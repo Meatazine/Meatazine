@@ -1,0 +1,13 @@
+#loading {
+  width: 200px;
+  position:absolute;
+  left:50%;
+  top:100px;
+  margin-left:-100px;
+  padding: 30px 0;
+  border:4px dashed #F33;
+  border-radius: 8px;
+}
+#loading p {
+  font-size:14px;
+}

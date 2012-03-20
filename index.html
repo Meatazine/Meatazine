@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>肉大师</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/loading.css" />
+  </head>
+  <body>
+    <div id="loading">
+      <p align="center">
+        <img src="images/loading.gif" />
+      </p>
+      <p align="center">
+        肉大师运功中，马上就来
+      </p>
+    </div>
+    <div class="navbar navbar-fixed-top hidden">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">
+            肉大师
+          </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  文件 <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">保存</a></li>
+                  <li><a href="#">导出</a></li>
+                </ul>
+              </li>
+              <li><a href="#">设置</a></li>
+              <li><a href="#">帮助</a></li>
+            </ul>
+            <p class="navbar-text pull-right">欢迎你， <a href="#">肉山</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid hidden">
+      <div id="welcome" class="modal hide">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3>肉大师恭候您的光临</h3>
+        </div>
+        <div class="modal-body">
+          <div id="welcome-page" class="carousel">
+            <div class="carousel-inner">
+              <div class="active item">
+                <img src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8754.jpg" width="100%" />
+                <div class="carousel-caption">
+                  <h4>La Verenda庭院内</h4>
+                  <p>刚来到La Verenda，乱拍的，好像这就是我们的房间，呵呵</p>
+                </div>
+              </div>
+              <div class="item">
+                <img src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8755.jpg" width="100%" />
+                <div class="carousel-caption">
+                  <h4>La Verenda 庭院</h4>
+                  <p>这座是专门做spa和各种护理的小楼，也卖他们自制的各种洗化用品，不过比较贵，我们后来还是在沙滩上找便宜的马杀鸡</p>
+                </div>
+              </div>
+              <div class="item">
+                <img src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8757.jpg" width="100%" />
+                <div class="carousel-caption">
+                  <h4>La Verenda 酒吧</h4>
+                  <p>从这里就能看到海了，那边是专属海滩以及烧烤餐厅</p>
+                </div>
+              </div>
+            </div>
+            <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+            <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn active" data-toggle="button">显示欢迎</button>
+          <a href="#welcome" class="btn btn-primary" data-dismiss="modal">关闭</a>
+        </div>
+      </div>
+      <div id="screen-size" class="modal hide">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3>选择设备分辨率</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span4">
+              <p align="center"><img src="images/ipad.jpg" /></p>
+              <p align="center">iPad<br /> 1024&times;768</p>
+            </div>
+            <div class="span4">
+              <p align="center"><img src="images/kindle.jpg" /></p>
+              <p align="center">Kindle Fire<br /> 1024&times;600</p>
+            </div>
+            <div class="span4"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a class="btn btn-primary" href="#">确定</a>
+          <a class="btn" href="#" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+      <div id="page-area">
+        <p>
+          <a class="btn" href="#screen-size" data-toggle="modal"><i class="icon-cog"></i></a>
+          当前分辨率 1024 &times; 768，适用机型：iPad, iPad 2, The New iPad
+        </p>
+        <div id="page-body">
+        </div>
+        <div id="page-list">
+          <p align="center">2/20</p>
+          <a class="btn page-list-control top" href="#page-list" data-slide="prev"><i class="icon-chevron-up"></i></a>
+          <ul class="page-list-inner well">
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8760-150x150.jpg" /></li>
+            <li class="active"><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8761-150x150.jpg" /></li>
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8762-150x150.jpg" /></li>
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8763-150x150.jpg" /></li>
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8764-150x150.jpg" /></li>
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8765-150x150.jpg" /></li>
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8766-150x150.jpg" /></li>
+            <li><img width="108" src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8767-150x150.jpg" /></li>
+          </ul>
+          <a class="btn page-list-control down" href="#page-list" data-slide="next"><i class="icon-chevron-down"></i></a>
+        </div>
+      </div>
+      <div id="panel">
+        <h2>设计面板</h2>
+        <hr />
+        <div class="btn-group" data-toggle="buttons-radio">
+          <button class="btn active">样式模板</button>
+          <button class="btn">素材</button>
+        </div>
+        <div class="template-list well">
+          
+        </div>
+      </div>
+      <hr />
+      <footer>
+        &copy; Meathill 2012 &nbsp;
+        <p class="pull-right">
+          <a href="http://blog.meathill.net/" target="_blank">Blog</a> &nbsp; <a href="mailto:meathill@foxmail.com">Email</a>
+        </p>
+      </footer>
+    </div>
+    <div id="always-hidden">
+    </div>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/libs/jquery-1.7.1.min.js"></script>
+    <script src="js/libs/jQuery.namespace.js"></script>
+    <script src="js/libs/bootstrap.min.js"></script>
+    <script src="js/libs/underscore-min.js"></script>
+    <script src="js/libs/backbone-min.js"></script>
+    <script src="js/AppMain.js"></script>
+  </body>
+</html>
