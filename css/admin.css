@@ -1,0 +1,70 @@
+body {
+  padding: 60px 0 40px;
+}
+
+.brand, h1, h2, h3 {
+  font-family: Microsoft Yahei;
+}
+
+#always-hidden {
+  display:none;
+}
+#page-area {
+  position: relative;
+}
+#page-body {
+  width: 1024px;
+  height:768px;
+  background:#EEE;
+  margin-left: 142px;
+}
+#page-list {
+  width:120px;
+  height: 750px;
+  padding: 14px 4px 4px;
+  background: #EEE;
+  position:absolute;
+  top:37px;
+  left:0;
+}
+.page-list-control {
+  width:98px;
+}
+.page-list-inner {
+  height:642px;
+  overflow:hidden;
+  margin:5px 0;
+  padding:5px 0 0;
+}
+.page-list-inner li {
+  list-style:none;
+  padding:0 5px 5px;
+}
+.page-list-inner li.active {
+  background:#9F9;
+  padding:5px;
+  margin-top:-5px;
+}
+
+#panel {
+  width: 300px;
+  height:748px;
+  padding: 10px;
+  background:#EEE;
+  position: absolute;
+  top:97px;
+  left: 1200px;
+}
+#panel hr {
+  border-top-color:#CCC;
+  margin:10px 0;
+}
+#panel .btn-group button {
+  width:150px;
+}
+#panel .template-list {
+  width:260px;
+  height: 658px;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
