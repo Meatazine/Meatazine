@@ -9,7 +9,7 @@
   <body>
     <div id="loading">
       <p align="center">
-        <img src="images/loading.gif" />
+        <img src="img/loading.gif" />
       </p>
       <p align="center">
         肉大师运功中，马上就来
@@ -104,19 +104,36 @@
         <div class="modal-body">
           <div class="row-fluid">
             <div class="span4">
-              <p align="center"><img src="images/ipad.jpg" /></p>
-              <p align="center">iPad<br /> 1024&times;768</p>
+              <div class="device ipad">
+                <p align="center"><img src="img/ipad.jpg" alt="iPad" /></p>
+                <p align="center">iPad<br /> 1024&times;768</p>
+              </div>
             </div>
             <div class="span4">
-              <p align="center"><img src="images/kindle.jpg" /></p>
-              <p align="center">Kindle Fire<br /> 1024&times;600</p>
+              <div class="device kindle-fire">
+                <p align="center"><img src="img/kindle.jpg" align="Kindle Fire" /></p>
+                <p align="center">Kindle Fire<br /> 1024&times;600</p>
+              </div>
             </div>
-            <div class="span4"></div>
+            <div class="span4">
+              <div class="device other">
+                <p align="center"><img src="img/ipad.jpg" /></p>
+                <p align="center">其他设备<br /> 自定义分辨率</p>
+              </div>
+              <form class="form-inline mt10">
+                <input type="number" id="device-width" value="1024" />
+                &times;
+                <input type="number" id="device-height" value="728" />
+              </form>
+            </div>
           </div>
+          <p class="mt10">
+            <small>理论上，设备间分辨率的些微差别会被肉大师用内功消弭于无形。不过，如果您有明确的目标平台，我建议您先设定好分辨率，这样对调试和最终效果都有很大帮助。</small>
+          </p>
         </div>
         <div class="modal-footer">
-          <a class="btn btn-primary" href="#">确定</a>
-          <a class="btn" href="#" data-dismiss="modal">取消</a>
+          <a class="btn btn-primary" href="#screen-size">确定</a>
+          <a class="btn" href="#screen-size" data-dismiss="modal">取消</a>
         </div>
       </div>
       <div id="page-area">
@@ -174,6 +191,10 @@
     <script src="js/libs/backbone-min.js"></script>
     <script src="js/model/ConfigModel.js"></script>
     <script src="js/view/windows/Welcome.js"></script>
+    <script src="js/view/windows/ScreenSizeSelector.js"></script>
+    <script src="js/view/PageBody.js"></script>
+    <script src="js/view/PageList.js"></script>
+    <script src="js/view/SourcePanel.js"></script>
     <script src="js/view/GUI.js"></script>
     <script src="js/AppMain.js"></script>
   </body>

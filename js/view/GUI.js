@@ -3,15 +3,17 @@ com.meathill.meatazine.GUI = Backbone.View.extend({
   navbar: null,
   config: null,
   welcome: null,
-  page: null,
-  list: null,
-  source: null,
+  screenSelector: null,
+  config: null,
   initialize: function () {
     this.config = this.options.config;
     this.welcome = new com.meathill.meatazine.view.windows.Welcome({
       el: '#welcome',
       model: this.config
     });
+    this.screenSelector = new com.meathill.meatazine.view.windows.ScreenSizeSelector({
+      el: '#screen-size',
+    })
     this.render();
     delete this.options;
   },

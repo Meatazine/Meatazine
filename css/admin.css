@@ -1,3 +1,7 @@
+/*========================
+ * body
+ * 空出导航条和脚部版权的位置
+ * =====================*/
 body {
   padding: 60px 0 40px;
 }
@@ -9,6 +13,40 @@ body {
 #always-hidden {
   display:none;
 }
+.mt10 {
+  margin-top:10px;
+}
+/*========================
+ * screen-size
+ * 设备分辨率选择window
+ * =====================*/
+#screen-size .device {
+  padding: 20px 0 5px;
+  border:2px solid #FFF;
+  border-radius: 4px;
+}
+#screen-size .device:hover {
+  border:2px solid #CCC;
+}
+#screen-size .active {
+  background-color: #F5F5F5;
+  border: 2px solid #EEE;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  font-weight:bold;
+}
+#screen-size form {
+  text-align:center;
+}
+#screen-size input {
+  width: 60px;
+  text-align:right;
+}
+
+/*========================
+ * page
+ * 页面功能部分
+ * =====================*/
 #page-area {
   position: relative;
 }
