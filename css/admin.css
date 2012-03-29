@@ -49,44 +49,68 @@ body {
  * =====================*/
 #page-area {
   position: relative;
-}
-#page-body {
-  width: 1024px;
-  height:768px;
-  background:#EEE;
-  margin-left: 142px;
+  overflow:hidden;
 }
 #page-list {
   width:120px;
-  height: 750px;
-  padding: 14px 4px 4px;
+  padding: 15px 5px 5px;
   background: #EEE;
-  position:absolute;
-  top:37px;
-  left:0;
+  text-shadow:0 1px 0 #FFF;
+  float:left;
 }
 .page-list-control {
   width:98px;
 }
-.page-list-inner {
-  height:642px;
+#page-list-inner {
+  height:648px;
   overflow:hidden;
   margin:5px 0;
-  padding:5px 0 0;
+  padding:5px 5px 0;
 }
-.page-list-inner li {
+#page-list-inner li {
+  width:106px;
+  min-height: 60px;
   list-style:none;
-  padding:0 5px 5px;
+  border:1px solid #CCC;
+  border-radius:2px;
+  background:#FFF;
+  margin: 0 0 5px;
+  cursor:pointer;
+  position:relative;
 }
-.page-list-inner li.active {
-  background:#9F9;
-  padding:5px;
-  margin-top:-5px;
+#page-list-inner li:hover {
+  border-color:#F33;
+  box-shadow:0 0 1px #F99;
+}
+#page-list-inner li.active {
+  border:1px solid #C00;
+  box-shadow: 0 0 2px #F33;
+}
+#page-list-inner li.add-button {
+  background:#D9D9D9 url(../img/glyphicons_190_circle_plus.png) center center no-repeat;
+}
+#page-list-inner li.add-button:hover {
+  background-color: #EEE;
+}
+#page-list-inner .remove-button {
+  position:absolute;
+  top:3px;
+  right:3px;
+  display: block;
+}
+#page-list-inner .remove-button:hover {
+  background-color:#EEE;
 }
 
+#page-body {
+  width: 1024px;
+  height:768px;
+  background:#EEE;
+  margin-left: 10px;
+  float: left;
+}
 #panel {
   width: 300px;
-  height:748px;
   padding: 10px;
   background:#EEE;
   position: absolute;
@@ -100,9 +124,10 @@ body {
 #panel .btn-group button {
   width:150px;
 }
-#panel .template-list {
+#template-list {
   width:260px;
   height: 658px;
   overflow-x:hidden;
   overflow-y:auto;
+  margin:0;
 }

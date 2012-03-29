@@ -1,7 +1,5 @@
 jQuery.namespace('com.meathill.meatazine.view.windows');
 com.meathill.meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
-  width: 0,
-  height: 0,
   events: {
     "click .device": "device_clickHandler",
     "click .btn-primary": "confirmHandler",
@@ -21,16 +19,19 @@ com.meathill.meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
     this.$el.modal('hide');
   },
   device_clickHandler: function (event) {
+    var target = this.$(event.currentTarget);
     this.$('.active').removeClass('active');
-    this.$(event.currentTarget).addClass('active');
-    if (this.$(event.currentTarget).hasClass('other')) {
+    target.addClass('active');
+    if (target.hasClass('other')) {
       this.$('form').slideDown();
     } else {
+      this.$('#device-width').val(target.attr('data-width'));
+      this.$('#device-height').val(target.attr('data-height'));
       this.$('form').slideUp();
     }
-    this.trigger('change');
   },
   confirmHandler: function (event) {
+    this.model.setSize($('#device-width').val(), $('#device-height').val());
     this.hide();
   }
 });

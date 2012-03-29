@@ -1,4 +1,4 @@
-jQuery.namespace('com.meathill.meatazine');
-com.meathill.meatazine.PageCollection = Backbone.Collection.extend({
-  
+jQuery.namespace('com.meathill.meatazine.model');
+com.meathill.meatazine.model.PageCollection = Backbone.Collection.extend({
+  model: com.meathill.meatazine.model.SinglePageModel
 })
