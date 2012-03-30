@@ -15,7 +15,8 @@ com.meathill.meatazine.GUI = Backbone.View.extend({
     });
     this.screenSelector = new com.meathill.meatazine.view.windows.ScreenSizeSelector({
       el: '#screen-size',
-      model: this.book
+      model: this.book,
+      infoText: '#screen-size-info'
     })
     this.render();
     delete this.options;

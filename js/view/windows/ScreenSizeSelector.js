@@ -6,6 +6,7 @@ com.meathill.meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.info = $(this.options.infoText);
     this.render();
   },
   render: function () {
@@ -32,6 +33,7 @@ com.meathill.meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
   },
   confirmHandler: function (event) {
     this.model.setSize($('#device-width').val(), $('#device-height').val());
+    this.info.text('当前分辨率 ' + this.model.get('width') + ' × ' + this.model.get('height') + '，适用机型：' + this.$('.active').attr('data-device'));
     this.hide();
   }
 });

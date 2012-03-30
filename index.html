@@ -104,19 +104,19 @@
         <div class="modal-body">
           <div class="row-fluid">
             <div class="span4">
-              <div class="device ipad" data-width="1024" data-height="768">
+              <div class="device ipad" data-width="1024" data-height="768" data-device="iPad, iPad 2, The New iPad">
                 <p align="center"><img src="img/ipad.jpg" alt="iPad" /></p>
                 <p align="center">iPad<br /> 1024&times;768</p>
               </div>
             </div>
             <div class="span4">
-              <div class="device kindle-fire" data-width="1024" data-height="600">
+              <div class="device kindle-fire" data-width="1024" data-height="600" data-device="Kindle Fire">
                 <p align="center"><img src="img/kindle.jpg" align="Kindle Fire" /></p>
                 <p align="center">Kindle Fire<br /> 1024&times;600</p>
               </div>
             </div>
             <div class="span4">
-              <div class="device other">
+              <div class="device other" data-device="其它设备">
                 <p align="center"><img src="img/ipad.jpg" /></p>
                 <p align="center">其他设备<br /> 自定义分辨率</p>
               </div>
@@ -139,7 +139,7 @@
       <div id="page-area">
         <p>
           <a class="btn" href="#screen-size" data-toggle="modal"><i class="icon-cog"></i></a>
-          当前分辨率 1024 &times; 768，适用机型：iPad, iPad 2, The New iPad
+          <span id="screen-size-info">当前分辨率 1024 &times; 768，适用机型：iPad, iPad 2, The New iPad</span>
         </p>
         <div id="page-list">
           <p align="center" id="page-number">1/1</p>

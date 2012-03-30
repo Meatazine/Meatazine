@@ -68,8 +68,10 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
     var item = this.createItem();
     item.trigger('click');
     this.refreshPageNumber();
-    this.$('li:not(.add-button)').sortable();
-    this.$('li:not(.add-button)').disableSelection();
+    this.list.sortable({
+      items: 'li:not(.add-button)'
+    });
+    this.$('li').disableSelection();
   },
   removeButton_clickHandler: function (event) {
     var target = this.removeButton.parent();
