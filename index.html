@@ -143,11 +143,15 @@
         </p>
         <div id="page-list">
           <p align="center" id="page-number">1/1</p>
-          <a class="btn page-list-control top" href="#page-list" data-slide="prev"><i class="icon-chevron-up"></i></a>
+          <a class="btn page-list-control top" href="#page-list" data-slide="prev" disabled="true"><i class="icon-chevron-up"></i></a>
           <ul id="page-list-inner" class="well">
-            
+            <li>
+              <button class="btn btn-large add-button" type="button">
+                <i class="icon-b-plug-sign"></i>
+              </button>
+            </li>
           </ul>
-          <a class="btn page-list-control down" href="#page-list" data-slide="next"><i class="icon-chevron-down"></i></a>
+          <a class="btn page-list-control down" href="#page-list" data-slide="next" disabled="true"><i class="icon-chevron-down"></i></a>
         </div>
         <div id="page-body">
         </div>
@@ -158,9 +162,17 @@
           <button class="btn">素材</button>
         </div>
         <hr />
-        <div id="template-list" class="well">
-          
-        </div>
+        <ul id="template-list" class="well thumbnails">
+          <li class="active">
+            <a href="#" class="thumbnail"><img src="img/elements/face.png" width="100%" alt="封面" /></a>
+          </li>
+          <li>
+            <a href="#" class="thumbnail"><img src="img/elements/slide.png" width="100%" alt="Slide" /></a>
+          </li>
+          <li>
+            <a href="#" class="thumbnail"><img src="img/elements/back.png" width="100%" alt="封底" /></a>
+          </li>
+        </ul>
       </div>
       <hr />
       <footer>

@@ -7,10 +7,11 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
   length: 0,
   events: {
     "click .add-button": "addButton_clickHandler",
-    "click li:not(.add-button)": "item_clickHandler",
-    "mouseover li:not(.add-button)": "item_mouseOverHandler",
-    "mouseout li:not(.add-button)": "item_mouseOutHandler",
+    "click li.item": "item_clickHandler",
+    "mouseover li.item": "item_mouseOverHandler",
+    "mouseout li.item": "item_mouseOutHandler",
     "click .remove-button": "removeButton_clickHandler",
+    "sortdeactivate #page-list-inner": "sortdeactivateHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -19,7 +20,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
     this.render();
   },
   render: function () {
-    this.addButton = this.createItem('', {"class": "add-button"});
+    this.addButton = this.$('.add-button');
     this.createRemoveButton();
     this.currentItem = this.createItem();
     this.currentItem.addClass('active');
@@ -28,6 +29,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
   },
   createItem: function (type, options) {
+    options = _.extend({"class": "item"}, options);
     var li = $('<li>', options);
     if (this.addButton !== null) {
       this.length++;
@@ -42,7 +44,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
   },
   refreshPageNumber: function () {
     var index = this.currentItem.index() + 1;
-    var total = this.$('li:not(.add-button)').length;
+    var total = this.length;
     this.$('#page-number').text(index + '/' + total);
   },
   item_clickHandler: function (event) {
@@ -69,7 +71,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
     item.trigger('click');
     this.refreshPageNumber();
     this.list.sortable({
-      items: 'li:not(.add-button)'
+      items: 'li.item'
     });
     this.$('li').disableSelection();
   },
@@ -87,6 +89,9 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
       .off()
       .remove();
     return false;
+  },
+  sortdeactivateHandler: function () {
+    this.refreshPageNumber();
   },
   resizeHandler: function () {
     // 把按钮和数字空出来
