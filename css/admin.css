@@ -129,7 +129,7 @@ body {
 #panel .btn-group button {
   width:150px;
 }
-#template-list {
+#panel .well {
   width:260px;
   height: 658px;
   overflow-x:hidden;

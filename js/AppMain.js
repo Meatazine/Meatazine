@@ -6,10 +6,6 @@ $(function () {
     config: config,
     book: book
   });
-  var page = new com.meathill.meatazine.view.PageBody({
-    el: '#page-body',
-    book: book
-  });
   var list = new com.meathill.meatazine.view.PageList({
     el: '#page-list',
     book: book,
@@ -17,7 +13,15 @@ $(function () {
   });
   var source = new com.meathill.meatazine.view.SourcePanel({
     el: '#panel',
-    book: book
-  })
+    book: book,
+    model: new com.meathill.meatazine.model.SourceModel()
+  });
+  var page = new com.meathill.meatazine.view.PageBody({
+    el: '#page-body',
+    book: book,
+    source: source.model
+  });
+  list.on('select', page.page_selectHandler, page);
+  source.on('templateSelect', page.template_selectHandler, page);
 });
 var GUI;

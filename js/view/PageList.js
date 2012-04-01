@@ -22,21 +22,15 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
   render: function () {
     this.addButton = this.$('.add-button');
     this.createRemoveButton();
-    this.currentItem = this.createItem();
-    this.currentItem.addClass('active');
   },
   createRemoveButton: function () {
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
   },
-  createItem: function (type, options) {
+  createItem: function (options) {
     options = _.extend({"class": "item"}, options);
     var li = $('<li>', options);
-    if (this.addButton !== null) {
-      this.length++;
-      li.insertBefore(this.addButton);
-    } else {
-      this.list.append(li);
-    }
+    this.length++;
+    li.insertBefore(this.addButton.parent());
     return li;
   },
   getItem: function (index) {
@@ -57,6 +51,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
     this.currentItem = $(event.currentTarget);
     this.currentItem.addClass('active');
     this.refreshPageNumber();
+    this.trigger('select', this.collection.getByCid(this.currentItem.attr('data-cid')));
   },
   item_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
@@ -68,12 +63,14 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
   },
   addButton_clickHandler: function (event) {
     var item = this.createItem();
-    item.trigger('click');
-    this.refreshPageNumber();
     this.list.sortable({
       items: 'li.item'
     });
     this.$('li').disableSelection();
+    var model = this.collection.create();
+    item.attr('data-cid', model.cid);
+    item.trigger('click');
+    this.refreshPageNumber();
   },
   removeButton_clickHandler: function (event) {
     var target = this.removeButton.parent();
@@ -85,12 +82,13 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
         this.getItem(target.index() + 1).trigger('click');
       }
     }
+    this.collection.remove(this.collection.getByCid(target.attr('data-cid')));
     target
       .off()
       .remove();
     return false;
   },
-  sortdeactivateHandler: function () {
+  sortdeactivateHandler: function (event, ui) {
     this.refreshPageNumber();
   },
   resizeHandler: function () {

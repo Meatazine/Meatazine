@@ -6,6 +6,10 @@ com.meathill.meatazine.view.windows.Welcome = Backbone.View.extend({
     this.$el.on('shown', function () {
       view.viewedHandler();
     });
+    this.render();
+  },
+  render: function () {
+  	this.$('.carousel').carousel();
   },
   show: function () {
     this.$el.modal('show');

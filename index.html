@@ -9,7 +9,7 @@
   <body>
     <div id="loading">
       <p align="center">
-        <img src="img/loading.gif" />
+        <img src="img/loading.gif" alt="Loading" />
       </p>
       <p align="center">
         肉大师运功中，马上就来
@@ -63,7 +63,7 @@
           <h3>肉大师恭候您的光临</h3>
         </div>
         <div class="modal-body">
-          <div id="welcome-page" class="carousel">
+          <div id="new-features" class="carousel">
             <div class="carousel-inner">
               <div class="active item">
                 <img src="http://blog.meathill.net/wp-content/uploads/2011/07/MG_8754.jpg" width="100%" />
@@ -87,8 +87,8 @@
                 </div>
               </div>
             </div>
-            <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-            <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+            <a class="carousel-control left" href="#new-features" data-slide="prev">&lsaquo;</a>
+            <a class="carousel-control right" href="#new-features" data-slide="next">&rsaquo;</a>
           </div>
         </div>
         <div class="modal-footer">
@@ -158,12 +158,12 @@
       </div>
       <div id="panel">
         <div class="btn-group" data-toggle="buttons-radio">
-          <button class="btn active">样式模板</button>
-          <button class="btn">素材</button>
+          <button class="btn active" data-for="template-list">样式模板</button>
+          <button class="btn" data-for="source-list">素材</button>
         </div>
         <hr />
         <ul id="template-list" class="well thumbnails">
-          <li class="active">
+          <li>
             <a href="#" class="thumbnail"><img src="img/elements/face.png" width="100%" alt="封面" /></a>
           </li>
           <li>
@@ -172,6 +172,9 @@
           <li>
             <a href="#" class="thumbnail"><img src="img/elements/back.png" width="100%" alt="封底" /></a>
           </li>
+        </ul>
+        <ul id="source-list" class="well thumbnails">
+          
         </ul>
       </div>
       <hr />
@@ -199,6 +202,7 @@
     <script src="js/model/BookProperties.js"></script>
     <script src="js/model/SinglePageModel.js"></script>
     <script src="js/model/PageCollection.js"></script>
+    <script src="js/model/SourceModel.js"></script>
     <script src="js/view/windows/Welcome.js"></script>
     <script src="js/view/windows/ScreenSizeSelector.js"></script>
     <script src="js/view/PageBody.js"></script>
