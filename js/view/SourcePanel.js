@@ -13,6 +13,9 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   render: function () {
   	this.$('#source-list').hide();
   },
+  getTemplateType: function (value) {
+    return value.substr(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
+  },
   tab_changeHandler: function (event) {
     var target = $(event.currentTarget).attr('data-for');
     target = this.$('#' + target);
@@ -25,7 +28,7 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
     }
     this.template = $(event.currentTarget);
     this.template.parent().addClass('active');
-    this.trigger('templateSelect');
+    this.model.set('type', this.getTemplateType(this.template.find('img').attr('src')));
     return false;
   },
   resizeHandler: function () {
