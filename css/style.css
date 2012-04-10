@@ -1,0 +1,13 @@
+/*************************
+ * 浏览用样式
+ * 
+ * ===================== */
+.fixed {
+  position:absolute;
+}
+.top, .tl, .tr {
+  top:0px;
+}
+.bottom, .bl, .br {
+  bottom:0px;
+}

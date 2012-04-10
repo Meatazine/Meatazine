@@ -3,7 +3,7 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   template: null,
   events: {
     "click .btn": "tab_changeHandler",
-    "click #template-list a": "template_clickHandler"
+    "click #template-list li": "template_clickHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -24,10 +24,13 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   },
   template_clickHandler: function (event) {
     if (this.template != null) {
-      this.template.parent().removeClass('active');
+      if ($(event.currentTarget).hasClass('active')) {
+        return;
+      }
+      this.template.removeClass('active');
     }
     this.template = $(event.currentTarget);
-    this.template.parent().addClass('active');
+    this.template.addClass('active');
     this.model.set('type', this.getTemplateType(this.template.find('img').attr('src')));
     return false;
   },

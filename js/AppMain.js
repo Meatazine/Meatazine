@@ -21,7 +21,6 @@ $(function () {
     book: book,
     source: source.model
   });
-  list.on('select', page.page_selectHandler, page);
-  source.on('templateSelect', page.template_selectHandler, page);
+  list.on('select', page.pageList_selectHandler, page);
 });
 var GUI;
