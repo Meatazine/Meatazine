@@ -111,12 +111,16 @@ body {
   width: 1024px;
   height:768px;
   background:#EEE;
-  margin-left: 10px;
+  margin-left: 12px;
   float: left;
   position: relative;
 }
-#page-body img {
-  height:inherit;
+#page-body .placeholder {
+  background:url(../img/imageplaceholder.png) center center no-repeat #CCC;
+  box-shadow:inset 0 0 8px #08C;
+}
+#page-body .active-img {
+  box-shadow:inset 0 0 8px #F83;
 }
 #panel {
   width: 300px;
@@ -162,7 +166,7 @@ body {
   border-color:#08C;
   box-shadow:0 1px 4px rgba(0, 105, 214, 0.25);
 }
-#template-list li.active a.thumbnail {
+#template-list li.active {
   border-color: #08C;
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
