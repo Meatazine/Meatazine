@@ -2,13 +2,8 @@ jQuery.namespace('com.meathill.meatazine.view');
 com.meathill.meatazine.view.PageBody = Backbone.View.extend({
   book: null,
   source: null,
+  items: [],
   isSentByMe: false,
-  events: {
-    "drop img": "img_dropHandler",
-    "dragover img": "img_dragOverHandler",
-    "dragenter img": "img_dragEnterHandler",
-    "dragleave img": "img_dragLeaveHandler"
-  },
   initialize: function (options) {
     this.$el = $(this.el);
     this.book = options.book;
@@ -18,10 +13,17 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
     delete this.options;
   },
   render: function () {
+    while (this.items.length > 0) {
+      this.items[0].rmeove();
+    }
     this.$el.html(this.model.get('template'));
-    _.each(this.$('[data-config]'), function (element, index, list) {
-      var filled = Mustache.render(element.innerHTML, this.model.getContentAt(index));
-      $(element).html(filled);
+    _.each(this.$('[data-config]'), function (elementDom, index) {
+      var collection = this.model.getContentAt(index);
+      var element = new com.meathill.meatazine.view.Element({
+        collection: collection,
+        el: elementDom
+      });
+      this.items[index] = element;
     }, this);
     
     this.$('img').popover({
@@ -76,30 +78,5 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
   resizeHandler: function () {
     this.$el.width(this.options.book.get('width'));
     this.$el.height(this.options.book.get('height'));
-  },
-  img_dropHandler: function (event) {
-    console.log(event.originalEvent.dataTransfer);
-    var files = event.originalEvent.dataTransfer.files,
-        reader = new FileReader(),
-        img = event.target;
-    reader.onload = function (event) {
-      $(img).attr('src', event.target.result);
-    }
-    for (var i = 0, len = files.length; i < len; i++) {
-      reader.readAsDataURL(files[i]);
-    }
-  },
-  img_dragOverHandler: function (event) {
-    if (event.preventDefault) {
-      event.preventDefault();
-    }
-    event.originalEvent.dataTransfer.dropEffect = 'copy';
-    return false;
-  },
-  img_dragEnterHandler: function (event) {
-    $(event.currentTarget).addClass('active-img');
-  },
-  img_dragLeaveHandler: function (event) {
-    $(event.currentTarget).removeClass('active-img');
   }
 })

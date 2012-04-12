@@ -1,0 +1,23 @@
+<diagram useFlex="true">
+  <class name="PageCollection" isInner="false" visibility="public" isMxml="false" x="342" y="211" width="180" height="72">
+    <asdoc name="AsDoc" content=""/>
+    <property name="page" type="SinglePageModel" visibility="private" hasGetter="false" hasSetter="false" isConstant="false" isStatic="false">
+      <asdoc name="AsDoc" content=""/>
+    </property>
+  </class>
+  <class name="SinglePageModel" isInner="false" visibility="public" isMxml="false" x="342" y="326" width="195" height="72">
+    <asdoc name="AsDoc" content=""/>
+    <property name="contents" type="ElementCollection" visibility="private" hasGetter="false" hasSetter="false" isConstant="false" isStatic="false">
+      <asdoc name="AsDoc" content=""/>
+    </property>
+  </class>
+  <relation name="relation" type="composition" from="PageCollection" to="SinglePageModel" shape=""/>
+  <class name="ElementCollection" isInner="false" visibility="public" isMxml="false" x="340" y="445" width="200" height="35">
+    <asdoc name="AsDoc" content=""/>
+  </class>
+  <relation name="relation" type="composition" from="SinglePageModel" to="ElementCollection" shape=""/>
+  <class name="ElementModel" isInner="false" visibility="public" isMxml="false" x="342" y="520" width="180" height="35">
+    <asdoc name="AsDoc" content=""/>
+  </class>
+  <relation name="relation" type="composition" from="ElementCollection" to="ElementModel" shape=""/>
+</diagram>

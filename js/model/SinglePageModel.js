@@ -5,16 +5,12 @@ com.meathill.meatazine.model.SinglePageModel = Backbone.Model.extend({
     template: '',
     contents: []
   },
-  defaultItem: {
-    title: '标题',
-    description: '内容',
-    link: 'http://blog.meathill.net/',
-    img: 'img/spacer.gif',
-  },
   getContentAt: function (index) {
-    if (!this.attributes.contents[index]) {
-      this.attributes.contents[index] = this.defaultItem; 
+    var elements = this.attributes.contents[index];
+    if (!elements) {
+      elements = new com.meathill.meatazine.model.ElementCollection();
+      this.attributes.contents[index] = elements;
     }
-    return this.attributes.contents[index];
+    return elements;
   }
 });
