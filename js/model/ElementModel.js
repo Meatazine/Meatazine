@@ -5,5 +5,13 @@ com.meathill.meatazine.model.ElementModel = Backbone.Model.extend({
     description: '内容',
     link: 'http://blog.meathill.net/',
     img: 'img/spacer.gif',
+  },
+  initialize: function () {
+    if (this.options.init.hasOwnProperty('fileName')) {
+      this.set({
+        img : this.options.init.fileName,
+        title: this.options.init.fileName
+      })
+    }
   }
 });

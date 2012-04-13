@@ -18,9 +18,12 @@ com.meathill.meatazine.view.Element = Backbone.View.extend({
     this.collection.on('add', this.collection_addHandler, this);
     this.render();
     
+    var self = this;
     this.reader = new FileReader();
-    _.extend(this.reader, Backbone.Events);
-    this.reader.on('load', this.loadCompleteHandler, this);
+    this.reader.onload = function (evnet) {
+      $(self.loadingIMGs.shift()).attr('src', event.target.result);
+      self.next();
+    }
   },
   render: function () {
     var item = this.createItem();
@@ -39,35 +42,31 @@ com.meathill.meatazine.view.Element = Backbone.View.extend({
       this.isLoading = false;
     }
   },
-  loadCompleteHandler: function (event) {
-    $(this.loadingIMGs.shift()).attr('src', event.target.result);
-    this.next();
-  },
   collection_addHandler: function (number) {
     var items = this.createItem(number);
   },
   img_dropHandler: function (event) {
     var files = event.originalEvent.dataTransfer.files,
+        usableFiles = [],
         img = event.target;
     // 只认图片
-    for (var i = 0; i < files.length; i++) {
+    for (var i = 0, len = files.length; i < len; i++) {
       var file = files[i];
-      if (file.type.substr(0, 5) != 'image') {
-        files.splice(i, 1);
-        i--;
+      if (file.type.substr(0, 5) == 'image') {
+        usableFiles.push(file);
       }
     }
-    if (files.length > 1) {
+    if (usableFiles.length > 1) {
       if (this.config.number > 1) {
         // 需要添加若干空元素
-        this.collection.create(files.length - 1);
+        this.collection.create(usableFiles);
       } else {
-        files = files.slice(0, 1);
+        usableFiles = usableFiles.slice(0, 1);
       }
     }
-    if (files.length > 0) {
+    if (usableFiles.length > 0) {
       this.loadingIMGs.push(img);
-      this.loadingFiles.concat(files);
+      this.loadingFiles = this.loadingFiles.concat(usableFiles);
       if (!this.isLoading) {
         this.isLoading = true;
         this.next();
