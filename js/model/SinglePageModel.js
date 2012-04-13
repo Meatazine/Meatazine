@@ -8,8 +8,10 @@ com.meathill.meatazine.model.SinglePageModel = Backbone.Model.extend({
   getContentAt: function (index) {
     var elements = this.attributes.contents[index];
     if (!elements) {
-      elements = new com.meathill.meatazine.model.ElementCollection();
-      this.attributes.contents[index] = elements;
+      elements = new com.meathill.meatazine.model.element.ElementCollection();
+      var contents = this.get('contents').concat();
+      contents[index] = elements;
+      this.set('contents', contents);
     }
     return elements;
   }

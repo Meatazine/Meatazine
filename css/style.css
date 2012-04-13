@@ -11,7 +11,28 @@
 .bottom, .bl, .br {
   bottom:0px;
 }
+.hcenter {
+  width:100%;
+  text-align:center;
+}
+.vbottom {
+  bottom:15%;
+}
 .full {
   width:100%;
   height:100%; 
+}
+
+.slide-navi {
+  margin:0;
+  background:rgba(0, 0, 0, 0.25);
+  width: 100%;
+}
+.slide-navi li {
+  list-style: none;
+  margin: 10px 0 10px 10px;
+  float: left;
+}
+.slide-navi li img {
+  cursor:pointer;
 }

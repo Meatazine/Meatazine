@@ -94,5 +94,8 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
   resizeHandler: function () {
     // 把按钮和数字空出来
     this.$('#page-list-inner').height(this.options.book.get('height') - 120);
+  },
+  page_changeHandler: function (thumb) {
+    this.currentItem.html(thumb);
   }
 })

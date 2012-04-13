@@ -4,6 +4,12 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
   source: null,
   items: [],
   isSentByMe: false,
+  events: {
+    "mouseover h1,h2,h3,p": "text_mouseOverHandler",
+    "mouseout h1,h2,h3,p": "text_mouseOutHandler",
+    "focusin h1,h2,h3,p": "text_focusInHandler",
+    "focusout h1,h2,h3,p": "text_focusOutHandler"
+  },
   initialize: function (options) {
     this.$el = $(this.el);
     this.book = options.book;
@@ -14,22 +20,22 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
   },
   render: function () {
     while (this.items.length > 0) {
-      this.items[0].rmeove();
+      this.items.shift().remove();
     }
     this.$el.html(this.model.get('template'));
     _.each(this.$('[data-config]'), function (elementDom, index) {
-      var collection = this.model.getContentAt(index);
-      var element = new com.meathill.meatazine.view.Element({
-        collection: collection,
-        el: elementDom
-      });
+      var collection = this.model.getContentAt(index),
+          config = JSON.parse($(elementDom).attr('data-config'));
+          element = com.meathill.meatazine.view.element.ElementFactory.getElement(config.type, {
+            collection: collection,
+            el: elementDom
+          });
+      element.on('change', this.element_changeHandler, this);
       this.items[index] = element;
     }, this);
     
-    this.$('img').popover({
-      title: '操作提示',
-      content: '将实际图片拖拽至此即可'
-    })
+    this.$('h1,h2,h3,p').prop('contenteditable', true);
+    this.refreshThumbnail();
   },
   showLoading: function () {
     this.$el.html('<p align="center" style="padding-top:40px"><img src="img/loading.gif" /><br />加载中，请稍后</p>');
@@ -47,6 +53,12 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
     this.source.on('complete', this.source_completeHandler, this);
     this.source.fetch(this.model.get('templateType'));
     this.showLoading();
+  },
+  refreshThumbnail: function () {
+    var self = this;
+    html2canvas(this.$el, {onrendered: function (canvas) {
+      self.trigger('change', canvas);
+    }});
   },
   pageList_selectHandler: function (model) {
     this.model = model;
@@ -78,5 +90,22 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
   resizeHandler: function () {
     this.$el.width(this.options.book.get('width'));
     this.$el.height(this.options.book.get('height'));
+  },
+  element_changeHandler: function () {
+    this.refreshThumbnail();
+  },
+  text_mouseOverHandler: function (event) {
+    $(event.target).addClass('editable');
+  },
+  text_mouseOutHandler: function (event) {
+    if(!$(event.target).hasClass('editing')) {
+      $(event.target).removeClass('editable');
+    }
+  },
+  text_focusInHandler: function (event) {
+    $(event.target).addClass('editing');
+  },
+  text_focusOutHandler: function (event) {
+    $(event.target).removeClass('editing editable');
   }
 })

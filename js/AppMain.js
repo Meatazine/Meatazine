@@ -22,5 +22,6 @@ $(function () {
     source: source.model
   });
   list.on('select', page.pageList_selectHandler, page);
+  page.on('change', list.page_changeHandler, list);
 });
 var GUI;
