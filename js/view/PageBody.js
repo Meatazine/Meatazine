@@ -63,7 +63,7 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
   pageList_selectHandler: function (model) {
     this.model = model;
     this.useTemplate(true);
-    this.isSentByMe = true;
+    this.isSentByMe = this.source.get('type') != this.model.get('templateType');
     this.source.set('type', this.model.get('templateType'));
   },
   source_selectHandler: function () {
@@ -71,7 +71,6 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
       this.isSentByMe = false;
       return;
     }
-    console.log(this.model.hasChanged());
     if (this.model.hasChanged("contents")) {
       if (!window.confirm('替换模板后，您所编辑的内容会丢失。确认替换么？')) {
         return;

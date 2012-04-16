@@ -9,7 +9,8 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   initialize: function () {
     this.$el = $(this.el);
     this.options.book.on('change', this.resizeHandler, this);
-    this.model.on('change:type', this.model_changeHandler, this);
+    this.model.on('change:type', this.model_typeChangeHandler, this);
+    this.model.on('change:contents', this.model_contentsChangeHandler, this);
     this.render();
   },
   render: function () {
@@ -39,7 +40,7 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
     this.model.set('type', this.getTemplateType(this.template.find('img').attr('src')));
     return false;
   },
-  model_changeHandler: function (event) {
+  model_typeChangeHandler: function (event) {
     var target = this.model.get('type'),
         index = -1;
     _.each(this.$('#template-list img'), function (element, i) {
@@ -51,6 +52,9 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
       this.enabled = true;
       this.$('#template-list li').eq(index).trigger('click');
     }
+  },
+  model_contentsChangeHandler: function (event) {
+    
   },
   resizeHandler: function () {
     // 空出按钮的位置

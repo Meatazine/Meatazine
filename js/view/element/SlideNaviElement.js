@@ -17,6 +17,10 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
     this.createReader();
     this.render();
   },
+  render: function () {
+    var item = this.createItem(this.collection.length);
+    this.$el.html(item);
+  },
   createReader: function () {
     var self = this;
     this.reader = new FileReader();
@@ -26,6 +30,7 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
         .attr('src', event.target.result)
         .removeClass('placeholder active-img');
       self.next();
+      self.collection.at(self.collection.length - self.loadingIMGs.length - 1).set('img', event.target.result);
     }
   },
   next: function () {
