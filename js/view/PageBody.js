@@ -36,6 +36,7 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
     
     this.$('h1,h2,h3,p').prop('contenteditable', true);
     this.refreshThumbnail();
+    this.trigger('edit');
   },
   showLoading: function () {
     this.$el.html('<p align="center" style="padding-top:40px"><img src="img/loading.gif" /><br />加载中，请稍后</p>');
@@ -71,11 +72,6 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
       this.isSentByMe = false;
       return;
     }
-    if (this.model.hasChanged("contents")) {
-      if (!window.confirm('替换模板后，您所编辑的内容会丢失。确认替换么？')) {
-        return;
-      }
-    }
     this.model.set('templateType', this.source.get('type'));
     this.useTemplate();
   },
@@ -90,8 +86,9 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
     this.$el.width(this.options.book.get('width'));
     this.$el.height(this.options.book.get('height'));
   },
-  element_changeHandler: function () {
+  element_changeHandler: function (collection) {
     this.refreshThumbnail();
+    this.trigger('edit', collection);
   },
   text_mouseOverHandler: function (event) {
     $(event.target).addClass('editable');

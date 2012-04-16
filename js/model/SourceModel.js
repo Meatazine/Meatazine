@@ -3,8 +3,13 @@ com.meathill.meatazine.model.SourceModel = Backbone.Model.extend({
   templates: {},
   isLoading: false,
   loadQueue: [],
+  events: {
+    "focusin #source-list span": "span_focusInHandler",
+    "focusout #source-list span": "span_focusOutHandler"
+  },
   defaults: {
     type: '',
+    itemTemplate: '{{#section}}<li><img src="{{img}}" width="80" /> <span>{{title}}</span><br /><span>{{link}}</span><br /><span>{{description}}</span></li>{{/section}}'
   },
   hasTemplate: function (type) {
     return _.has(this.templates, type);
@@ -34,5 +39,11 @@ com.meathill.meatazine.model.SourceModel = Backbone.Model.extend({
     if(this.loadQueue.length > 0) {
       this.fetch();
     }
+  },
+  span_focusInHandler: function (event) {
+    $(event.target).addClass('editing');
+  },
+  span_focusOutHandler: function (event) {
+    $(event.target).removeClass('editing');
   }
 });

@@ -181,3 +181,40 @@ body {
   border-color: #08C;
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
+#source-list dt {
+  background: #EEE;
+  background: -moz-linear-gradient(top, #FFF, #EEE);
+  background: -webkit-linear-gradient(top, #FFF, #EEE);
+  padding: 5px 8px 4px;
+  border: 1px solid #CCC;
+  border-radius: 4px 4px 0 0;
+}
+#source-list dd {
+  padding: 10px;
+  border: 1px solid #CCC;
+  border-top: none;
+  margin: 0 0 10px;
+  border-radius: 0 0 4px 4px;
+  background: #FFF;
+}
+#source-list ul {
+  margin:0;
+}
+#source-list li {
+  list-style: none;
+  border-bottom: 1px dashed #EEE;
+}
+#source-list li:last-child {
+  border:none;
+}
+#source-list li img {
+  border:1px solid #CCC;
+  padding:1px;
+}
+#source-list li span:hover,
+#source-list .editing {
+  border:1px solid #08C;
+  padding:2px;
+  border-radius:2px;
+  box-shadow:inset 0 0 1px #CCC;
+}

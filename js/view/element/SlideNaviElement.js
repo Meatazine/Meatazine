@@ -24,18 +24,20 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
   createReader: function () {
     var self = this;
     this.reader = new FileReader();
-    this.reader.onload = function (evnet) {
+    this.reader.onloadend = function (evnet) {
       var img = $(self.loadingIMGs.shift());
       img
         .attr('src', event.target.result)
         .removeClass('placeholder active-img');
-      self.next();
       self.collection.at(self.collection.length - self.loadingIMGs.length - 1).set('img', event.target.result);
+      self.next();
     }
   },
   next: function () {
     if (this.loadingFiles.length > 0) {
-      this.reader.readAsDataURL(this.loadingFiles.shift());
+      var file = this.loadingFiles.shift();
+      console.log('start load: ', file.fileName);
+      this.reader.readAsDataURL(file);
     } else {
       this.isLoading = false;
       this.trigger('change');
@@ -60,8 +62,8 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
       }
     }
     if (usableFiles.length > 0) {
-      this.collection.create(usableFiles.slice(1));
       this.loadingIMGs.push(img);
+      this.collection.create(usableFiles.slice(1));
       this.loadingFiles = this.loadingFiles.concat(usableFiles);
       if (!this.isLoading) {
         this.isLoading = true;

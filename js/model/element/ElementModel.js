@@ -11,7 +11,7 @@ com.meathill.meatazine.model.element.ElementModel = Backbone.Model.extend({
       this.set({
         img : this.attributes.file.fileName,
         title: this.attributes.file.fileName
-      });
+      }, {silent: true});
     }
     delete this.attributes.file;
   }

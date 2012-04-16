@@ -45,7 +45,7 @@ com.meathill.meatazine.view.element.AbstractElement = Backbone.View.extend({
       this.reader.onload = function (event) {
         $(img).attr('src', event.target.result);
         self.collection.at(0).set('img', event.target.result);
-        self.trigger('change');
+        self.trigger('change', self.collection);
       }
       this.reader.readAsDataURL(file)
     }
