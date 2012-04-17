@@ -14,6 +14,8 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
     this.$el = $(this.el);
     this.template = this.el.innerHTML;
     this.collection.on('create', this.collection_createHandler, this);
+    this.collection.on('sort', this.collection_sortHandler, this);
+    this.collection.on('edit', this.collection_editHandler, this);
     this.createReader();
     this.render();
   },
@@ -29,7 +31,9 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
       img
         .attr('src', event.target.result)
         .removeClass('placeholder active-img');
-      self.collection.at(self.collection.length - self.loadingIMGs.length - 1).set('img', event.target.result);
+      self.collection.at(self.collection.length - self.loadingIMGs.length - 1).set({
+        img: event.target.result
+      }, {silent: true});
       self.next();
     }
   },
@@ -41,6 +45,7 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
     } else {
       this.isLoading = false;
       this.$('img').eq(0).trigger('click');
+      this.collection.trigger('change');
       this.trigger('change');
     }
   },
@@ -50,6 +55,17 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
     _.each(items.find('img'), function (el, i) {
       this.loadingIMGs.push(el);
     }, this);
+  },
+  collection_sortHandler: function (start, end) {
+    var item = this.$el.children().eq(start).remove();
+    if (end == 0) {
+      this.$el.prepend(item);
+    } else {
+      item.insertAfter(this.$el.children().eq(end - 1));
+    }
+  },
+  collection_editHandler: function (index) {
+    this.$el.children().eq(index).replaceWith(Mustache.render(this.template, this.collection.at(index)));
   },
   img_dropHandler: function (event) {
     var files = event.originalEvent.dataTransfer.files,
@@ -63,7 +79,11 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
       }
     }
     if (usableFiles.length > 0) {
-      this.loadingIMGs.push(img);
+      if ($(event.target).hasClass('placeholder')) {
+        this.loadingIMGs.push(this.$('.placeholder'));
+      } else if ($.contains(this.$el, img)) {
+        this.loadingIMGs.push(img);
+      }
       this.collection.create(usableFiles.slice(1));
       this.loadingFiles = this.loadingFiles.concat(usableFiles);
       if (!this.isLoading) {
@@ -73,6 +93,7 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
     }
   },
   img_clickHandler: function (event) {
-    this.body.setImageSrc(event.target.src);
+    var index = $(event.target).parent().index();
+    this.body.setModel(this.collection.at(index));
   }
 });

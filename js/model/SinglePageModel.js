@@ -6,7 +6,13 @@ com.meathill.meatazine.model.SinglePageModel = Backbone.Model.extend({
     template: '',
     contents: []
   },
-  getContentAt: function (index) {
+  reset: function () {
+    _.each(this.attributes.contents, function (collection, i) {
+      collection.off();
+    }, this);
+    this.set('contents', []);
+  },
+  getContentAt: function (index, title) {
     var elements = this.attributes.contents[index];
     if (!elements) {
       elements = new com.meathill.meatazine.model.element.ElementCollection();

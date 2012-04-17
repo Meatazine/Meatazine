@@ -23,13 +23,17 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
       this.items.shift().remove();
     }
     this.$el.html(this.model.get('template'));
+    var count = 0;
     _.each(this.$('[data-config]'), function (elementDom, index) {
-      var collection = this.model.getContentAt(index),
+      var collection, element,
           config = JSON.parse($(elementDom).attr('data-config'));
-          element = com.meathill.meatazine.view.element.ElementFactory.getElement(config.type, {
-            collection: collection,
-            el: elementDom
-          });
+      if (!config.noData) {
+      	collection = this.model.getContentAt(count++);
+      }
+      element = com.meathill.meatazine.view.element.ElementFactory.getElement(config.type, {
+        collection: collection,
+        el: elementDom
+      });
       element.on('change', this.element_changeHandler, this);
       this.items[index] = element;
     }, this);
@@ -72,6 +76,7 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
       this.isSentByMe = false;
       return;
     }
+    this.model.reset();
     this.model.set('templateType', this.source.get('type'));
     this.useTemplate();
   },

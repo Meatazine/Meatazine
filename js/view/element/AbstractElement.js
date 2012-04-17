@@ -23,7 +23,7 @@ com.meathill.meatazine.view.element.AbstractElement = Backbone.View.extend({
   },
   createItem: function (number) {
     number = number || 1;
-    var template = '{{#section}}' + this.template +　'{{/section}}',
+    var template = '{{#section}}' + this.template + '{{/section}}',
         data = {section: _.last(this.collection.toJSON(), number)};
     return Mustache.render(template, data);
   },

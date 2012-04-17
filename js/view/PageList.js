@@ -4,6 +4,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
   addButton: null,
   removeButton: null,
   currentItem: null,
+  currentDragItemIndex: -1,
   length: 0,
   events: {
     "click .add-button": "addButton_clickHandler",
@@ -11,6 +12,7 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
     "mouseover li.item": "item_mouseOverHandler",
     "mouseout li.item": "item_mouseOutHandler",
     "click .remove-button": "removeButton_clickHandler",
+    "sortactivate #page-list-inner": "sortactivateHandler",
     "sortdeactivate #page-list-inner": "sortdeactivateHandler"
   },
   initialize: function () {
@@ -88,7 +90,13 @@ com.meathill.meatazine.view.PageList = Backbone.View.extend({
       .remove();
     return false;
   },
+  sortactivateHandler: function (event, ui) {
+    this.currentDragItemIndex = ui.item.index();
+  },
   sortdeactivateHandler: function (event, ui) {
+    var model = this.collection.at(this.currentDragItemIndex);
+    this.collection.remove(model);
+    this.collection.add(model, {at: ui.item.index()});
     this.refreshPageNumber();
   },
   resizeHandler: function () {

@@ -8,7 +8,7 @@ com.meathill.meatazine.view.element.ElementFactory = {
       case 'slide-navi':
         element = new com.meathill.meatazine.view.element.SlideNaviElement(options);
         if (this.slideBody != null) {
-          this.slideBody.navi = element;
+          this.slideBody.setNavi(element);
           element.body = this.slideBody;
           this.slideBody = null;
         } else {
@@ -20,7 +20,7 @@ com.meathill.meatazine.view.element.ElementFactory = {
         element = new com.meathill.meatazine.view.element.SlideBodyElement(options);
         if (this.slideNavi != null) {
           this.slideNavi.body = element;
-          element.navi = this.slideNavi;
+          element.setNavi(this.slideNavi);
           this.slideNavi = null;
         } else {
           this.slideBody = element;

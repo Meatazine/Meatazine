@@ -3,12 +3,15 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   currentPanel: null,
   enabled: false,
   pageContent: null,
+  currentDragItemIndex: 0,
   events: {
     "click .btn": "tab_changeHandler",
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
     "focusout #source-list input": "input_focusOutHandler",
-    "keydown #source-list input": "input_keydownHandler"
+    "keydown #source-list input": "input_keydownHandler",
+    "sortactivate #source-list ul": "source_sortactivateHandler",
+    "sortdeactivate #source-list ul": "source_sortdeactivateHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -83,7 +86,7 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
       // 更新全部内容
       this.$('#source-list').empty();
       _.each(this.pageContent.get('contents'), function (collection, index) {
-        var dt = $('<dt>', {text: '元素：' + (index + 1)});
+        var dt = $('<dt>', {text: '元素'});
         var dd = $('<dd></dd>');
         dd.append('<ul>' + Mustache.render(this.model.get('itemTemplate'), {section: collection.toJSON()}) + '</ul>');
         this.$('#source-list')
@@ -91,8 +94,9 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
           .append(dd);
       }, this);
     }
-    this.$('#source-list dd').sortable();
-    this.$('#source-list li').disableSelection();
+    this.$('#source-list ul')
+      .sortable()
+      .disableSelection();
   },
   span_clickHandler: function (event) {
     var target = $(event.target),
@@ -121,5 +125,15 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   resizeHandler: function () {
     // 空出按钮的位置
     this.$('#template-list').height(this.options.book.get('height') - 110);
+  },
+  source_sortactivateHandler: function (event, ui) {
+    this.currentDragItemIndex = ui.item.index();
+  },
+  source_sortdeactivateHandler: function (event, ui) {
+    var collection = this.pageContent.getContentAt(ui.item.parent().index() >> 1);
+    var model = collection.at(this.currentDragItemIndex);
+    collection.remove(model);
+    collection.add(model, {at: ui.item.index()});
+    collection.trigger('sort', this.currentDragItemIndex, ui.item.index());
   }
 })
