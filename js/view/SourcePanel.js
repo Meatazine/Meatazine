@@ -5,7 +5,9 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   pageContent: null,
   events: {
     "click .btn": "tab_changeHandler",
-    "click #template-list li": "template_clickHandler"
+    "click #template-list li": "template_clickHandler",
+    "click #source-list span": "span_clickHandler",
+    "focusout #source-list input": "input_focusOutHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -88,7 +90,27 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
           .append(dd);
       }, this);
     }
-    this.$('#source-list span').prop('contenteditable', true);
+    this.$('#source-list dd').sortable();
+    this.$('#source-list li').disableSelection();
+  },
+  span_clickHandler: function (event) {
+    var target = $(event.target),
+        input = $('<input />', {
+          val: target.text(),
+          "name": target.attr('class'),
+          "class": "input-medium focused form-inline"
+        });
+    target.replaceWith(input);
+    input.focus();
+  },
+  input_focusOutHandler: function (event) {
+    var target = $(event.target),
+        mIndex = target.parent().index(),
+        cIndex = target.parentUntil('dd').index() >> 1,
+        value = target.val(),
+        key = target.attr('name');
+    target.replaceWith('<span class>' + value + '</span>');
+    this.pageContent.getContentAt(cIndex).at(mIndex).set(key, value);
   },
   resizeHandler: function () {
     // 空出按钮的位置

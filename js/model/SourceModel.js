@@ -9,7 +9,7 @@ com.meathill.meatazine.model.SourceModel = Backbone.Model.extend({
   },
   defaults: {
     type: '',
-    itemTemplate: '{{#section}}<li><img src="{{img}}" width="80" /> <span>{{title}}</span><br /><span>{{link}}</span><br /><span>{{description}}</span></li>{{/section}}'
+    itemTemplate: '{{#section}}<li><img src="{{img}}" width="80" /> <span class="title">{{title}}</span><br /><span class="link">{{link}}</span><br /><span class="description">{{description}}</span></li>{{/section}}'
   },
   hasTemplate: function (type) {
     return _.has(this.templates, type);
