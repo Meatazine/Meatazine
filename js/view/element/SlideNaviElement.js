@@ -40,6 +40,7 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
       this.reader.readAsDataURL(file);
     } else {
       this.isLoading = false;
+      this.$('img').eq(0).trigger('click');
       this.trigger('change');
     }
   },

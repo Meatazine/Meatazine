@@ -7,7 +7,8 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
     "click .btn": "tab_changeHandler",
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
-    "focusout #source-list input": "input_focusOutHandler"
+    "focusout #source-list input": "input_focusOutHandler",
+    "keydown #source-list input": "input_keydownHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -106,11 +107,16 @@ com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
   input_focusOutHandler: function (event) {
     var target = $(event.target),
         mIndex = target.parent().index(),
-        cIndex = target.parentUntil('dd').index() >> 1,
+        cIndex = target.parentsUntil(this.$('#source-list'), 'dd').index() >> 1,
         value = target.val(),
         key = target.attr('name');
     target.replaceWith('<span class>' + value + '</span>');
     this.pageContent.getContentAt(cIndex).at(mIndex).set(key, value);
+  },
+  input_keydownHandler: function (event) {
+    if (event.keyCode == 13) {
+      $(event.target).focusout();
+    }
   },
   resizeHandler: function () {
     // 空出按钮的位置
