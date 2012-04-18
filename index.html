@@ -15,7 +15,7 @@
         肉大师运功中，马上就来
       </p>
     </div>
-    <div class="navbar navbar-fixed-top hidden">
+    <div class="navbar navbar-fixed-top hidden" id="navbar">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -33,8 +33,9 @@
                   文件 <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">保存</a></li>
-                  <li><a href="#">导出</a></li>
+                  <li><a href="#save" class="system-button">保存</a></li>
+                  <li><a href="#load" class="system-button">读取</a></li>
+                  <li><a href="#export" class="system-button">导出</a></li>
                 </ul>
               </li>
               <li class="dropdown">
@@ -45,7 +46,7 @@
                   <li><a href="#welcome" data-toggle="modal">欢迎窗体</a></li>
                   <li class="active"><a href="#">向导</a></li>
                   <li class="divider"></li>
-                  <li><a href="#">预览</a></li>
+                  <li><a href="#preview" class="system-button">预览</a></li>
                 </ul>
               </li>
               <li><a href="#">设置</a></li>
@@ -217,6 +218,7 @@
     <script src="js/view/PageBody.js"></script>
     <script src="js/view/PageList.js"></script>
     <script src="js/view/SourcePanel.js"></script>
+    <script src="js/view/NavBar.js"></script>
     <script src="js/view/GUI.js"></script>
     <script src="js/AppMain.js"></script>
   </body>

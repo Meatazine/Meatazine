@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.model.element');
-com.meathill.meatazine.model.element.ElementModel = Backbone.Model.extend({
+jQuery.namespace('Meatazine.model.element');
+Meatazine.model.element.ElementModel = Backbone.Model.extend({
   defaults: {
     title: '标题',
     description: '内容',

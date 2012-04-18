@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.model');
-com.meathill.meatazine.model.SourceModel = Backbone.Model.extend({
+jQuery.namespace('Meatazine.model');
+Meatazine.model.SourceModel = Backbone.Model.extend({
   templates: {},
   isLoading: false,
   loadQueue: [],

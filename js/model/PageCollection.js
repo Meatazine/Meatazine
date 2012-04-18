@@ -1,9 +1,14 @@
-jQuery.namespace('com.meathill.meatazine.model');
-com.meathill.meatazine.model.PageCollection = Backbone.Collection.extend({
-  model: com.meathill.meatazine.model.SinglePageModel,
-  create: function () {
-    var model = new this.model();
+jQuery.namespace('Meatazine.model');
+Meatazine.model.PageCollection = Backbone.Collection.extend({
+  model: Meatazine.model.SinglePageModel,
+  create: function (init) {
+    var model = new this.model(init);
     this.add(model);
     return model;
   },
+  fill: function (array) {
+    for (var i = 0, len = array.length; i < len; i++) {
+      this.create(array[i]);
+    }
+  }
 })

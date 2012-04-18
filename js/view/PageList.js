@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view');
-com.meathill.meatazine.view.PageList = Backbone.View.extend({
+jQuery.namespace('Meatazine.view');
+Meatazine.view.PageList = Backbone.View.extend({
   list : null,
   addButton: null,
   removeButton: null,

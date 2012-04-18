@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view.element');
-com.meathill.meatazine.view.element.SlideBodyElement = com.meathill.meatazine.view.element.AbstractElement.extend({
+jQuery.namespace('Meatazine.view.element');
+Meatazine.view.element.SlideBodyElement = Meatazine.view.element.AbstractElement.extend({
   navi: null,
   initialize: function () {
     this.$el = $(this.el);

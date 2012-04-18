@@ -1,1 +1,1 @@
-jQuery.namespace('com.meathill.meatazine.controller');
+jQuery.namespace('Meatazine.controller');

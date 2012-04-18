@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view');
-com.meathill.meatazine.view.PageBody = Backbone.View.extend({
+jQuery.namespace('Meatazine.view');
+Meatazine.view.PageBody = Backbone.View.extend({
   book: null,
   source: null,
   items: [],
@@ -30,7 +30,7 @@ com.meathill.meatazine.view.PageBody = Backbone.View.extend({
       if (!config.noData) {
       	collection = this.model.getContentAt(count++);
       }
-      element = com.meathill.meatazine.view.element.ElementFactory.getElement(config.type, {
+      element = Meatazine.view.element.ElementFactory.getElement(config.type, {
         collection: collection,
         el: elementDom
       });

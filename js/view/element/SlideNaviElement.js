@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view.element');
-com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.view.element.AbstractElement.extend({
+jQuery.namespace('Meatazine.view.element');
+Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement.extend({
   loadingIMGs: [],
   loadingFiles: [],
   body: null,
@@ -65,7 +65,7 @@ com.meathill.meatazine.view.element.SlideNaviElement = com.meathill.meatazine.vi
     }
   },
   collection_editHandler: function (index) {
-    this.$el.children().eq(index).replaceWith(Mustache.render(this.template, this.collection.at(index)));
+    this.$el.children().eq(index).replaceWith(Mustache.render(this.template, this.collection.at(index).toJSON()));
   },
   img_dropHandler: function (event) {
     var files = event.originalEvent.dataTransfer.files,

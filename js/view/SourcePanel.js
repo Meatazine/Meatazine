@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view');
-com.meathill.meatazine.view.SourcePanel = Backbone.View.extend({
+jQuery.namespace('Meatazine.view');
+Meatazine.view.SourcePanel = Backbone.View.extend({
   currentPanel: null,
   enabled: false,
   pageContent: null,

@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view.element');
-com.meathill.meatazine.view.element.AbstractElement = Backbone.View.extend({
+jQuery.namespace('Meatazine.view.element');
+Meatazine.view.element.AbstractElement = Backbone.View.extend({
   reader: null,
   isLoading: false,
   events: {
@@ -11,6 +11,7 @@ com.meathill.meatazine.view.element.AbstractElement = Backbone.View.extend({
   initialize: function () {
     this.$el = $(this.el);
     this.template = this.el.innerHTML;
+    this.collection.on('edit', this.collection_editHandler, this);
     this.render();
   },
   render: function () {
@@ -62,5 +63,8 @@ com.meathill.meatazine.view.element.AbstractElement = Backbone.View.extend({
   },
   img_dragLeaveHandler: function (event) {
     $(event.currentTarget).removeClass('active-img');
+  },
+  collection_editHandler: function (event) {
+    
   }
 });

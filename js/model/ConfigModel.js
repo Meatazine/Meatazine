@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.model');
-com.meathill.meatazine.model.ConfigModel = Backbone.Model.extend({
+jQuery.namespace('Meatazine.model');
+Meatazine.model.ConfigModel = Backbone.Model.extend({
   KEY: 'config',
   initialize: function () {
     this.on('change', this.save, this);

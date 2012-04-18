@@ -1,22 +1,24 @@
 $(function () {
-  var config = new com.meathill.meatazine.model.ConfigModel();
-  var book = new com.meathill.meatazine.model.BookProperties();
-  var pages = new com.meathill.meatazine.model.PageCollection();
-  GUI = new com.meathill.meatazine.GUI({
+  var config = new Meatazine.model.ConfigModel();
+  var pages = new Meatazine.model.PageCollection();
+  var book = new Meatazine.model.BookProperties({
+    pages: pages
+  });
+  GUI = new Meatazine.view.GUI({
     config: config,
     book: book
   });
-  var list = new com.meathill.meatazine.view.PageList({
+  var list = new Meatazine.view.PageList({
     el: '#page-list',
     book: book,
     collection: pages
   });
-  var source = new com.meathill.meatazine.view.SourcePanel({
+  var source = new Meatazine.view.SourcePanel({
     el: '#panel',
     book: book,
-    model: new com.meathill.meatazine.model.SourceModel()
+    model: new Meatazine.model.SourceModel()
   });
-  var page = new com.meathill.meatazine.view.PageBody({
+  var page = new Meatazine.view.PageBody({
     el: '#page-body',
     book: book,
     source: source.model

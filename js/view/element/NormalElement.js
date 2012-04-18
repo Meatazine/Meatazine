@@ -1,4 +1,4 @@
-jQuery.namespace('com.meathill.meatazine.view.element');
-com.meathill.meatazine.view.element.NormalElement = com.meathill.meatazine.view.element.AbstractElement.extend({
+jQuery.namespace('Meatazine.view.element');
+Meatazine.view.element.NormalElement = Meatazine.view.element.AbstractElement.extend({
   
 });

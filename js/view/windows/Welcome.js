@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view.windows');
-com.meathill.meatazine.view.windows.Welcome = Backbone.View.extend({
+jQuery.namespace('Meatazine.view.windows');
+Meatazine.view.windows.Welcome = Backbone.View.extend({
   initialize: function () {
     var view = this;
     this.$el = $(this.el);

@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine');
-com.meathill.meatazine.GUI = Backbone.View.extend({
+jQuery.namespace('Meatazine.view');
+Meatazine.view.GUI = Backbone.View.extend({
   navbar: null,
   config: null,
   welcome: null,
@@ -9,15 +9,19 @@ com.meathill.meatazine.GUI = Backbone.View.extend({
   initialize: function () {
     this.config = this.options.config;
     this.book = this.options.book;
-    this.welcome = new com.meathill.meatazine.view.windows.Welcome({
+    this.welcome = new Meatazine.view.windows.Welcome({
       el: '#welcome',
       model: this.config
     });
-    this.screenSelector = new com.meathill.meatazine.view.windows.ScreenSizeSelector({
+    this.screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
       el: '#screen-size',
       model: this.book,
       infoText: '#screen-size-info'
-    })
+    });
+    this.navbar = new Meatazine.view.NavBar({
+      el: '#navbar'
+    });
+    this.navbar.on('select', this.navbar_selectHandler, this);
     this.render();
     delete this.options;
   },
@@ -30,5 +34,25 @@ com.meathill.meatazine.GUI = Backbone.View.extend({
   removeLoading: function () {
     $('#loading').fadeOut();
     $('.hidden').removeClass('hidden');
+  },
+  save: function () {
+    localStorage.setItem('book', JSON.stringify(this.book.toJSON()));
+  },
+  load: function () {
+    var store = localStorage.getItem('book'),
+        data = (store && JSON.parse(store)) || {};
+    if (!_.isEmpty(data)) {
+      book.fill(data);
+      
+    }
+  },
+  exportHTML: function () {
+    
+  },
+  preview: function () {
+    
+  },
+  navbar_selectHandler: function (type) {
+    this[type]();
   }
 });

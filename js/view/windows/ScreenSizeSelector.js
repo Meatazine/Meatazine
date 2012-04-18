@@ -1,5 +1,5 @@
-jQuery.namespace('com.meathill.meatazine.view.windows');
-com.meathill.meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
+jQuery.namespace('Meatazine.view.windows');
+Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
   events: {
     "click .device": "device_clickHandler",
     "click .btn-primary": "confirmHandler",
