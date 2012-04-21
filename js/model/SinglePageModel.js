@@ -31,6 +31,18 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     }
     return elements;
   },
+  renderHTML: function () {
+    var template = $('<div>' + this.attributes.template + '</div>');
+    _.each(template.find('[data-config]'), function (elementDom, index) {
+      var tpl = '{{#section}}' + $(elementDom).html() + '{{/section}}',
+          data = {section: this.attributes.contents[index].toJSON()};
+          content = Mustache.render(tpl, data);
+      $(elementDom).html(content);
+    }, this);
+    template.find('.editable').removeClass('editable');
+    template.find('[data-config]').removeAttr('data-config');
+    return template.html();
+  },
   element_changeHandler: function () {
     this.isEmpty = false;
   }

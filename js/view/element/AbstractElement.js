@@ -40,16 +40,15 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
         break;
       }
     }
-    if (file != null) {
-      var self = this;
-      this.reader = new FileReader();
-      this.reader.onload = function (event) {
-        $(img).attr('src', event.target.result);
-        self.collection.at(0).set('img', event.target.result);
-        self.trigger('change', self.collection);
-      }
-      this.reader.readAsDataURL(file)
-    }
+    Meatazine.utils.FileReferrence.on('complete', function (url) {
+      $(img)
+        .removeClass('.placeholder')
+        .attr('src', url);
+      this.collection.at(0).set('img', url);
+      this.trigger('change', this.collection);
+      Meatazine.utils.FileReferrence.off('complete', null, this);
+    }, this);
+    Meatazine.utils.FileReferrence.load(file);
   },
   img_dragOverHandler: function (event) {
     if (event.preventDefault) {

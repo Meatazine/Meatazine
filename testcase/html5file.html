@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML5 文件API测试用例</title>
+    <meta content="text/html; charset=UTF-8t" />
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
+    <script src="../js/libs/jquery-1.7.2.min.js"></script>
+    <script src="../js/libs/jszip.js"></script>
+    <script src="../js/libs/jszip-deflate.js"></script>
+    <style>
+      body {
+        padding-top: 60px;
+      }
+      h1, h2, h3, .brand {
+        font-family: Tahoma, Microsoft Yahei;
+      }
+      #file-here {
+        width: 300px;
+        height: 200px;
+        border: 4px dashed #CCC;
+        border-radius:10px;
+        vertical-align: middle;
+        display:table-cell;
+        text-align:center;
+      }
+      #file-here.active {
+        border-color:#08C;
+        color:#08C;
+      }
+      #file-here + p {
+        margin-top:20px;
+      }
+      #hidden-form {
+        display:none;
+      }
+    </style>
+    <script>
+      function errorHandler(error) {
+        console.log('Error: ' + error.code);
+      }
+      function onInitFs(fs) {
+        fs.root.getFile(fileName, {create: true}, function(fileEntry) {
+          url = fileEntry.toURL();
+          // Create a FileWriter object for our FileEntry (log.txt).
+          fileEntry.createWriter(function(fileWriter) {
+            fileWriter.onwriteend = function(e) {
+              console.log('Write completed.');
+              $('#file-here').removeClass('active');
+              $('#pic-container')
+                .empty()
+                .append('<a href="' + url + '" class="thumbnail"><img src="' + url + '" /></a>');
+              $('.btn').prop('disabled', false);
+            };
+            fileWriter.onerror = function(e) {
+              console.log('Write failed: ' + e.toString());
+            };
+            // Create a new Blob and write it to log.txt.
+            var bb = new WebKitBlobBuilder(); // Note: window.WebKitBlobBuilder in Chrome 12.
+            bb.append(fileContent);
+            fileWriter.write(bb.getBlob('image/jpeg'));
+          }, errorHandler);
+        }, errorHandler);
+      }
+      $(function () {
+        window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+        window.webkitStorageInfo.requestQuota(TEMPORARY, 1024*1024, function(grantedBytes) {
+          
+        }, function(e) {
+          console.log('Error', e);
+        });
+        $('#file-here')
+          .on('drop', function (event) {
+            var files = event.originalEvent.dataTransfer.files,
+                usableFiles = [],
+                file;
+            // 只认图片
+            for (var i = 0, len = files.length; i < len; i++) {
+              if (files[i].type.substr(0, 5) == 'image') {
+                file = files[i];
+                break;
+              }
+            }
+            console.log(file);
+            if (file != null) {
+              fileName = file.fileName;
+              var reader = new FileReader(),
+                  binaryReader = new FileReader();
+              reader.onload = function (event) {
+                fileContent = event.target.result;
+                window.requestFileSystem(PERSISTENT, 1024*1024, onInitFs, errorHandler);
+              }
+              reader.readAsArrayBuffer(file);
+              binaryReader.onload = function (event) {
+                fileContentBinary = event.target.result;
+              }
+              binaryReader.readAsBinaryString(file);
+            }
+          })
+          .on('dragover', function (event) {
+            if (event.preventDefault) {
+              event.preventDefault();
+            }
+            event.originalEvent.dataTransfer.dropEffect = 'copy';
+            return false;
+          })
+          .on('dragenter', function (event) {
+            $(event.currentTarget).addClass('active');
+          })
+          .on('dragleave', function (event) {
+            $(event.currentTarget).removeClass('active');
+          });
+        $('#download-btn').click(function () {
+          var zip = new JSZip();
+          zip.file('file.txt', fileName);
+          zip.file(fileName, fileContentBinary, {binary: true});
+          var content = zip.generate();
+          location.href = "data:application/zip;base64," + content;
+        });
+      });
+      var fileContent, fileContentBinary, url, fileName;
+    </script>
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">测试用例</a>
+          <!--<div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>--><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="hero-unit">
+        <h1>HTML5 文件API测试用例</h1>
+        <p>本测试用例试图包含以下功能及代码：</p>
+        <ol>
+          <li>从桌面拖动图片到页面中</li>
+          <li>自动加载图片，并保存到本地</li>
+          <li>显示图片</li>
+          <li>将图片信息保存在同名文本文件里</li>
+          <li>将所有文件打包成zip，自动下载</li>
+          <li>上传本地文件</li>
+        </ol>
+      </div>
+      <div class="row">
+        <div class="span4">
+          <div id="file-here">
+            请将图片拖放至此
+          </div>
+          <p>
+            <button id="download-btn" type="button" class="btn btn-primary" disabled="true">下载zip文件</button>
+          </p>
+          
+        </div>
+        <div class="span8">
+          <div class="thumbnails" id="pic-container">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

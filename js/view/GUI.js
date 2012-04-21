@@ -35,24 +35,14 @@ Meatazine.view.GUI = Backbone.View.extend({
     $('#loading').fadeOut();
     $('.hidden').removeClass('hidden');
   },
-  save: function () {
-    localStorage.setItem('book', JSON.stringify(this.book.toJSON()));
-  },
-  load: function () {
-    var store = localStorage.getItem('book'),
-        data = (store && JSON.parse(store)) || {};
-    if (!_.isEmpty(data)) {
-      book.fill(data);
-      
-    }
-  },
-  exportHTML: function () {
-    
-  },
   preview: function () {
     
   },
   navbar_selectHandler: function (type) {
-    this[type]();
+    if (type == 'preview') {
+      this.preview();
+      return;
+    }
+    this.book[type]();
   }
 });

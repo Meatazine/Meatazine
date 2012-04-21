@@ -5,10 +5,8 @@ Meatazine.view.PageBody = Backbone.View.extend({
   items: [],
   isSentByMe: false,
   events: {
-    "mouseover h1,h2,h3,p": "text_mouseOverHandler",
-    "mouseout h1,h2,h3,p": "text_mouseOutHandler",
-    "focusin h1,h2,h3,p": "text_focusInHandler",
-    "focusout h1,h2,h3,p": "text_focusOutHandler"
+    "focusin .editable": "text_focusInHandler",
+    "focusout .editable": "text_focusOutHandler"
   },
   initialize: function (options) {
     this.$el = $(this.el);
@@ -95,18 +93,17 @@ Meatazine.view.PageBody = Backbone.View.extend({
     this.refreshThumbnail();
     this.trigger('edit', collection);
   },
-  text_mouseOverHandler: function (event) {
-    $(event.target).addClass('editable');
-  },
-  text_mouseOutHandler: function (event) {
-    if(!$(event.target).hasClass('editing')) {
-      $(event.target).removeClass('editable');
-    }
-  },
   text_focusInHandler: function (event) {
+    console.log('xxx');
     $(event.target).addClass('editing');
   },
   text_focusOutHandler: function (event) {
-    $(event.target).removeClass('editing editable');
+    console.log('ooo');
+    var target = $(event.target),
+        index = target.index(this.$('.editable')),
+        template = $('<div>' + this.model.get('template') + '</div>');
+    template.find('.editable').eq(index).text(target.text());
+    this.model.set('template', template.html());
+    target.removeClass('editing');
   }
 })
