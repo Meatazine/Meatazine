@@ -6,8 +6,12 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css" />
     <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
     <script src="../js/libs/jquery-1.7.2.min.js"></script>
+    <script src="../js/libs/jQuery.namespace.js"></script>
     <script src="../js/libs/jszip.js"></script>
     <script src="../js/libs/jszip-deflate.js"></script>
+    <script src="../js/libs/underscore-min.js"></script>
+    <script src="../js/libs/backbone-min.js"></script>
+    <script src="../js/utils/FileReferrence.js"></script>
     <style>
       body {
         padding-top: 60px;
@@ -36,39 +40,15 @@
       }
     </style>
     <script>
-      function errorHandler(error) {
-        console.log('Error: ' + error.code);
-      }
-      function onInitFs(fs) {
-        fs.root.getFile(fileName, {create: true}, function(fileEntry) {
-          url = fileEntry.toURL();
-          // Create a FileWriter object for our FileEntry (log.txt).
-          fileEntry.createWriter(function(fileWriter) {
-            fileWriter.onwriteend = function(e) {
-              console.log('Write completed.');
-              $('#file-here').removeClass('active');
-              $('#pic-container')
-                .empty()
-                .append('<a href="' + url + '" class="thumbnail"><img src="' + url + '" /></a>');
-              $('.btn').prop('disabled', false);
-            };
-            fileWriter.onerror = function(e) {
-              console.log('Write failed: ' + e.toString());
-            };
-            // Create a new Blob and write it to log.txt.
-            var bb = new WebKitBlobBuilder(); // Note: window.WebKitBlobBuilder in Chrome 12.
-            bb.append(fileContent);
-            fileWriter.write(bb.getBlob('image/jpeg'));
-          }, errorHandler);
-        }, errorHandler);
-      }
       $(function () {
-        window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-        window.webkitStorageInfo.requestQuota(TEMPORARY, 1024*1024, function(grantedBytes) {
-          
-        }, function(e) {
-          console.log('Error', e);
-        });
+        Meatazine.utils.FileReferrence.on('complete:clone', function (url) {
+          fileURL = url;
+          $('#file-here').removeClass('active');
+          $('#pic-container')
+            .empty()
+            .append('<a href="' + url + '" class="thumbnail"><img src="' + url + '" /></a>');
+          $('.btn').prop('disabled', false);
+        })
         $('#file-here')
           .on('drop', function (event) {
             var files = event.originalEvent.dataTransfer.files,
@@ -81,20 +61,8 @@
                 break;
               }
             }
-            console.log(file);
             if (file != null) {
-              fileName = file.fileName;
-              var reader = new FileReader(),
-                  binaryReader = new FileReader();
-              reader.onload = function (event) {
-                fileContent = event.target.result;
-                window.requestFileSystem(PERSISTENT, 1024*1024, onInitFs, errorHandler);
-              }
-              reader.readAsArrayBuffer(file);
-              binaryReader.onload = function (event) {
-                fileContentBinary = event.target.result;
-              }
-              binaryReader.readAsBinaryString(file);
+              Meatazine.utils.FileReferrence.load(file);
             }
           })
           .on('dragover', function (event) {
@@ -111,14 +79,18 @@
             $(event.currentTarget).removeClass('active');
           });
         $('#download-btn').click(function () {
-          var zip = new JSZip();
+          var zip = new JSZip(),
+              fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
           zip.file('file.txt', fileName);
-          zip.file(fileName, fileContentBinary, {binary: true});
-          var content = zip.generate();
-          location.href = "data:application/zip;base64," + content;
+          Meatazine.utils.FileReferrence.on('complete:read', function (file) {
+            zip.file(fileName, file, {binary: true});
+            var content = zip.generate();
+            location.href = "data:application/zip;base64," + content;
+          });
+          Meatazine.utils.FileReferrence.read(fileURL);
         });
       });
-      var fileContent, fileContentBinary, url, fileName;
+      var fileURL;
     </script>
   </head>
   <body>
@@ -144,15 +116,7 @@
     <div class="container">
       <div class="hero-unit">
         <h1>HTML5 文件API测试用例</h1>
-        <p>本测试用例试图包含以下功能及代码：</p>
-        <ol>
-          <li>从桌面拖动图片到页面中</li>
-          <li>自动加载图片，并保存到本地</li>
-          <li>显示图片</li>
-          <li>将图片信息保存在同名文本文件里</li>
-          <li>将所有文件打包成zip，自动下载</li>
-          <li>上传本地文件</li>
-        </ol>
+        <p>本测试用例试基本等同于<a href="html5file.html">html5file.html</a>，只是将函数进行了分解封装。</p>
       </div>
       <div class="row">
         <div class="span4">

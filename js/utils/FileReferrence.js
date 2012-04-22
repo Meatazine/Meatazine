@@ -2,10 +2,7 @@ jQuery.namespace('Meatazine.utils');
 Meatazine.utils.FileReferrence = new function () {
   var self = this,
       reader = new FileReader(),
-      binaryReader = new FileReader(),
-      fileName,
-      fileContent,
-      fileContentBinary,
+      targetFile,
       fileSystem,
       fileURL;
   this.load = function (file) {
@@ -18,45 +15,41 @@ Meatazine.utils.FileReferrence = new function () {
     if (file.type.match(/image/) == null) {
       throw new Error('只能上传图片类素材');
     }
-    fileName = file.fileName;
-    reader.readAsArrayBuffer(file);
-    binaryReader.readAsBinaryString(file);
+    targetFile = file;
+    fileSystem.root.getFile(file.name, {create: true}, fileEntry_loadReadyHandler, errorHandler);
   }
-  this.getFileInfo = function () {
-    return {fileName: fileName};
-  }
-  this.getBinary = function () {
-    return fileContentBinary;
-  }
-  function fileEntryReadyHandler(fileEntry) {
-    fileURL = fileEntry.toURL();
-    fileEntry.createWriter(fileWriterReadyHandler, errorHandler);
+  this.read = function (url) {
+    window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
   }
   function fileSystemReadyHandler(fs) {
     fileSystem = fs;
   }
+  function fileEntry_loadReadyHandler(fileEntry) {
+    fileURL = fileEntry.toURL();
+    fileEntry.createWriter(fileWriterReadyHandler, errorHandler);
+  }
+  function fileEntry_readReadyHandler(fileEntry) {
+    fileEntry.file(fileReadyHandler, errorHandler);
+  }
   function fileWriterReadyHandler(fileWriter) {
     fileWriter.onwriteend = function(e) {
       console.log('Write completed.');
-      self.trigger('complete', fileURL);
+      self.trigger('complete:clone', fileURL);
     };
     fileWriter.onerror = function(e) {
       console.log('Write failed: ' + e.toString());
     };
-    var builder = new WebKitBlobBuilder();
-    builder.append(fileContent);
-    fileWriter.write(builder.getBlob('image/jpeg'));
+    fileWriter.write(targetFile);
+  }
+  function fileReadyHandler(file) {
+    reader.readAsBinaryString(file);
   }
   function errorHandler(error) {
     console.log('Error: ' + error.code);
   }
   _.extend(this, Backbone.Events);
   reader.onload = function (event) {
-    fileContent = event.target.result;
-    fileSystem.root.getFile(fileName, {create: true}, fileEntryReadyHandler, errorHandler);;
-  }
-  binaryReader.onload = function (event) {
-    fileContentBinary = event.target.result;
+    self.trigger('complete:read', event.target.result);
   }
   window.webkitRequestFileSystem(TEMPORARY, 128 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
 }

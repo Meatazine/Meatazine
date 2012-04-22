@@ -16,35 +16,20 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
     this.collection.on('create', this.collection_createHandler, this);
     this.collection.on('sort', this.collection_sortHandler, this);
     this.collection.on('edit', this.collection_editHandler, this);
-    this.createReader();
     this.render();
   },
   render: function () {
     var item = this.createItem(this.collection.length);
     this.$el.html(item);
   },
-  createReader: function () {
-    var self = this;
-    this.reader = new FileReader();
-    this.reader.onloadend = function (evnet) {
-      var img = $(self.loadingIMGs.shift());
-      img
-        .attr('src', event.target.result)
-        .removeClass('placeholder active-img');
-      self.collection.at(self.collection.length - self.loadingIMGs.length - 1).set({
-        img: event.target.result
-      }, {silent: true});
-      self.next();
-    }
-  },
   next: function () {
     if (this.loadingFiles.length > 0) {
       var file = this.loadingFiles.shift();
-      console.log('start load: ', file.fileName);
-      this.reader.readAsDataURL(file);
+      Meatazine.utils.FileReferrence.load(file);
     } else {
       this.isLoading = false;
       this.$('img').eq(0).trigger('click');
+      Meatazine.utils.FileReferrence.off('complete:clone', null, this);
       this.collection.trigger('change');
       this.trigger('change');
     }
@@ -86,6 +71,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
       }
       this.collection.create(usableFiles.slice(1));
       this.loadingFiles = this.loadingFiles.concat(usableFiles);
+      Meatazine.utils.FileReferrence.on('complete:clone', this.file_completeHandler, this);
       if (!this.isLoading) {
         this.isLoading = true;
         this.next();
@@ -95,5 +81,15 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   img_clickHandler: function (event) {
     var index = $(event.target).parent().index();
     this.body.setModel(this.collection.at(index));
+  },
+  file_completeHandler: function (url) {
+    var img = $(this.loadingIMGs.shift());
+    img
+      .attr('src', url)
+      .removeClass('placeholder active-img');
+    this.collection.at(this.collection.length - this.loadingIMGs.length - 1).set({
+      img: url
+    }, {silent: true});
+    this.next();
   }
 });
