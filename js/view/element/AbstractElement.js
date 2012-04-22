@@ -40,7 +40,7 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
         break;
       }
     }
-    Meatazine.utils.FileReferrence.on('complete', function (url) {
+    Meatazine.utils.FileReferrence.on('complete:clone', function (url) {
       $(img)
         .removeClass('.placeholder')
         .attr('src', url);
@@ -48,7 +48,7 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
       this.trigger('change', this.collection);
       Meatazine.utils.FileReferrence.off('complete', null, this);
     }, this);
-    Meatazine.utils.FileReferrence.load(file);
+    Meatazine.utils.FileReferrence.clone(file);
   },
   img_dragOverHandler: function (event) {
     if (event.preventDefault) {

@@ -4,8 +4,9 @@ Meatazine.utils.FileReferrence = new function () {
       reader = new FileReader(),
       targetFile,
       fileSystem,
+      fileContent,
       fileURL;
-  this.load = function (file) {
+  this.clone = function (file) {
     if (file == null) {
       throw new Error('文件错误');
     }
@@ -16,22 +17,30 @@ Meatazine.utils.FileReferrence = new function () {
       throw new Error('只能上传图片类素材');
     }
     targetFile = file;
-    fileSystem.root.getFile(file.name, {create: true}, fileEntry_loadReadyHandler, errorHandler);
+    fileSystem.root.getFile(file.name, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
   }
   this.read = function (url) {
     window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
   }
+  this.save = function (fileName, content) {
+    fileContent = content;
+    fileSystem.root.getFile(fileName, {create: true}, fileEntry_saveReadyHandler, errorHandler);
+  }
   function fileSystemReadyHandler(fs) {
     fileSystem = fs;
   }
-  function fileEntry_loadReadyHandler(fileEntry) {
+  function fileEntry_cloneReadyHandler(fileEntry) {
     fileURL = fileEntry.toURL();
-    fileEntry.createWriter(fileWriterReadyHandler, errorHandler);
+    fileEntry.createWriter(fileWriter_cloneReadyHandler, errorHandler);
   }
   function fileEntry_readReadyHandler(fileEntry) {
     fileEntry.file(fileReadyHandler, errorHandler);
   }
-  function fileWriterReadyHandler(fileWriter) {
+  function fileEntry_saveReadyHandler(fileEntry) {
+    fileURL = fileEntry.toURL();
+    fileEntry.createWriter(fileWriter_saveReadyHandler, errorHandler);
+  }
+  function fileWriter_cloneReadyHandler(fileWriter) {
     fileWriter.onwriteend = function(e) {
       console.log('Write completed.');
       self.trigger('complete:clone', fileURL);
@@ -40,6 +49,20 @@ Meatazine.utils.FileReferrence = new function () {
       console.log('Write failed: ' + e.toString());
     };
     fileWriter.write(targetFile);
+    targetFile = null;
+  }
+  function fileWriter_saveReadyHandler(fileWriter) {
+    fileWriter.onwriteend = function (event) {
+      console.log('Write completed.');
+      self.trigger('complete:save', fileURL);
+    };
+    fileWriter.onerror = function (error) {
+      console.log('Write failed: ' + error.toString());
+    };
+    var bb = new WebKitBlobBuilder();
+    bb.append(fileContent);
+    fileWriter.write(bb.getBlob('text/plain'));
+    fileContent = null;
   }
   function fileReadyHandler(file) {
     reader.readAsBinaryString(file);

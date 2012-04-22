@@ -14,14 +14,20 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
       }
     }
   },
+  toJSON: function () {
+    var obj = {};
+    _.extend(obj, this.attributes);
+    obj.template = this.getCleanTemplate(); 
+    return obj;
+  },
   reset: function () {
-    _.each(this.attributes.contents, function (collection, i) {
+    _.each(this.get('contents'), function (collection, i) {
       collection.off();
     }, this);
     this.set('contents', []);
   },
   getContentAt: function (index) {
-    var elements = this.attributes.contents[index];
+    var elements = this.get('contents')[index];
     if (!elements) {
       elements = new Meatazine.model.element.ElementCollection();
       elements.on('change', this.element_changeHandler, this);
@@ -31,11 +37,17 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     }
     return elements;
   },
+  getCleanTemplate: function () {
+    var template = $('<div>' + this.get('template') + '</div>');
+    template.find('.editable').removeClass('editable');
+    template.find('[data-config]').removeAttr('data-config');
+    return template;
+  },
   renderHTML: function () {
-    var template = $('<div>' + this.attributes.template + '</div>');
+    var template = $('<div>' + this.get('template') + '</div>');
     _.each(template.find('[data-config]'), function (elementDom, index) {
       var tpl = '{{#section}}' + $(elementDom).html() + '{{/section}}',
-          data = {section: this.attributes.contents[index].toJSON()};
+          data = {section: this.get('contents')[index].toJSON()};
           content = Mustache.render(tpl, data);
       $(elementDom).html(content);
     }, this);

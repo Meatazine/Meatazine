@@ -1,6 +1,5 @@
 jQuery.namespace('Meatazine.model');
 Meatazine.model.BookProperties = Backbone.Model.extend({
-  html: '',
   defaults: {
     width: 0,
     height: 0,
@@ -27,32 +26,19 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     }
   },
   exportHTML: function () {
+    var html = '';
     _.each(this.attributes.pages.models, function (model, i) {
-      this.html += model.renderHTML();
+      html += model.renderHTML();
     }, this);
-    window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-    window.requestFileSystem(window.PERSISTENT, 1024*1024, this.fileSystemHandler, this.errorHandler);
+    Meatazine.utils.FileReferrence.on('complete:save', this.saveCompleteHandler, this);
+    Meatazine.utils.FileReferrence.save('export.html', html);
   },
   fill: function (data) {
     this.setSize(data.width, data.height);
     pages.fill(data.pages);
   },
-  fileSystemHandler: function (fileSystem) {
-    fileSystem.root.getFile('./export.html', {create: true}, function (fileEntry) {
-      fileEntry.createWriter(function (fileWriter) {
-        fileWriter.onwriteend = function (event) {
-          console.log('Write completed.');
-        };
-        fileWriter.onerror = function (error) {
-          console.log('Write failed: ' + error.toString());
-        };
-        var bb = new WebKitBlobBuilder();
-        bb.append('html');
-        fileWriter.write(bb.getBlob('text/plain'));
-      }, self.errorHandler);
-    });
-  },
-  errorHandler: function (error) {
-    console.log(error);
+  saveCompleteHandler: function (url) {
+    window.open(url);
+    Meatazine.utils.FileReferrence.off('complete:save', null, this);
   }
 });

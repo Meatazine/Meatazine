@@ -25,7 +25,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   next: function () {
     if (this.loadingFiles.length > 0) {
       var file = this.loadingFiles.shift();
-      Meatazine.utils.FileReferrence.load(file);
+      Meatazine.utils.FileReferrence.clone(file);
     } else {
       this.isLoading = false;
       this.$('img').eq(0).trigger('click');
