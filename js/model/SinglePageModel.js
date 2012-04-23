@@ -59,7 +59,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     template.find('.editable').removeClass('editable');
     template.find('.placeholder').removeClass('placeholder');
     template.find('[data-config]').removeAttr('data-config');
-    return template.html();
+    return '<div class="page hide">' + template.html() + '</div>';
   },
   element_changeHandler: function () {
     this.isEmpty = false;

@@ -1,0 +1,16 @@
+#viewport {
+  width:1024px;
+  height:768px;
+  border:4px dashed #CCC;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+}
+.page {
+  width:1024px;
+  height:768px;
+  position: absolute;
+}
+.hide {
+  display:none;
+}
