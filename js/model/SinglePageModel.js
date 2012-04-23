@@ -44,14 +44,20 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     return template;
   },
   renderHTML: function () {
-    var template = $('<div>' + this.get('template') + '</div>');
+    var count = 0,
+        template = $('<div>' + this.get('template') + '</div>');
     _.each(template.find('[data-config]'), function (elementDom, index) {
-      var tpl = '{{#section}}' + $(elementDom).html() + '{{/section}}',
-          data = {section: this.get('contents')[index].toJSON()};
+      var config = JSON.parse($(elementDom).attr('data-config')),
+          tpl = '{{#section}}' + $(elementDom).html() + '{{/section}}',
+          data = {section: this.get('contents')[count].toJSON()};
           content = Mustache.render(tpl, data);
       $(elementDom).html(content);
+      if (!config.noData) {
+        count++;
+      }
     }, this);
     template.find('.editable').removeClass('editable');
+    template.find('.placeholder').removeClass('placeholder');
     template.find('[data-config]').removeAttr('data-config');
     return template.html();
   },

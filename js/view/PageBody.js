@@ -36,7 +36,7 @@ Meatazine.view.PageBody = Backbone.View.extend({
       this.items[index] = element;
     }, this);
     
-    this.$('h1,h2,h3,p').prop('contenteditable', true);
+    this.$('.editable').prop('contenteditable', true);
     this.refreshThumbnail();
     this.trigger('edit');
   },

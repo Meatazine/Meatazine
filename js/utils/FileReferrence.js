@@ -3,6 +3,7 @@ Meatazine.utils.FileReferrence = new function () {
   var self = this,
       reader = new FileReader(),
       targetFile,
+      fileName,
       fileSystem,
       fileContent,
       fileURL;
@@ -22,9 +23,10 @@ Meatazine.utils.FileReferrence = new function () {
   this.read = function (url) {
     window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
   }
-  this.save = function (fileName, content) {
+  this.save = function (name, content) {
+    fileName = name;
     fileContent = content;
-    fileSystem.root.getFile(fileName, {create: true}, fileEntry_saveReadyHandler, errorHandler);
+    fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
   }
   function fileSystemReadyHandler(fs) {
     fileSystem = fs;
@@ -39,6 +41,9 @@ Meatazine.utils.FileReferrence = new function () {
   function fileEntry_saveReadyHandler(fileEntry) {
     fileURL = fileEntry.toURL();
     fileEntry.createWriter(fileWriter_saveReadyHandler, errorHandler);
+  }
+  function fileEntry_removeReadyHandler(fileEntry) {
+    fileEntry.remove(fileRemoveHandler, errorHandler);
   }
   function fileWriter_cloneReadyHandler(fileWriter) {
     fileWriter.onwriteend = function(e) {
@@ -67,8 +72,15 @@ Meatazine.utils.FileReferrence = new function () {
   function fileReadyHandler(file) {
     reader.readAsBinaryString(file);
   }
+  function fileRemoveHandler() {
+    console.log('Removed: ' + fileName);
+    self.save(fileName, fileContent);
+  }
   function errorHandler(error) {
-    console.log('Error: ' + error.code);
+    console.log('Error: ' + error.code, Error);
+    if (error.code == FileError.INVALID_MODIFICATION_ERR) {
+      fileSystem.root.getFile(fileName, {create: false}, fileEntry_removeReadyHandler, errorHandler);
+    }
   }
   _.extend(this, Backbone.Events);
   reader.onload = function (event) {
