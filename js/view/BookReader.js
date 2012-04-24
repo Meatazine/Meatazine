@@ -1,18 +1,27 @@
 BookReader = Backbone.View.extend({
   currentPage: -1,
-  events: {
-    "swipeLeft .page": "nextPageHandler",
-    "swipeRight .page": "prevPageHandler",
-  },
+  totalPage: 0,
+  scroll: null,
   initialize: function () {
     this.$el = $(this.el);
+    this.width = this.$('#container');
     this.window_resizeHandler();
   },
   render: function () {
     
   },
   addContent: function (html) {
-    this.$el.html(html);
+    this.$('#container').html(html);
+    this.totalPage = this.$('.page').length;
+    this.$('#container').width(this.options.width * this.totalPage);
+    this.scroll = new iScroll(this.el, {
+      snap: true,
+      momentum: false,
+      hScrollbar: false,
+      vScroll: false,
+      zoom: true,
+      zoomMax: 4,
+    });
     this.turnToPage(0);
   },
   turnToPage: function (index) {

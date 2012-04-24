@@ -1,16 +1,19 @@
 #viewport {
   width:1024px;
   height:768px;
-  border:4px dashed #CCC;
   margin:0 auto;
   position:relative;
+  z-index:1;
   overflow:hidden;
+}
+#container {
+  height:100%;
 }
 .page {
   width:1024px;
   height:768px;
-  position: absolute;
+  float:left;
 }
 .hide {
-  display:none;
+  visibility:hidden;
 }

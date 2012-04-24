@@ -10,6 +10,8 @@ $(function () {
     }
   });
   var reader = new BookReader({
-    el: '#viewport'
+    el: '#viewport',
+    width: 1024,
+    height: 768
   })
 });
