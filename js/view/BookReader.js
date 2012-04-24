@@ -19,8 +19,6 @@ BookReader = Backbone.View.extend({
       momentum: false,
       hScrollbar: false,
       vScroll: false,
-      zoom: true,
-      zoomMax: 4,
     });
     this.turnToPage(0);
   },
@@ -29,6 +27,6 @@ BookReader = Backbone.View.extend({
     this.$('.page').eq(index).removeClass('hide');
   },
   window_resizeHandler: function (event) {
-    this.$el.css('margin-top', $(window).height() - 786 >> 1);
+    this.$el.css('margin-top', $(window).height() - 768 >> 1);
   }
 });

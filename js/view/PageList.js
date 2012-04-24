@@ -5,6 +5,7 @@ Meatazine.view.PageList = Backbone.View.extend({
   removeButton: null,
   currentItem: null,
   currentDragItemIndex: -1,
+  emptyItems: [],
   length: 0,
   events: {
     "click .add-button": "addButton_clickHandler",
@@ -18,7 +19,8 @@ Meatazine.view.PageList = Backbone.View.extend({
   initialize: function () {
     this.$el = $(this.el);
     this.list = this.$('#page-list-inner');
-    this.options.book.on('change', this.resizeHandler, this);
+    this.options.book.on('change:size', this.resizeHandler, this);
+    this.options.book.on('refresh', this.refreshHandler, this);
     this.render();
   },
   render: function () {
@@ -103,7 +105,25 @@ Meatazine.view.PageList = Backbone.View.extend({
     // 把按钮和数字空出来
     this.$('#page-list-inner').height(this.options.book.get('height') - 120);
   },
+  refreshHandler: function () {
+    this.length = 0;
+    this.list.find('li.item').remove();
+    for (var i = 0, len = this.collection.length; i < len; i++) {
+      var model = this.collection.at(i),
+          item = this.createItem();
+      item.attr('data-cid', model.cid);
+      this.emptyItems.push(item);
+    }
+    this.list.sortable({
+      items: 'li.item'
+    });
+    this.$('li').disableSelection();
+    this.emptyItems.shift().trigger('click');
+  },
   page_changeHandler: function (thumb) {
     this.currentItem.html(thumb);
+    if (this.emptyItems.length > 0) {
+      this.emptyItems.shift().trigger('click');
+    }
   }
 })

@@ -15,7 +15,7 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.options.book.on('change', this.resizeHandler, this);
+    this.options.book.on('change:size', this.resizeHandler, this);
     this.model.on('change:type', this.model_typeChangeHandler, this);
     this.render();
   },

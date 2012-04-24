@@ -35,12 +35,10 @@ Meatazine.view.GUI = Backbone.View.extend({
     $('#loading').fadeOut();
     $('.hidden').removeClass('hidden');
   },
-  preview: function () {
-    
-  },
   navbar_selectHandler: function (type) {
     if (type == 'preview') {
-      this.preview();
+      this.book.saveHTML();
+      this.navbar.$('.dropdown-menu').eq(0).toggle();
       return;
     }
     this.book[type]();

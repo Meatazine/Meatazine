@@ -35,9 +35,11 @@
                 <ul class="dropdown-menu">
                   <li><a href="#save" class="system-button">保存</a></li>
                   <li><a href="#load" class="system-button">读取</a></li>
-                  <li><a href="#exportHTML" class="system-button">导出</a></li>
+                  <li><a href="#exportZip" class="system-button">导出</a></li>
                   <li class="divider"></li>
-                  <li><a href="preview.html" target="_blank">预览</a></li>
+                  <li><a href="preview.html" class="system-button" target="_blank">预览</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#publish" class="system-button">发布</a></li>
                 </ul>
               </li>
               <li class="dropdown">
@@ -46,7 +48,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li><a href="#welcome" data-toggle="modal">欢迎窗体</a></li>
-                  <li class="active"><a href="#">向导</a></li>
+                  <li><a href="#tutorial">向导</a></li>
                 </ul>
               </li>
               <li><a href="#">设置</a></li>
@@ -143,7 +145,7 @@
           <span id="screen-size-info">当前分辨率 1024 &times; 768，适用机型：iPad, iPad 2, The New iPad</span>
         </p>
         <div id="page-list">
-          <p align="center" id="page-number">1/1</p>
+          <p align="center" id="page-number">0/0</p>
           <a class="btn page-list-control top" href="#page-list" data-slide="prev" disabled="true"><i class="icon-chevron-up"></i></a>
           <ul id="page-list-inner" class="well">
             <li>

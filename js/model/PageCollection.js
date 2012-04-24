@@ -7,6 +7,7 @@ Meatazine.model.PageCollection = Backbone.Collection.extend({
     return model;
   },
   fill: function (array) {
+    this.reset();
     for (var i = 0, len = array.length; i < len; i++) {
       this.create(array[i]);
     }

@@ -9,16 +9,9 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   initialize: function (init) {
     if (init.contents.length > 0) {
       for (var i = 0, len = init.contents.length; i < len; i++) {
-        var element = this.getContentAt(i);
-        element.create(init.contents[i]);
+        this.createElement(i, init.contents[i]);
       }
     }
-  },
-  toJSON: function () {
-    var obj = {};
-    _.extend(obj, this.attributes);
-    obj.template = this.getCleanTemplate(); 
-    return obj;
   },
   reset: function () {
     _.each(this.get('contents'), function (collection, i) {
@@ -26,22 +19,28 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     }, this);
     this.set('contents', []);
   },
-  getContentAt: function (index) {
-    var elements = this.get('contents')[index];
-    if (!elements) {
-      elements = new Meatazine.model.element.ElementCollection();
-      elements.on('change', this.element_changeHandler, this);
-      var contents = this.get('contents').concat();
-      contents[index] = elements;
-      this.set('contents', contents);
+  createElement: function (index, array) {
+    var contents = this.get('contents').concat(),
+        element = new Meatazine.model.element.ElementCollection(array);
+    element.on('change', this.element_changeHandler, this);
+    if (index != null) {
+      contents[index] = element;
+    } else {
+      contents.push(element);
     }
-    return elements;
+    this.set('contents', contents);
+    return element;
+  },
+  getContentAt: function (index) {
+    var element = this.get('contents')[index];
+    element = element || this.createElement(index);
+    return element;
   },
   getCleanTemplate: function () {
     var template = $('<div>' + this.get('template') + '</div>');
     template.find('.editable').removeClass('editable');
     template.find('[data-config]').removeAttr('data-config');
-    return template;
+    return template.html();
   },
   renderHTML: function () {
     var count = 0,

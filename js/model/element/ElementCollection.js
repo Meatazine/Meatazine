@@ -1,7 +1,7 @@
 jQuery.namespace('Meatazine.model.element');
 Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
-  initialize: function () {
-    this.create();
+  initialize: function (array) {
+    this.create(array);
   },
   create: function (array) {
     array = array || [{}];
