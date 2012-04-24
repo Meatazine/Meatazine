@@ -38,7 +38,6 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     pages.fill(data.pages);
   },
   saveCompleteHandler: function (url) {
-    window.open(url);
     Meatazine.utils.FileReferrence.off('complete:save', null, this);
   }
 });
