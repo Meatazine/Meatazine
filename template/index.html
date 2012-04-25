@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>杂志最终模板</title>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+<script src="js/zepto.ming.js"></script>
+<script src="js/underscore-min.js"></script>
+<script src="js/backbone-min.js"></script>
+<script src="js/BookReader.js"></script>
+<script>
+  $(function () {
+    var reader = new BookReader({
+    el: '#viewport',
+    width: {{width}},
+    height: {{height}}
+  });
+</script>
+<div id="viewport">
+  <div id="container">
+    {{content}}
+  </div>
+</div>

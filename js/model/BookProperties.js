@@ -25,7 +25,7 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
       this.trigger('refresh');
     }
   },
-  saveHTML: function () {
+  preview: function () {
     var html = '';
     _.each(this.attributes.pages.models, function (model, i) {
       html += model.renderHTML();
@@ -34,6 +34,18 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     Meatazine.utils.FileReferrence.save('export.html', html);
   },
   exportZip: function () {
+    // 先请求模板
+    $.ajax({
+      url: 'template/index.html',
+      dataType: 'html',
+      context: this,
+      success: this.loadTemplateComplete
+    });
+  },
+  loadScriptsStyles: function () {
+    
+  },
+  loadAssets: function () {
     
   },
   publish: function () {
@@ -44,7 +56,21 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     this.get('pages').fill(data.pages);
   },
   saveCompleteHandler: function (url) {
-    window.open('preview.html', 'preview', 'width=' + this.get('width') + ',height=' + this.get('height'));
     Meatazine.utils.FileReferrence.off('complete:save', null, this);
+    window.open('preview.html', 'preview', 'width=' + this.get('width') + ',height=' + this.get('height'));
+  },
+  loadTemplateComplete: function (template) {
+    var html = '',
+        zip = new JSZip();
+    _.each(this.attributes.pages.models, function (model, i) {
+      html += model.renderHTML();
+    }, this);
+    var data = {
+      width: self.get('width'),
+      height: self.get('height'),
+      content: html
+    }
+    html = Mustache.render(template, data);
+    zip.file('index.html', html);
   }
 });

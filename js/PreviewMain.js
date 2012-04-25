@@ -13,5 +13,7 @@ $(function () {
     el: '#viewport',
     width: 1024,
     height: 768
-  })
+  });
+  _.extend(window, Backbone.Events);
+  window.on('resize', reader.window_resizeHandler, reader);
 });

@@ -14,6 +14,5 @@ Meatazine.view.NavBar = Backbone.View.extend({
   button_clickHandler: function (event) {
     var target = $(event.target).attr('href').match(/(\w+)(\.html)?/)[1];
     this.trigger('select', target);
-    return false;
   }
 });

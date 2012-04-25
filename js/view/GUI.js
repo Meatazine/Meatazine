@@ -36,11 +36,6 @@ Meatazine.view.GUI = Backbone.View.extend({
     $('.hidden').removeClass('hidden');
   },
   navbar_selectHandler: function (type) {
-    if (type == 'preview') {
-      this.book.saveHTML();
-      this.navbar.$('.dropdown-menu').eq(0).toggle();
-      return;
-    }
     this.book[type]();
   }
 });

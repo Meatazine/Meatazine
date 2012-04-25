@@ -44,16 +44,35 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   },
   renderHTML: function () {
     var count = 0,
+        temp = {},
         template = $('<div>' + this.get('template') + '</div>');
     _.each(template.find('[data-config]'), function (elementDom, index) {
       var config = JSON.parse($(elementDom).attr('data-config')),
-          tpl = '{{#section}}' + $(elementDom).html() + '{{/section}}',
-          data = {section: this.get('contents')[count].toJSON()};
-          content = Mustache.render(tpl, data);
-      $(elementDom).html(content);
-      if (!config.noData) {
+          data, content;
+      if (config.noData) {
+        var key = config.type.match(/(\w+)\-/)[1];
+        if (temp.hasOwnProperty(key)) {
+          data = Meatazine.utils.render($(elementDom).html(), temp[key].at(0).toJSON());
+        } else {
+          temp[key] = elementDom;
+        }
+      } else {
+        data = this.get('contents')[count].toJSON();
+        if (config.type.indexOf('-') != -1) {
+          var key = config.type.match(/(\w+)\-/)[1];
+          if (temp.hasOwnProperty(key)) {
+            $(temp[key]).html(Meatazine.utils.render($(temp[key]).html(), data[0]));
+          } else {
+            temp[key] = data;
+          }
+        }
         count++;
       }
+      if (data != null) {
+        content = Meatazine.utils.render($(elementDom).html(), data);
+        $(elementDom).html(content);
+      }
+      $(elementDom).addClass(config.type)
     }, this);
     template.find('.editable').removeClass('editable');
     template.find('.placeholder').removeClass('placeholder');
