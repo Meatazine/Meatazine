@@ -34,19 +34,33 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     Meatazine.utils.FileReferrence.save('export.html', html);
   },
   exportZip: function () {
-    // 先请求模板
+    // 先生成内容html
+    var data = {
+          width: this.get('width'),
+          height: this.get('height'),
+          content: ''
+        },
+        zip = new FileZip();
+    _.each(this.attributes.pages.models, function (model, i) {
+      data.content += model.renderHTML();
+    }, this);
+    // 加载模板
     $.ajax({
       url: 'template/index.html',
       dataType: 'html',
-      context: this,
-      success: this.loadTemplateComplete
+      success: function (template) {
+        template = Mustache.render(template, data);
+        zip.addFile('index.html', template);
+        // 将用到的素材添加到zip中，依次为link、有src属性的
+        _.each($(template).find('link'), function (el, i) {
+          
+        }, this);
+        _.each($(template).find('[src]'), function (el, i) {
+          
+        }, this);
+        zip.downloadZip();
+      }
     });
-  },
-  loadScriptsStyles: function () {
-    
-  },
-  loadAssets: function () {
-    
   },
   publish: function () {
     
