@@ -38,9 +38,6 @@
 }
 
 #viewport {
-  width:1024px;
-  height:768px;
-  margin:0 auto;
   position:relative;
   z-index:1;
   overflow:hidden;
@@ -49,7 +46,5 @@
   height:100%;
 }
 .page {
-  width:1024px;
-  height:768px;
   float:left;
 }

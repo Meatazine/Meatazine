@@ -30,17 +30,18 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     _.each(this.attributes.pages.models, function (model, i) {
       html += model.renderHTML();
     }, this);
-    Meatazine.utils.FileReferrence.on('complete:save', this.saveCompleteHandler, this);
-    Meatazine.utils.FileReferrence.save('export.html', html);
+    Meatazine.utils.fileAPI.on('complete:save', this.saveCompleteHandler, this);
+    Meatazine.utils.fileAPI.save('export.html', html);
   },
   exportZip: function () {
     // 先生成内容html
-    var data = {
+    var self = this,
+        data = {
           width: this.get('width'),
           height: this.get('height'),
           content: ''
         },
-        zip = new FileZip();
+        zip = new Meatazine.utils.FileZip();
     _.each(this.attributes.pages.models, function (model, i) {
       data.content += model.renderHTML();
     }, this);
@@ -50,17 +51,22 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
       dataType: 'html',
       success: function (template) {
         template = Mustache.render(template, data);
+        // 将用到的素材添加到zip中，依次为link、script、有src属性的
+        template = template.replace(/(href|src)="(\S+)"/gmi, function () {
+          var url = arguments[2],
+              src = url.split('/').pop();
+          zip.addFile(src, null, url);
+          return arguments[1] + '="' + src + '"';
+        });
         zip.addFile('index.html', template);
-        // 将用到的素材添加到zip中，依次为link、有src属性的
-        _.each($(template).find('link'), function (el, i) {
-          
-        }, this);
-        _.each($(template).find('[src]'), function (el, i) {
-          
-        }, this);
         zip.downloadZip();
       }
     });
+  },
+  loadAsset: function (collection, attr, zip) {
+    _.each(collection, function (el, i) {
+      
+    }, this);
   },
   publish: function () {
     
@@ -70,7 +76,7 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     this.get('pages').fill(data.pages);
   },
   saveCompleteHandler: function (url) {
-    Meatazine.utils.FileReferrence.off('complete:save', null, this);
+    Meatazine.utils.fileAPI.off('complete:save', null, this);
     window.open('preview.html', 'preview', 'width=' + this.get('width') + ',height=' + this.get('height'));
   },
   loadTemplateComplete: function (template) {

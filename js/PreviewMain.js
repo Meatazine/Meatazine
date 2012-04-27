@@ -9,11 +9,6 @@ $(function () {
       reader.addContent(data);
     }
   });
-  var reader = new BookReader({
-    el: '#viewport',
-    width: 1024,
-    height: 768
-  });
-  _.extend(window, Backbone.Events);
-  window.on('resize', reader.window_resizeHandler, reader);
+  var reader = new BookReader('viewport', 1024, 768);
+  $(window).on('resize', reader.window_resizeHandler, reader);
 });

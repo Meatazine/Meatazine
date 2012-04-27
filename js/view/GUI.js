@@ -36,6 +36,14 @@ Meatazine.view.GUI = Backbone.View.extend({
     $('.hidden').removeClass('hidden');
   },
   navbar_selectHandler: function (type) {
+    if (type == 'exportZip') {
+      noty({
+        layout: 'topLeft',
+        text: '正在将全部素材压缩打包，请稍后',
+        theme: 'noty_theme_twitter',
+        type: 'information',
+      })
+    }
     this.book[type]();
   }
 });

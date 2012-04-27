@@ -25,11 +25,11 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   next: function () {
     if (this.loadingFiles.length > 0) {
       var file = this.loadingFiles.shift();
-      Meatazine.utils.FileReferrence.clone(file);
+      Meatazine.utils.fileAPI.clone(file);
     } else {
       this.isLoading = false;
       this.$('img').eq(0).trigger('click');
-      Meatazine.utils.FileReferrence.off('complete:clone', null, this);
+      Meatazine.utils.fileAPI.off('complete:clone', null, this);
       this.collection.trigger('change');
       this.trigger('change');
     }
@@ -71,7 +71,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
       }
       this.collection.create(usableFiles.slice(1));
       this.loadingFiles = this.loadingFiles.concat(usableFiles);
-      Meatazine.utils.FileReferrence.on('complete:clone', this.file_completeHandler, this);
+      Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
       if (!this.isLoading) {
         this.isLoading = true;
         this.next();

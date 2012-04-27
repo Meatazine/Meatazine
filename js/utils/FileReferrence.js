@@ -1,9 +1,10 @@
 jQuery.namespace('Meatazine.utils');
-Meatazine.utils.FileReferrence = new function () {
+Meatazine.utils.FileReferrence = function () {
   var self = this,
       reader = new FileReader(),
       targetFile,
       fileName,
+      fileType,
       fileSystem,
       fileContent,
       fileURL;
@@ -23,9 +24,10 @@ Meatazine.utils.FileReferrence = new function () {
   this.read = function (url) {
     window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
   }
-  this.save = function (name, content) {
+  this.save = function (name, content, type) {
     fileName = name;
     fileContent = content;
+    fileType = type || 'text/plain';
     fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
   }
   function fileSystemReadyHandler(fs) {
@@ -64,9 +66,19 @@ Meatazine.utils.FileReferrence = new function () {
     fileWriter.onerror = function (error) {
       console.log('Write failed: ' + error.toString());
     };
-    var bb = new WebKitBlobBuilder();
-    bb.append(fileContent);
-    fileWriter.write(bb.getBlob('text/plain'));
+    
+    // 处理二进制数据
+    var builder = new WebKitBlobBuilder();
+    if (fileType == 'application/zip') {
+      var byteArray = new Uint8Array(fileContent.length);
+      for (var i = 0, len = fileContent.length; i < len; i++) {
+        byteArray[i] = fileContent.charCodeAt(i) & 0xFF;
+      }
+      builder.append(byteArray.buffer);
+    } else {
+      builder.append(fileContent);
+    }
+    fileWriter.write(builder.getBlob(fileType));
     fileContent = null;
   }
   function fileReadyHandler(file) {
@@ -74,7 +86,7 @@ Meatazine.utils.FileReferrence = new function () {
   }
   function fileRemoveHandler() {
     console.log('Removed: ' + fileName);
-    self.save(fileName, fileContent);
+    self.save(fileName, fileContent, fileType);
   }
   function errorHandler(error) {
     console.log('Error: ' + error.code, Error);
@@ -88,3 +100,4 @@ Meatazine.utils.FileReferrence = new function () {
   }
   window.webkitRequestFileSystem(TEMPORARY, 128 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
 }
+Meatazine.utils.fileAPI = new Meatazine.utils.FileReferrence();

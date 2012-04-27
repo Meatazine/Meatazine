@@ -38,15 +38,15 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
         break;
       }
     }
-    Meatazine.utils.FileReferrence.on('complete:clone', function (url) {
+    Meatazine.utils.fileAPI.on('complete:clone', function (url) {
       $(img)
         .removeClass('.placeholder')
         .attr('src', url);
       this.collection.at(0).set('img', url);
       this.trigger('change', this.collection);
-      Meatazine.utils.FileReferrence.off('complete:clone', null, this);
+      Meatazine.utils.fileAPI.off('complete:clone', null, this);
     }, this);
-    Meatazine.utils.FileReferrence.clone(file);
+    Meatazine.utils.fileAPI.clone(file);
   },
   img_dragOverHandler: function (event) {
     if (event.preventDefault) {
