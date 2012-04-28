@@ -16,5 +16,8 @@ Meatazine.view.element.SlideBodyElement = Meatazine.view.element.AbstractElement
   },
   img_dropHandler: function (event) {
     this.navi.img_dropHandler(event);
+  },
+  placeholder_clickHandler: function (event) {
+    this.navi.img_clickHandler(event);
   }
 });

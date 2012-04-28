@@ -10,5 +10,4 @@ $(function () {
     }
   });
   var reader = new BookReader('viewport', 1024, 768);
-  $(window).on('resize', reader.window_resizeHandler, reader);
 });

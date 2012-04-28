@@ -8,6 +8,7 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
     this.$el = $(this.el);
     this.info = $(this.options.infoText);
     this.render();
+    this.confirmHandler();
   },
   render: function () {
     this.$('form').hide();
@@ -18,6 +19,12 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
   },
   hide: function () {
     this.$el.modal('hide');
+  },
+  showInfo: function () {
+    this.info
+      .text(this.model.get('width') + ' × ' + this.model.get('height'))
+      .attr('title', '适用机型：' + this.$('.active').attr('data-device'))
+      .tooltip({placement: 'bottom'});
   },
   device_clickHandler: function (event) {
     var target = this.$(event.currentTarget);
@@ -33,7 +40,7 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
   },
   confirmHandler: function (event) {
     this.model.setSize($('#device-width').val(), $('#device-height').val());
-    this.info.text('当前分辨率 ' + this.model.get('width') + ' × ' + this.model.get('height') + '，适用机型：' + this.$('.active').attr('data-device'));
+    this.showInfo();
     this.hide();
   }
 });

@@ -85,9 +85,9 @@ Meatazine.view.PageBody = Backbone.View.extend({
       this.render();
     }
   },
-  resizeHandler: function () {
-    this.$el.width(this.book.get('width'));
-    this.$el.height(this.book.get('height'));
+  resizeHandler: function (w, h) {
+    this.$el.width(w);
+    this.$el.height(h);
   },
   element_changeHandler: function (collection) {
     this.refreshThumbnail();

@@ -58,6 +58,7 @@ body {
 #page-area {
   position: relative;
   overflow:hidden;
+  margin:0 auto;
 }
 #page-list {
   width:120px;
@@ -122,6 +123,7 @@ body {
 #page-body .placeholder {
   background:url(../img/imageplaceholder.png) center center no-repeat #CCC;
   box-shadow:inset 0 0 8px #08C;
+  cursor: pointer;
 }
 #page-body .active-img {
   box-shadow:inset 0 0 8px #F83;
@@ -133,14 +135,17 @@ body {
   box-shadow: inset 0 0 2px #CCC;
   border-radius:4px;
 }
+.uploader {
+  visible:hidden;
+  position:absolute;
+  bottom: -50px;
+}
 
 #panel {
   width: 300px;
   padding: 10px;
   background:#EEE;
-  position: absolute;
-  top:97px;
-  left: 1200px;
+  float:right;
 }
 #panel hr {
   border-top-color:#CCC;

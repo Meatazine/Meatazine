@@ -6,11 +6,12 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     pages: null
   },
   setSize: function (w, h) {
+    w = parseInt(w), h = parseInt(h);
     this.set({
       width: w,
       height: h
     }, {silent: true});
-    this.trigger('change:size');
+    this.trigger('change:size', w, h);
   },
   save: function () {
     var data = _.clone(this.attributes);

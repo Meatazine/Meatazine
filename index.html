@@ -60,6 +60,63 @@
       </div>
     </div>
     <div class="container-fluid hidden">
+      <div id="page-area">
+        <p>
+          <span>目标分辨率：</span>
+          <a href="#screen-size" data-toggle="modal" id="screen-size-info" title="适用机型：iPad, iPad 2, The New iPad">1024 &times; 768</a>
+        </p>
+        <div id="page-list">
+          <p align="center" id="page-number">0/0</p>
+          <a class="btn page-list-control top" href="#page-list" data-slide="prev" disabled="true"><i class="icon-chevron-up"></i></a>
+          <ul id="page-list-inner" class="well">
+            <li>
+              <button class="btn btn-large add-button" type="button">
+                <i class="icon-b-plug-sign"></i>
+              </button>
+            </li>
+          </ul>
+          <a class="btn page-list-control down" href="#page-list" data-slide="next" disabled="true"><i class="icon-chevron-down"></i></a>
+        </div>
+        <div id="page-body">
+        </div>
+        <div id="panel">
+          <div class="btn-group" data-toggle="buttons-radio">
+            <button class="btn active" data-for="template-list">样式模板</button>
+            <button class="btn" data-for="source-list">素材</button>
+          </div>
+          <hr />
+          <ul id="template-list" class="well">
+            <li>
+              <img src="img/elements/face.png" width="100%" alt="封面" />
+            </li>
+            <li>
+              <img src="img/elements/slide.png" width="100%" alt="Slide" />
+            </li>
+            <li>
+              <img src="img/elements/back.png" width="100%" alt="封底" />
+            </li>
+          </ul>
+          <dl id="source-list" class="well">
+            <dt>元素（鼠标划过对应的区块会高亮）</dt>
+            <dd>
+              <ul>
+                {{#elements}}
+                <li><img src="{{img}}" width="80" /> <span class="title">{{title}}</span><br /><span class="link">{{link}}</span><br /><span class="description">{{description}}</span></li>
+                {{/elements}}
+              </ul>
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <hr />
+      <footer>
+        &copy; Meathill 2012 &nbsp;
+        <p class="pull-right">
+          <a href="http://blog.meathill.net/" target="_blank">Blog</a> &nbsp; <a href="mailto:meathill@foxmail.com">Email</a>
+        </p>
+      </footer>
+    </div>
+    <div id="hidden">
       <div id="welcome" class="modal hide">
         <div class="modal-header">
           <a class="close" data-dismiss="modal">&times;</a>
@@ -139,56 +196,6 @@
           <a class="btn" href="#screen-size" data-dismiss="modal">取消</a>
         </div>
       </div>
-      <div id="page-area">
-        <p>
-          <a class="btn" href="#screen-size" data-toggle="modal"><i class="icon-cog"></i></a>
-          <span id="screen-size-info">当前分辨率 1024 &times; 768，适用机型：iPad, iPad 2, The New iPad</span>
-        </p>
-        <div id="page-list">
-          <p align="center" id="page-number">0/0</p>
-          <a class="btn page-list-control top" href="#page-list" data-slide="prev" disabled="true"><i class="icon-chevron-up"></i></a>
-          <ul id="page-list-inner" class="well">
-            <li>
-              <button class="btn btn-large add-button" type="button">
-                <i class="icon-b-plug-sign"></i>
-              </button>
-            </li>
-          </ul>
-          <a class="btn page-list-control down" href="#page-list" data-slide="next" disabled="true"><i class="icon-chevron-down"></i></a>
-        </div>
-        <div id="page-body">
-        </div>
-      </div>
-      <div id="panel">
-        <div class="btn-group" data-toggle="buttons-radio">
-          <button class="btn active" data-for="template-list">样式模板</button>
-          <button class="btn" data-for="source-list">素材</button>
-        </div>
-        <hr />
-        <ul id="template-list" class="well">
-          <li>
-            <img src="img/elements/face.png" width="100%" alt="封面" />
-          </li>
-          <li>
-            <img src="img/elements/slide.png" width="100%" alt="Slide" />
-          </li>
-          <li>
-            <img src="img/elements/back.png" width="100%" alt="封底" />
-          </li>
-        </ul>
-        <dl id="source-list" class="well">
-          
-        </dl>
-      </div>
-      <hr />
-      <footer>
-        &copy; Meathill 2012 &nbsp;
-        <p class="pull-right">
-          <a href="http://blog.meathill.net/" target="_blank">Blog</a> &nbsp; <a href="mailto:meathill@foxmail.com">Email</a>
-        </p>
-      </footer>
-    </div>
-    <div id="always-hidden">
     </div>
     <!-- 最后加载css和js -->
     <link rel="stylesheet" href="css/bootstrap.min.css" />

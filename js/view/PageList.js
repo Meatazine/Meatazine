@@ -101,9 +101,8 @@ Meatazine.view.PageList = Backbone.View.extend({
     this.collection.add(model, {at: ui.item.index()});
     this.refreshPageNumber();
   },
-  resizeHandler: function () {
-    // 把按钮和数字空出来
-    this.$('#page-list-inner').height(this.options.book.get('height') - 120);
+  resizeHandler: function (w, h) {
+    this.$('#page-list-inner').height(h - 120); // 把按钮和数字空出来
   },
   refreshHandler: function () {
     this.length = 0;

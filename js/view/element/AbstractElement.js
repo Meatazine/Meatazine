@@ -1,12 +1,15 @@
 jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.AbstractElement = Backbone.View.extend({
   reader: null,
+  uploader: null,
   isLoading: false,
   events: {
     "drop img": "img_dropHandler",
     "dragover img": "img_dragOverHandler",
     "dragenter img": "img_dragEnterHandler",
-    "dragleave img": "img_dragLeaveHandler"
+    "dragleave img": "img_dragLeaveHandler",
+    "click .placeholder": "placeholder_clickHandler",
+    "change input[type='file']": "input_selectHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -26,10 +29,8 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     number = number || 1;
     return Meatazine.utils.render(this.template, _.last(this.collection.toJSON(), number));
   },
-  img_dropHandler: function (event) {
-    var files = event.originalEvent.dataTransfer.files,
-        usableFiles = [],
-        img = event.target,
+  handleFiles: function (files, img) {
+    var usableFiles = [],
         file;
     // 只认图片
     for (var i = 0, len = files.length; i < len; i++) {
@@ -48,6 +49,9 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     }, this);
     Meatazine.utils.fileAPI.clone(file);
   },
+  img_dropHandler: function (event) {
+    this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
+  },
   img_dragOverHandler: function (event) {
     if (event.preventDefault) {
       event.preventDefault();
@@ -63,5 +67,18 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
   },
   collection_editHandler: function (event) {
     
+  },
+  placeholder_clickHandler: function (event) {
+    this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
+    this.uploader
+      .appendTo(this.$el)
+      .data('target', event.target);
+    setTimeout(function (uploader) {
+      uploader.click();
+    }, 50, this.uploader);
+  },
+  input_selectHandler: function (event) {
+    this.handleFiles(this.uploader[0].files, this.uploader.data('target'));
+    this.uploader.remove();
   }
 });

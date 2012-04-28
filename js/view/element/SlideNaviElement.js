@@ -8,7 +8,8 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
     "dragover img": "img_dragOverHandler",
     "dragenter img": "img_dragEnterHandler",
     "dragleave img": "img_dragLeaveHandler",
-    "click img": "img_clickHandler"
+    "click img": "img_clickHandler",
+    "change input[type='file']": "input_selectHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -21,6 +22,28 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   render: function () {
     var item = this.createItem(this.collection.length);
     this.$el.html(item);
+  },
+  handleFiles: function (files, img) {
+    var usableFiles = [];
+    // 只认图片
+    for (var i = 0, len = files.length; i < len; i++) {
+      var file = files[i];
+      if (file.type.substr(0, 5) == 'image') {
+        usableFiles.push(file);
+      }
+    }
+    if (usableFiles.length > 0) {
+      if(this.$('.placeholder').length > 0 && _.indexOf(this.loadingIMGs, this.$('.placeholder')) == -1) {
+        this.loadingIMGs.push(this.$('.placeholder'));
+      }
+      this.collection.create(usableFiles.slice(1));
+      this.loadingFiles = this.loadingFiles.concat(usableFiles);
+      Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
+      if (!this.isLoading) {
+        this.isLoading = true;
+        this.next();
+      }
+    }
   },
   next: function () {
     if (this.loadingFiles.length > 0) {
@@ -53,34 +76,21 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
     this.$el.children().eq(index).replaceWith(Mustache.render(this.template, this.collection.at(index).toJSON()));
   },
   img_dropHandler: function (event) {
-    var files = event.originalEvent.dataTransfer.files,
-        usableFiles = [],
-        img = event.target;
-    // 只认图片
-    for (var i = 0, len = files.length; i < len; i++) {
-      var file = files[i];
-      if (file.type.substr(0, 5) == 'image') {
-        usableFiles.push(file);
-      }
-    }
-    if (usableFiles.length > 0) {
-      if ($(event.target).hasClass('placeholder')) {
-        this.loadingIMGs.push(this.$('.placeholder'));
-      } else if ($.contains(this.$el, img)) {
-        this.loadingIMGs.push(img);
-      }
-      this.collection.create(usableFiles.slice(1));
-      this.loadingFiles = this.loadingFiles.concat(usableFiles);
-      Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
-      if (!this.isLoading) {
-        this.isLoading = true;
-        this.next();
-      }
-    }
+    this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
   },
   img_clickHandler: function (event) {
-    var index = $(event.target).parent().index();
-    this.body.setModel(this.collection.at(index));
+    if ($(event.target).hasClass('placeholder')) {
+      this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
+      this.uploader
+        .appendTo(this.$el)
+        .data('target', event.target);
+      setTimeout(function (uploader) {
+        uploader.click();
+      }, 50, this.uploader);
+    } else {
+      var index = $(event.target).parent().index();
+      this.body.setModel(this.collection.at(index));
+    }
   },
   file_completeHandler: function (url) {
     var img = $(this.loadingIMGs.shift());
@@ -91,5 +101,9 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
       img: url
     }, {silent: true});
     this.next();
+  },
+  input_selectHandler: function (event) {
+    this.handleFiles(this.uploader[0].files, this.uploader.data('target'));
+    this.uploader.remove();
   }
 });

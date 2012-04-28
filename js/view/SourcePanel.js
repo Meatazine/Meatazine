@@ -15,7 +15,9 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.currentPanel = this.$('#template-list');
     this.options.book.on('change:size', this.resizeHandler, this);
+    this.model.set('template', this.$('#source-list').html());
     this.model.on('change:type', this.model_typeChangeHandler, this);
     this.render();
   },
@@ -79,19 +81,15 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
       //只更新collection里的内容
       var index = _.indexOf(this.pageContent.get('contents'), collection);
       // 判断是增加减少了还是修改了
-      this.$('#source-list').find('ul').eq(index)
+      this.$('#source-list').find('dd').eq(index)
         .empty()
-        .html(Mustache.render(this.model.get('itemTemplate'), {section: collection.toJSON()}));
+        .html(Mustache.render(this.model.get('template').match(/<ul>[\S\s]+<\/ul>/)[0], {elements: collection.toJSON()}));
     } else {
       // 更新全部内容
       this.$('#source-list').empty();
       _.each(this.pageContent.get('contents'), function (collection, index) {
-        var dt = $('<dt>', {text: '元素'});
-        var dd = $('<dd></dd>');
-        dd.append('<ul>' + Mustache.render(this.model.get('itemTemplate'), {section: collection.toJSON()}) + '</ul>');
         this.$('#source-list')
-          .append(dt)
-          .append(dd);
+          .append(Mustache.render(this.model.get('template'), {elements: collection.toJSON()}))
       }, this);
     }
     this.$('#source-list ul')
@@ -122,9 +120,8 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
       $(event.target).focusout();
     }
   },
-  resizeHandler: function () {
-    // 空出按钮的位置
-    this.$('#template-list').height(this.options.book.get('height') - 110);
+  resizeHandler: function (w, h) {
+    this.$('#template-list, #source-list').height(h - 110); // 空出按钮的位置
   },
   source_sortactivateHandler: function (event, ui) {
     this.currentDragItemIndex = ui.item.index();

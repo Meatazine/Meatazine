@@ -8,6 +8,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   },
   initialize: function (init) {
     if (init.contents.length > 0) {
+      this.isEmpty = false;
       for (var i = 0, len = init.contents.length; i < len; i++) {
         this.createElement(i, init.contents[i]);
       }

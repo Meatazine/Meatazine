@@ -21,6 +21,7 @@ BookReader = function (el, w, h) {
         self.enablePage();
       }
     });
+    this.window_resizeHandler();
     turnToPage(0);
   }
   this.addContent = function (html) {

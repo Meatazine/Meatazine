@@ -9,6 +9,7 @@ Meatazine.view.GUI = Backbone.View.extend({
   initialize: function () {
     this.config = this.options.config;
     this.book = this.options.book;
+    this.book.on('change:size', this.book_sizeChangeHandler, this);
     this.welcome = new Meatazine.view.windows.Welcome({
       el: '#welcome',
       model: this.config
@@ -34,6 +35,9 @@ Meatazine.view.GUI = Backbone.View.extend({
   removeLoading: function () {
     $('#loading').fadeOut();
     $('.hidden').removeClass('hidden');
+  },
+  book_sizeChangeHandler: function (w) {
+    $('#page-area').width(474 + w);
   },
   navbar_selectHandler: function (type) {
     if (type == 'exportZip') {
