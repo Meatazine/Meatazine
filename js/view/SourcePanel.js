@@ -10,7 +10,6 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
-    "mouseout #source-list li": "sourceItem_mouseOutHandler",
     "focusout #source-list input": "input_focusOutHandler",
     "keydown #source-list input": "input_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
@@ -141,12 +140,13 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
   sourceItem_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
   },
-  sourceItem_mouseOutHandler: function (event) {
-    if (this.removeButton.parent()[0] !== event.currentTarget) {
-      this.removeButton.remove();
-    }
-  },
   removeButton_clickHandler: function (event) {
-    
+    var target = $(event.target).parent(),
+        mIndex = target.index(),
+        cIndex = target.parentsUntil(this.$('#source-list'), 'dd').index() >> 1;
+    if (target.siblings().length > 0) {
+      target.remove();
+    }
+    this.pageContent.getContentAt(cIndex).removeAt(mIndex);
   }
 })

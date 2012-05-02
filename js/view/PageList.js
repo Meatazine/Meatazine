@@ -11,7 +11,6 @@ Meatazine.view.PageList = Backbone.View.extend({
     "click .add-button": "addButton_clickHandler",
     "click li.item": "item_clickHandler",
     "mouseover li.item": "item_mouseOverHandler",
-    "mouseout li.item": "item_mouseOutHandler",
     "click #remove-button": "removeButton_clickHandler",
     "sortactivate #page-list-inner": "sortactivateHandler",
     "sortdeactivate #page-list-inner": "sortdeactivateHandler"
@@ -56,11 +55,6 @@ Meatazine.view.PageList = Backbone.View.extend({
   },
   item_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
-  },
-  item_mouseOutHandler: function (event) {
-    if (this.removeButton.parent()[0] !== event.currentTarget) {
-      this.removeButton.remove();
-    }
   },
   addButton_clickHandler: function (event) {
     var item = this.createItem();

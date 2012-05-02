@@ -7,12 +7,15 @@ Meatazine.model.element.ElementModel = Backbone.Model.extend({
     img: 'img/spacer.gif',
   },
   initialize: function () {
-    if (this.attributes.file.hasOwnProperty('fileName')) {
+    if (this.attributes.hasOwnProperty('file')) {
       this.set({
         img : this.attributes.file.fileName,
         title: this.attributes.file.fileName
       }, {silent: true});
     }
     delete this.attributes.file;
+  },
+  reset: function () {
+    this.set(this.defaults);
   }
 });

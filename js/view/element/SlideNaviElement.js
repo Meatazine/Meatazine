@@ -3,6 +3,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   loadingIMGs: [],
   loadingFiles: [],
   body: null,
+  placeholder: null,
   events: {
     "drop img": "img_dropHandler",
     "dragover img": "img_dragOverHandler",
@@ -14,14 +15,25 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   initialize: function () {
     this.$el = $(this.el);
     this.template = this.el.innerHTML;
+    this.$el.empty();
+    this.createPlaceholder();
     this.collection.on('create', this.collection_createHandler, this);
     this.collection.on('sort', this.collection_sortHandler, this);
     this.collection.on('edit', this.collection_editHandler, this);
+    this.collection.on('remove', this.collection_removeHandler, this);
     this.render();
   },
   render: function () {
-    var item = this.createItem(this.collection.length);
-    this.$el.html(item);
+    if (this.collection.length == 0) {
+      return;
+    }
+    var item = $(this.createItem(this.collection.length));
+    item.insertBefore(this.placeholder);
+  },
+  createPlaceholder: function () {
+    this.placeholder = Meatazine.utils.render(this.template, (new Meatazine.model.element.ElementModel()).toJSON());
+    this.placeholder = $(this.placeholder);
+    this.$el.append(this.placeholder);
   },
   handleFiles: function (files, img) {
     var usableFiles = [];
@@ -33,10 +45,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
       }
     }
     if (usableFiles.length > 0) {
-      if(this.$('.placeholder').length > 0 && _.indexOf(this.loadingIMGs, this.$('.placeholder')) == -1) {
-        this.loadingIMGs.push(this.$('.placeholder'));
-      }
-      this.collection.create(usableFiles.slice(1));
+      this.collection.createItems(usableFiles);
       this.loadingFiles = this.loadingFiles.concat(usableFiles);
       Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
       if (!this.isLoading) {
@@ -44,6 +53,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
         this.next();
       }
     }
+    console.log('xx');
   },
   next: function () {
     if (this.loadingFiles.length > 0) {
@@ -59,7 +69,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   },
   collection_createHandler: function (number) {
     var items = $(this.createItem(number));
-    this.$el.append(items);
+    items.insertBefore(this.placeholder);
     _.each(items.find('img'), function (el, i) {
       this.loadingIMGs.push(el);
     }, this);
@@ -74,6 +84,10 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   },
   collection_editHandler: function (index) {
     this.$el.children().eq(index).replaceWith(Mustache.render(this.template, this.collection.at(index).toJSON()));
+  },
+  collection_removeHandler: function (model, collection, options) {
+    this.$el.children().eq(options.index).remove();
+    this.trigger('change');
   },
   img_dropHandler: function (event) {
     this.handleFiles(event.originalEvent.dataTransfer.files, event.target);

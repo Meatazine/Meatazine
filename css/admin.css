@@ -31,9 +31,11 @@ body {
   right:3px;
   display: block;
   cursor: pointer;
+  background-color:#EEE;
+  opacity:0.4;
 }
 #remove-button:hover {
-  background-color:#EEE;
+  opacity:1;
 }
 /*========================
  * screen-size
@@ -98,9 +100,15 @@ body {
   cursor:pointer;
   position:relative;
 }
+#page-list-inner li.item #remove-button {
+  display:none;
+}
 #page-list-inner li.item:hover {
   border-color:#08C;
   box-shadow:0 0 1px rgba(0, 105, 214, 0.25);
+}
+#page-list-inner li.item:hover #remove-button {
+  display:block;
 }
 #page-list-inner li.active {
   border:1px solid #08C;
@@ -214,6 +222,12 @@ body {
   list-style: none;
   border-bottom: 1px dashed #EEE;
   position:relative;
+}
+#source-list li #remove-button {
+  display:none;
+}
+#source-list li:hover #remove-button {
+  display:block;
 }
 #source-list li:last-child {
   border:none;

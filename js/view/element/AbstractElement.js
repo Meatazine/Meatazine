@@ -18,6 +18,9 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     this.render();
   },
   render: function () {
+    if (this.collection.length == 0) {
+      this.collection.create({});
+    }
     var item = this.createItem();
     this.$el.html(item);
   },
@@ -66,7 +69,8 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     $(event.currentTarget).removeClass('active-img');
   },
   collection_editHandler: function (event) {
-    
+    this.render();
+    this.trigger('change');
   },
   placeholder_clickHandler: function (event) {
     this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
