@@ -3,18 +3,23 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
   currentPanel: null,
   enabled: false,
   pageContent: null,
+  removeButton: null,
   currentDragItemIndex: 0,
   events: {
     "click .btn": "tab_changeHandler",
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
+    "mouseover #source-list li": "sourceItem_mouseOverHandler",
+    "mouseout #source-list li": "sourceItem_mouseOutHandler",
     "focusout #source-list input": "input_focusOutHandler",
     "keydown #source-list input": "input_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
-    "sortdeactivate #source-list ul": "source_sortdeactivateHandler"
+    "sortdeactivate #source-list ul": "source_sortdeactivateHandler",
+    "click #remove-button": "removeButton_clickHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.removeButton = $('#remove-button');
     this.currentPanel = this.$('#template-list');
     this.options.book.on('change:size', this.resizeHandler, this);
     this.model.set('template', this.$('#source-list').html());
@@ -132,5 +137,16 @@ Meatazine.view.SourcePanel = Backbone.View.extend({
     collection.remove(model);
     collection.add(model, {at: ui.item.index()});
     collection.trigger('sort', this.currentDragItemIndex, ui.item.index());
+  },
+  sourceItem_mouseOverHandler: function (event) {
+    $(event.currentTarget).append(this.removeButton);
+  },
+  sourceItem_mouseOutHandler: function (event) {
+    if (this.removeButton.parent()[0] !== event.currentTarget) {
+      this.removeButton.remove();
+    }
+  },
+  removeButton_clickHandler: function (event) {
+    
   }
 })

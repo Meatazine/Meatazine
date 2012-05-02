@@ -12,12 +12,13 @@ Meatazine.view.PageList = Backbone.View.extend({
     "click li.item": "item_clickHandler",
     "mouseover li.item": "item_mouseOverHandler",
     "mouseout li.item": "item_mouseOutHandler",
-    "click .remove-button": "removeButton_clickHandler",
+    "click #remove-button": "removeButton_clickHandler",
     "sortactivate #page-list-inner": "sortactivateHandler",
     "sortdeactivate #page-list-inner": "sortdeactivateHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.removeButton = $('#remove-button');
     this.list = this.$('#page-list-inner');
     this.options.book.on('change:size', this.resizeHandler, this);
     this.options.book.on('refresh', this.refreshHandler, this);
@@ -25,10 +26,6 @@ Meatazine.view.PageList = Backbone.View.extend({
   },
   render: function () {
     this.addButton = this.$('.add-button');
-    this.createRemoveButton();
-  },
-  createRemoveButton: function () {
-    this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
   },
   createItem: function (options) {
     options = _.extend({"class": "item"}, options);
@@ -61,7 +58,7 @@ Meatazine.view.PageList = Backbone.View.extend({
     $(event.currentTarget).append(this.removeButton);
   },
   item_mouseOutHandler: function (event) {
-    if (this.removeButton.parent().index() === $(event.currentTarget).index()) {
+    if (this.removeButton.parent()[0] !== event.currentTarget) {
       this.removeButton.remove();
     }
   },

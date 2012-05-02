@@ -95,7 +95,7 @@ Meatazine.utils.FileReferrence = function () {
     }
   }
   _.extend(this, Backbone.Events);
-  reader.onload = function (event) {
+  reader.onloadend = function (event) {
     self.trigger('complete:read', event.target.result);
   }
   window.webkitRequestFileSystem(TEMPORARY, 128 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
