@@ -2,14 +2,12 @@ jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.PageBody = Backbone.View.extend({
   book: null,
   source: null,
+  contextButtons: null,
   items: [],
   isSentByMe: false,
-  events: {
-    "focusin .editable": "text_focusInHandler",
-    "focusout .editable": "text_focusOutHandler"
-  },
   initialize: function (options) {
     this.$el = $(this.el);
+    this.contextButtons = options.contextButtons;
     this.book = options.book;
     this.book.on('change:size', this.resizeHandler, this);
     this.source = options.source;
@@ -33,6 +31,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
         el: elementDom
       });
       element.on('change', this.element_changeHandler, this);
+      element.on('edit:start', this.element_editStartHandler, this);
+      element.on('edit:stop', this.element_editStopHandler, this);
       this.items[index] = element;
     }, this);
     
@@ -93,15 +93,12 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.refreshThumbnail();
     this.trigger('edit', collection);
   },
-  text_focusInHandler: function (event) {
-    $(event.target).addClass('editing');
+  element_editStartHandler: function (event, type) {
+    this.contextButtons.showButtons(type);
+    event.target.addEditorHandler(this.contextButtons);
   },
-  text_focusOutHandler: function (event) {
-    var target = $(event.target),
-        index = target.index(this.$('.editable')),
-        template = $('<div>' + this.model.get('template') + '</div>');
-    template.find('.editable').eq(index).text(target.text());
-    this.model.set('template', template.html());
-    target.removeClass('editing');
+  element_editStopHandler: function (event) {
+    this.contextButtons.off(null, null, event.target);
+    this.contextButtons.disable();
   }
 })

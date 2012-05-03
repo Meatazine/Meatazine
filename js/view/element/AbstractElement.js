@@ -9,7 +9,9 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     "dragenter img": "img_dragEnterHandler",
     "dragleave img": "img_dragLeaveHandler",
     "click .placeholder": "placeholder_clickHandler",
-    "change input[type='file']": "input_selectHandler"
+    "change input[type='file']": "input_selectHandler",
+    "focusin .editable": "text_focusInHandler",
+    "focusout .editable": "text_focusOutHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -84,5 +86,17 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
   input_selectHandler: function (event) {
     this.handleFiles(this.uploader[0].files, this.uploader.data('target'));
     this.uploader.remove();
+  },
+  text_focusInHandler: function (event) {
+    $(event.target).addClass('editing');
+    this.trigger('edit:start', 'text');
+  },
+  text_focusOutHandler: function (event) {
+    var target = $(event.target),
+        index = target.index(this.$('.editable')),
+        template = $('<div>' + this.model.get('template') + '</div>');
+    template.find('.editable').eq(index).text(target.text());
+    this.model.set('template', template.html());
+    target.removeClass('editing');
   }
 });
