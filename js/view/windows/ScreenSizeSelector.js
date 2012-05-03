@@ -24,7 +24,7 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
     this.info
       .text(this.model.get('width') + ' × ' + this.model.get('height'))
       .attr('title', '适用机型：' + this.$('.active').attr('data-device'))
-      .tooltip({placement: 'bottom'});
+      .tooltip({placement: 'right'});
   },
   device_clickHandler: function (event) {
     var target = this.$(event.currentTarget);

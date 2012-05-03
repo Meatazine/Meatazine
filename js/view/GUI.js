@@ -19,7 +19,7 @@ Meatazine.view.GUI = Backbone.View.extend({
       model: this.book,
       infoText: '#screen-size-info'
     });
-    this.navbar = new Meatazine.view.NavBar({
+    this.navbar = new Meatazine.view.ui.NavBar({
       el: '#navbar'
     });
     this.navbar.on('select', this.navbar_selectHandler, this);

@@ -1,27 +1,27 @@
 $(function () {
-  var config = new Meatazine.model.ConfigModel();
-  var pages = new Meatazine.model.PageCollection();
-  var book = new Meatazine.model.BookProperties({
-    pages: pages
-  });
+  var config = new Meatazine.model.ConfigModel(),
+      pages = new Meatazine.model.PageCollection(),
+      book = new Meatazine.model.BookProperties({
+        pages: pages
+      }),
+      list = new Meatazine.view.ui.PageList({
+        el: '#page-list',
+        book: book,
+        collection: pages
+      }),
+      source = new Meatazine.view.ui.SourcePanel({
+        el: '#panel',
+        book: book,
+        model: new Meatazine.model.SourceModel()
+      }),
+      page = new Meatazine.view.ui.PageBody({
+        el: '#page-body',
+        book: book,
+        source: source.model,
+      });
   GUI = new Meatazine.view.GUI({
     config: config,
     book: book
-  });
-  var list = new Meatazine.view.PageList({
-    el: '#page-list',
-    book: book,
-    collection: pages
-  });
-  var source = new Meatazine.view.SourcePanel({
-    el: '#panel',
-    book: book,
-    model: new Meatazine.model.SourceModel()
-  });
-  var page = new Meatazine.view.PageBody({
-    el: '#page-body',
-    book: book,
-    source: source.model
   });
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);

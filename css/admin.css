@@ -150,6 +150,11 @@ body {
   position:absolute;
   bottom: -50px;
 }
+#context-menu {
+  position:absolute;
+  top:0;
+  right:332px;
+}
 
 #panel {
   width: 300px;

@@ -31,7 +31,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
     item.insertBefore(this.placeholder);
   },
   createPlaceholder: function () {
-    this.placeholder = Meatazine.utils.render(this.template, (new Meatazine.model.element.ElementModel()).toJSON());
+    this.placeholder = Meatazine.utils.render(this.template, (new this.collection.model()).toJSON());
     this.placeholder = $(this.placeholder);
     this.$el.append(this.placeholder);
   },
@@ -53,7 +53,6 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
         this.next();
       }
     }
-    console.log('xx');
   },
   next: function () {
     if (this.loadingFiles.length > 0) {
@@ -100,7 +99,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
         .data('target', event.target);
       setTimeout(function (uploader) {
         uploader.click();
-      }, 50, this.uploader);
+      }, 100, this.uploader);
     } else {
       var index = $(event.target).parent().index();
       this.body.setModel(this.collection.at(index));

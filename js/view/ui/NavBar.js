@@ -1,10 +1,10 @@
-jQuery.namespace('Meatazine.view');
+jQuery.namespace('Meatazine.view.ui');
 /**
  * 处理一些简单的弹窗
  * 登录
  * 设计系统的操作广播事件给GUI处理
  */
-Meatazine.view.NavBar = Backbone.View.extend({
+Meatazine.view.ui.NavBar = Backbone.View.extend({
   events: {
     "click .system-button": "button_clickHandler"
   },
