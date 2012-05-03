@@ -8,7 +8,7 @@ Meatazine.view.element.SlideBodyElement = Meatazine.view.element.AbstractElement
   setNavi: function (navi) {
     this.navi = navi;
     this.collection = navi.collection;
-    this.$el.html(Mustache.render(this.template, (new this.collection.model()).toJSON()));
+    this.setModel(this.collection.length > 0 ? this.collection.at(0) : new this.collection.model());
   },
   setModel: function (model) {
     this.model = model;

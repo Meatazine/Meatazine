@@ -29,6 +29,10 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
     }
     var item = $(this.createItem(this.collection.length));
     item.insertBefore(this.placeholder);
+    item.find('.placeholder').removeClass('placeholder');
+    if (this.body != null) {
+      this.body.setModel(this.collection.at(0));
+    }
   },
   createPlaceholder: function () {
     this.placeholder = Meatazine.utils.render(this.template, (new this.collection.model()).toJSON());
