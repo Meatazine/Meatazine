@@ -92,9 +92,6 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
     this.$el.children().eq(options.index).remove();
     this.trigger('change');
   },
-  img_dropHandler: function (event) {
-    this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
-  },
   img_clickHandler: function (event) {
     if ($(event.target).hasClass('placeholder')) {
       this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');

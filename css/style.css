@@ -1,15 +1,54 @@
 /*************************
- * 浏览用样式
+ * 电子书样式
  * 
  * ===================== */
+/**
+ *   全局
+ */
+.article {
+  font-size:14px;
+  line-height:21px;
+  text-shadow:0 -1px 0 #FFF;
+}
+
+/**
+ *   定位
+ */
 .fixed {
   position:absolute;
 }
-.top, .tl, .tr {
-  top:0px;
+.l10 {
+  left:10%;
 }
-.bottom, .bl, .br {
-  bottom:0px;
+.r5 {
+  right:5%;
+}
+.t10, .tr10 {
+  top:10%;
+}
+.t20 {
+  top:20%;
+}
+.t25 {
+  top:25%;
+}
+.t30 {
+  top:30%;
+}
+.t35 {
+  top:35%;
+}
+.r10, .br10, .tr10 {
+  right:10%;
+}
+.b10, .br10, .lb10 {
+  bottom: 10%;
+}
+.b20 {
+  bottom:20%;
+}
+.b30 {
+  bottom:30%;
 }
 .hcenter {
   width:100%;
@@ -18,18 +57,68 @@
 .vbottom {
   bottom:15%;
 }
+.v-middle-top {
+  top:50%;
+}
+.v-middle-bottom {
+  bottom:50%;
+}
+.mt5 {
+  margin-top:5%;
+}
+.mt10 {
+  margin-top: 10%;
+}
 .full {
   width:100%;
   height:100%; 
 }
 
+/**
+ *   元素
+ */
+h1 {
+  font:bold 80px/120px Arial, Microsoft Yahei;
+  color:#FFF;
+  text-shadow: 1px 1px 4px #666;
+}
+h2 {
+  font:bold 50px/75px Arial, Microsoft Yahei;
+  color:#FFF;
+  text-shadow: 1px 1px 4px #999;
+}
+h3 {
+  font:bold 20px/30px Arial, Microsoft Yahei;
+  color:#FFF;
+  text-shadow:0px 0px 2px #999;
+}
+.summary {
+  color:#FFF;
+  background:rgba(0, 0, 0, .25);
+  padding:20px;
+  font:16px/24px Arial, Microsoft Yahei;
+  max-width:30%;
+}
+.bighead:first-letter {
+  font-size:250%;
+  line-height:120%;
+  font-weight:bold;
+  float:left;
+  padding-right:4px;
+}
+
+/**
+ *   组件
+ */
+.grid {
+  list-style: none;
+}
 .slide-navi {
   margin:0;
   background:rgba(0, 0, 0, 0.25);
   width: inherit;
 }
 .slide-navi li {
-  list-style: none;
   margin: 10px 0 10px 10px;
   float: left;
 }
@@ -37,6 +126,9 @@
   cursor:pointer;
 }
 
+/**
+ *   窗体
+ */
 #viewport {
   position:relative;
   z-index:1;
