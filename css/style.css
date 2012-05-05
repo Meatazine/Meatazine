@@ -41,6 +41,9 @@
 .r10, .br10, .tr10 {
   right:10%;
 }
+.bottom {
+  bottom:0;
+}
 .b10, .br10, .lb10 {
   bottom: 10%;
 }
@@ -110,7 +113,7 @@ h3 {
 /**
  *   组件
  */
-.grid {
+.grid, .grid li {
   list-style: none;
 }
 .slide-navi {

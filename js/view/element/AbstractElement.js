@@ -8,7 +8,7 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     "dragover img": "img_dragOverHandler",
     "dragenter img": "img_dragEnterHandler",
     "dragleave img": "img_dragLeaveHandler",
-    "click .placeholder": "placeholder_clickHandler",
+    "click img": "img_clickHandler",
     "change input[type='file']": "input_selectHandler"
   },
   initialize: function () {
@@ -52,6 +52,9 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     }, this);
     Meatazine.utils.fileAPI.clone(file);
   },
+  handleClickImg: function (img) {
+    
+  },
   img_dropHandler: function (event) {
     this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
   },
@@ -72,14 +75,18 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     this.render();
     this.trigger('change');
   },
-  placeholder_clickHandler: function (event) {
-    this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
-    this.uploader
-      .appendTo(this.$el)
-      .data('target', event.target);
-    setTimeout(function (uploader) {
-      uploader.click();
-    }, 50, this.uploader);
+  img_clickHandler: function (event) {
+    if ($(event.target).hasClass('placeholder')) {
+      this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
+      this.uploader
+        .appendTo(this.$el)
+        .data('target', event.target);
+      setTimeout(function (uploader) {
+        uploader.click();
+      }, 100, this.uploader);
+      return;
+    }
+    this.handleClickImg($(event.target));
   },
   input_selectHandler: function (event) {
     this.handleFiles(this.uploader[0].files, this.uploader.data('target'));

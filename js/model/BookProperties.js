@@ -29,7 +29,7 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
   preview: function () {
     var html = '';
     _.each(this.attributes.pages.models, function (model, i) {
-      html += model.renderHTML();
+      html += model.get('renderedHTML');
     }, this);
     Meatazine.utils.fileAPI.on('complete:save', this.saveCompleteHandler, this);
     Meatazine.utils.fileAPI.save('export.html', html);
