@@ -28,6 +28,14 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
       this.at(0).reset();
     }
   },
+  getToken: function (number) {
+    var model = new this.model(),
+        array = [];
+    for (; number > 0; number--) {
+      array.push(model.toJSON());
+    }
+    return array;
+  },
   model_changeHandler: function (model) {
     this.trigger('edit', _.indexOf(this.models, model));
   }

@@ -1,8 +1,10 @@
 jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.AbstractElement = Backbone.View.extend({
-  reader: null,
   uploader: null,
+  token: null,
   isLoading: false,
+  fileQueue: [],
+  items: [],
   events: {
     "drop img": "img_dropHandler",
     "dragover img": "img_dragOverHandler",
@@ -18,42 +20,50 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     this.render();
   },
   render: function () {
-    if (this.collection.length == 0) {
-      this.collection.create({});
+    var items = $(this.createItem(this.collection.toJSON()));
+    items.toggle(items.index() > this.options.config.number);
+    this.$el
+      .empty()
+      .append(items);
+    if (this.collection.length < this.options.config.number) {
+      this.token = $(this.createItem(this.collection.getToken(this.options.config.number - this.collection.length)));
+      this.$el.append(this.token);
     }
-    var item = this.createItem();
-    this.$el.html(item);
   },
   remove: function () {
     this.off();
     this.$el.remove();
   },
-  createItem: function (number) {
-    number = number || 1;
-    return Meatazine.utils.render(this.template, _.last(this.collection.toJSON(), number));
+  createItem: function (data) {
+    return Meatazine.utils.render(this.template, data);
   },
   handleFiles: function (files, img) {
-    var usableFiles = [],
-        file;
-    // 只认图片
+    var usableFiles = [];
+    // 暂时只认图片
+    // TODO 加入对音频文件（.mp3）和视频文件（.avi）的支持
     for (var i = 0, len = files.length; i < len; i++) {
       if (files[i].type.substr(0, 5) == 'image') {
-        file = files[i];
+        this.fileQueue.push(files[i]);
         break;
       }
     }
-    Meatazine.utils.fileAPI.on('complete:clone', function (url) {
-      $(img)
-        .removeClass('.placeholder')
-        .attr('src', url);
-      this.collection.at(0).set('img', url);
-      this.trigger('change', this.collection);
-      Meatazine.utils.fileAPI.off('complete:clone', null, this);
-    }, this);
-    Meatazine.utils.fileAPI.clone(file);
+    Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
+    if (!this.isLoading) {
+      this.isLoading = true;
+      this.next();
+    }
   },
   handleClickImg: function (img) {
     
+  },
+  next: function () {
+    if (this.fileQueue.length > 0) {
+      Meatazine.utils.fileAPI.clone(this.fileQueue.shift());
+    } else {
+      this.isLoading = false;
+      this.trigger('change', this.collection);
+      Meatazine.utils.fileAPI.off('complete:clone', null, this);
+    }
   },
   img_dropHandler: function (event) {
     this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
@@ -71,10 +81,6 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
   img_dragLeaveHandler: function (event) {
     $(event.currentTarget).removeClass('active-img');
   },
-  collection_editHandler: function (event) {
-    this.render();
-    this.trigger('change');
-  },
   img_clickHandler: function (event) {
     if ($(event.target).hasClass('placeholder')) {
       this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
@@ -87,6 +93,23 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
       return;
     }
     this.handleClickImg($(event.target));
+  },
+  collection_editHandler: function (event) {
+    this.render();
+    this.trigger('change');
+  },
+  file_completeHandler: function (url) {
+    var model = this.collection.create({img: url}),
+        item = $(this.createItem(model.toJSON()));
+    this.items.push(item);
+    if (this.options.config.number < this.items.length) {
+      item.addClass('hide');
+    }
+    this.$el.append(item);
+    if (this.token != null) {
+      this.token.remove();
+    }
+    this.next();
   },
   input_selectHandler: function (event) {
     this.handleFiles(this.uploader[0].files, this.uploader.data('target'));

@@ -3,7 +3,6 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.AbstractElement
   loadingIMGs: [],
   loadingFiles: [],
   body: null,
-  placeholder: null,
   initialize: function () {
     this.$el = $(this.el);
     this.template = this.el.innerHTML;

@@ -30,7 +30,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       }
       element = Meatazine.view.element.ElementFactory.getElement(config.type, {
         collection: collection,
-        el: elementDom
+        el: elementDom,
+        config: config
       });
       element.on('change', this.element_changeHandler, this);
       this.items[index] = element;
