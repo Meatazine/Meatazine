@@ -19,7 +19,6 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
       model.on('change', this.model_changeHandler, this);
       this.add(model);
     }
-    this.trigger('create', array.length);
   },
   removeAt: function (index) {
     if (this.length > 1) {

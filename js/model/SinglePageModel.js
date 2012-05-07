@@ -1,6 +1,5 @@
 jQuery.namespace('Meatazine.model');
 Meatazine.model.SinglePageModel = Backbone.Model.extend({
-  isEmpty: true,
   defaults: {
     templateType: 'face',
     template: '',
@@ -24,7 +23,6 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   createElement: function (index, array) {
     var contents = this.get('contents').concat(),
         element = new Meatazine.model.element.ElementCollection(array);
-    element.on('change', this.element_changeHandler, this);
     if (index != null) {
       contents[index] = element;
     } else {
@@ -38,7 +36,9 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     element = element || this.createElement(index);
     return element;
   },
-  element_changeHandler: function () {
-    this.isEmpty = false;
+  checkIsModified: function () {
+    return _.any(this.attributes.contents, function (collection) {
+      return collection.length > 0;
+    });
   }
 });

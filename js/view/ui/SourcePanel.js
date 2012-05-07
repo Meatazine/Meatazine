@@ -78,7 +78,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.pageContent = model;
   },
   page_editHandler: function (collection) {
-    if (!this.pageContent.isEmpty) {
+    if (this.pageContent.checkIsModified()) {
       this.$('.btn').eq(1).trigger('click');
     }
     if (collection != null) {

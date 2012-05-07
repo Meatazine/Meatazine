@@ -44,7 +44,7 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
         },
         zip = new Meatazine.utils.FileZip();
     _.each(this.attributes.pages.models, function (model, i) {
-      data.content += model.renderHTML();
+      data.content += model.renderedHTML;
     }, this);
     // 加载模板
     $.ajax({

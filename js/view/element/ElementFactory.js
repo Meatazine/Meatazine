@@ -28,7 +28,7 @@ Meatazine.view.element.ElementFactory = {
         break;
         
       default:
-        element = new Meatazine.view.element.NormalElement(options);
+        element = new Meatazine.view.element.BaseElement(options);
         break;
     }
     return element;

@@ -1,10 +1,10 @@
 jQuery.namespace('Meatazine.view.element');
-Meatazine.view.element.AbstractElement = Backbone.View.extend({
+Meatazine.view.element.BaseElement = Backbone.View.extend({
   uploader: null,
   token: null,
   isLoading: false,
   fileQueue: [],
-  items: [],
+  length: 0,
   events: {
     "drop img": "img_dropHandler",
     "dragover img": "img_dragOverHandler",
@@ -15,13 +15,14 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.template = this.el.innerHTML;
+    this.template = this.el.innerHTML.replace(/[\r\n]/gm, '');
     this.collection.on('edit', this.collection_editHandler, this);
+    this.collection.on('remove', this.collection_removeHandler, this);
+    this.collection.on('sort', this.collection_sortHandler, this);
     this.render();
   },
   render: function () {
     var items = $(this.createItem(this.collection.toJSON()));
-    items.toggle(items.index() > this.options.config.number);
     this.$el
       .empty()
       .append(items);
@@ -29,13 +30,14 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
       this.token = $(this.createItem(this.collection.getToken(this.options.config.number - this.collection.length)));
       this.$el.append(this.token);
     }
+    this.handleChildrenVisibility();
   },
   remove: function () {
     this.off();
     this.$el.remove();
   },
   createItem: function (data) {
-    return Meatazine.utils.render(this.template, data);
+    return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
   },
   handleFiles: function (files, img) {
     var usableFiles = [];
@@ -44,7 +46,6 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
     for (var i = 0, len = files.length; i < len; i++) {
       if (files[i].type.substr(0, 5) == 'image') {
         this.fileQueue.push(files[i]);
-        break;
       }
     }
     Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
@@ -53,8 +54,12 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
       this.next();
     }
   },
-  handleClickImg: function (img) {
+  handleClickingImg: function (img) {
     
+  },
+  handleChildrenVisibility: function () {
+    this.$el.children().slice(0, this.options.config.number).removeClass('hide');
+    this.$el.children().slice(this.options.config.number).addClass('hide');
   },
   next: function () {
     if (this.fileQueue.length > 0) {
@@ -92,22 +97,39 @@ Meatazine.view.element.AbstractElement = Backbone.View.extend({
       }, 100, this.uploader);
       return;
     }
-    this.handleClickImg($(event.target));
+    this.handleClickingImg($(event.target));
   },
-  collection_editHandler: function (event) {
-    this.render();
+  collection_editHandler: function (index) {
+    this.$el.children().eq(index).replaceWith(this.createItem(this.collection.at(index).toJSON()));
     this.trigger('change');
+  },
+  collection_removeHandler: function (model, collection, options) {
+    this.$el.children().eq(options.index).remove();
+    this.handleChildrenVisibility();
+    this.trigger('change');
+  },
+  collection_sortHandler: function (start, end) {
+    var item = this.$el.children().eq(start).remove();
+    if (end == 0) {
+      this.$el.prepend(item);
+    } else {
+      item.insertAfter(this.$el.children().eq(end - 1));
+    }
+    this.handleChildrenVisibility();
   },
   file_completeHandler: function (url) {
     var model = this.collection.create({img: url}),
         item = $(this.createItem(model.toJSON()));
-    this.items.push(item);
-    if (this.options.config.number < this.items.length) {
+    item.filter('.placeholder').add(item.find('.placeholder')).removeClass('placeholder');
+    this.length += 1;
+    if (this.options.config.number < this.length) {
       item.addClass('hide');
     }
-    this.$el.append(item);
-    if (this.token != null) {
-      this.token.remove();
+    if (this.token.length > 0) {
+      this.token.eq(0).replaceWith(item);
+      this.token = this.token.slice(1);
+    } else {
+      this.$el.append(item);
     }
     this.next();
   },
