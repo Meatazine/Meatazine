@@ -26,11 +26,11 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     this.$el
       .empty()
       .append(items);
-    if (this.collection.length < this.options.config.number) {
-      this.token = $(this.createItem(this.collection.getToken(this.options.config.number - this.collection.length)));
+    if (this.collection.length < this.collection.config.number) {
+      this.token = $(this.createItem(this.collection.getToken(this.collection.config.number - this.collection.length)));
       this.$el.append(this.token);
     }
-    this.handleChildrenVisibility();
+    this.handleChildrenState();
   },
   remove: function () {
     this.off();
@@ -57,9 +57,9 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   handleClickingImg: function (img) {
     
   },
-  handleChildrenVisibility: function () {
-    this.$el.children().slice(0, this.options.config.number).removeClass('hide');
-    this.$el.children().slice(this.options.config.number).addClass('hide');
+  handleChildrenState: function () {
+    this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
+    this.$el.children().slice(this.collection.config.number).addClass('hide');
   },
   next: function () {
     if (this.fileQueue.length > 0) {
@@ -105,7 +105,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   },
   collection_removeHandler: function (model, collection, options) {
     this.$el.children().eq(options.index).remove();
-    this.handleChildrenVisibility();
+    this.handleChildrenState();
     this.trigger('change');
   },
   collection_sortHandler: function (start, end) {
@@ -115,14 +115,14 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     } else {
       item.insertAfter(this.$el.children().eq(end - 1));
     }
-    this.handleChildrenVisibility();
+    this.handleChildrenState();
   },
   file_completeHandler: function (url) {
     var model = this.collection.create({img: url}),
         item = $(this.createItem(model.toJSON()));
     item.filter('.placeholder').add(item.find('.placeholder')).removeClass('placeholder');
     this.length += 1;
-    if (this.options.config.number < this.length) {
+    if (this.collection.config.number < this.length) {
       item.addClass('hide');
     }
     if (this.token.length > 0) {

@@ -3,4 +3,5 @@ body {
 }
 #viewport {
   background:#FFF;
+  overflow:hidden;
 }

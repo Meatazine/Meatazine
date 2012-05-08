@@ -5,7 +5,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
     var index = img.parent().index();
     this.body.setModel(this.collection.at(index));
   },
-  handleChildrenVisibility: function () {
+  handleChildrenState: function () {
     
   },
   next: function () {

@@ -1,5 +1,6 @@
 jQuery.namespace('Meatazine.model.element');
 Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
+  config: null,
   model: Meatazine.model.element.ElementModel,
   create: function (attributes, options) {
     var model = new this.model(attributes);

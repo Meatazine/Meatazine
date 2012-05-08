@@ -80,6 +80,8 @@ Meatazine.utils.FileZip = function () {
     }
   }
   
+  _.extend(this, Backbone.Events);
+  
   file.on('complete:read', readCompleteHandler, this);
   file.on('complete:save', saveCompleteHandler, this);
 }

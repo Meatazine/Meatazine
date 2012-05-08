@@ -13,6 +13,33 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     }, {silent: true});
     this.trigger('change:size', w, h);
   },
+  createZip: function () {
+    var self = this,
+        data = _.pick(this.attributes, 'width', 'height'),
+        zip = new Meatazine.utils.FileZip();
+    data.content = '';
+    _.each(this.attributes.pages.models, function (model, i) {
+      data.content += model.renderedHTML;
+    }, this);
+    // 加载模板
+    $.ajax({
+      url: 'template/index.html',
+      dataType: 'html',
+      success: function (template) {
+        template = Mustache.render(template, data);
+        // 将用到的素材添加到zip中，依次为link、script、有src属性的
+        template = template.replace(/(href|src)="(\S+)"/gmi, function () {
+          var url = arguments[2],
+              src = url.split('/').pop();
+          zip.addFile(src, null, url);
+          return arguments[1] + '="' + src + '"';
+        });
+        zip.addFile('index.html', template);
+        zip.trigger('ready');
+      }
+    });
+    return zip;
+  },
   save: function () {
     var data = _.clone(this.attributes);
     data.pages = this.get('pages').toJSON();
@@ -64,13 +91,11 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
       }
     });
   },
-  loadAsset: function (collection, attr, zip) {
-    _.each(collection, function (el, i) {
-      
-    }, this);
-  },
   publish: function () {
-    
+    var zip = this.createZip();
+    zip.on('ready', function () {
+      
+    });
   },
   fill: function (data) {
     this.setSize(data.width, data.height);
@@ -78,7 +103,7 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
   },
   saveCompleteHandler: function (url) {
     Meatazine.utils.fileAPI.off('complete:save', null, this);
-    window.open('preview.html', 'preview', 'width=' + this.get('width') + ',height=' + this.get('height'));
+    window.open('preview.html#width=' + this.get('width') + '&height=' + this.get('height'), 'preview');
   },
   loadTemplateComplete: function (template) {
     var html = '',

@@ -27,11 +27,11 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
           config = JSON.parse($(elementDom).attr('data-config'));
       if (!config.noData) {
       	collection = this.model.getContentAt(count++);
+      	collection.config = config;
       }
       element = Meatazine.view.element.ElementFactory.getElement(config.type, {
         collection: collection,
         el: elementDom,
-        config: config
       });
       element.on('change', this.element_changeHandler, this);
       this.items[index] = element;
@@ -60,12 +60,12 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   },
   getFilteredHTML: function () {
     var html = this.$el.clone();
-    html.find('.placeholder').remove();
+    html.find('.placeholder').removeClass('placeholder');
     html.find('[data-config]').removeAttr('data-config');
     html.find('.editable')
       .removeClass('editable')
       .removeProp('contenteditable');
-    return html.html();
+    return '<div class="page">' + html.html() + '</div>';
   },
   refreshThumbnail: function () {
     var self = this;
