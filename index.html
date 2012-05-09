@@ -39,7 +39,8 @@
                   <li class="divider"></li>
                   <li><a href="#preview" class="system-button" target="_blank">预览</a></li>
                   <li class="divider"></li>
-                  <li><a href="#publish" class="system-button">发布</a></li>
+                  <li><a href="#publish-settings" data-toggle="modal">发布设置</a></li>
+                  <li><a href="#publish" class="system-button" title="目前只支持发布Android应用" data-toggle="modal">发布</a></li>
                 </ul>
               </li>
               <li class="dropdown">
@@ -193,7 +194,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn active" data-toggle="button">启用向导</button>
-          <a href="#welcome" class="btn btn-primary" data-dismiss="modal">关闭</a>
+          <button href="#welcome" class="btn btn-primary" data-dismiss="modal">关闭</button>
         </div>
       </div>
       <div id="screen-size" class="modal hide">
@@ -232,8 +233,38 @@
           </p>
         </div>
         <div class="modal-footer">
-          <a class="btn btn-primary" href="#screen-size">确定</a>
-          <a class="btn" href="#screen-size" data-dismiss="modal">取消</a>
+          <button class="btn btn-primary" href="#screen-size">确定</button>
+          <button class="btn" href="#screen-size" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+      <div id="publish-settings" class="modal hide">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3>发布设置</h3>
+        </div>
+        <div class="modal-body">
+          占位，留待设置选项
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" href="#">确定</button>
+          <button class="btn" href="#" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+      <div id="publish" class="modal hide">
+        <div class="modal-header">
+          <h3>发布</h3>
+        </div>
+        <div class="modal-body">
+          <p>发布需要一点时间，请耐心等待</p>
+          <ol>
+            <li>生成压缩包</li>
+            <li>上传压缩包</li>
+            <li>服务器打包成应用</li>
+            <li>完成！请下载</li>
+          </ol>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" disabled="true">关闭</button>
         </div>
       </div>
     </div>

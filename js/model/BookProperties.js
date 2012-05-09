@@ -92,10 +92,10 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     });
   },
   publish: function () {
-    var zip = this.createZip();
+    /*var zip = this.createZip();
     zip.on('ready', function () {
       
-    });
+    });*/
   },
   fill: function (data) {
     this.setSize(data.width, data.height);
