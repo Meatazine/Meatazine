@@ -38,8 +38,9 @@ body {
   opacity:1;
 }
 /*========================
- * screen-size
- * 设备分辨率选择window
+ * windows
+ * #screen-size 设备分辨率选择
+ * #publish 发布窗体
  * =====================*/
 #screen-size .device {
   padding: 20px 0 5px;
@@ -62,6 +63,15 @@ body {
 #screen-size input {
   width: 60px;
   text-align:right;
+}
+
+#publish li.active {
+  list-style:circle;
+  color:#049cdb;
+}
+#publish li.pass {
+  list-style:disc;
+  color:#46a546;
 }
 
 /*========================

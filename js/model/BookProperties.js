@@ -3,6 +3,7 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
   defaults: {
     width: 1024,
     height: 768,
+    id: -1,
     pages: null
   },
   setSize: function (w, h) {
@@ -14,12 +15,11 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     this.trigger('change:size', w, h);
   },
   createZip: function () {
-    var self = this,
-        data = _.pick(this.attributes, 'width', 'height'),
+    var data = _.pick(this.attributes, 'width', 'height'),
         zip = new Meatazine.utils.FileZip();
     data.content = '';
     _.each(this.attributes.pages.models, function (model, i) {
-      data.content += model.renderedHTML;
+      data.content += model.get('renderedHTML');
     }, this);
     // 加载模板
     $.ajax({
@@ -35,10 +35,25 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
           return arguments[1] + '="' + src + '"';
         });
         zip.addFile('index.html', template);
-        zip.trigger('ready');
       }
     });
     return zip;
+  },
+  fill: function (data) {
+    this.setSize(data.width, data.height);
+    this.get('pages').fill(data.pages);
+  },
+  checkPackSatus: function () {
+    $.ajax({
+      url: '/meatazine/api/status/' + this.get('id') + '.log',
+      context: this,
+      success: function () {
+        GUI.publishStatus.finish();
+      },
+      error: function () {
+        setTimeout(this.checkPackSatus, 2000);
+      }
+    })
   },
   save: function () {
     var data = _.clone(this.attributes);
@@ -62,44 +77,39 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     Meatazine.utils.fileAPI.save('export.html', html);
   },
   exportZip: function () {
-    // 先生成内容html
-    var self = this,
-        data = {
-          width: this.get('width'),
-          height: this.get('height'),
-          content: ''
-        },
-        zip = new Meatazine.utils.FileZip();
-    _.each(this.attributes.pages.models, function (model, i) {
-      data.content += model.renderedHTML;
-    }, this);
-    // 加载模板
-    $.ajax({
-      url: 'template/index.html',
-      dataType: 'html',
-      success: function (template) {
-        template = Mustache.render(template, data);
-        // 将用到的素材添加到zip中，依次为link、script、有src属性的
-        template = template.replace(/(href|src)="(\S+)"/gmi, function () {
-          var url = arguments[2],
-              src = url.split('/').pop();
-          zip.addFile(src, null, url);
-          return arguments[1] + '="' + src + '"';
-        });
-        zip.addFile('index.html', template);
-        zip.downloadZip();
-      }
+    var zip = this.createZip();
+    zip.on('ready', function () {
+      zip.downloadZip();
     });
   },
   publish: function () {
-    /*var zip = this.createZip();
+    var self = this,
+        zip = this.createZip();
     zip.on('ready', function () {
-      
-    });*/
-  },
-  fill: function (data) {
-    this.setSize(data.width, data.height);
-    this.get('pages').fill(data.pages);
+      var zipData = zip.generate(false, 'DEFLATE'),
+          builder = new WebKitBlobBuilder(),
+          byteArray = new Uint8Array(zipData.length);
+      for (var i = 0, len = zipData.length; i < len; i++) {
+        byteArray[i] = zipData.charCodeAt(i) & 0xFF;
+      }
+      builder.append(byteArray.buffer);
+      $.ajax({
+        url: '/meatazine/api/publish.php',
+        type: 'POST',
+        contentType: 'application/octet-stream',
+        processData: false,
+        data: byteArray.buffer,
+        context: self,
+        beforeSend: function() {
+          GUI.publishStatus.showStep(2);
+        },
+        success: function (data) {
+          GUI.publishStatus.showStep(3);
+          this.set('id', data);
+          this.checkPackSatus();
+        },
+      });
+    });
   },
   saveCompleteHandler: function (url) {
     Meatazine.utils.fileAPI.off('complete:save', null, this);

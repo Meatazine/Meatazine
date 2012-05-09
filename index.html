@@ -4,7 +4,24 @@
     <title>肉大师</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/loading.css" />
+    <style>
+      #loading {
+        width: 200px;
+        position:absolute;
+        left:50%;
+        top:100px;
+        margin-left:-100px;
+        padding: 30px 0;
+        border:4px dashed #F33;
+        border-radius: 8px;
+      }
+      #loading p {
+        font-size:14px;
+      }
+      .hidden, .hide {
+        display:none;
+      }
+    </style>
   </head>
   <body>
     <div id="loading">
@@ -78,7 +95,7 @@
           </ul>
           <a class="btn page-list-control down" href="#page-list" data-slide="next" disabled="true"><i class="icon-chevron-down"></i></a>
         </div>
-        <div id="page-body">
+        <div id="page-body" class="page">
         </div>
         <div id="panel">
           <div class="btn-group" data-toggle="buttons-radio">
@@ -167,21 +184,21 @@
           <div id="new-features" class="carousel">
             <div class="carousel-inner">
               <div class="active item">
-                <img src="img/welcome/_MG_9071.JPG" width="100%" />
+                <img src="img/welcome/_MG_9071.jpg" width="100%" />
                 <div class="carousel-caption">
                   <h4>La Verenda庭院内</h4>
                   <p>刚来到La Verenda，乱拍的，好像这就是我们的房间，呵呵</p>
                 </div>
               </div>
               <div class="item">
-                <img src="img/welcome/_MG_8928.JPG" width="100%" />
+                <img src="img/welcome/_MG_8928.jpg" width="100%" />
                 <div class="carousel-caption">
                   <h4>La Verenda 庭院</h4>
                   <p>这座是专门做spa和各种护理的小楼，也卖他们自制的各种洗化用品，不过比较贵，我们后来还是在沙滩上找便宜的马杀鸡</p>
                 </div>
               </div>
               <div class="item">
-                <img src="img/welcome/_MG_9020.JPG" width="100%" />
+                <img src="img/welcome/_MG_9020.jpg" width="100%" />
                 <div class="carousel-caption">
                   <h4>La Verenda 酒吧</h4>
                   <p>从这里就能看到海了，那边是专属海滩以及烧烤餐厅</p>
@@ -295,6 +312,7 @@
     <script src="js/model/SourceModel.js"></script>
     <script src="js/view/windows/Welcome.js"></script>
     <script src="js/view/windows/ScreenSizeSelector.js"></script>
+    <script src="js/view/windows/PublishStatusWindow.js"></script>
     <script src="js/view/element/BaseElement.js"></script>
     <script src="js/view/element/SlideNaviElement.js"></script>
     <script src="js/view/element/SlideBodyElement.js"></script>

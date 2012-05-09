@@ -5,10 +5,10 @@
 /**
  *   全局
  */
-.article {
-  font-size:14px;
-  line-height:21px;
-  text-shadow:0 -1px 0 #FFF;
+#page-body,
+.page {
+  color:#FFF;
+  font:16px/150% Arial, Microsoft Yahei;
 }
 
 /**
@@ -83,36 +83,34 @@
 /**
  *   元素
  */
-h1 {
-  font:bold 80px/120px Arial, Microsoft Yahei;
-  color:#FFF;
+.page h1,
+.page h2,
+.page h3 {
+  font-weight:bold;
+  line-height:200%;
+}
+.page h1 {
   text-shadow: 1px 1px 4px #666;
 }
-h2 {
-  font:bold 50px/75px Arial, Microsoft Yahei;
-  color:#FFF;
+.page h2 {
   text-shadow: 1px 1px 4px #999;
 }
-h3 {
-  font:bold 20px/30px Arial, Microsoft Yahei;
-  color:#FFF;
+.page h3 {
   text-shadow:0px 0px 2px #999;
 }
-.summary {
-  color:#FFF;
+.page .summary,
+.page .content {
   background:rgba(0, 0, 0, .4);
   padding:20px;
   font:16px/24px Arial, Microsoft Yahei;
+}
+.page .summary {
   max-width:30%;
 }
-.content {
-  color:#FFF;
-  padding:20px;
-  font:16px/24px Arial, Microsoft Yahei;
-  background:rgba(0, 0, 0, .4);
+.page .content {
   margin:0;
 }
-.bighead:first-letter {
+.page .bighead:first-letter {
   font-size:250%;
   line-height:120%;
   font-weight:bold;

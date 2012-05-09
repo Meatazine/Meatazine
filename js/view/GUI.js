@@ -4,7 +4,7 @@ Meatazine.view.GUI = Backbone.View.extend({
   config: null,
   welcome: null,
   screenSelector: null,
-  config: null,
+  publishStatus: null,
   book: null,
   initialize: function () {
     this.config = this.options.config;
@@ -18,6 +18,10 @@ Meatazine.view.GUI = Backbone.View.extend({
       el: '#screen-size',
       model: this.book,
       infoText: '#screen-size-info'
+    });
+    this.publishStatus = new Meatazine.view.windows.PublishStatusWindow({
+      el: '#publish',
+      model: this.book
     });
     this.navbar = new Meatazine.view.ui.NavBar({
       el: '#navbar'
@@ -40,13 +44,20 @@ Meatazine.view.GUI = Backbone.View.extend({
     $('#page-area').width(474 + w);
   },
   navbar_selectHandler: function (type) {
-    if (type == 'exportZip') {
-      noty({
-        layout: 'topLeft',
-        text: '正在将全部素材压缩打包，请稍后',
-        theme: 'noty_theme_twitter',
-        type: 'information',
-      })
+    switch (type) {
+      case 'exportZip':
+        noty({
+          layout: 'topLeft',
+          text: '正在将全部素材压缩打包，请稍后',
+          theme: 'noty_theme_twitter',
+          type: 'information',
+        });
+        break;
+        
+      case 'publish':
+        this.publishStatus.reset();
+        this.publishStatus.showStep(1);
+        break;
     }
     this.book[type]();
   }
