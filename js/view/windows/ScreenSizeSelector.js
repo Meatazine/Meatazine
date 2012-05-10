@@ -9,6 +9,7 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
     this.info = $(this.options.infoText);
     this.render();
     this.confirmHandler();
+    delete this.options;
   },
   render: function () {
     this.$('form').hide();

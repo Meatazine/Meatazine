@@ -3,6 +3,11 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
   defaults: {
     width: 1024,
     height: 768,
+    id: -1,
+    platform: 1, // 1-android, 2-ios, 3-wp
+    icon: '',
+    cover: '',
+    gallery: -1,
     pages: null
   },
   setSize: function (w, h) {
@@ -12,6 +17,47 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
       height: h
     }, {silent: true});
     this.trigger('change:size', w, h);
+  },
+  createZip: function () {
+    var data = _.pick(this.attributes, 'width', 'height'),
+        zip = new Meatazine.utils.FileZip();
+    data.content = '';
+    _.each(this.attributes.pages.models, function (model, i) {
+      data.content += model.get('renderedHTML');
+    }, this);
+    // 加载模板
+    $.ajax({
+      url: 'template/index.html',
+      dataType: 'html',
+      success: function (template) {
+        template = Mustache.render(template, data);
+        // 将用到的素材添加到zip中，依次为link、script、有src属性的
+        template = template.replace(/(href|src)="(\S+)"/gmi, function () {
+          var url = arguments[2],
+              src = url.split('/').pop();
+          zip.addFile(src, null, url);
+          return arguments[1] + '="' + src + '"';
+        });
+        zip.addFile('index.html', template);
+      }
+    });
+    return zip;
+  },
+  fill: function (data) {
+    this.setSize(data.width, data.height);
+    this.get('pages').fill(data.pages);
+  },
+  getAppPack: function () {
+    $.ajax({
+      url: '/meatazine/api/publish.php',
+      data: {
+        id: this.get('id')
+      },
+      context: this,
+      success: function () {
+        GUI.publishStatus.finish();
+      },
+    })
   },
   save: function () {
     var data = _.clone(this.attributes);
@@ -29,56 +75,44 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
   preview: function () {
     var html = '';
     _.each(this.attributes.pages.models, function (model, i) {
-      html += model.renderHTML();
+      html += model.get('renderedHTML');
     }, this);
     Meatazine.utils.fileAPI.on('complete:save', this.saveCompleteHandler, this);
     Meatazine.utils.fileAPI.save('export.html', html);
   },
   exportZip: function () {
-    // 先生成内容html
-    var self = this,
-        data = {
-          width: this.get('width'),
-          height: this.get('height'),
-          content: ''
-        },
-        zip = new Meatazine.utils.FileZip();
-    _.each(this.attributes.pages.models, function (model, i) {
-      data.content += model.renderHTML();
-    }, this);
-    // 加载模板
-    $.ajax({
-      url: 'template/index.html',
-      dataType: 'html',
-      success: function (template) {
-        template = Mustache.render(template, data);
-        // 将用到的素材添加到zip中，依次为link、script、有src属性的
-        template = template.replace(/(href|src)="(\S+)"/gmi, function () {
-          var url = arguments[2],
-              src = url.split('/').pop();
-          zip.addFile(src, null, url);
-          return arguments[1] + '="' + src + '"';
-        });
-        zip.addFile('index.html', template);
-        zip.downloadZip();
-      }
+    var zip = this.createZip();
+    zip.on('ready', function () {
+      zip.downloadZip();
     });
   },
-  loadAsset: function (collection, attr, zip) {
-    _.each(collection, function (el, i) {
-      
-    }, this);
-  },
   publish: function () {
-    
-  },
-  fill: function (data) {
-    this.setSize(data.width, data.height);
-    this.get('pages').fill(data.pages);
+    var self = this,
+        zip = this.createZip();
+    zip.on('ready', function () {
+      var zipData = zip.generate(false, 'DEFLATE'),
+          byteArray = new Uint8Array(zipData.length);
+      for (var i = 0, len = zipData.length; i < len; i++) {
+        byteArray[i] = zipData.charCodeAt(i) & 0xFF;
+      }
+      $.ajax({
+        url: '/meatazine/api/save.php',
+        type: 'POST',
+        contentType: 'application/octet-stream',
+        processData: false,
+        data: byteArray.buffer,
+        success: function (data) {
+          GUI.publishStatus.showStep(3);
+          self.set('id', data);
+          self.getAppPack();
+        },
+      });
+      GUI.publishStatus.showStep(2);
+    });
   },
   saveCompleteHandler: function (url) {
     Meatazine.utils.fileAPI.off('complete:save', null, this);
-    window.open('preview.html', 'preview', 'width=' + this.get('width') + ',height=' + this.get('height'));
+    window.open('preview.html#width=' + this.get('width') + '&height=' + this.get('height'), 'preview');
   },
   loadTemplateComplete: function (template) {
     var html = '',

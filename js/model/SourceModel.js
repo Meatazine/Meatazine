@@ -28,6 +28,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     $.ajax({
       url: './template/' + this.loadQueue[0] + '.html',
       dataType: 'text',
+      cache: false,
       context: this,
       success: this.parse
     });

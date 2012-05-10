@@ -1,9 +1,9 @@
 jQuery.namespace('Meatazine.model');
 Meatazine.model.SinglePageModel = Backbone.Model.extend({
-  isEmpty: true,
   defaults: {
     templateType: 'face',
     template: '',
+    renderedHTML: '',
     contents: []
   },
   initialize: function (init) {
@@ -23,7 +23,6 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   createElement: function (index, array) {
     var contents = this.get('contents').concat(),
         element = new Meatazine.model.element.ElementCollection(array);
-    element.on('change', this.element_changeHandler, this);
     if (index != null) {
       contents[index] = element;
     } else {
@@ -37,50 +36,9 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     element = element || this.createElement(index);
     return element;
   },
-  getCleanTemplate: function () {
-    var template = $('<div>' + this.get('template') + '</div>');
-    template.find('.editable').removeClass('editable');
-    template.find('[data-config]').removeAttr('data-config');
-    return template.html();
-  },
-  renderHTML: function () {
-    var count = 0,
-        temp = {},
-        template = $('<div>' + this.get('template') + '</div>');
-    _.each(template.find('[data-config]'), function (elementDom, index) {
-      var config = JSON.parse($(elementDom).attr('data-config')),
-          data, content;
-      if (config.noData) {
-        var key = config.type.match(/(\w+)\-/)[1];
-        if (temp.hasOwnProperty(key)) {
-          data = Meatazine.utils.render($(elementDom).html(), temp[key].at(0).toJSON());
-        } else {
-          temp[key] = elementDom;
-        }
-      } else {
-        data = this.get('contents')[count].toJSON();
-        if (config.type.indexOf('-') != -1) {
-          var key = config.type.match(/(\w+)\-/)[1];
-          if (temp.hasOwnProperty(key)) {
-            $(temp[key]).html(Meatazine.utils.render($(temp[key]).html(), data[0]));
-          } else {
-            temp[key] = data;
-          }
-        }
-        count++;
-      }
-      if (data != null) {
-        content = Meatazine.utils.render($(elementDom).html(), data);
-        $(elementDom).html(content);
-      }
-      $(elementDom).addClass(config.type)
-    }, this);
-    template.find('.editable').removeClass('editable');
-    template.find('.placeholder').removeClass('placeholder');
-    template.find('[data-config]').removeAttr('data-config');
-    return '<div class="page">' + template.html() + '</div>';
-  },
-  element_changeHandler: function () {
-    this.isEmpty = false;
+  checkIsModified: function () {
+    return _.any(this.attributes.contents, function (collection) {
+      return collection.length > 0;
+    });
   }
 });

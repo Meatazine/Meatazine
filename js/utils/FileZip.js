@@ -46,6 +46,12 @@ Meatazine.utils.FileZip = function () {
     });
     file.save('肉大师导出.zip', content, 'application/zip');
   }
+  this.generate = function (base64, compression) {
+    return zip.generate({
+      base64: base64,
+      compression: compression
+    });
+  }
   function readCompleteHandler(content) {
     var item = queue.shift();
     zip.file(item.name, content, {binary: true});
@@ -74,11 +80,14 @@ Meatazine.utils.FileZip = function () {
       }
     } else {
       isLoading = false;
+      self.trigger('ready');
       if (isAutoDownload) {
         self.downloadZip();
       }
     }
   }
+  
+  _.extend(this, Backbone.Events);
   
   file.on('complete:read', readCompleteHandler, this);
   file.on('complete:save', saveCompleteHandler, this);

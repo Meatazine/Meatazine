@@ -89,7 +89,7 @@ Meatazine.utils.FileReferrence = function () {
     self.save(fileName, fileContent, fileType);
   }
   function errorHandler(error) {
-    console.log('Error: ' + error.code, Error);
+    console.log('Error: ' + error.code, error);
     if (error.code == FileError.INVALID_MODIFICATION_ERR) {
       fileSystem.root.getFile(fileName, {create: false}, fileEntry_removeReadyHandler, errorHandler);
     }
@@ -98,6 +98,7 @@ Meatazine.utils.FileReferrence = function () {
   reader.onloadend = function (event) {
     self.trigger('complete:read', event.target.result);
   }
+  window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   window.webkitRequestFileSystem(TEMPORARY, 128 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
 }
 Meatazine.utils.fileAPI = new Meatazine.utils.FileReferrence();

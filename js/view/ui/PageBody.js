@@ -25,10 +25,11 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
           config = JSON.parse($(elementDom).attr('data-config'));
       if (!config.noData) {
       	collection = this.model.getContentAt(count++);
+      	collection.config = config;
       }
       element = Meatazine.view.element.ElementFactory.getElement(config.type, {
         collection: collection,
-        el: elementDom
+        el: elementDom,
       });
       element.on('change', this.element_changeHandler, this);
       element.on('edit:start', this.element_editStartHandler, this);
@@ -57,11 +58,21 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.source.fetch(this.model.get('templateType'));
     this.showLoading();
   },
+  getFilteredHTML: function () {
+    var html = this.$el.clone();
+    html.find('.placeholder').removeClass('placeholder');
+    html.find('[data-config]').removeAttr('data-config');
+    html.find('.editable')
+      .removeClass('editable')
+      .removeProp('contenteditable');
+    return '<div class="page">' + html.html() + '</div>';
+  },
   refreshThumbnail: function () {
     var self = this;
     html2canvas(this.$el, {onrendered: function (canvas) {
       self.trigger('change', canvas);
     }});
+    this.model.set('renderedHTML', this.getFilteredHTML());
   },
   pageList_selectHandler: function (model) {
     this.model = model;

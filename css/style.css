@@ -1,42 +1,170 @@
 /*************************
- * 浏览用样式
+ * 电子书样式
  * 
  * ===================== */
+/**
+ *   全局
+ */
+.page,
+.page p {
+  color:#FFF;
+  font:16px/150% Arial, Microsoft Yahei;
+}
+.large {
+  font-size: 30px;
+  line-height:45px;
+}
+.black {
+  color:#333 !important;
+}
+
+/**
+ *   定位
+ */
 .fixed {
   position:absolute;
 }
-.top, .tl, .tr {
-  top:0px;
+.l10 {
+  left:10%;
 }
-.bottom, .bl, .br {
-  bottom:0px;
+.l50 {
+  left:50%;
+}
+.l60 {
+  left:60%;
+}
+.r5 {
+  right:5%;
+}
+.t10, .tr10 {
+  top:10%;
+}
+.t20 {
+  top:20%;
+}
+.t25 {
+  top:25%;
+}
+.t30 {
+  top:30%;
+}
+.t35 {
+  top:35%;
+}
+.t50 {
+  top:50%;
+}
+.r10, .br10, .tr10 {
+  right:10%;
+}
+.bottom {
+  bottom:0;
+}
+.b10, .br10, .lb10 {
+  bottom: 10%;
+}
+.b15 {
+  bottom:15%;
+}
+.b20 {
+  bottom:20%;
+}
+.b30 {
+  bottom:30%;
+}
+.b50 {
+  bottom:50%;
 }
 .hcenter {
   width:100%;
   text-align:center;
 }
-.vbottom {
-  bottom:15%;
+.mt5 {
+  margin-top:5%;
+}
+.mt10 {
+  margin-top: 10%;
+}
+.p20 {
+  padding:20px;
 }
 .full {
   width:100%;
   height:100%; 
 }
 
-.slide-navi {
+/**
+ *   元素
+ */
+.page h1,
+.page h2,
+.page h3 {
+  font-weight:bold;
+  line-height:200%;
+}
+.page h1 {
+  font-size: 80px;
+  text-shadow: 1px 1px 4px #666;
+}
+.page h2 {
+  font-size: 60px;
+  text-shadow: 1px 1px 4px #999;
+}
+.page h3 {
+  font-size:40px;
+  text-shadow:0px 0px 2px #999;
+}
+.page .blackcon {
+  background:rgba(0, 0, 0, .4);
+  padding:20px;
+}
+.page .whitecon {
+  background: #FFF;
+  padding:20px;
+  color:#333;
+}
+.page .summary {
+  max-width:30%;
+}
+.page .content {
+  margin:0;
+}
+.page .bighead:first-letter {
+  font-size:250%;
+  line-height:120%;
+  font-weight:bold;
+  float:left;
+  padding-right:4px;
+}
+
+/**
+ *   组件
+ */
+.page .grid {
+  position: relative;
+}
+.page .grid, .grid li {
+  list-style: none;
+  float:left;
+  margin:0;
+  overflow: hidden;
+}
+.page .slide-navi {
   margin:0;
   background:rgba(0, 0, 0, 0.25);
   width: inherit;
 }
-.slide-navi li {
-  list-style: none;
+.page .slide-navi li {
   margin: 10px 0 10px 10px;
   float: left;
 }
-.slide-navi li img {
+.page .slide-navi li img {
   cursor:pointer;
 }
 
+/**
+ *   窗体
+ */
 #viewport {
   position:relative;
   z-index:1;
@@ -47,4 +175,12 @@
 }
 .page {
   float:left;
+  position:relative;
+}
+
+/**
+ *   效果
+ */
+.shadow {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, .4);
 }

@@ -27,8 +27,12 @@ Meatazine.view.element.ElementFactory = {
         }
         break;
         
+      case 'list':
+        element = new Meatazine.view.element.ListElement(options);
+        break;
+        
       default:
-        element = new Meatazine.view.element.NormalElement(options);
+        element = new Meatazine.view.element.BaseElement(options);
         break;
     }
     return element;

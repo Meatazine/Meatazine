@@ -4,8 +4,8 @@ BookReader = function (el, w, h) {
       $el = $('#' + el),
       totalPage = 0,
       scroll = null,
-      width = w,
-      height = h;
+      width = parseInt(w),
+      height = parseInt(h);
   this.start = function () {
     totalPage = $el.find('.page').length;
     $('#container').width($el.width() * totalPage);
@@ -36,31 +36,31 @@ BookReader = function (el, w, h) {
   }
   this.window_resizeHandler = function (event) {
     var ww = $(window).width(),
-        wh = $(window).height();
+        wh = $(window).height()
+        fitWidth = 0,
+        fitHeight = 0,
+        margin = '';
     if (ww > width && wh > height) {
-      var mt = wh - height >> 1;
-      $el
-        .width(width)
-        .height(height)
-        .css('margin', mt + 'px auto');
+      fitWidth = width;
+      fitHeight = height;
+      margin = (wh - height >> 1) + 'px auto';
     } else {
-      var nw = 0,
-          nh = 0;
       if (ww / wh > width / height) {
-        nh = wh;
-        nw = width * wh / height;
+        fitHeight = wh;
+        fitWidth = width * wh / height;
       } else {
-        nw = ww;
-        nh = height * ww / width;
+        fitWidth = ww;
+        fitHeight = height * ww / width;
       }
-      $el
-        .width(nw)
-        .height(nh)
-        .css('margin', (wh - nh >> 1) + 'px ' + (ww - nw >> 1) + 'px');
+      margin = (wh - fitHeight >> 1) + 'px ' + (ww - fitWidth>> 1) + 'px';
     }
-    $el.find('.page').width($el.width());
+    $el
+      .css('margin', margin)
+      .width(fitWidth)
+      .height(fitHeight);
+    $el.find('.page').width(fitWidth);
     if (totalPage > 0) {
-      $('#container').width($el.width() * totalPage);
+      $('#container').width(fitWidth * totalPage);
     }
   }
   function turnToPage(index) {
