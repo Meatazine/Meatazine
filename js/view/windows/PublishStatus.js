@@ -14,16 +14,13 @@ Meatazine.view.windows.PublishStatus = Backbone.View.extend({
   },
   finish: function () {
     this.showStep(4);
-    this.$('li').last()
-      .append('<button class="btn btn-success download" data-target=".apk"><i class="icon-download icon-white"></i>下载APK</button>');
-    this.$('.modal-footer button').removeProp('disabled');
+    this.$('button').removeProp('disabled');
   },
   reset: function () {
     this.$('li').removeClass('active pass');
-    this.$('li').remove('button');
-    this.$('.modal-footer button').prop('disabled', true);
+    this.$('button').prop('disabled', true);
   },
   downloadHandler: function (event) {
-    location.href = '/static/' + this.model.get('id') + $(event.target).attr('data-target');
+    location.href = './api/static/' + this.model.get('id') + $(event.target).attr('data-target');
   }
 });

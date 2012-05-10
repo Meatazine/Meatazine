@@ -5,10 +5,17 @@
 /**
  *   全局
  */
-#page-body,
-.page {
+.page,
+.page p {
   color:#FFF;
   font:16px/150% Arial, Microsoft Yahei;
+}
+.large {
+  font-size: 30px;
+  line-height:45px;
+}
+.black {
+  color:#333 !important;
 }
 
 /**
@@ -19,6 +26,12 @@
 }
 .l10 {
   left:10%;
+}
+.l50 {
+  left:50%;
+}
+.l60 {
+  left:60%;
 }
 .r5 {
   right:5%;
@@ -38,6 +51,9 @@
 .t35 {
   top:35%;
 }
+.t50 {
+  top:50%;
+}
 .r10, .br10, .tr10 {
   right:10%;
 }
@@ -47,24 +63,21 @@
 .b10, .br10, .lb10 {
   bottom: 10%;
 }
+.b15 {
+  bottom:15%;
+}
 .b20 {
   bottom:20%;
 }
 .b30 {
   bottom:30%;
 }
+.b50 {
+  bottom:50%;
+}
 .hcenter {
   width:100%;
   text-align:center;
-}
-.vbottom {
-  bottom:15%;
-}
-.v-middle-top {
-  top:50%;
-}
-.v-middle-bottom {
-  bottom:50%;
 }
 .mt5 {
   margin-top:5%;
@@ -90,19 +103,25 @@
   line-height:200%;
 }
 .page h1 {
+  font-size: 80px;
   text-shadow: 1px 1px 4px #666;
 }
 .page h2 {
+  font-size: 60px;
   text-shadow: 1px 1px 4px #999;
 }
 .page h3 {
+  font-size:40px;
   text-shadow:0px 0px 2px #999;
 }
-.page .summary,
-.page .content {
+.page .blackcon {
   background:rgba(0, 0, 0, .4);
   padding:20px;
-  font:16px/24px Arial, Microsoft Yahei;
+}
+.page .whitecon {
+  background: #FFF;
+  padding:20px;
+  color:#333;
 }
 .page .summary {
   max-width:30%;
@@ -121,25 +140,25 @@
 /**
  *   组件
  */
-.grid {
+.page .grid {
   position: relative;
 }
-.grid, .grid li {
+.page .grid, .grid li {
   list-style: none;
   float:left;
   margin:0;
   overflow: hidden;
 }
-.slide-navi {
+.page .slide-navi {
   margin:0;
   background:rgba(0, 0, 0, 0.25);
   width: inherit;
 }
-.slide-navi li {
+.page .slide-navi li {
   margin: 10px 0 10px 10px;
   float: left;
 }
-.slide-navi li img {
+.page .slide-navi li img {
   cursor:pointer;
 }
 

@@ -7,7 +7,7 @@
  * 通知用户下载
  */
 $zip = new ZipArchive();
-$template = 'template.zip';
+$template = 'template.apk';
 $id = (int)$_REQUEST['id'];
  
 // 先解压缩，然后进行把素材添加到apk   
@@ -23,11 +23,9 @@ $zip->open($filename);
 $mydir = dir($temp_dir);
 while ($file = $mydir->read()) {
   if (!is_dir($temp_dir/$file) && $file != '.' && $file != '..') {
-    $zip->addFile($temp_dir . $file, 'assets/www/' . $file);
-    unlink($temp_dir . $file);
+    echo $file . ' : ' . $zip->addFile($temp_dir . $file, 'assets/www/' . $file) . "<br />\n";
   }
 }
-rmdir($temp_dir);
 $zip->close();
 
 echo 'ok';

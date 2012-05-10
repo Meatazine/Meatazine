@@ -211,7 +211,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn active" data-toggle="button">启用向导</button>
-          <button href="#welcome" class="btn btn-primary" data-dismiss="modal">关闭</button>
+          <button class="btn btn-primary" data-dismiss="modal">关闭</button>
         </div>
       </div>
       <div id="screen-size" class="modal hide">
@@ -250,8 +250,8 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" href="#screen-size">确定</button>
-          <button class="btn" href="#screen-size" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary">确定</button>
+          <button class="btn" data-dismiss="modal">取消</button>
         </div>
       </div>
       <div id="book-config" class="modal hide">
@@ -300,8 +300,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" href="#">确定</button>
-          <button class="btn" href="#" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary">确定</button>
+          <button class="btn" data-dismiss="modal">取消</button>
         </div>
       </div>
       <div id="publish" class="modal hide">
@@ -309,16 +309,22 @@
           <h3>发布</h3>
         </div>
         <div class="modal-body">
-          <p>发布需要一点时间，请耐心等待</p>
+          <p>
+            受网速和服务器负载影响，发布需要几分钟到十几分钟时间，请耐心等待。<br />
+            期间请不要关闭浏览器或电脑。发布完成后，可以点击下方的按钮下载应用安装包。
+          </p>
           <ol>
             <li>生成压缩包</li>
             <li>上传压缩包</li>
             <li>服务器打包成应用</li>
-            <li>完成！请下载</li>
+            <li>
+              完成！请下载<br />
+              <button class="btn btn-success download" data-target=".apk"><i class="icon-download icon-white"></i> 下载APK</button>
+            </li>
           </ol>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" disabled="true">关闭</button>
+          <button class="btn btn-primary" disabled="true" data-dismiss="modal">关闭</button>
         </div>
       </div>
     </div>
