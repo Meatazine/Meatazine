@@ -56,7 +56,7 @@
                   <li class="divider"></li>
                   <li><a href="#preview" class="system-button" target="_blank">预览</a></li>
                   <li class="divider"></li>
-                  <li><a href="#publish-settings" data-toggle="modal">发布设置</a></li>
+                  <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
                   <li><a href="#publish" class="system-button" title="目前只支持发布Android应用" data-toggle="modal">发布</a></li>
                 </ul>
               </li>
@@ -254,13 +254,50 @@
           <button class="btn" href="#screen-size" data-dismiss="modal">取消</button>
         </div>
       </div>
-      <div id="publish-settings" class="modal hide">
+      <div id="book-config" class="modal hide">
         <div class="modal-header">
           <a class="close" data-dismiss="modal">&times;</a>
-          <h3>发布设置</h3>
+          <h3>应用属性</h3>
         </div>
         <div class="modal-body">
-          占位，留待设置选项
+          <form class="form-horizontal" onsubmit="return false;">
+            <fieldset>
+              <div class="control-group">
+                <label class="control-label" for="book-name">应用名称</label>
+                <div class="controls">
+                  <input type="text" class="input-normal" id="book-name" />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="book-icon">应用图标</label>
+                <div class="controls">
+                  <img src="" />
+                  <input type="file" />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="book-cover">应用封面</label>
+                <div class="controls">
+                  <img src="" />
+                  <input type="file" />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">目标平台</label>
+                <div class="controls btn-group" data-toggle="buttons-checkbox">
+                  <button class="btn active">Android</button>
+                  <button class="btn">iOS</button>
+                  <button class="btn">Windows Phone</button>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">应用模板</label>
+                <div class="controls">
+                  
+                </div>
+              </div>
+            </fieldset>
+          </form>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" href="#">确定</button>
@@ -312,7 +349,7 @@
     <script src="js/model/SourceModel.js"></script>
     <script src="js/view/windows/Welcome.js"></script>
     <script src="js/view/windows/ScreenSizeSelector.js"></script>
-    <script src="js/view/windows/PublishStatusWindow.js"></script>
+    <script src="js/view/windows/PublishStatus.js"></script>
     <script src="js/view/element/BaseElement.js"></script>
     <script src="js/view/element/SlideNaviElement.js"></script>
     <script src="js/view/element/SlideBodyElement.js"></script>

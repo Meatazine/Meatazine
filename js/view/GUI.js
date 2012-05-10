@@ -19,7 +19,7 @@ Meatazine.view.GUI = Backbone.View.extend({
       model: this.book,
       infoText: '#screen-size-info'
     });
-    this.publishStatus = new Meatazine.view.windows.PublishStatusWindow({
+    this.publishStatus = new Meatazine.view.windows.PublishStatus({
       el: '#publish',
       model: this.book
     });

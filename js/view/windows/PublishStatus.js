@@ -1,5 +1,5 @@
 jQuery.namespace('Meatazine.view.windows');
-Meatazine.view.windows.PublishStatusWindow = Backbone.View.extend({
+Meatazine.view.windows.PublishStatus = Backbone.View.extend({
   events: {
     "click .download": "downloadHandler"
   },

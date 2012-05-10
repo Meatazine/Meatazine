@@ -4,6 +4,10 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     width: 1024,
     height: 768,
     id: -1,
+    platform: 1, // 1-android, 2-ios, 3-wp
+    icon: '',
+    cover: '',
+    gallery: -1,
     pages: null
   },
   setSize: function (w, h) {
@@ -43,16 +47,16 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     this.setSize(data.width, data.height);
     this.get('pages').fill(data.pages);
   },
-  checkPackSatus: function () {
+  getAppPack: function () {
     $.ajax({
-      url: '/meatazine/api/status/' + this.get('id') + '.log',
+      url: '/meatazine/api/publish.php',
+      data: {
+        id: this.get('id')
+      },
       context: this,
       success: function () {
         GUI.publishStatus.finish();
       },
-      error: function () {
-        setTimeout(this.checkPackSatus, 2000);
-      }
     })
   },
   save: function () {
@@ -87,28 +91,23 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
         zip = this.createZip();
     zip.on('ready', function () {
       var zipData = zip.generate(false, 'DEFLATE'),
-          builder = new WebKitBlobBuilder(),
           byteArray = new Uint8Array(zipData.length);
       for (var i = 0, len = zipData.length; i < len; i++) {
         byteArray[i] = zipData.charCodeAt(i) & 0xFF;
       }
-      builder.append(byteArray.buffer);
       $.ajax({
-        url: '/meatazine/api/publish.php',
+        url: '/meatazine/api/save.php',
         type: 'POST',
         contentType: 'application/octet-stream',
         processData: false,
         data: byteArray.buffer,
-        context: self,
-        beforeSend: function() {
-          GUI.publishStatus.showStep(2);
-        },
         success: function (data) {
           GUI.publishStatus.showStep(3);
-          this.set('id', data);
-          this.checkPackSatus();
+          self.set('id', data);
+          self.getAppPack();
         },
       });
+      GUI.publishStatus.showStep(2);
     });
   },
   saveCompleteHandler: function (url) {
