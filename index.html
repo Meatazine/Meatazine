@@ -94,15 +94,17 @@
         </div>
         <div id="page-list">
           <p align="center" id="page-number">0/0</p>
-          <a class="btn page-list-control top" href="#page-list" data-slide="prev" disabled="true"><i class="icon-chevron-up"></i></a>
-          <ul id="page-list-inner" class="well">
-            <li>
-              <button class="btn btn-large add-button" type="button">
-                <i class="icon-b-plug-sign"></i>
-              </button>
-            </li>
-          </ul>
-          <a class="btn page-list-control down" href="#page-list" data-slide="next" disabled="true"><i class="icon-chevron-down"></i></a>
+          <button class="btn page-list-scroll up" disabled="true"><i class="icon-chevron-up"></i></button>
+          <div class="well" id="page-list-outer">
+            <ul id="page-list-inner">
+              <li>
+                <button class="btn btn-large add-button" type="button">
+                  <i class="icon-b-plug-sign"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+          <button class="btn page-list-scroll down" disabled="true"><i class="icon-chevron-down"></i></button>
         </div>
         <div id="page-body" class="page">
         </div>

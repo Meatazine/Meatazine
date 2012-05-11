@@ -90,14 +90,17 @@ body {
   text-shadow:0 1px 0 #FFF;
   float:left;
 }
-.page-list-control {
-  width:98px;
+.page-list-scroll {
+  width:120px;
+}
+#page-list-outer {
+  margin:5px 0;
+  overflow: hidden;
+  padding:5px 5px 0;
 }
 #page-list-inner {
-  height:648px;
-  overflow:hidden;
-  margin:5px 0;
-  padding:5px 5px 0;
+  list-style:none;
+  margin:0;
 }
 #page-list-inner li.item {
   width:106px;
