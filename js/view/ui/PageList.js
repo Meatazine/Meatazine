@@ -47,10 +47,10 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   },
   refreshScroll: function () {
     if (this.list.height() > this.outer.height()) {
-      this.$el.find('.').prop('disabled', false);
+      this.$('.up').prop('disabled', false);
       this.outer.scrollTop(this.list.height() - this.outer.height());
     } else {
-      this.$el.find('.page-list-scroll').prop('disabled', true);
+      this.$('.page-list-scroll').prop('disabled', true);
     }
   },
   item_clickHandler: function (event) {
@@ -133,18 +133,18 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   scrollUpHandler: function (event) {
     if (this.outer.scrollTop() > 0) {
       this.outer.scrollTop(this.outer.scrollTop() - this.outer.height());
-      this.$el.find('.down').prop('disabled', false);
+      this.$('.down').prop('disabled', false);
       if (this.outer.scrollTop() == 0) {
-        this.$el.find('.up').prop('disabled', true);
+        this.$('.up').prop('disabled', true);
       }
     }
   },
   scrollDownHandler: function (event) {
     if (this.list.height() - this.outer.scrollTop() > this.outer.height()) {
       this.outer.scrollTop(this.outer.scrollTop() + this.outer.height());
-      this.$el.find('.up').prop('disabled', false);
+      this.$('.up').prop('disabled', false);
       if (this.outer.scrollTop() == this.list.height() - this.outer.height()) {
-        this.$el.find('.down').prop('disabled', true);
+        this.$('.down').prop('disabled', true);
       }
     }
   }

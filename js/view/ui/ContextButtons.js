@@ -5,6 +5,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.$('.btn-group').hide();
     this.disable();
   },
   enable: function () {
@@ -15,8 +16,14 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   showButtonsAs: function (type) {
     this.enable();
+    this.$('.group' + type).show();
   },
   fontSize_selectHandler: function (event) {
     this.trigger('select:fontsize', event.target.innerHTML);
   }
 });
+Meatazine.view.ui.ContextButtonBype = {
+  TEXT: 1,
+  IMAGE: 2,
+  VIDEO: 3,
+}

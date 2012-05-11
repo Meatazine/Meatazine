@@ -5,6 +5,10 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   contextButtons: null,
   items: [],
   isSentByMe: false,
+  events: {
+    "focusin .editable": "editable_focusInHandler",
+    "focusout .editable": "editable_focusOutHandler"
+  },
   initialize: function (options) {
     this.$el = $(this.el);
     this.contextButtons = options.contextButtons;
@@ -37,7 +41,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       this.items[index] = element;
     }, this);
     
-    this.$('.editable').prop('contenteditable', true);
+    this.$('.editable')
+      .prop('contenteditable', true);
     this.refreshThumbnail();
     this.trigger('edit');
   },
@@ -64,7 +69,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     html.find('[data-config]').removeAttr('data-config');
     html.find('.editable')
       .removeClass('editable')
-      .removeProp('contenteditable');
+      .removeProp('contenteditable dragable');
     return '<div class="page">' + html.html() + '</div>';
   },
   refreshThumbnail: function () {
@@ -73,6 +78,12 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       self.trigger('change', canvas);
     }});
     this.model.set('renderedHTML', this.getFilteredHTML());
+  },
+  bindContextButton: function (input) {
+    var self = this;
+    input.focusout(function () {
+      self.contextButtons.off(null, null, this);
+    });
   },
   pageList_selectHandler: function (model) {
     this.model = model;
@@ -105,11 +116,18 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.trigger('edit', collection);
   },
   element_editStartHandler: function (event, type) {
-    this.contextButtons.showButtons(type);
+    this.contextButtons.showButtonsAs(type);
     event.target.addEditorHandler(this.contextButtons);
   },
   element_editStopHandler: function (event) {
     this.contextButtons.off(null, null, event.target);
+    this.contextButtons.disable();
+  },
+  editable_focusInHandler: function (event) {
+    this.contextButtons.showButtonsAs(Meatazine.view.ui.ContextButtonBype.TEXT);
+    this.bindContextButton($(event.target));
+  },
+  editable_focusOutHandler: function (event) {
     this.contextButtons.disable();
   }
 })

@@ -5,6 +5,12 @@
 body {
   padding: 60px 0 40px;
 }
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select:none;
+}
 
 .brand, h1, h2, h3 {
   font-family: Microsoft Yahei;

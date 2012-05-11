@@ -14,10 +14,14 @@ $(function () {
         book: book,
         model: new Meatazine.model.SourceModel()
       }),
+      contextButtons = new Meatazine.view.ui.ContextButtons({
+        el: '#context-menu'
+      })
       page = new Meatazine.view.ui.PageBody({
         el: '#page-body',
         book: book,
         source: source.model,
+        contextButtons: contextButtons
       });
   GUI = new Meatazine.view.GUI({
     config: config,

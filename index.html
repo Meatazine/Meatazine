@@ -83,14 +83,22 @@
           <span>目标分辨率：</span>
           <a href="#screen-size" data-toggle="modal" id="screen-size-info" title="适用机型：iPad, iPad 2, The New iPad">1024 &times; 768</a>
         </p>
-        <div class="btn-group" id="context-menu">
-          <button class="btn dropdown-toggle btn-mini" data-toggle="dropdown" href="#">
-            字号
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="#">12</a></li>
-          </ul>
+        <div id="context-menu">
+          <div class="btn-group group1">
+            <button class="btn dropdown-toggle btn-mini" data-toggle="dropdown">
+              字号
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" data-type="size">
+              <li><a href="#">16</a></li>
+              <li><a href="#">20</a></li>
+              <li><a href="#">24</a></li>
+              <li><a href="#">30</a></li>
+            </ul>
+            <button class="btn btn-mini" data-type="color">颜色</button>
+            <button class="btn btn-mini" data-toggle="button" data-type="drag">拖动</button>
+            <button class="btn btn-mini" data-type="delete">删除</button>
+          </div>
         </div>
         <div id="page-list">
           <p align="center" id="page-number">0/0</p>
@@ -347,7 +355,7 @@
     <link rel="stylesheet" href="css/jquery.noty.css" />
     <link rel="stylesheet" href="css/noty_theme_twitter.css" />
     <script src="js/libs/jquery-1.7.2.min.js"></script>
-    <script src="js/libs/jquery-ui-1.8.18.custom.min.js"></script>
+    <script src="js/libs/jquery-ui-1.8.20.custom.min.js"></script>
     <script src="js/libs/jQuery.namespace.js"></script>
     <script src="js/libs/mustache.js"></script>
     <script src="js/libs/bootstrap.min.js"></script>
