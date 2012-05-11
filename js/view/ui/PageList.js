@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.PageList = Backbone.View.extend({
   list : null,
+  outer: null,
   addButton: null,
   removeButton: null,
   currentItem: null,
@@ -13,12 +14,15 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     "mouseover li.item": "item_mouseOverHandler",
     "click #remove-button": "removeButton_clickHandler",
     "sortactivate #page-list-inner": "sortactivateHandler",
-    "sortdeactivate #page-list-inner": "sortdeactivateHandler"
+    "sortdeactivate #page-list-inner": "sortdeactivateHandler",
+    "click .up": "scrollUpHandler",
+    "click .down": "scrollDownHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
     this.removeButton = $('#remove-button');
     this.list = this.$('#page-list-inner');
+    this.outer = this.$('#page-list-outer');
     this.options.book.on('change:size', this.resizeHandler, this);
     this.options.book.on('refresh', this.refreshHandler, this);
     this.render();
@@ -40,6 +44,14 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     var index = this.currentItem.index() + 1;
     var total = this.length;
     this.$('#page-number').text(index + '/' + total);
+  },
+  refreshScroll: function () {
+    if (this.list.height() > this.outer.height()) {
+      this.$el.find('.').prop('disabled', false);
+      this.outer.scrollTop(this.list.height() - this.outer.height());
+    } else {
+      this.$el.find('.page-list-scroll').prop('disabled', true);
+    }
   },
   item_clickHandler: function (event) {
     if (this.currentItem != null) {
@@ -65,6 +77,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     var model = this.collection.create();
     item.attr('data-cid', model.cid);
     item.trigger('click');
+    this.refreshScroll();
     this.refreshPageNumber();
   },
   removeButton_clickHandler: function (event) {
@@ -81,6 +94,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     target
       .off()
       .remove();
+    this.refreshScroll();
     return false;
   },
   sortactivateHandler: function (event, ui) {
@@ -93,7 +107,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.refreshPageNumber();
   },
   resizeHandler: function (w, h) {
-    this.$('#page-list-inner').height(h - 120); // 把按钮和数字空出来
+    this.$('#page-list-outer').height(h - 120); // 把按钮和数字空出来
   },
   refreshHandler: function () {
     this.length = 0;
@@ -114,6 +128,24 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.currentItem.html(thumb);
     if (this.emptyItems.length > 0) {
       this.emptyItems.shift().trigger('click');
+    }
+  },
+  scrollUpHandler: function (event) {
+    if (this.outer.scrollTop() > 0) {
+      this.outer.scrollTop(this.outer.scrollTop() - this.outer.height());
+      this.$el.find('.down').prop('disabled', false);
+      if (this.outer.scrollTop() == 0) {
+        this.$el.find('.up').prop('disabled', true);
+      }
+    }
+  },
+  scrollDownHandler: function (event) {
+    if (this.list.height() - this.outer.scrollTop() > this.outer.height()) {
+      this.outer.scrollTop(this.outer.scrollTop() + this.outer.height());
+      this.$el.find('.up').prop('disabled', false);
+      if (this.outer.scrollTop() == this.list.height() - this.outer.height()) {
+        this.$el.find('.down').prop('disabled', true);
+      }
     }
   }
 })
