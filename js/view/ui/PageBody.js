@@ -6,8 +6,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   items: [],
   isSentByMe: false,
   events: {
-    "focusin .editable": "editable_focusInHandler",
-    "focusout .editable": "editable_focusOutHandler"
+    "focusout .editable": "editable_focusOutHandler",
+    "click .editable": "editable_clickHandler",
+    "dblclick .editable": "editable_dbClickHandler"
   },
   initialize: function (options) {
     this.$el = $(this.el);
@@ -28,7 +29,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       var collection, element,
           config = JSON.parse($(elementDom).attr('data-config'));
       if (!config.noData) {
-      	collection = this.model.getContentAt(count++);
+        var keys = elementDom.outerHTML.match(/{{(\w+)}}/gim);
+      	collection = this.model.getContentAt(count++, keys);
       	collection.config = config;
       }
       element = Meatazine.view.element.ElementFactory.getElement(config.type, {
@@ -42,7 +44,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     }, this);
     
     this.$('.editable')
-      .prop('contenteditable', true);
+      .attr('title', '双击开启编辑')
+      .draggable({ cursor: "move" })
+      .css('cursor', 'move');
     this.refreshThumbnail();
     this.trigger('edit');
   },
@@ -80,10 +84,14 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.model.set('renderedHTML', this.getFilteredHTML());
   },
   bindContextButton: function (input) {
-    var self = this;
-    input.focusout(function () {
-      self.contextButtons.off(null, null, this);
-    });
+    this.contextButtons.off();
+    this.contextButtons
+      .on('select:fontsize', function (size) {
+        input.css('font-size', size + 'px');
+      })
+      .on('select:color', function (color) {
+        input.css('color', color);
+      })
   },
   pageList_selectHandler: function (model) {
     this.model = model;
@@ -123,11 +131,37 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.contextButtons.off(null, null, event.target);
     this.contextButtons.disable();
   },
-  editable_focusInHandler: function (event) {
-    this.contextButtons.showButtonsAs(Meatazine.view.ui.ContextButtonBype.TEXT);
-    this.bindContextButton($(event.target));
-  },
   editable_focusOutHandler: function (event) {
-    this.contextButtons.disable();
+    $(event.target)
+      .prop('contenteditable', false)
+      .css('cursor', 'move')
+      .draggable({ cursor: "move"});
+  },
+  editable_clickHandler: function (event) {
+    var self = this, target = $(event.target);
+    function body_clickHandler(event) {
+      if ($.contains(self.contextButtons.$el[0], event.target)) {
+        return true;
+      }
+      self.contextButtons.hide();
+      self.contextButtons.off();
+      target.removeClass('editing');
+      $(this).off('click', body_clickHandler);
+    }
+    if (this.$('.editing').length > 0) {
+      this.$('.editing').removeClass('editing');
+    }
+    target.addClass('editing');
+    this.contextButtons.showButtonsAs(Meatazine.view.ui.ContextButtonBype.TEXT);
+    this.bindContextButton(target);
+    $('body').on('click', body_clickHandler);
+    event.stopPropagation();
+  },
+  editable_dbClickHandler: function (event) {
+    $(event.target)
+      .draggable('destroy')
+      .css('cursor', 'text')
+      .prop('contenteditable', true)
+      .focus();
   }
-})
+});

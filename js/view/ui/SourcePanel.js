@@ -21,7 +21,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.removeButton = $('#remove-button');
     this.currentPanel = this.$('#template-list');
     this.options.book.on('change:size', this.resizeHandler, this);
-    this.model.set('template', this.$('#source-list').html());
+    this.model.setSourceTemplate(this.$('#source-list').html());
     this.model.on('change:type', this.model_typeChangeHandler, this);
     this.render();
   },
@@ -81,19 +81,24 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     if (this.pageContent.checkIsModified()) {
       this.$('.btn').eq(1).trigger('click');
     }
-    if (collection != null) {
+    if (collection instanceof Meatazine.model.element.ElementCollection) {
       //只更新collection里的内容
-      var index = _.indexOf(this.pageContent.get('contents'), collection);
-      // 判断是增加减少了还是修改了
-      this.$('#source-list').find('dd').eq(index)
-        .empty()
-        .html(Mustache.render(this.model.get('template').match(/<ul>[\S\s]+<\/ul>/)[0], {elements: collection.toJSON()}));
+      var index = _.indexOf(this.pageContent.get('contents'), collection),
+          template = this.model.getSourceTemplate(collection.at(0));
+      // 重新渲染
+      if (this.$('#source-list').find('dd').length > index) {
+        this.$('#source-list').find('dd').eq(index)
+          .empty()
+          .html(Mustache.render(template.match(/<ul>[\S\s]+<\/ul>/)[0], {elements: collection.toJSON()}));
+      } else {
+        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}));
+      }
     } else {
       // 更新全部内容
       this.$('#source-list').empty();
       _.each(this.pageContent.get('contents'), function (collection, index) {
-        this.$('#source-list')
-          .append(Mustache.render(this.model.get('template'), {elements: collection.toJSON()}))
+        var template = this.model.getSourceTemplate(collection.at(0));
+        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}))
       }, this);
     }
     this.$('#source-list ul')

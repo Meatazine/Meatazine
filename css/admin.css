@@ -5,12 +5,6 @@
 body {
   padding: 60px 0 40px;
 }
-[draggable] {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select:none;
-}
 
 .brand, h1, h2, h3 {
   font-family: Microsoft Yahei;
@@ -175,6 +169,14 @@ body {
   position:absolute;
   top:0;
   right:332px;
+  margin-top:0;
+}
+#context-menu .swatch {
+  width: 16px;
+  height: 10px;
+  display: inline-block;
+  margin-right: 4px;
+  border-radius: 2px;
 }
 
 #panel {

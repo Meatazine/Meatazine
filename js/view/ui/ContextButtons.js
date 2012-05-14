@@ -1,26 +1,35 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.ContextButtons = Backbone.View.extend({
+  currentGroup: '',
   events: {
-    "click .font-size a": "fontSize_selectHandler"
+    "click a": "selectHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.$('.btn-group').hide();
-    this.disable();
-  },
-  enable: function () {
-    this.$('.btn').removeProp('disabled');
-  },
-  disable: function () {
-    this.$('.btn').prop('disabled', true);
+    this.hide();
   },
   showButtonsAs: function (type) {
-    this.enable();
     this.$('.group' + type).show();
   },
-  fontSize_selectHandler: function (event) {
-    this.trigger('select:fontsize', event.target.innerHTML);
-  }
+  hide: function () {
+    this.$('.btn-group').not(this.currentGroup).hide();
+  },
+  selectHandler: function (event) {
+    var target = $(event.target),
+        type = target.closest('[data-type]').attr('data-type');
+    switch (type) {
+      case 'font-size':
+        this.trigger('select:fontsize', target.text());
+        break;
+        
+      case 'color':
+        this.trigger('select:color', target.css('color'));
+        break;
+        
+      default:
+        break;
+    }
+  },
 });
 Meatazine.view.ui.ContextButtonBype = {
   TEXT: 1,

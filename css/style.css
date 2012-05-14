@@ -15,14 +15,38 @@
   line-height:45px;
 }
 .black {
-  color:#333 !important;
+  color:#000 !important;
+}
+.white {
+  color:#FFF;
+}
+.blue {
+  color:#049cdb !important;
+}
+.green {
+  color:#46a546 !important;
+}
+.red {
+  color:#9d261d !important;
+}
+.yellow {
+  color:#ffc40d !important;
+}
+.orange {
+  color:#f89406 !important;
+}
+.pink {
+  color:#c3325f !important;
+}
+.purple {
+  color:#7a43b6 !important;
 }
 
 /**
  *   定位
  */
 .fixed {
-  position:absolute;
+  position:absolute !important;
 }
 .l10 {
   left:10%;

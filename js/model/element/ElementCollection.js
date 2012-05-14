@@ -1,7 +1,11 @@
 jQuery.namespace('Meatazine.model.element');
 Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
   config: null,
-  model: Meatazine.model.element.ElementModel,
+  createModel: function (object) {
+    this.model = Backbone.Model.extend({
+      defaults: object
+    });
+  },
   create: function (attributes, options) {
     var model = new this.model(attributes);
     this.add(model);
@@ -22,11 +26,7 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
     }
   },
   removeAt: function (index) {
-    if (this.length > 1) {
-      this.remove(this.at(index));
-    } else {
-      this.at(0).reset();
-    }
+    this.remove(this.at(index));
   },
   getToken: function (number) {
     var model = new this.model(),
