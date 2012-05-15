@@ -1,6 +1,5 @@
 jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.BaseElement = Backbone.View.extend({
-  uploader: null,
   token: null,
   isLoading: false,
   fileQueue: [],
@@ -11,7 +10,6 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     "dragenter img": "img_dragEnterHandler",
     "dragleave img": "img_dragLeaveHandler",
     "click img": "img_clickHandler",
-    "change input[type='file']": "input_selectHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -39,7 +37,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   createItem: function (data) {
     return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
   },
-  handleFiles: function (files, img) {
+  handleFiles: function (files) {
     var usableFiles = [];
     // 暂时只认图片
     // TODO 加入对音频文件（.mp3）和视频文件（.avi）的支持
@@ -87,17 +85,9 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     $(event.currentTarget).removeClass('active-img');
   },
   img_clickHandler: function (event) {
-    if ($(event.target).hasClass('placeholder')) {
-      this.uploader = this.uploader || $('<input type="file" multiple class="uploader" />');
-      this.uploader
-        .appendTo(this.$el)
-        .data('target', event.target);
-      setTimeout(function (uploader) {
-        uploader.click();
-      }, 100, this.uploader);
-      return;
-    }
+    this.trigger('select', this, Meatazine.view.ui.ContextButtonBype.IMAGE);
     this.handleClickingImg($(event.target));
+    event.stopPropagation();
   },
   collection_editHandler: function (index) {
     this.$el.children().eq(index).replaceWith(this.createItem(this.collection.at(index).toJSON()));
@@ -133,8 +123,4 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     }
     this.next();
   },
-  input_selectHandler: function (event) {
-    this.handleFiles(this.uploader[0].files, this.uploader.data('target'));
-    this.uploader.remove();
-  }
 });

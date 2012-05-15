@@ -178,6 +178,10 @@ body {
   margin-right: 4px;
   border-radius: 2px;
 }
+#context-menu input {
+  visibility:hidden;
+  position: absolute;
+}
 
 #panel {
   width: 300px;

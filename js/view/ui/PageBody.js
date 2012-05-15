@@ -1,8 +1,5 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.PageBody = Backbone.View.extend({
-  book: null,
-  source: null,
-  contextButtons: null,
   items: [],
   isSentByMe: false,
   events: {
@@ -10,14 +7,19 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     "click .editable": "editable_clickHandler",
     "dblclick .editable": "editable_dbClickHandler"
   },
-  initialize: function (options) {
+  initialize: function () {
+    var self = this;
     this.$el = $(this.el);
-    this.contextButtons = options.contextButtons;
-    this.book = options.book;
-    this.book.on('change:size', this.resizeHandler, this);
-    this.source = options.source;
-    this.source.on('change:type', this.source_selectHandler, this);
-    delete this.options;
+    this.options.book.on('change:size', this.resizeHandler, this);
+    this.options.source.on('change:type', this.source_selectHandler, this);
+    $('body').on('click', function (event) {
+        if ($.contains(self.$el[0], event.target)) {
+        return true;
+      }
+      self.options.contextButtons.hide();
+      self.options.contextButtons.off();
+      self.$('.editing').removeClass('editing');
+    });
   },
   render: function () {
     while (this.items.length > 0) {
@@ -38,8 +40,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
         el: elementDom,
       });
       element.on('change', this.element_changeHandler, this);
-      element.on('edit:start', this.element_editStartHandler, this);
-      element.on('edit:stop', this.element_editStopHandler, this);
+      element.on('select', this.element_selectHandler, this);
       this.items[index] = element;
     }, this);
     
@@ -58,13 +59,13 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       this.render();
       return;
     }
-    if (this.source.hasTemplate(this.model.get('templateType'))){
-      this.model.set('template', this.source.getTemplate(this.model.get('templateType')));
+    if (this.options.source.hasTemplate(this.model.get('templateType'))){
+      this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
       this.render();
       return;
     }
-    this.source.on('complete', this.source_completeHandler, this);
-    this.source.fetch(this.model.get('templateType'));
+    this.options.source.on('complete', this.source_completeHandler, this);
+    this.options.source.fetch(this.model.get('templateType'));
     this.showLoading();
   },
   getFilteredHTML: function () {
@@ -83,54 +84,6 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     }});
     this.model.set('renderedHTML', this.getFilteredHTML());
   },
-  bindContextButton: function (input) {
-    this.contextButtons.off();
-    this.contextButtons
-      .on('select:fontsize', function (size) {
-        input.css('font-size', size + 'px');
-      })
-      .on('select:color', function (color) {
-        input.css('color', color);
-      })
-  },
-  pageList_selectHandler: function (model) {
-    this.model = model;
-    this.useTemplate(true);
-    this.isSentByMe = this.source.get('type') != this.model.get('templateType');
-    this.source.set('type', this.model.get('templateType'));
-  },
-  source_selectHandler: function () {
-    if (this.isSentByMe) {
-      this.isSentByMe = false;
-      return;
-    }
-    this.model.reset();
-    this.model.set('templateType', this.source.get('type'));
-    this.useTemplate();
-  },
-  source_completeHandler: function () {
-    if (this.source.hasTemplate(this.model.get('templateType'))) {
-      this.model.set('template', this.source.getTemplate(this.model.get('templateType')));
-      this.source.off('complete', this.source_completeHandler);
-      this.render();
-    }
-  },
-  resizeHandler: function (w, h) {
-    this.$el.width(w);
-    this.$el.height(h);
-  },
-  element_changeHandler: function (collection) {
-    this.refreshThumbnail();
-    this.trigger('edit', collection);
-  },
-  element_editStartHandler: function (event, type) {
-    this.contextButtons.showButtonsAs(type);
-    event.target.addEditorHandler(this.contextButtons);
-  },
-  element_editStopHandler: function (event) {
-    this.contextButtons.off(null, null, event.target);
-    this.contextButtons.disable();
-  },
   editable_focusOutHandler: function (event) {
     $(event.target)
       .prop('contenteditable', false)
@@ -139,22 +92,11 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   },
   editable_clickHandler: function (event) {
     var self = this, target = $(event.target);
-    function body_clickHandler(event) {
-      if ($.contains(self.contextButtons.$el[0], event.target)) {
-        return true;
-      }
-      self.contextButtons.hide();
-      self.contextButtons.off();
-      target.removeClass('editing');
-      $(this).off('click', body_clickHandler);
-    }
     if (this.$('.editing').length > 0) {
       this.$('.editing').removeClass('editing');
     }
     target.addClass('editing');
-    this.contextButtons.showButtonsAs(Meatazine.view.ui.ContextButtonBype.TEXT);
-    this.bindContextButton(target);
-    $('body').on('click', body_clickHandler);
+    this.options.contextButtons.showButtonsAs(Meatazine.view.ui.ContextButtonBype.TEXT, target);
     event.stopPropagation();
   },
   editable_dbClickHandler: function (event) {
@@ -163,5 +105,38 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       .css('cursor', 'text')
       .prop('contenteditable', true)
       .focus();
-  }
+  },
+  element_changeHandler: function (collection) {
+    this.refreshThumbnail();
+    this.trigger('edit', collection);
+  },
+  element_selectHandler: function (target, type) {
+    this.options.contextButtons.showButtonsAs(type, target);
+  },
+  pageList_selectHandler: function (model) {
+    this.model = model;
+    this.useTemplate(true);
+    this.isSentByMe = this.options.source.get('type') != this.model.get('templateType');
+    this.options.source.set('type', this.model.get('templateType'));
+  },
+  resizeHandler: function (w, h) {
+    this.$el.width(w);
+    this.$el.height(h);
+  },
+  source_selectHandler: function () {
+    if (this.isSentByMe) {
+      this.isSentByMe = false;
+      return;
+    }
+    this.model.reset();
+    this.model.set('templateType', this.options.source.get('type'));
+    this.useTemplate();
+  },
+  source_completeHandler: function () {
+    if (this.options.source.hasTemplate(this.model.get('templateType'))) {
+      this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
+      this.options.source.off('complete', this.source_completeHandler);
+      this.render();
+    }
+  },
 });
