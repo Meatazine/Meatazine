@@ -153,12 +153,19 @@ body {
 #page-body .active-img {
   box-shadow:inset 0 0 8px #F83;
 }
+#page-body .ui-resizable-handle {
+  display:none;
+}
 #page-body .editable:hover,
 #page-body .editing {
   border:1px solid #08C;
   background: rgba(255, 255, 255, 0.4);
   box-shadow: inset 0 0 2px #CCC;
   border-radius:4px;
+}
+#page-body .editable:hover .ui-resizable-handle,
+#page-body .editing .ui-resizable-handle {
+  display:block;
 }
 .uploader {
   visible:hidden;

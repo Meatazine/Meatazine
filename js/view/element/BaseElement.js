@@ -64,6 +64,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       Meatazine.utils.fileAPI.clone(this.fileQueue.shift());
     } else {
       this.isLoading = false;
+      this.handleChildrenState();
       this.trigger('change', this.collection);
       Meatazine.utils.fileAPI.off('complete:clone', null, this);
     }

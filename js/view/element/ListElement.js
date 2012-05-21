@@ -4,6 +4,10 @@ Meatazine.view.element.ListElement = Meatazine.view.element.BaseElement.extend({
     this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
     this.$el.children().slice(this.collection.config.number).addClass('hide');
     
-    this.$el.children().eq(this.collection.config.number - 1).css('margin-right', 0);
+    var i = this.collection.config.cols - 1,
+        len = this.collection.config.number;
+    for (; i < len; i += this.collection.config.cols) {
+      this.$el.children().eq(i).css('margin-right', 0);
+    }
   }
 });

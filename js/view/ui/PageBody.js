@@ -46,9 +46,10 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     
     this.$('.editable')
       .attr('title', '双击开启编辑')
-      .draggable({ cursor: "move" })
-      .resizable()
+    this.$('.ui-draggable')
+      .draggable({cursor: 'move'})
       .css('cursor', 'move');
+    this.$('.ui-resizable').resizable();
     this.refreshThumbnail();
     this.trigger('edit');
   },
@@ -74,8 +75,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     html.find('.placeholder').removeClass('placeholder');
     html.find('[data-config]').removeAttr('data-config');
     html.find('.editable')
-      .removeClass('editable')
-      .removeProp('contenteditable dragable');
+      .removeClass('editable ui-draggable ui-resizable')
+      .removeProp('contenteditable');
     return '<div class="page">' + html.html() + '</div>';
   },
   refreshThumbnail: function () {
