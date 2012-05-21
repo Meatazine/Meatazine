@@ -78,6 +78,12 @@
 .t50 {
   top:50%;
 }
+.t60 {
+  top:60%;
+}
+.t75 {
+  top:75%;
+}
 .r10, .br10, .tr10 {
   right:10%;
 }
@@ -102,6 +108,9 @@
 .hcenter {
   width:100%;
   text-align:center;
+}
+.w80 {
+  width:80%;
 }
 .mt5 {
   margin-top:5%;

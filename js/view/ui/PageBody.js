@@ -13,7 +13,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.options.book.on('change:size', this.resizeHandler, this);
     this.options.source.on('change:type', this.source_selectHandler, this);
     $('body').on('click', function (event) {
-        if ($.contains(self.$el[0], event.target)) {
+        if ($.contains(self.$el[0], event.target) || $.contains(self.options.contextButtons.$el[0], event.target)) {
         return true;
       }
       self.options.contextButtons.hide();
@@ -47,6 +47,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.$('.editable')
       .attr('title', '双击开启编辑')
       .draggable({ cursor: "move" })
+      .resizable()
       .css('cursor', 'move');
     this.refreshThumbnail();
     this.trigger('edit');
