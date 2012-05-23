@@ -8,6 +8,7 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
   },
   create: function (attributes, options) {
     var model = new this.model(attributes);
+    model.set('count', this.length + 1);
     this.add(model);
     return model;
   },
@@ -31,8 +32,8 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
   getToken: function (number) {
     var model = new this.model(),
         array = [];
-    for (; number > 0; number--) {
-      array.push(model.toJSON());
+    for (var i = 0; i < number; i++) {
+      array.push(_.extend(model.toJSON(), {count: i + 1}));
     }
     return array;
   },

@@ -52,9 +52,6 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       this.next();
     }
   },
-  handleClickingImg: function (img) {
-    
-  },
   handleChildrenState: function () {
     this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
     this.$el.children().slice(this.collection.config.number).addClass('hide');
@@ -87,7 +84,6 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   },
   img_clickHandler: function (event) {
     this.trigger('select', this, Meatazine.view.ui.ContextButtonBype.IMAGE);
-    this.handleClickingImg($(event.target));
     event.stopPropagation();
   },
   collection_editHandler: function (index) {
@@ -113,9 +109,6 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
         item = $(this.createItem(model.toJSON()));
     item.filter('.placeholder').add(item.find('.placeholder')).removeClass('placeholder');
     this.length += 1;
-    if (this.collection.config.number < this.length) {
-      item.addClass('hide');
-    }
     if (this.token.length > 0) {
       this.token.eq(0).replaceWith(item);
       this.token = this.token.slice(1);
