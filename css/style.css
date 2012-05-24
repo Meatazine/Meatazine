@@ -75,6 +75,9 @@
 .r10, .br10, .tr10 {
   right:10%;
 }
+.top {
+  top:0;
+}
 .t5 {
   top:5%;
 }
@@ -127,11 +130,26 @@
   width:100%;
   text-align:center;
 }
+.w40 {
+  width:40%;
+}
+.w50 {
+  width: 50%;
+}
 .w80 {
   width:80%;
 }
+.w90 {
+  width:90%;
+}
 .w100 {
   width:100%;
+}
+.h70 {
+  height:70%;
+}
+.h90 {
+  height:90%;
 }
 .mt5 {
   margin-top:5%;
@@ -227,6 +245,8 @@
   margin:0 0 15px -20px;
   text-align: center;
   width:32px;
+  user-select:none;
+  cursor: pointer;
 }
 .page .slide-navi1 li.active {
   background:#F83;
@@ -249,6 +269,8 @@
   margin:0 15px 0 0;
   text-align:center;
   width:40px;
+  user-select:none;
+  cursor:pointer;
 }
 .page .slide-navi2 li.active {
   background:#F83;

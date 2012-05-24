@@ -9,11 +9,17 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
     if (this.fileQueue.length == 0) {
       this.token.find('img').css('max-height', this.$el.children().eq(0).height());
       this.trigger('change', this.collection);
-      this.$el.children().eq(0).trigger('click');
+      this.$el.children()
+        .on('click', {self: this}, this.item_clickHandler)
+        .eq(0).trigger('click');
     }
   },
   item_clickHandler: function (event) {
-    var index = img.parent().index();
-    this.body.setModel(this.collection.at(index));
+    var target = $(event.target),
+        index = target.index(),
+        self = event.data.self;
+    self.body.setModel(self.collection.at(index));
+    self.$('.active').removeClass('active');
+    target.addClass('active');
   },
 });
