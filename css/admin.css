@@ -74,6 +74,45 @@ body {
   color:#46a546;
 }
 
+/** ======================
+ * context menu
+ * 功能菜单项  
+ *======================*/
+#context-menu {
+  position:absolute;
+  top:0;
+  right:332px;
+  margin-top:0;
+}
+#context-menu .swatch {
+  width: 16px;
+  height: 10px;
+  display: inline-block;
+  margin-right: 4px;
+  border-radius: 2px;
+}
+#context-menu input {
+  visibility:hidden;
+  position: absolute;
+}
+#context-menu .scale {
+  text-align:center;
+}
+#context-menu .line {
+  width: 90%;
+  height: 2px;
+  background: -webkit-linear-gradient(top, #CCC, #999);
+  margin: 5px auto 10px;
+}
+#context-menu .handle {
+  width: 12px;
+  height: 12px;
+  background: url(../img/glyphicons-halflings.png) -288px -120px no-repeat;
+  position: absolute;
+  cursor: pointer;
+  left:74px;
+}
+
 /*========================
  * page
  * 页面功能部分
@@ -171,23 +210,6 @@ body {
   visible:hidden;
   position:absolute;
   bottom: -50px;
-}
-#context-menu {
-  position:absolute;
-  top:0;
-  right:332px;
-  margin-top:0;
-}
-#context-menu .swatch {
-  width: 16px;
-  height: 10px;
-  display: inline-block;
-  margin-right: 4px;
-  border-radius: 2px;
-}
-#context-menu input {
-  visibility:hidden;
-  position: absolute;
 }
 
 #panel {

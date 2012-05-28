@@ -3,12 +3,14 @@ Meatazine.utils.FileReferrence = function () {
   var self = this,
       reader = new FileReader(),
       targetFile,
+      fileDir,
       fileName,
       fileType,
       fileSystem,
       fileContent,
-      fileURL;
-  this.clone = function (file) {
+      fileURL,
+      folders;
+  this.clone = function (file, dir, filename) {
     if (file == null) {
       throw new Error('文件错误');
     }
@@ -19,16 +21,52 @@ Meatazine.utils.FileReferrence = function () {
       throw new Error('只能上传图片类素材');
     }
     targetFile = file;
-    fileSystem.root.getFile(file.name, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
+    fileDir = dir;
+    fileName = filename || file.name;
+    fileName = fileDir ? fileDir + '/' + fileName : fileName;
+    if (fileDir) {
+      this.on('complete:createDirs', function () {
+        this.off('complate:createDirs');
+        fileSystem.root.getFile(fileName, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
+      }, this);
+      folders = dir.split('/');
+      createDir(fileSystem.root);
+    } else {
+      fileSystem.root.getFile(fileName, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
+    }
   }
   this.read = function (url) {
     window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
   }
-  this.save = function (name, content, type) {
-    fileName = name;
+  this.save = function (name, dir, content, type) {
+    fileDir = dir;
+    fileName = fileDir ? fileDir + '/' + name : name;
     fileContent = content;
     fileType = type || 'text/plain';
-    fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
+    if (fileDir) {
+      this.on('complete:createDirs', function () {
+        this.off('complate:createDirs');
+        fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
+      }, this);
+      folders = dir.split('/');
+      createDir(fileSystem.root);
+    } else {
+      fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
+    }
+  }
+  function createDir(root) {
+    if (folders[0] == '.' || folders[0] == '') {
+      folders = folders.slice(1);
+    }
+    root.getDirectory(folders[0], {create: true}, dirEntry_readerHandler, errorHandler);
+  }
+  function dirEntry_readerHandler(dirEntry) {
+    folders.shift();
+    if (folders.length > 0) {
+      createDir(dirEntry);
+    } else {
+      self.trigger('complete:createDirs');
+    }
   }
   function fileSystemReadyHandler(fs) {
     fileSystem = fs;

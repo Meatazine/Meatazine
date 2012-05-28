@@ -37,6 +37,10 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   createItem: function (data) {
     return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
   },
+  handleChildrenState: function () {
+    this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
+    this.$el.children().slice(this.collection.config.number).addClass('hide');
+  },
   handleFiles: function (files) {
     var usableFiles = [];
     // 暂时只认图片
@@ -52,19 +56,68 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       this.next();
     }
   },
-  handleChildrenState: function () {
-    this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
-    this.$el.children().slice(this.collection.config.number).addClass('hide');
+  /**
+   * 将图片根据目标尺寸缩放，并保留最终图片
+   * @param {Object} url
+   */
+  handleImages: function (url) {
+    var image = new Image(),
+        sample = this.$el.children().first();
+    image.onload = function () {
+      var sourceX,
+          sourceY,
+          sourceWidth,
+          sourceHeight,
+          destWidth = sample.find('img').width(),
+          destHeight = sample.find('img').height(),
+          canvas;
+    }
+    image.src = url;
   },
   next: function () {
     if (this.fileQueue.length > 0) {
-      Meatazine.utils.fileAPI.clone(this.fileQueue.shift());
+      Meatazine.utils.fileAPI.clone(this.fileQueue.shift(), 'source');
     } else {
       this.isLoading = false;
       this.handleChildrenState();
+      this.trigger('ready');
       this.trigger('change', this.collection);
       Meatazine.utils.fileAPI.off('complete:clone', null, this);
     }
+  },
+  renderItem: function (url) {
+    var model = this.collection.create({img: url}),
+        item = $(this.createItem(model.toJSON()));
+    item.filter('.placeholder').add(item.find('.placeholder')).removeClass('placeholder');
+    this.length += 1;
+    if (this.token.length > 0) {
+      this.token.eq(0).replaceWith(item);
+      this.token = this.token.slice(1);
+    } else {
+      this.$el.append(item);
+    }
+    this.next();
+  },
+  collection_editHandler: function (index) {
+    this.$el.children().eq(index).replaceWith(this.createItem(this.collection.at(index).toJSON()));
+    this.trigger('change');
+  },
+  collection_removeHandler: function (model, collection, options) {
+    this.$el.children().eq(options.index).remove();
+    this.handleChildrenState();
+    this.trigger('change');
+  },
+  collection_sortHandler: function (start, end) {
+    var item = this.$el.children().eq(start).remove();
+    if (end == 0) {
+      this.$el.prepend(item);
+    } else {
+      item.insertAfter(this.$el.children().eq(end - 1));
+    }
+    this.handleChildrenState();
+  },
+  file_completeHandler: function (url) {
+    this.handleImages(url);
   },
   img_dropHandler: function (event) {
     this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
@@ -86,35 +139,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     this.trigger('select', this, Meatazine.view.ui.ContextButtonBype.IMAGE);
     event.stopPropagation();
   },
-  collection_editHandler: function (index) {
-    this.$el.children().eq(index).replaceWith(this.createItem(this.collection.at(index).toJSON()));
-    this.trigger('change');
-  },
-  collection_removeHandler: function (model, collection, options) {
-    this.$el.children().eq(options.index).remove();
-    this.handleChildrenState();
-    this.trigger('change');
-  },
-  collection_sortHandler: function (start, end) {
-    var item = this.$el.children().eq(start).remove();
-    if (end == 0) {
-      this.$el.prepend(item);
-    } else {
-      item.insertAfter(this.$el.children().eq(end - 1));
-    }
-    this.handleChildrenState();
-  },
-  file_completeHandler: function (url) {
-    var model = this.collection.create({img: url}),
-        item = $(this.createItem(model.toJSON()));
-    item.filter('.placeholder').add(item.find('.placeholder')).removeClass('placeholder');
-    this.length += 1;
-    if (this.token.length > 0) {
-      this.token.eq(0).replaceWith(item);
-      this.token = this.token.slice(1);
-    } else {
-      this.$el.append(item);
-    }
-    this.next();
-  },
+  scaleChangeHandler: function () {
+    
+  }
 });
