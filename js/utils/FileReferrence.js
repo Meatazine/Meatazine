@@ -87,27 +87,27 @@ Meatazine.utils.FileReferrence = function () {
   }
   function fileWriter_cloneReadyHandler(fileWriter) {
     fileWriter.onwriteend = function(e) {
-      console.log('Write completed.');
+      console.log('Clone completed.', fileURL);
       self.trigger('complete:clone', fileURL);
     };
     fileWriter.onerror = function(e) {
-      console.log('Write failed: ' + e.toString());
+      console.log('Clone failed: ' + e.toString());
     };
     fileWriter.write(targetFile);
     targetFile = null;
   }
   function fileWriter_saveReadyHandler(fileWriter) {
     fileWriter.onwriteend = function (event) {
-      console.log('Write completed.');
+      console.log('Save completed.', fileURL);
       self.trigger('complete:save', fileURL);
     };
     fileWriter.onerror = function (error) {
-      console.log('Write failed: ' + error.toString());
+      console.log('Save failed: ' + error.toString());
     };
     
     // 处理二进制数据
     var builder = new WebKitBlobBuilder();
-    if (fileType == 'application/zip') {
+    if (fileType.indexOf('text') == -1) {
       var byteArray = new Uint8Array(fileContent.length);
       for (var i = 0, len = fileContent.length; i < len; i++) {
         byteArray[i] = fileContent.charCodeAt(i) & 0xFF;
@@ -124,7 +124,7 @@ Meatazine.utils.FileReferrence = function () {
   }
   function fileRemoveHandler() {
     console.log('Removed: ' + fileName);
-    self.save(fileName, fileContent, fileType);
+    self.save(fileName, fileDir, fileContent, fileType);
   }
   function errorHandler(error) {
     console.log('Error: ' + error.code, error);

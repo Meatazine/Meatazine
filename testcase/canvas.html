@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<title>Canvas绘图测试用例</title>
+<meta content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="../jqueryui/base/jquery.ui.all.css">
+<link rel="stylesheet" href="../jqueryui/demos.css" />
+<script src="../js/libs/jquery-1.7.2.min.js"></script>
+<script src="../jqueryui/jquery.ui.core.js"></script>
+<script src="../jqueryui/jquery.ui.widget.js"></script>
+<script src="../jqueryui/jquery.ui.mouse.js"></script>
+<script src="../jqueryui/jquery.ui.slider.js"></script>
+<style>
+  #mycanvas {
+    border:1px solid #999;
+    cursor:pointer;
+  }
+  #slider {
+    width:300px;
+    margin:10px 0;
+  }
+</style>
+<script>
+  $(function () {
+    function drawImage(image, scale, offsetX, offsetY) {
+      offsetX = offsetX || 0;
+      offsetY = offsetY || 0;
+      var sourceWidth = canvas.width / scale,
+          sourceHeight = canvas.height / scale,
+          sourceX = 0,
+          sourceY = 0,
+          destWidth = canvas.width,
+          destHeight = canvas.height,
+          destX = 0,
+          destY = 0;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      // 因为draw空白会出问题，所以得先判断有没有draw到外面
+      if (sourceWidth > image.width || sourceHeight > image.height) {
+        sourceWidth = sourceWidth > image.width ? image.width : sourceWidth;
+        sourceHeight = sourceHeight > image.height ? image.height : sourceHeight;
+        destWidth = sourceWidth * scale,
+        destHeight = sourceHeight * scale;
+        destX = canvas.width - destWidth >> 1;
+        destY = canvas.height - destHeight >> 1;
+      }
+      sourceX = (image.width - sourceWidth >> 1) - offsetX / scale,
+      sourceY = (image.height - sourceHeight >> 1) - offsetY / scale;
+      // 然后还得判断有位移之后会不会draw到外面
+      if (sourceX < 0) {
+        sourceWidth += sourceX;
+        sourceX = 0;
+        destWidth = sourceWidth * scale;
+        destX = canvas.width - destWidth;
+      }
+      if (sourceY < 0) {
+        sourceHeight += sourceY;
+        sourceY = 0;
+        destHeight = sourceHeight * scale;
+        destY = canvas.height - destHeight;
+      }
+      if (sourceX + sourceWidth > image.width) {
+        sourceWidth = image.width - sourceX;
+        destWidth = sourceWidth * scale;
+      }
+      if (sourceY + sourceHeight > image.height) {
+        sourceHeight =  image.height - sourceY;
+        destHeight = sourceHeight * scale;
+      }
+      context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+    }
+    var image = new Image(),
+        canvas = $('#mycanvas')[0],
+        context = canvas.getContext('2d');
+    image.onload = function () {
+      var isHorizontal = this.width / this.height > canvas.width / canvas.height,
+          scale = isHorizontal ? canvas.height / this.height : (canvas.width / this.width);
+      $('#slider').slider('option', 'value', 100);
+      drawImage(this, 1);
+    }
+    image.src = '../img/welcome/_MG_8928.jpg';
+    $('#slider').slider({
+      min: 50,
+      max: 150,
+      slide: function (event, ui) {
+        drawImage(image, ui.value / 100, $('#mycanvas').data('x'), $('#mycanvas').data('y'));
+      },
+      value: 100
+    });
+    $('#mycanvas')
+      .on('mousedown', function (event) {
+        var currX = $(this).data('x') || 0,
+            currY = $(this).data('y') || 0
+            startX = event.pageX,
+            startY = event.pageY;
+        $(this).on('mousemove', function (event) {
+          x = event.pageX - startX;
+          y = event.pageY - startY;
+          $(this).data('x', currX + x);
+          $(this).data('y', currY + y);
+          drawImage(image, $('#slider').slider('option', 'value') / 100, currX + x, currY + y);
+        });
+      })
+      .on('mouseup', function (event) {
+        $(event.target).off('mousemove');
+      });
+    $('body').on('mouseup', function (event) {
+      $('#mycanvas').off('mousemove');
+    });
+  });
+</script>
+
+<canvas id="mycanvas" width="400" height="300"></canvas>
+<div id="slider"></div>
+<img src="../img/welcome/_MG_8928.jpg" width="400" />

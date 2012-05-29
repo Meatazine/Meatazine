@@ -51,6 +51,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       }
     }
     Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
+    Meatazine.utils.fileAPI.on('complete:save', this.file_savedHandler, this);
     if (!this.isLoading) {
       this.isLoading = true;
       this.next();
@@ -62,15 +63,23 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
    */
   handleImages: function (url) {
     var image = new Image(),
-        sample = this.$el.children().first();
+        sample = this.$el.children().first(),
+        canvas = $('<canvas>')[0],
+        context = canvas.getContext('2d');
+    canvas.width = sample.filter('img').add(sample.find('img')).width();
+    canvas.height = sample.filter('img').add(sample.find('img')).height();
     image.onload = function () {
-      var sourceX,
-          sourceY,
-          sourceWidth,
-          sourceHeight,
-          destWidth = sample.find('img').width(),
-          destHeight = sample.find('img').height(),
-          canvas;
+      var sourceWidth,
+          sourceHeight;
+      if (image.width / image.height > canvas.width / canvas.height) {
+        sourceHeight = image.height;
+        sourceWidth = image.height * canvas.width / canvas.height;
+      } else {
+        sourceWidth = image.width;
+        sourceHeight = image.width * canvas.height / canvas.width;
+      }
+      context.drawImage(image, image.width - sourceWidth >> 1, image.height - sourceHeight >> 1, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
+      Meatazine.utils.fileAPI.save(url.substr(url.lastIndexOf('/') + 1), '', atob(canvas.toDataURL('image/jpeg').split(',')[1]), 'image/jpeg');
     }
     image.src = url;
   },
@@ -82,7 +91,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       this.handleChildrenState();
       this.trigger('ready');
       this.trigger('change', this.collection);
-      Meatazine.utils.fileAPI.off('complete:clone', null, this);
+      Meatazine.utils.fileAPI.off('complete', null, this);
     }
   },
   renderItem: function (url) {
@@ -118,6 +127,9 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   },
   file_completeHandler: function (url) {
     this.handleImages(url);
+  },
+  file_savedHandler: function (url) {
+    this.renderItem(url);
   },
   img_dropHandler: function (event) {
     this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
