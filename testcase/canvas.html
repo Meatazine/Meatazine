@@ -59,10 +59,16 @@
       if (sourceX + sourceWidth > image.width) {
         sourceWidth = image.width - sourceX;
         destWidth = sourceWidth * scale;
+        if (descWidth < canvas.width) {
+          destX += offsetX;
+        }
       }
       if (sourceY + sourceHeight > image.height) {
         sourceHeight =  image.height - sourceY;
         destHeight = sourceHeight * scale;
+        if (destHeight < canvas.height) {
+          destY += offsetY;
+        }
       }
       context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     }

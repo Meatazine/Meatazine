@@ -131,6 +131,10 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   file_savedHandler: function (url) {
     this.renderItem(url);
   },
+  img_clickHandler: function (event) {
+    this.trigger('select', this, Meatazine.view.ui.ContextButtonBype.IMAGE, $(event.target));
+    event.stopPropagation();
+  },
   img_dropHandler: function (event) {
     this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
   },
@@ -147,11 +151,13 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   img_dragLeaveHandler: function (event) {
     $(event.currentTarget).removeClass('active-img');
   },
-  img_clickHandler: function (event) {
-    this.trigger('select', this, Meatazine.view.ui.ContextButtonBype.IMAGE);
-    event.stopPropagation();
-  },
   scaleChangeHandler: function () {
+    
+  },
+  startEditHandler: function () {
+    
+  },
+  stopEditHandler: function () {
     
   }
 });

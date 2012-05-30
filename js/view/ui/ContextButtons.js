@@ -23,11 +23,13 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
       containment: 'parent',
     });
   },
-  addImageHandlers: function (image) {
-    this.currentTarget = image;
+  addImageHandlers: function (element, image) {
+    this.currentTarget = element;
     this.currentTarget.on('ready', this.image_readyHandler, this);
-    this.on('select:image', image.handleFiles, image);
-    this.on('change:scale', image.scaleChangeHandler, image);
+    this.on('select:image', element.handleFiles, element);
+    this.on('edit:start', element.startEditHandler, element);
+    this.on('edit:stop', element.stopEditHandler, element);
+    this.on('change:scale', element.scaleChangeHandler, element);
   },
   addTextHandlers: function (text) {
     this
@@ -41,7 +43,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   hide: function () {
     this.$('.btn-group').not(this.currentGroup).hide();
   },
-  showButtonsAs: function (type, target) {
+  showButtonsAs: function (type, target, param) {
     if (this.currentTarget != null) {
       this.currentTarget.off(null, null, this);
       this.currentTarget = null;
@@ -51,11 +53,11 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     this.$('.group' + type).show();
     switch (type) {
       case Meatazine.view.ui.ContextButtonBype.TEXT:
-        this.addTextHandlers(target);
+        this.addTextHandlers(target, param);
         break;
         
       case Meatazine.view.ui.ContextButtonBype.IMAGE:
-        this.addImageHandlers(target);
+        this.addImageHandlers(target, param);
         break;
     }
   },

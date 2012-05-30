@@ -113,7 +113,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.trigger('edit', collection);
   },
   element_selectHandler: function (target, type) {
-    this.options.contextButtons.showButtonsAs(type, target);
+    this.options.contextButtons.showButtonsAs(type, target, image);
   },
   pageList_selectHandler: function (model) {
     this.model = model;
