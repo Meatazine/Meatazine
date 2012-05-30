@@ -182,6 +182,9 @@ body {
   float: left;
   position: relative;
 }
+#page-body canvas {
+  box-shadow:0 0 1px #000;
+}
 #page-body .placeholder {
   background:url(../img/imageplaceholder.png) center center no-repeat #CCC;
   box-shadow:inset 0 0 8px #08C;

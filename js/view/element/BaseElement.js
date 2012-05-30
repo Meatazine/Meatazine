@@ -1,9 +1,9 @@
 jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.BaseElement = Backbone.View.extend({
+  canvas: null,
   token: null,
   isLoading: false,
   fileQueue: [],
-  length: 0,
   events: {
     "drop img": "img_dropHandler",
     "dragover img": "img_dragOverHandler",
@@ -36,6 +36,46 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   },
   createItem: function (data) {
     return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
+  },
+  drawImage : function () {
+    var offsetX = this.canvas.data('x'),
+        offsetY = this.canvas.data('y'),
+        image = this.canvas.data('image'),
+        scale = this.canvas.data('scale'),
+        canvas = this.canvas[0],
+        context = canvas.getContext('2d'),
+        sourceWidth = canvas.width / scale,
+        sourceHeight = canvas.height / scale,
+        sourceX = (image.width - sourceWidth >> 1) - offsetX / scale,
+        sourceY = (image.height - sourceHeight >> 1) - offsetY / scale,
+        destWidth = 0,
+        destHeight = 0,
+        destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas.width : 0,
+        destY = sourceY < 0 ? Math.abs(sourceY) / sourceHeight * canvas.height : 0;
+    if (sourceX < 0) {
+      sourceWidth += sourceX;
+      sourceX = 0;
+    }
+    if (sourceX + sourceWidth > image.width) {
+      sourceWidth = image.width - sourceX;
+    }
+    if (sourceY < 0) {
+      sourceHeight += sourceY;
+      sourceY = 0;
+    }
+    if (sourceY + sourceHeight > image.height) {
+      sourceHeight = image.height - sourceY;
+    }
+    destWidth = sourceWidth * scale;
+    destHeight = sourceHeight * scale;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+  },
+  getSourceImageUrl: function (url) {
+    if (url.match(/\/source\//) != null) {
+      return url;
+    }
+    return url.substr(0, url.lastIndexOf('/')) + '/source' + url.substr(url.lastIndexOf('/'));
   },
   handleChildrenState: function () {
     this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
@@ -70,16 +110,19 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     canvas.height = sample.filter('img').add(sample.find('img')).height();
     image.onload = function () {
       var sourceWidth,
-          sourceHeight;
+          sourceHeight,
+          scale;
       if (image.width / image.height > canvas.width / canvas.height) {
         sourceHeight = image.height;
         sourceWidth = image.height * canvas.width / canvas.height;
+        scale = canvas.height / image.height;
       } else {
         sourceWidth = image.width;
         sourceHeight = image.width * canvas.height / canvas.width;
+        scale = canvas.width / image.width;
       }
       context.drawImage(image, image.width - sourceWidth >> 1, image.height - sourceHeight >> 1, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
-      Meatazine.utils.fileAPI.save(url.substr(url.lastIndexOf('/') + 1), '', atob(canvas.toDataURL('image/jpeg').split(',')[1]), 'image/jpeg');
+      Meatazine.utils.fileAPI.save(url.substr(url.lastIndexOf('/') + 1), '', atob(canvas.toDataURL('image/jpeg').split(',')[1]), 'image/jpeg', scale);
     }
     image.src = url;
   },
@@ -91,14 +134,14 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       this.handleChildrenState();
       this.trigger('ready');
       this.trigger('change', this.collection);
-      Meatazine.utils.fileAPI.off('complete', null, this);
+      Meatazine.utils.fileAPI.off('complete:clone', null, this);
+      Meatazine.utils.fileAPI.off('complete:save', null, this);
     }
   },
-  renderItem: function (url) {
+  renderItem: function (url, scale) {
     var model = this.collection.create({img: url}),
         item = $(this.createItem(model.toJSON()));
-    item.filter('.placeholder').add(item.find('.placeholder')).removeClass('placeholder');
-    this.length += 1;
+    item.filter('.placeholder').add(item.find('.placeholder')).data('scale', scale).removeClass('placeholder');
     if (this.token.length > 0) {
       this.token.eq(0).replaceWith(item);
       this.token = this.token.slice(1);
@@ -106,6 +149,23 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
       this.$el.append(item);
     }
     this.next();
+  },
+  saveCanvas: function () {
+    var name = this.canvas.data('url'),
+        canvas = this.canvas[0],
+        content = atob(canvas.toDataURL('image/jpeg').split(',')[1]);
+    Meatazine.utils.fileAPI.on('complete:save', this.canvas_savedHandler, this);
+    Meatazine.utils.fileAPI.save(name.substr(name.lastIndexOf('/') + 1), content, 'image/jpeg');
+  },
+  canvas_savedHandler: function (url) {
+    var image = this.canvas.data('body'),
+        scale = this.canvas.data('scale');
+    image.attr('src', url).data('scale', scale);
+    this.canvas.replaceWith(image);
+    this.canvas[0].clearRect(0, 0, this.canvas.width(), this.canvas.height());
+    this.canvas.off();
+    this.canvas = null;
+    Meatazine.utils.fileAPI.off('complete:save', null, this);
   },
   collection_editHandler: function (index) {
     this.$el.children().eq(index).replaceWith(this.createItem(this.collection.at(index).toJSON()));
@@ -128,11 +188,11 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   file_completeHandler: function (url) {
     this.handleImages(url);
   },
-  file_savedHandler: function (url) {
-    this.renderItem(url);
+  file_savedHandler: function (url, scale) {
+    this.renderItem(url, scale);
   },
   img_clickHandler: function (event) {
-    this.trigger('select', this, Meatazine.view.ui.ContextButtonBype.IMAGE, $(event.target));
+    this.trigger('select', this, $(event.target), Meatazine.view.ui.ContextButtonBype.IMAGE);
     event.stopPropagation();
   },
   img_dropHandler: function (event) {
@@ -151,13 +211,56 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   img_dragLeaveHandler: function (event) {
     $(event.currentTarget).removeClass('active-img');
   },
-  scaleChangeHandler: function () {
-    
+  scaleChangeHandler: function (scale) {
+    this.canvas.data('scale', scale / 100);
+    this.drawImage();
   },
-  startEditHandler: function () {
-    
+  startEditHandler: function (image) {
+    if (this.canvas != null) {
+      this.saveCanvas();
+      return;
+    }
+    this.canvas = $('<canvas>');
+    var self = this,
+        canvas = this.canvas[0],
+        sourceUrl = this.getSourceImageUrl(image.attr('src')),
+        loader = new Image();
+    canvas.width = image.width();
+    canvas.height = image.height();
+    loader.onload = function () {
+      self.drawImage();
+    }
+    this.canvas
+      .data('body', image)
+      .data('image', loader)
+      .data('scale', image.data('scale'))
+      .data('url', image.attr('src'))
+      .data('x', 0)
+      .data('y', 0)
+      .on('mousedown', function (event) {
+        var currX = $(this).data('x'),
+            currY = $(this).data('y'),
+            startX = event.pageX,
+            startY = event.pageY;
+        $(this).on('mousemove', function (event) {
+          x = event.pageX - startX;
+          y = event.pageY - startY;
+          $(this).data('x', currX + x);
+          $(this).data('y', currY + y);
+          self.drawImage();
+          event.stopPropagation();
+        });
+        $('body').one('mouseup', function (event) {
+          self.canvas.off('mousemove');
+        });
+      })
+      .on('mouseup', function (event) {
+        $(this).off('mousemove');
+      });
+    loader.src = sourceUrl;
+    image.replaceWith(this.canvas);
   },
-  stopEditHandler: function () {
-    
+  stopEditHandler: function (image) {
+    this.saveCanvas();
   }
 });

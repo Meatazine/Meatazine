@@ -1,8 +1,10 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   currentTarget: null,
+  currentImage: null,
   currentGroup: '',
   uploader: '',
+  scaleMin: 0,
   events: {
     "click a": "selectHandler",
     "click button:not([data-toggle])": "button_clickHandler",
@@ -25,6 +27,8 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   addImageHandlers: function (element, image) {
     this.currentTarget = element;
+    this.currentImage = image;
+    this.scaleMin = image.data('scale') * 100;
     this.currentTarget.on('ready', this.image_readyHandler, this);
     this.on('select:image', element.handleFiles, element);
     this.on('edit:start', element.startEditHandler, element);
@@ -67,10 +71,13 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   editButton_clickHandler: function (event) {
     var target = $(event.target);
     if (target.hasClass('active')) {
+      this.trigger('edit:stop');
+      this.currentImage = null;
       target
         .removeClass('active')
         .parents('.btn-group').siblings('.group2').andSelf().find('[data-group=edit]').prop('disabled', true);
     } else {
+      this.trigger('edit:start', this.currentImage);
       target
         .addClass('active')
         .parents('.btn-group').siblings('.group2').andSelf().find('[data-group=edit]').prop('disabled', false);
@@ -79,7 +86,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   handle_dragHandler: function (event, ui) {
     var target = $(event.target),
         width = target.parent().width(),
-        value = (ui.position.left + 6) / width * 100 + 50;
+        value = (ui.position.left + 6) / width * (150 - this.scaleMin) + this.scaleMin;
     value = Math.round(value * 100) / 100;
     target.parent().siblings().text(value + '%');
     this.trigger('change:scale', value); 

@@ -9,7 +9,8 @@ Meatazine.utils.FileReferrence = function () {
       fileSystem,
       fileContent,
       fileURL,
-      folders;
+      folders,
+      params;
   this.clone = function (file, dir, filename) {
     if (file == null) {
       throw new Error('文件错误');
@@ -38,11 +39,12 @@ Meatazine.utils.FileReferrence = function () {
   this.read = function (url) {
     window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
   }
-  this.save = function (name, dir, content, type) {
+  this.save = function (name, dir, content, type, argus) {
     fileDir = dir;
     fileName = fileDir ? fileDir + '/' + name : name;
     fileContent = content;
     fileType = type || 'text/plain';
+    params = argus;
     if (fileDir) {
       this.on('complete:createDirs', function () {
         this.off('complate:createDirs');
@@ -99,7 +101,7 @@ Meatazine.utils.FileReferrence = function () {
   function fileWriter_saveReadyHandler(fileWriter) {
     fileWriter.onwriteend = function (event) {
       console.log('Save completed.', fileURL);
-      self.trigger('complete:save', fileURL);
+      self.trigger('complete:save', fileURL, params);
     };
     fileWriter.onerror = function (error) {
       console.log('Save failed: ' + error.toString());
@@ -124,7 +126,7 @@ Meatazine.utils.FileReferrence = function () {
   }
   function fileRemoveHandler() {
     console.log('Removed: ' + fileName);
-    self.save(fileName, fileDir, fileContent, fileType);
+    self.save(fileName, fileDir, fileContent, fileType, params);
   }
   function errorHandler(error) {
     console.log('Error: ' + error.code, error);

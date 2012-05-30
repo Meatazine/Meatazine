@@ -23,53 +23,31 @@
     function drawImage(image, scale, offsetX, offsetY) {
       offsetX = offsetX || 0;
       offsetY = offsetY || 0;
+      context.clearRect(0, 0, canvas.width, canvas.height);
       var sourceWidth = canvas.width / scale,
           sourceHeight = canvas.height / scale,
-          sourceX = 0,
-          sourceY = 0,
-          destWidth = canvas.width,
-          destHeight = canvas.height,
-          destX = 0,
-          destY = 0;
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      // 因为draw空白会出问题，所以得先判断有没有draw到外面
-      if (sourceWidth > image.width || sourceHeight > image.height) {
-        sourceWidth = sourceWidth > image.width ? image.width : sourceWidth;
-        sourceHeight = sourceHeight > image.height ? image.height : sourceHeight;
-        destWidth = sourceWidth * scale,
-        destHeight = sourceHeight * scale;
-        destX = canvas.width - destWidth >> 1;
-        destY = canvas.height - destHeight >> 1;
-      }
-      sourceX = (image.width - sourceWidth >> 1) - offsetX / scale,
-      sourceY = (image.height - sourceHeight >> 1) - offsetY / scale;
-      // 然后还得判断有位移之后会不会draw到外面
+          sourceX = (image.width - sourceWidth >> 1) - offsetX / scale,
+          sourceY = (image.height - sourceHeight >> 1) - offsetY / scale,
+          destWidth = 0,
+          destHeight = 0,
+          destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas.width : 0,
+          destY = sourceY < 0 ? Math.abs(sourceY) / sourceHeight * canvas.height : 0;
       if (sourceX < 0) {
         sourceWidth += sourceX;
         sourceX = 0;
-        destWidth = sourceWidth * scale;
-        destX = canvas.width - destWidth;
+      }
+      if (sourceX + sourceWidth > image.width) {
+        sourceWidth = image.width - sourceX;
       }
       if (sourceY < 0) {
         sourceHeight += sourceY;
         sourceY = 0;
-        destHeight = sourceHeight * scale;
-        destY = canvas.height - destHeight;
-      }
-      if (sourceX + sourceWidth > image.width) {
-        sourceWidth = image.width - sourceX;
-        destWidth = sourceWidth * scale;
-        if (descWidth < canvas.width) {
-          destX += offsetX;
-        }
       }
       if (sourceY + sourceHeight > image.height) {
-        sourceHeight =  image.height - sourceY;
-        destHeight = sourceHeight * scale;
-        if (destHeight < canvas.height) {
-          destY += offsetY;
-        }
+        sourceHeight = image.height - sourceY;
       }
+      destWidth = sourceWidth * scale;
+      destHeight = sourceHeight * scale;
       context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     }
     var image = new Image(),
