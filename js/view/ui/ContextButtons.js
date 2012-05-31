@@ -19,21 +19,16 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     this.initScale(this.$('.handle'));
     this.hide();
   },
-  initScale: function (handles) {
-    handles.draggable({
-      axis: 'x',
-      containment: 'parent',
-    });
-  },
   addImageHandlers: function (element, image) {
     this.currentTarget = element;
     this.currentImage = image;
-    this.scaleMin = image.data('scale') * 100;
+    this.scaleMin = image.data('scale') < 0.5 ? image.data('scale') * 100 : 50;
     this.currentTarget.on('ready', this.image_readyHandler, this);
     this.on('select:image', element.handleFiles, element);
     this.on('edit:start', element.startEditHandler, element);
     this.on('edit:stop', element.stopEditHandler, element);
     this.on('change:scale', element.scaleChangeHandler, element);
+    this.setScaleValue(image.data('scale') * 100);
   },
   addTextHandlers: function (text) {
     this
@@ -46,6 +41,18 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   hide: function () {
     this.$('.btn-group').not(this.currentGroup).hide();
+  },
+  initScale: function (handles) {
+    handles.draggable({
+      axis: 'x',
+      containment: 'parent',
+    });
+  },
+  setScaleValue: function (value) {
+    var handle = this.$('.handle'),
+        width = handle.parent();
+    handle.css('left', (value - this.scaleMin) / (150 - this.scaleMin) * width + 8);
+    handle.parent().siblings().text(value + '%');
   },
   showButtonsAs: function (type, target, param) {
     if (this.currentTarget != null) {
@@ -72,7 +79,6 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     var target = $(event.target);
     if (target.hasClass('active')) {
       this.trigger('edit:stop');
-      this.currentImage = null;
       target
         .removeClass('active')
         .parents('.btn-group').siblings('.group2').andSelf().find('[data-group=edit]').prop('disabled', true);
@@ -86,7 +92,8 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   handle_dragHandler: function (event, ui) {
     var target = $(event.target),
         width = target.parent().width(),
-        value = (ui.position.left + 6) / width * (150 - this.scaleMin) + this.scaleMin;
+        value = (ui.position.left - 8) / width * (150 - this.scaleMin) + this.scaleMin;
+    console.log(ui.position.left);
     value = Math.round(value * 100) / 100;
     target.parent().siblings().text(value + '%');
     this.trigger('change:scale', value); 

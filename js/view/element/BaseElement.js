@@ -155,14 +155,14 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
         canvas = this.canvas[0],
         content = atob(canvas.toDataURL('image/jpeg').split(',')[1]);
     Meatazine.utils.fileAPI.on('complete:save', this.canvas_savedHandler, this);
-    Meatazine.utils.fileAPI.save(name.substr(name.lastIndexOf('/') + 1), content, 'image/jpeg');
+    Meatazine.utils.fileAPI.save(name.substr(name.lastIndexOf('/') + 1), '', content, 'image/jpeg');
   },
   canvas_savedHandler: function (url) {
     var image = this.canvas.data('body'),
         scale = this.canvas.data('scale');
     image.attr('src', url).data('scale', scale);
     this.canvas.replaceWith(image);
-    this.canvas[0].clearRect(0, 0, this.canvas.width(), this.canvas.height());
+    this.canvas[0].getContext('2d').clearRect(0, 0, this.canvas.width(), this.canvas.height());
     this.canvas.off();
     this.canvas = null;
     Meatazine.utils.fileAPI.off('complete:save', null, this);

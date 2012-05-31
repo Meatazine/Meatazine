@@ -105,12 +105,13 @@ body {
   margin: 5px auto 10px;
 }
 #context-menu .handle {
-  width: 12px;
-  height: 12px;
   background: url(../img/glyphicons-halflings.png) -288px -120px no-repeat;
-  position: absolute;
   cursor: pointer;
+  height: 12px;
   left:74px;
+  position: absolute;
+  width: 12px;
+  margin:0 -5px 0 -6px;
 }
 
 /*========================
