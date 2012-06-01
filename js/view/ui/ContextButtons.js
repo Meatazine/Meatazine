@@ -11,9 +11,9 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     "click button:[data-type='upload']": "uploadButton_clickHandker",
     "click button:[data-type='edit']": "editButton_clickHandler",
     "click button:[data-type='switch']": "switchButton_clickHandler",
+    "click input": "stopEventPropagation",
     "change #uploader": "uploader_selectHandler",
-    "change #scaleRanger": "scale_changeHandler",
-    "mouseup #scaleRanger": "stopEventPropagation"
+    "change .scale input": "scale_changeHandler",
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -65,13 +65,16 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
       .find('span').text(Math.round(value * 10000) / 100 + '%');
   },
   showButtonsAs: function (type, target, param) {
+    this.hide();
+    this.$('.group' + type).show();
+    if (target == null) {
+      return;
+    }
     if (this.currentTarget != null) {
       this.currentTarget.off(null, null, this);
       this.currentTarget = null;
     }
     this.off();
-    this.hide();
-    this.$('.group' + type).show();
     switch (type) {
       case Meatazine.view.ui.ContextButtonBype.TEXT:
         this.addTextHandlers(target, param);
@@ -139,7 +142,9 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     }
   },
   scale_changeHandler: function (event) {
-    this.trigger('change:scale', $(event.target).val()); 
+    var value = $(event.target).val();
+    this.$('.scale span').text(Math.round(value * 10000) / 100 + '%');
+    this.trigger('change:scale', value); 
   },
   switchButton_clickHandler: function (event) {
     var type = $(event.target).attr('data-class');

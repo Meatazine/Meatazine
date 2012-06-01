@@ -15,7 +15,8 @@
           zoom: 15,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         },
-        map = new google.maps.Map($('#map')[0], options);
+        map = new google.maps.Map($('#map')[0], options),
+        coder = new google.maps.Geocoder();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
         initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -24,7 +25,16 @@
         console.log('no geolocation');
       });
     }
-    console.log(map.getDiv());
+    $('#search-btn').on('click', function (event) {
+      coder.geocode({
+        address: $('#keyword').val()
+      }, function (array, obj) {
+        console.log(array);
+        console.log(obj);
+      })
+    });
   });
 </script>
 <div id="map"></div>
+<input type="search" id="keyword" />
+<button type="button" id="search-btn">搜索</button>

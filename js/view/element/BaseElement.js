@@ -282,7 +282,7 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     $(event.currentTarget).removeClass('active-img');
   },
   scaleChangeHandler: function (scale) {
-    this.canvas.data('scale', scale / 100);
+    this.canvas.data('scale', scale);
     this.drawImage();
   },
   startEditHandler: function (target) {
@@ -300,6 +300,11 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     }
   },
   switchMapHandler: function (image) {
+    if (this.canvas != null) {
+      this.saveCanvas(this.switchMapHandler, image);
+      this.trigger('edit:stop');
+      return;
+    }
     var self = this,
         options = {
           draggable: false,

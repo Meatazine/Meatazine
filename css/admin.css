@@ -96,11 +96,17 @@ body {
   position: absolute;
 }
 #context-menu .scale {
+  padding: 0 10px;
   text-align:center;
 }
 #context-menu .scale input {
-  width:144px;
-  margin:0 8px;
+  margin:0;
+  padding:0;
+  width:150px;
+}
+#context-menu .form-search {
+  padding:5px 10px;
+  width:232px;
 }
 
 /*========================
