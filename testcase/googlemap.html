@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <title>Google Map API 测试</title>
 <meta content="text/html; charset=UTF-8" />
+<link href="../css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
 <style>
+  body {
+    padding-top:60px;
+  }
   #map {
     width:400px;
     height:300px;
+  }
+  #search-result {
+    margin-top: 10px;
   }
 </style>
 <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
@@ -13,7 +21,8 @@
   $(function () {
     var options = {
           zoom: 15,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          center: new google.maps.LatLng(10.28114, 103.974609)
         },
         map = new google.maps.Map($('#map')[0], options),
         coder = new google.maps.Geocoder();
@@ -29,12 +38,52 @@
       coder.geocode({
         address: $('#keyword').val()
       }, function (array, obj) {
-        console.log(array);
-        console.log(obj);
+        if (obj == 'OK') {
+          $('#search-result').empty();
+          for (var i = 0, len = array.length; i < len; i++) {
+            var option = $('<li>', {
+              html: '<a href="#">' + array[i].formatted_address + '</a>',
+            });
+            option
+              .data('geometry', array[i].geometry)
+              .on('click', function (event) {
+                var geometry = $(this).data('geometry');
+                    marker = new google.maps.Marker({
+                      position: geometry.location,
+                      clickable: true,
+                      map: map,
+                    })
+                map.fitBounds(geometry.viewport);
+                 
+              });
+            $('#search-result').append(option);
+          }
+        } else {
+          var info = $('<div>', {
+            "class": 'alert'
+          });
+          info
+            .append('<button class="close" data-dismiss="alert">×</button>')
+            .append('搜索出错，返回：' + obj);
+          info.insertBefore($('#search-result'));
+        }
       })
     });
   });
 </script>
-<div id="map"></div>
-<input type="search" id="keyword" />
-<button type="button" id="search-btn">搜索</button>
+<div class="container">
+  <div class="row">
+    <div class="span5">
+      <div id="map"></div>
+    </div>
+    <div class="span7 form-inline">
+      <input type="search" id="keyword" />
+      <button type="button" id="search-btn" class="btn">搜索</button>
+      <ul class="nav nav-tabs nav-stacked" id="search-result">
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+

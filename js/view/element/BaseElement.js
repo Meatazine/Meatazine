@@ -35,6 +35,21 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     this.off();
     this.$el.remove();
   },
+  addMapMarker: function (map) {
+    var model = $(map.getDiv()).data('model'),
+        markers;
+    if (model.get('markers') == null) {
+      markers = new Meatazine.model.element.ElementCollection();
+      markers.createModel({
+        lat: 0,
+        lng: 0,
+        title: '',
+        description: ''
+      });
+      model.set('markers', markers);
+      this.trigger('decorate', markers);
+    }
+  },
   createItem: function (data) {
     return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
   },
@@ -121,10 +136,18 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     this.saveCanvas();
   },
   startEditMap: function (map) {
-    
+    map.setOptions({
+      draggable: true,
+    });
+    $(map.getDiv()).on('mousemove', function (event) {
+      event.stopPropagation();
+    });
   },
   stopEditMap: function (map) {
-    
+    map.setOptions({
+      draggable: false,
+    });
+    $(map.getDiv()).off('mousemove');
   },
   getSourceImageUrl: function (url) {
     if (url.match(/\/source\//) != null) {
@@ -281,6 +304,11 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   img_dragLeaveHandler: function (event) {
     $(event.currentTarget).removeClass('active-img');
   },
+  addMakerHandler: function (target) {
+    if (target instanceof google.maps.Map) {
+      this.addMapMarker(target);
+    }
+  },
   scaleChangeHandler: function (scale) {
     this.canvas.data('scale', scale);
     this.drawImage();
@@ -301,11 +329,22 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
   },
   switchMapHandler: function (image) {
     if (this.canvas != null) {
-      this.saveCanvas(this.switchMapHandler, image);
-      this.trigger('edit:stop');
-      return;
+      this.canvas.replaceWith(image);
+      this.canvas.off();
+      this.canvas = null;
+    }
+    // 改变类型的时候需要替换model
+    var index = -1;
+    if (!image.hasClass('placeholder')) {
+      this.$el.children().each(function (i) {
+        if ($.contains(this, image)) {
+          index = i;
+          return false;
+        }
+      });
     }
     var self = this,
+        model = new Meatazine.model.element.MapModel(),
         options = {
           draggable: false,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -318,6 +357,17 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     }, function () {
       console.log('no geolocation');
     });
+    
+    if (index == -1) {
+      this.collection.add(model);
+    } else {
+      this.collection.replace(model, index);
+    }
+    $(map.getDiv()).data('model', model);
+    
     self.trigger('select', self, map, Meatazine.view.ui.ContextButtonBype.MAP);
+    $(map.getDiv()).on('click', function (event) {
+      self.trigger('select', self, map, Meatazine.view.ui.ContextButtonBype.MAP);
+    });
   }
 });

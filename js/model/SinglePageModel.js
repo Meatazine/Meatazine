@@ -20,6 +20,17 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     }, this);
     this.set('contents', []);
   },
+  addElement: function (element) {
+    var contents = this.get('contents').concat(),
+        index = contents.push(element) - 1;
+    this.set('contents', contents);
+    return index;
+  },
+  checkIsModified: function () {
+    return _.any(this.attributes.contents, function (collection) {
+      return collection.length > 0;
+    });
+  },
   createElement: function (index, init, array) {
     var contents = this.get('contents').concat(),
         element = new Meatazine.model.element.ElementCollection();
@@ -48,9 +59,4 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     }
     return obj;
   },
-  checkIsModified: function () {
-    return _.any(this.attributes.contents, function (collection) {
-      return collection.length > 0;
-    });
-  }
 });

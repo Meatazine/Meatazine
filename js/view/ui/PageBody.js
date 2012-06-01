@@ -41,6 +41,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       });
       element.on('change', this.element_changeHandler, this);
       element.on('select', this.element_selectHandler, this);
+      element.on('decorate', this.element_decorateHandler, this);
       this.items[index] = element;
     }, this);
     
@@ -111,6 +112,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   element_changeHandler: function (collection) {
     this.refreshThumbnail();
     this.trigger('edit', collection);
+  },
+  element_decorateHandler: function (collection) {
+    var index = this.model.addElement(collection);
   },
   element_selectHandler: function (target, image, type) {
     this.options.contextButtons.showButtonsAs(type, target, image);

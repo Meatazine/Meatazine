@@ -1,10 +1,11 @@
 jQuery.namespace('Meatazine.model.element');
 Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
   config: null,
-  createModel: function (object) {
-    this.model = Backbone.Model.extend({
-      defaults: object
-    });
+  add: function (models, options) {
+    Backbone.Collection.prototype.add.call(this, models, options);
+    _.each(this.models, function (model) {
+      model.on('change', this.model_changeHandler, this);
+    }, this);
   },
   create: function (attributes, options) {
     var model = new this.model(attributes);
@@ -12,11 +13,10 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
     this.add(model);
     return model;
   },
-  add: function (models, options) {
-    Backbone.Collection.prototype.add.call(this, models, options);
-    _.each(this.models, function (model) {
-      model.on('change', this.model_changeHandler, this);
-    }, this);
+  createModel: function (object) {
+    this.model = Backbone.Model.extend({
+      defaults: object
+    });
   },
   createItems: function (array) {
     array = array || [{}];
@@ -26,9 +26,6 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
       this.add(model);
     }
   },
-  removeAt: function (index) {
-    this.remove(this.at(index));
-  },
   getToken: function (number) {
     var model = new this.model(),
         array = [];
@@ -36,6 +33,13 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
       array.push(_.extend(model.toJSON(), {count: i + 1}));
     }
     return array;
+  },
+  removeAt: function (index) {
+    this.remove(this.at(index));
+  },
+  replaceAt: function (model, index) {
+    this.removeAt(index);
+    this.add(model, {at: index});
   },
   model_changeHandler: function (model) {
     this.trigger('edit', _.indexOf(this.models, model));

@@ -1,16 +1,18 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.ContextButtons = Backbone.View.extend({
-  currentTarget: null,
-  currentImage: null,
+  currentElement: null,
+  currentItem: null,
   currentGroup: '',
   uploader: '',
   scaleMin: 0,
   events: {
     "click a": "selectHandler",
     "click button:not([data-toggle])": "button_clickHandler",
-    "click button:[data-type='upload']": "uploadButton_clickHandker",
-    "click button:[data-type='edit']": "editButton_clickHandler",
-    "click button:[data-type='switch']": "switchButton_clickHandler",
+    "click button[data-type='upload']": "uploadButton_clickHandker",
+    "click button[data-type='edit']": "editButton_clickHandler",
+    "click button[data-type='switch']": "switchButton_clickHandler",
+    "click button[data-type='add-marker']": "addMarkerButton_clickHandler",
+    "click .geo-search button": "geoSearchButton_clickHandler",
     "click input": "stopEventPropagation",
     "change #uploader": "uploader_selectHandler",
     "change .scale input": "scale_changeHandler",
@@ -24,11 +26,11 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     if (element == null || image == null) {
       return;
     }
-    this.currentTarget = element;
-    this.currentImage = image;
+    this.currentElement = element;
+    this.currentItem = image;
     this.scaleMin = image.data('scale') < 0.5 ? image.data('scale') : 0.5;
     this.scaleMax = image.data('scale') > 1.5 ? image.data('scale') : 1.5;
-    this.currentTarget.on('ready', this.image_readyHandler, this);
+    this.currentElement.on('ready', this.image_readyHandler, this);
     this.on('select:image', element.handleFiles, element);
     this.on('edit:start', element.startEditHandler, element);
     this.on('edit:stop', element.stopEditHandler, element);
@@ -37,10 +39,12 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     element.on('edit:stop', this.element_stopEditHandler, this);
     this.setScaleValue(image.data('scale'));
   },
-  addMapHandlers: function (element) {
-    this.currentTarget = element;
+  addMapHandlers: function (element, map) {
+    this.currentElement = element;
+    this.currentItem = map;
     this.on('edit:start', element.startEditHandler, element);
     this.on('edit:stop', element.stopEditHandler, element);
+    this.on('add:marker', element.addMakerHandler, element);
     this.on('switch:image', element.switchImageHandler, element);
   },
   addTextHandlers: function (text) {
@@ -70,9 +74,9 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     if (target == null) {
       return;
     }
-    if (this.currentTarget != null) {
-      this.currentTarget.off(null, null, this);
-      this.currentTarget = null;
+    if (this.currentElement != null) {
+      this.currentElement.off(null, null, this);
+      this.currentElement = null;
     }
     this.off();
     switch (type) {
@@ -91,7 +95,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   startEdit: function (target, isTrigger) {
     if (isTrigger) {
-      this.trigger('edit:start', this.currentImage);
+      this.trigger('edit:start', this.currentItem);
     }
     target
       .addClass('active')
@@ -99,7 +103,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   stopEdit: function (target, isTrigger) {
     if (isTrigger) {
-      this.trigger('edit:stop', this.currentImage);
+      this.trigger('edit:stop', this.currentItem);
     }
     target
       .removeClass('active')
@@ -107,6 +111,9 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   stopEventPropagation: function (event) {
     event.stopPropagation();
+  },
+  addMarkerButton_clickHandler: function (event) {
+    this.trigger('add:marker', this.currentItem);
   },
   button_clickHandler: function (event) {
     event.stopPropagation();
@@ -120,7 +127,40 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     }
   },
   element_stopEditHandler: function () {
-    this.stopEdit(this.$('.group' + Meatazine.view.ui.ContextButtonBype.IMAGE).find('[data-type="edit"]'));
+    this.$('[data-type="edit"]:visible').trigger('click');
+  },
+  geoSearchButton_clickHandler: function (event) {
+    var self = this,
+        coder = new google.maps.Geocoder();
+    this.$('.geo-search').removeClass('error');
+    coder.geocode({
+      address: this.$('.geo-search input').val()
+    }, function (array, obj) {
+      if (obj == 'OK') {
+        var search = self.$('.geo-search');
+        if (search.next().length == 0) {
+          $('<li class="divider"></li>').insertAfter(search);
+        }
+        search.next().nextAll().remove();
+        for (var i = 0, len = array.length; i < len; i++) {
+          var option = $('<li><a href="#">' + array[i].formatted_address + '</a></li>');
+          option
+            .data('geometry', array[i].geometry)
+            .on('click', function (event) {
+              var geometry = $(this).data('geometry');
+                  marker = new google.maps.Marker({
+                    position: geometry.location,
+                    clickable: true,
+                    map: self.currentItem,
+                  })
+              self.currentItem.fitBounds(geometry.viewport);
+            });
+          search.parent().append(option);
+        }
+      } else {
+        self.$('.geo-search').addClass('error');
+      }
+    })
   },
   image_readyHandler: function (event) {
     this.$('.group' + Meatazine.view.ui.ContextButtonBype.IMAGE).find('[data-type="edit"]').prop('disabled', false);
@@ -148,7 +188,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   switchButton_clickHandler: function (event) {
     var type = $(event.target).attr('data-class');
-    this.trigger('switch:' + type, this.currentImage);
+    this.trigger('switch:' + type, this.currentItem);
   },
   uploadButton_clickHandker: function (event) {
     this.uploader.click();
