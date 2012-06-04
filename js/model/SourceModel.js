@@ -39,15 +39,6 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   hasTemplate: function (type) {
     return _.has(this.templates, type);
   },
-  getTemplate: function (type) {
-    return this.templates[type];
-  },
-  // 元素列表模板
-  setSourceTemplate: function (str) {
-    str = str.replace(/[\r\n]/gm, '');
-    str = str.replace(/\s{2,}/gm, '');
-    this.set('sourceListTemplate', str);
-  },
   getSourceTemplate: function (model) {
     if (model instanceof Backbone.Model) {
       var obj = model.attributes,
@@ -63,6 +54,15 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
       return template;
     }
     return '';
+  },
+  getTemplate: function (type) {
+    return this.templates[type];
+  },
+  // 元素列表模板
+  setSourceTemplate: function (str) {
+    str = str.replace(/[\r\n]/gm, '');
+    str = str.replace(/\s{2,}/gm, '');
+    this.set('sourceListTemplate', str);
   },
   span_focusInHandler: function (event) {
     $(event.target).addClass('editing');

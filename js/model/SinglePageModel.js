@@ -28,7 +28,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   },
   checkIsModified: function () {
     return _.any(this.attributes.contents, function (collection) {
-      return collection.length > 0;
+      return collection.isModified;
     });
   },
   createElement: function (index, init, array) {

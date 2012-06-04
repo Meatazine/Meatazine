@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.model.element');
 Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
   config: null,
+  isModified: false,
   add: function (models, options) {
     Backbone.Collection.prototype.add.call(this, models, options);
     _.each(this.models, function (model) {
@@ -26,22 +27,15 @@ Meatazine.model.element.ElementCollection = Backbone.Collection.extend({
       this.add(model);
     }
   },
-  getToken: function (number) {
-    var model = new this.model(),
-        array = [];
-    for (var i = 0; i < number; i++) {
-      array.push(_.extend(model.toJSON(), {count: i + 1}));
-    }
-    return array;
-  },
-  removeAt: function (index) {
-    this.remove(this.at(index));
+  removeAt: function (index, silent) {
+    this.remove(this.at(index), {silent: silent});
   },
   replaceAt: function (model, index) {
-    this.removeAt(index);
+    this.removeAt(index, true);
     this.add(model, {at: index});
   },
   model_changeHandler: function (model) {
+    this.isModified = true;
     this.trigger('edit', _.indexOf(this.models, model));
   }
 });

@@ -4,6 +4,31 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
   handleChildrenState: function () {
     
   },
+  handleImages: function (url) {
+    var image = new Image(),
+        sample = this.body.$el.children().first(),
+        canvas = $('<canvas>')[0],
+        context = canvas.getContext('2d');
+    canvas.width = sample.filter('img').add(sample.find('img')).width();
+    canvas.height = sample.filter('img').add(sample.find('img')).height();
+    image.onload = function () {
+      var sourceWidth,
+          sourceHeight,
+          scale;
+      if (image.width / image.height > canvas.width / canvas.height) {
+        sourceHeight = image.height;
+        sourceWidth = image.height * canvas.width / canvas.height;
+        scale = canvas.height / image.height;
+      } else {
+        sourceWidth = image.width;
+        sourceHeight = image.width * canvas.height / canvas.width;
+        scale = canvas.width / image.width;
+      }
+      context.drawImage(image, image.width - sourceWidth >> 1, image.height - sourceHeight >> 1, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
+      Meatazine.utils.fileAPI.save(url.substr(url.lastIndexOf('/') + 1), '', atob(canvas.toDataURL('image/jpeg').split(',')[1]), 'image/jpeg', scale);
+    }
+    image.src = url;
+  },
   next: function () {
     Meatazine.view.element.BaseElement.prototype.next.call(this);
     if (this.fileQueue.length == 0) {
@@ -15,7 +40,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
     }
   },
   item_clickHandler: function (event) {
-    var target = $(event.target),
+    var target = $(event.currentTarget),
         index = target.index(),
         self = event.data.self;
     self.body.setModel(self.collection.at(index));

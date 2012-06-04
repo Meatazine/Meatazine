@@ -14,6 +14,12 @@
   #search-result {
     margin-top: 10px;
   }
+  .mymarker {
+    width:32px;
+    height: 52px;
+    background: url(../img/mapmarker.png);
+    position: absolute;
+  }
 </style>
 <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
 <script src="../js/libs/jquery-1.7.2.min.js"></script>
@@ -25,7 +31,8 @@
           center: new google.maps.LatLng(10.28114, 103.974609)
         },
         map = new google.maps.Map($('#map')[0], options),
-        coder = new google.maps.Geocoder();
+        coder = new google.maps.Geocoder(),
+        markers = [];
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
         initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -69,6 +76,39 @@
         }
       })
     });
+    $('#add-marker').on('click', function (event) {
+      var marker = $('<div>', {
+        "class": "mymarker"
+      }),
+          markerSize = new google.maps.Size(22, 32),
+          originPoint = new google.maps.Point(0, 0),
+          markerImage = new google.maps.MarkerImage('../img/mapmarkers.png', markerSize, originPoint);
+      marker
+        .css('left', event.pageX)
+        .css('top', event.pageY)
+        .appendTo($('body'));
+      $('body')
+        .mousemove(function (event) {
+          marker.css('left', event.pageX - marker.width() / 2).css('top', event.pageY - marker.height());
+        })
+        .click(function (event) {
+          marker.remove();
+          $(this).off();
+          google.maps.event.clearListeners(map, 'click');
+        });
+      google.maps.event.addListener(map, 'click', function (event) {
+        markerImage.origin.x = Math.floor(markers.length / 9);
+        markerImage.origin.y = markers.length % 9 * 32;
+        var mapmarker = new google.maps.Marker({
+          position: event.latLng,
+          icon: markerImage,
+          map: map
+        });
+        markers.push(mapmarker);
+        google.maps.event.clearListeners(map, 'click');
+      });
+      event.stopPropagation();
+    });
   });
 </script>
 <div class="container">
@@ -77,8 +117,13 @@
       <div id="map"></div>
     </div>
     <div class="span7 form-inline">
-      <input type="search" id="keyword" />
-      <button type="button" id="search-btn" class="btn">搜索</button>
+      <div class="control-group">
+        <button class="btn" id="add-marker">添加标记</button>
+      </div>
+      <div class="control-group">
+        <input type="search" id="keyword" />
+        <button type="button" id="search-btn" class="btn">搜索</button>
+      </div>
       <ul class="nav nav-tabs nav-stacked" id="search-result">
         
       </ul>

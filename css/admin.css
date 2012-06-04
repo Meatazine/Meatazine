@@ -108,6 +108,12 @@ body {
   padding:5px 10px;
   width:232px;
 }
+.tmp-marker {
+  background: url(../img/mapmarkers.png);
+  height:32px;
+  position: absolute;
+  width:22px;
+}
 
 /*========================
  * page
