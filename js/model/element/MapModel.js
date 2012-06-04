@@ -6,6 +6,5 @@ Meatazine.model.element.MapModel = Backbone.Model.extend({
     lng: 0,
     zoom: 0,
     markers: null,
-    decorator: 0,
   },
 });

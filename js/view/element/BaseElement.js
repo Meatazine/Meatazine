@@ -87,68 +87,6 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
   },
-  startEditImage: function (image) {
-    if (this.canvas != null) {
-      this.saveCanvas();
-      return;
-    }
-    this.canvas = $('<canvas>');
-    var self = this,
-        canvas = this.canvas[0],
-        sourceUrl = this.getSourceImageUrl(image.attr('src')),
-        loader = new Image();
-    canvas.width = image.width();
-    canvas.height = image.height();
-    loader.onload = function () {
-      self.drawImage();
-    }
-    this.canvas
-      .data('body', image)
-      .data('image', loader)
-      .data('scale', image.data('scale'))
-      .data('url', image.attr('src'))
-      .data('x', 0)
-      .data('y', 0)
-      .on('mousedown', function (event) {
-        var currX = $(this).data('x'),
-            currY = $(this).data('y'),
-            startX = event.pageX,
-            startY = event.pageY;
-        $(this).on('mousemove', function (event) {
-          x = event.pageX - startX;
-          y = event.pageY - startY;
-          $(this).data('x', currX + x);
-          $(this).data('y', currY + y);
-          self.drawImage();
-          event.stopPropagation();
-        });
-        $('body').one('mouseup', function (event) {
-          self.canvas.off('mousemove');
-        });
-      })
-      .on('mouseup', function (event) {
-        $(this).off('mousemove');
-      });
-    loader.src = sourceUrl;
-    image.replaceWith(this.canvas);
-  },
-  stopEditImage: function (image) {
-    this.saveCanvas();
-  },
-  startEditMap: function (map) {
-    map.setOptions({
-      draggable: true,
-    });
-    $(map.getDiv()).on('mousemove', function (event) {
-      event.stopPropagation();
-    });
-  },
-  stopEditMap: function (map) {
-    map.setOptions({
-      draggable: false,
-    });
-    $(map.getDiv()).off('mousemove');
-  },
   getSourceImageUrl: function (url) {
     if (url.match(/\/source\//) != null) {
       return url;
@@ -238,6 +176,76 @@ Meatazine.view.element.BaseElement = Backbone.View.extend({
         } : null;
     Meatazine.utils.fileAPI.on('complete:save', this.canvas_savedHandler, this);
     Meatazine.utils.fileAPI.save(name.substr(name.lastIndexOf('/') + 1), '', content, 'image/jpeg', callback);
+  },
+  startEditImage: function (image) {
+    if (this.canvas != null) {
+      this.saveCanvas();
+      return;
+    }
+    this.canvas = $('<canvas>');
+    var self = this,
+        canvas = this.canvas[0],
+        sourceUrl = this.getSourceImageUrl(image.attr('src')),
+        loader = new Image();
+    canvas.width = image.width();
+    canvas.height = image.height();
+    loader.onload = function () {
+      self.drawImage();
+    }
+    this.canvas
+      .data('body', image)
+      .data('image', loader)
+      .data('scale', image.data('scale'))
+      .data('url', image.attr('src'))
+      .data('x', 0)
+      .data('y', 0)
+      .on('mousedown', function (event) {
+        var currX = $(this).data('x'),
+            currY = $(this).data('y'),
+            startX = event.pageX,
+            startY = event.pageY;
+        $(this).on('mousemove', function (event) {
+          x = event.pageX - startX;
+          y = event.pageY - startY;
+          $(this).data('x', currX + x);
+          $(this).data('y', currY + y);
+          self.drawImage();
+          event.stopPropagation();
+        });
+        $('body').one('mouseup', function (event) {
+          self.canvas.off('mousemove');
+        });
+      })
+      .on('mouseup', function (event) {
+        $(this).off('mousemove');
+      });
+    loader.src = sourceUrl;
+    image.replaceWith(this.canvas);
+  },
+  stopEditImage: function (image) {
+    this.saveCanvas();
+  },
+  startEditMap: function (map) {
+    map.setOptions({
+      draggable: true,
+    });
+    $(map.getDiv()).on('mousemove', function (event) {
+      event.stopPropagation();
+    });
+  },
+  stopEditMap: function (map) {
+    map.setOptions({
+      draggable: false,
+    });
+    $(map.getDiv()).off('mousemove');
+    var model = $(map.getDiv()).data('model'),
+        latlng = map.getCenter(),
+        zoom = map.getZoom();
+    model.set({
+      lat: latlng.lat(),
+      lng: latlng.lng(),
+      zoom: zoom,
+    })
   },
   canvas_clickHandler: function (event) {
     this.trigger('select', null, null, Meatazine.view.ui.ContextButtonBype.IMAGE);
