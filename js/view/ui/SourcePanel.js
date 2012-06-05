@@ -58,18 +58,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       this.$('#template-list li').eq(index).trigger('click');
     }
   },
-  tab_changeHandler: function (event) {
-    if (this.currentPanel != null) {
-      this.currentPanel.hide();
-    }
-    var target = $(event.currentTarget).attr('data-for');
-    this.currentPanel = this.$('#' + target);
-    this.currentPanel.show();
-  },
-  pageList_selectHandler: function (model) {
-    this.$('.btn').eq(0).trigger('click');
-    this.pageContent = model;
-  },
   page_editHandler: function (collection) {
     if (this.pageContent.checkIsModified()) {
       this.$('.btn').eq(1).trigger('click');
@@ -99,6 +87,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       .sortable()
       .disableSelection();
   },
+  pageList_selectHandler: function (model) {
+    this.$('.btn').eq(0).trigger('click');
+    this.pageContent = model;
+  },
   removeButton_clickHandler: function (event) {
     var target = $(event.target).parent(),
         mIndex = target.index(),
@@ -107,16 +99,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       target.remove();
     }
     this.pageContent.getContentAt(cIndex).removeAt(mIndex);
-  },
-  span_clickHandler: function (event) {
-    var target = $(event.target),
-        input = $('<input />', {
-          val: target.text(),
-          "name": target.attr('class'),
-          "class": "input-medium focused form-inline"
-        });
-    target.replaceWith(input);
-    input.focus();
   },
   source_sortactivateHandler: function (event, ui) {
     this.currentDragItemIndex = ui.item.index();
@@ -130,6 +112,24 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   sourceItem_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
+  },
+  span_clickHandler: function (event) {
+    var target = $(event.target),
+        input = $('<input />', {
+          val: target.text(),
+          "name": target.attr('class'),
+          "class": "input-medium focused form-inline"
+        });
+    target.replaceWith(input);
+    input.focus();
+  },
+  tab_changeHandler: function (event) {
+    if (this.currentPanel != null) {
+      this.currentPanel.hide();
+    }
+    var target = $(event.currentTarget).attr('data-for');
+    this.currentPanel = this.$('#' + target);
+    this.currentPanel.show();
   },
   template_clickHandler: function (event) {
     if (!this.enabled) {

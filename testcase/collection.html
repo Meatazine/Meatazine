@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>测试Backbone.Collection</title>
+<meta content="text/html; charset=UTF-8" />
+<style>
+  #output {
+    width:400px;
+    height:600px;
+    border:1px solid #CCC;
+  }
+</style>
+<script src="../js/libs/underscore-min.js"></script>
+<script src="../js/libs/jquery-1.7.2.min.js"></script>
+<script src="../js/libs/backbone-min.js"></script>
+<script>
+  var SampleCollection = Backbone.Collection.extend({
+        create: function (attributes, options) {
+          var model = new this.model(attributes);
+          model.set('count', this.length + 1);
+          this.add(model);
+          return model;
+        },
+        initialize: function () {
+          this.on('add', this.addHandler, this);
+        },
+        addHandler: function (model, collection, options) {
+          model.on('change', this.model_changeHandler, this);
+        },
+        model_changeHandler: function (model) {
+          this.isModified = true;
+          this.trigger('edit', model, _.indexOf(this.models, model));
+        }
+      });
+  $(function () {
+    var count = 0,
+        collection = new SampleCollection();
+    collection.on('edit', function (model, index) {
+      $('#output').append(model.cid + ' ; ' + count++ + '<br />');
+    });
+    for (var i = 0; i < 3; i++) {
+      collection.create({tmp: i});
+    }
+    collection.at(0).set('tmp', 5);
+    collection.at(1).set('tmp', 4);
+    collection.at(2).set('tmp', 3);
+  });
+</script>
+<div id="output"></div>

@@ -10,13 +10,10 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     gallery: -1,
     pages: null
   },
-  setSize: function (w, h) {
-    w = parseInt(w), h = parseInt(h);
-    this.set({
-      width: w,
-      height: h
-    }, {silent: true});
-    this.trigger('change:size', w, h);
+  save: function () {
+    var data = _.clone(this.attributes);
+    data.pages = this.get('pages').toJSON();
+    localStorage.setItem('book', JSON.stringify(data));
   },
   createZip: function () {
     var data = _.pick(this.attributes, 'width', 'height'),
@@ -43,6 +40,12 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     });
     return zip;
   },
+  exportZip: function () {
+    var zip = this.createZip();
+    zip.on('ready', function () {
+      zip.downloadZip();
+    });
+  },
   fill: function (data) {
     this.setSize(data.width, data.height);
     this.get('pages').fill(data.pages);
@@ -59,11 +62,6 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
       },
     })
   },
-  save: function () {
-    var data = _.clone(this.attributes);
-    data.pages = this.get('pages').toJSON();
-    localStorage.setItem('book', JSON.stringify(data));
-  },
   load: function () {
     var store = localStorage.getItem('book'),
         data = (store && JSON.parse(store)) || {};
@@ -79,12 +77,6 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     }, this);
     Meatazine.utils.fileAPI.on('complete:save', this.saveCompleteHandler, this);
     Meatazine.utils.fileAPI.save('export.html', html);
-  },
-  exportZip: function () {
-    var zip = this.createZip();
-    zip.on('ready', function () {
-      zip.downloadZip();
-    });
   },
   publish: function () {
     var self = this,
@@ -110,22 +102,16 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
       GUI.publishStatus.showStep(2);
     });
   },
+  setSize: function (w, h) {
+    w = parseInt(w), h = parseInt(h);
+    this.set({
+      width: w,
+      height: h
+    }, {silent: true});
+    this.trigger('change:size', w, h);
+  },
   saveCompleteHandler: function (url) {
     Meatazine.utils.fileAPI.off('complete:save', null, this);
     window.open('preview.html#width=' + this.get('width') + '&height=' + this.get('height'), 'preview');
   },
-  loadTemplateComplete: function (template) {
-    var html = '',
-        zip = new JSZip();
-    _.each(this.attributes.pages.models, function (model, i) {
-      html += model.renderHTML();
-    }, this);
-    var data = {
-      width: self.get('width'),
-      height: self.get('height'),
-      content: html
-    }
-    html = Mustache.render(template, data);
-    zip.file('index.html', html);
-  }
 });

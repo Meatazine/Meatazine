@@ -3,6 +3,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   items: [],
   isSentByMe: false,
   events: {
+    "focusin .editable": "editable_focusInHandler",
     "focusout .editable": "editable_focusOutHandler",
     "click .editable": "editable_clickHandler",
     "dblclick .editable": "editable_dbClickHandler"
@@ -51,7 +52,6 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       .css('cursor', 'move');
     this.$('.ui-resizable').resizable();
     this.refreshThumbnail();
-    this.trigger('edit');
   },
   getFilteredHTML: function () {
     var html = this.$el.clone();
@@ -83,6 +83,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   showLoading: function () {
     this.$el.html('<p align="center" style="padding-top:40px"><img src="img/loading.gif" /><br />加载中，请稍后</p>');
   },
+  stopEvent: function (event) {
+    event.stopPropagation();
+  },
   useTemplate: function(isFromPage) {
     if (isFromPage && this.model.get('template') != '') {
       this.render();
@@ -97,12 +100,25 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.options.source.fetch(this.model.get('templateType'));
     this.showLoading();
   },
+  editable_focusInHandler: function (event) {
+    $(event.target).on({
+      'mousedown': this.stopEvent,
+      'mousemove': this.stopEvent,
+      'keydown': this.stopEvent,
+    });
+  },
   editable_focusOutHandler: function (event) {
     $(event.target)
       .removeClass('editing')
       .prop('contenteditable', false)
       .css('cursor', 'move')
-      .draggable({ cursor: "move"});
+      .draggable({ cursor: "move"})
+      .off({
+        'mousedown': this.stopEvent,
+        'mousemove': this.stopEvent,
+        'keydown': this.stopEvent,
+      });
+    this.saveTemplate();
     this.refreshThumbnail();
   },
   editable_clickHandler: function (event) {

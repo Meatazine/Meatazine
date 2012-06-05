@@ -1,6 +1,9 @@
 jQuery.namespace('Meatazine.view.element');
 (function (ns) {
-  var isSentByMe = false;
+  var isSentByMe = false,
+      markerSize = new google.maps.Size(22, 32),
+      originPoint = new google.maps.Point(0, 0),
+      markerImage = new google.maps.MarkerImage('img/mapmarkers.png', markerSize, originPoint);
   ns.BaseElement = Backbone.View.extend({
     canvas: null,
     token: null,
@@ -26,17 +29,17 @@ jQuery.namespace('Meatazine.view.element');
       this.$el.empty();
       _.each(this.collection.models, function (model, i) {
         // 判断是否是地图
-        if (model instanceof Meatazine.model.element.MapModel) {
+        if (model.attributes.hasOwnProperty('lat')) {
           var item = $(this.template);
           this.$el.append(item);
           this.createMap(item, model);
         } else {
-          this.$el.append(this.createItem(model.toJSON()));
+          this.$el.append(this.createItem(model));
         }
       }, this);
-      this.$('.placeholder').removeClass('placeholder');
+      this.$('.placeholder[src!="img/spacer.gif"]').removeClass('placeholder');
       for (var i = this.collection.config.number - this.collection.length; i > 0; i--) {
-        item = $(this.createItem(this.collection.create().toJSON()));
+        item = $(this.createItem(this.collection.create()));
         this.$el.append(item);
         this.token = this.token == null ? item : this.token.add(item);
       }
@@ -49,10 +52,7 @@ jQuery.namespace('Meatazine.view.element');
     addMapMarker: function (map) {
       var model = $(map.getDiv()).data('model'),
           markers = model.get('markers') ? model.get('markers').concat() : [],
-          markerSize = new google.maps.Size(22, 32),
-          originPoint = new google.maps.Point(0, 0),
-          markerImage = new google.maps.MarkerImage('img/mapmarkers.png', markerSize, originPoint);;
-      var tmpMarker = $('<div>', {"class": "tmp-marker"});
+          tmpMarker = $('<div>', {"class": "tmp-marker"});
       tmpMarker
         .css('background-position', -Math.floor(markers.length / 9) * 22 + 'px ' + -markers.length % 9 * 32 + 'px')
         .appendTo($('body'));
@@ -62,11 +62,12 @@ jQuery.namespace('Meatazine.view.element');
         })
         .click(function (event) {
           tmpMarker.remove();
-          $(this).off('mousemove click');
+          $(this).off('mousemove')
+            .off('click', arguments.callee);
           google.maps.event.clearListeners(map, 'click');
         });
       google.maps.event.addListener(map, 'click', function (event) {
-        markerImage.origin.x = Math.floor(markers.length / 9);
+        markerImage.origin.x = Math.floor(markers.length / 9) * 22;
         markerImage.origin.y = markers.length % 9 * 32;
         var mapmarker = new google.maps.Marker({
           clickable: false,
@@ -81,6 +82,7 @@ jQuery.namespace('Meatazine.view.element');
       event.stopPropagation();
     },
     createItem: function (data) {
+      data = data.toJSON != null ? data.toJSON() : data;
       return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
     },
     createMap: function (container, model) {
@@ -94,6 +96,19 @@ jQuery.namespace('Meatazine.view.element');
             zoom: model.get('zoom'),
           },
           map = new google.maps.Map(container[0], options);
+      if (model.get('markers') instanceof Array) {
+        for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
+          var point = new google.maps.Point(Math.floor(i / 9) * 22, i % 9 * 32);
+          var image = new google.maps.MarkerImage('img/mapmarkers.png', markerSize, point);
+          var latlng = new google.maps.LatLng(arr[i].x, arr[i].y),
+              mapmarker = new google.maps.Marker({
+                clickable: false,
+                icon: image,
+                map: map,
+                position: latlng,
+              });
+        }
+      }
       $(map.getDiv()).data('model', model);
       $(map.getDiv()).on('click', function (event) {
         self.trigger('select', self, map, Meatazine.view.ui.ContextButtonBype.MAP);
@@ -195,26 +210,32 @@ jQuery.namespace('Meatazine.view.element');
       } else {
         this.isLoading = false;
         this.handleChildrenState();
+        this.trigger('change', this.collection);
         this.trigger('ready');
-        //this.trigger('change', this.collection);
         Meatazine.utils.fileAPI.off('complete:clone', null, this);
         Meatazine.utils.fileAPI.off('complete:save', null, this);
       }
     },
     renderItem: function (url, scale) {
+      var item;
       if (this.token.length > 0) {
         var index = this.token.eq(0).index();
-        this.collection.at(index).set('img', url);
+        this.collection.at(index).set({img: url}, {silent: true});
+        item = $(this.createItem(this.collection.at(index)));
+        this.token.eq(0).replaceWith(item);
         this.token = this.token.slice(1);
       } else {
-        var model = this.collection.create({img: url}),
-            item = $(this.createItem(model.toJSON()));
-        item.filter('.placeholder').add(item.find('.placeholder')).data('scale', scale).removeClass('placeholder');
+        var model = this.collection.create({img: url});
+        item = $(this.createItem(model));
         this.$el.append(item);
       }
+      item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).data('scale', scale).removeClass('placeholder');
       this.next();
     },
     saveCanvas: function (callback, event) {
+      if (this.canvas == null) {
+        return;
+      }
       var name = this.canvas.data('url'),
           canvas = this.canvas[0],
           content = atob(canvas.toDataURL('image/jpeg').split(',')[1])
@@ -289,12 +310,11 @@ jQuery.namespace('Meatazine.view.element');
       var model = $(map.getDiv()).data('model'),
           latlng = map.getCenter(),
           zoom = map.getZoom();
-      isSenetByMe = true;
       model.set({
         lat: latlng.lat(),
         lng: latlng.lng(),
         zoom: zoom,
-      })
+      }, {silent: true});
     },
     canvas_clickHandler: function (event) {
       this.trigger('select', null, null, Meatazine.view.ui.ContextButtonBype.IMAGE);
@@ -317,15 +337,18 @@ jQuery.namespace('Meatazine.view.element');
         isSentByMe = false;
         return;
       }
-      this.$el.children().eq(index).replaceWith(this.createItem(this.collection.at(index).toJSON()));
-      this.$el.children().eq(index).find('.placeholder').removeClass('placeholder');
-      this.$el.children().eq(index).filter('.placeholder').removeClass('placeholder');
-      this.trigger('change');
+      var oldItem = this.$el.children().eq(index),
+          data = oldItem.filter('img').add(oldItem.find('img')).data();
+          newItem = $(this.createItem(this.collection.at(index)));
+      oldItem.replaceWith(newItem);
+      newItem.filter('img').add(oldItem.find('img')).data(data);
+      newItem.filter('.placeholder').add(newItem.find('.placeholder')).removeClass('placeholder');
+      this.trigger('change', this.collection);
     },
     collection_removeHandler: function (model, collection, options) {
       this.$el.children().eq(options.index).remove();
       this.handleChildrenState();
-      this.trigger('change');
+      this.trigger('change', this.collection);
     },
     collection_sortHandler: function (start, end) {
       var item = this.$el.children().eq(start).remove();
@@ -397,27 +420,31 @@ jQuery.namespace('Meatazine.view.element');
         this.canvas = null;
       }
       // 改变类型的时候需要替换model
-      var index = -1, token = -1
-          model = new Meatazine.model.element.MapModel();
+      var index = -1,
+          model = this.collection.createMapModel();
       this.$el.children().each(function (i) {
         if ($.contains(this, image[0]) || this == image[0]) {
           index = i;
           return false;
         }
       });
-      this.token.each(function (i) {
-        if ($.contains(this, image[0]) || this == image[0]) {
-          token = i;
-          return false;
+      if (this.token != null) {
+        var token = -1;
+        this.token.each(function (i) {
+          if ($.contains(this, image[0]) || this == image[0]) {
+            token = i;
+            return false;
+          }
+        });
+        if (token != -1) {
+          this.token = this.token.not(this.token.eq(token));
         }
-      });
-      if (token != -1) {
-        this.token = this.token.not(this.token.eq(token));
       }
+      
       image.parent().addClass('map-container');
       this.collection.replaceAt(model, index); 
       var map = this.createMap(image.parent(), model);
-      this.trigger('change');
+      this.trigger('change', this.collection);
       this.trigger('select', this, map, Meatazine.view.ui.ContextButtonBype.MAP);
     }
   });

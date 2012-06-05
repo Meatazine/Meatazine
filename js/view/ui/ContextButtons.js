@@ -3,7 +3,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   currentElement: null,
   currentItem: null,
   currentGroup: '',
-  uploader: '',
+  uploader: null,
   scaleMin: 0,
   events: {
     "click a": "selectHandler",
@@ -19,7 +19,6 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.uploader = this.$('#uploader');
     this.hide();
   },
   addImageHandlers: function (element, image) {
@@ -38,6 +37,13 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     this.on('switch:map', element.switchMapHandler, element);
     element.on('edit:stop', this.element_stopEditHandler, this);
     this.setScaleValue(image.data('scale'));
+    if (this.uploader != null) {
+      this.uploader.remove();
+      this.uploader.off();
+      this.uploader = null;
+    }
+    this.uploader = $('<input type="file" multiple="multiple" id="uploader" accept="image/*" />');
+    this.$el.append(this.uploader);
   },
   addMapHandlers: function (element, map) {
     this.currentElement = element;

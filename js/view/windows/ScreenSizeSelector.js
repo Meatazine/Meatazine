@@ -1,5 +1,6 @@
 jQuery.namespace('Meatazine.view.windows');
 Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
+  info: null,
   events: {
     "click .device": "device_clickHandler",
     "click .btn-primary": "confirmHandler",
@@ -7,6 +8,7 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
   initialize: function () {
     this.$el = $(this.el);
     this.info = $(this.options.infoText);
+    this.model.on('change:size', this.model_sizeChangeHandler, this);
     this.render();
     this.confirmHandler();
     delete this.options;
@@ -15,17 +17,22 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
     this.$('form').hide();
     this.$('.ipad').addClass('active');
   },
-  show: function () {
-    this.$el.modal('show');
-  },
   hide: function () {
     this.$el.modal('hide');
+  },
+  show: function () {
+    this.$el.modal('show');
   },
   showInfo: function () {
     this.info
       .text(this.model.get('width') + ' × ' + this.model.get('height'))
       .attr('title', '适用机型：' + this.$('.active').attr('data-device'))
       .tooltip({placement: 'right'});
+  },
+  confirmHandler: function (event) {
+    this.model.setSize($('#device-width').val(), $('#device-height').val());
+    this.showInfo();
+    this.hide();
   },
   device_clickHandler: function (event) {
     var target = this.$(event.currentTarget);
@@ -39,9 +46,19 @@ Meatazine.view.windows.ScreenSizeSelector = Backbone.View.extend({
       this.$('form').slideUp();
     }
   },
-  confirmHandler: function (event) {
-    this.model.setSize($('#device-width').val(), $('#device-height').val());
+  model_sizeChangeHandler: function (w, h) {
+    this.$('.active').removeClass('active');
+    this.$('#device-width').val(w);
+    this.$('#device-height').val(h);
     this.showInfo();
-    this.hide();
-  }
+    if (w == 1024 && h == 768) {
+      this.$('.ipad').addClass('active');
+      return;
+    }
+    if (w == 1024 && h == 600) {
+      this.$('.kindle-fire').addClass('active');
+      return;
+    }
+    this.$('.other').addClass('active');
+  },
 });

@@ -8,9 +8,8 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   },
   initialize: function (init) {
     if (init.contents.length > 0) {
-      this.isEmpty = false;
       for (var i = 0, len = init.contents.length; i < len; i++) {
-        this.createElement(i, init.contents[i]);
+        this.createElement(i, this.getModelDefaults(_.keys(init.contents[i][0])), init.contents[i]);
       }
     }
   },
@@ -19,6 +18,11 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
       collection.off();
     }, this);
     this.set('contents', []);
+  },
+  toJSON: function () {
+    var json = Backbone.Model.prototype.toJSON.call(this);
+    delete json.renderedHTML;
+    return json;
   },
   addElement: function (element) {
     var contents = this.get('contents').concat(),
@@ -34,11 +38,11 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   createElement: function (index, init, array) {
     var contents = this.get('contents').concat(),
         element = new Meatazine.model.element.ElementCollection();
-        element.createModel(init);
+        element.initModel(init);
         if (array instanceof Array) {
           element.add(array);
         }
-    if (index != null) {
+    if (index != -1) {
       contents[index] = element;
     } else {
       contents.push(element);
@@ -54,7 +58,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   getModelDefaults: function (array) {
     var obj = {};
     for (var i = 0, len = array.length; i < len; i++) {
-      var key = array[i].slice(2, -2);
+      var key = array[i].match(/{?(\w+)}?/)[1];
       obj[key] = key == 'img' ? 'img/spacer.gif' : 'placeholder';
     }
     return obj;
