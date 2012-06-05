@@ -28,8 +28,8 @@ jQuery.namespace('Meatazine.view.element');
         // 判断是否是地图
         if (model instanceof Meatazine.model.element.MapModel) {
           var item = $(this.template);
-          this.createMap(item, model);
           this.$el.append(item);
+          this.createMap(item, model);
         } else {
           this.$el.append(this.createItem(model.toJSON()));
         }
@@ -85,8 +85,8 @@ jQuery.namespace('Meatazine.view.element');
     },
     createMap: function (container, model) {
       var self = this,
-          model = model,
-          position = new google.maps.LatLng(model.get('lat'), model.get('lng'));
+          position = new google.maps.LatLng(model.get('lat'), model.get('lng')),
+          container = container[0].tagName.match(/img|video|audio/i) != null ? container.parent() : container,
           options = {
             center: position,
             draggable: false,
@@ -98,6 +98,7 @@ jQuery.namespace('Meatazine.view.element');
       $(map.getDiv()).on('click', function (event) {
         self.trigger('select', self, map, Meatazine.view.ui.ContextButtonBype.MAP);
       });
+      return map;
     },
     drawImage : function () {
       var offsetX = this.canvas.data('x'),
@@ -399,13 +400,13 @@ jQuery.namespace('Meatazine.view.element');
       var index = -1, token = -1
           model = new Meatazine.model.element.MapModel();
       this.$el.children().each(function (i) {
-        if ($.contains(this, image[0])) {
+        if ($.contains(this, image[0]) || this == image[0]) {
           index = i;
           return false;
         }
       });
       this.token.each(function (i) {
-        if ($.contains(this, image[0])) {
+        if ($.contains(this, image[0]) || this == image[0]) {
           token = i;
           return false;
         }
@@ -415,7 +416,7 @@ jQuery.namespace('Meatazine.view.element');
       }
       image.parent().addClass('map-container');
       this.collection.replaceAt(model, index); 
-      this.createMap(image.parent(), model);
+      var map = this.createMap(image.parent(), model);
       this.trigger('change');
       this.trigger('select', this, map, Meatazine.view.ui.ContextButtonBype.MAP);
     }
