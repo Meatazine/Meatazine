@@ -5,6 +5,13 @@
 /**
  *   全局
  */
+body {
+  background:#000;
+}
+.page {
+  background: #F0F0F0;
+  text-shadow: 0 1px 0 #FFF;
+}
 .page,
 .page p {
   color:#FFF;
@@ -40,6 +47,9 @@
 }
 .purple {
   color:#7a43b6 !important;
+}
+#assets {
+  display:none;
 }
 
 /**
@@ -130,6 +140,9 @@
   width:100%;
   text-align:center;
 }
+.w30 {
+  width:30%;
+}
 .w40 {
   width:40%;
 }
@@ -164,6 +177,10 @@
   width:100%;
   height:100%; 
 }
+.nmp {
+  margin:0;
+  padding:0;
+}
 
 /**
  *   元素
@@ -186,8 +203,12 @@
   font-size:40px;
   text-shadow:0px 0px 2px #999;
 }
+.page h4 {
+  font-size:24px;
+}
 .page .blackcon {
   background:rgba(0, 0, 0, .4);
+  text-shadow: 0 -1px 0 #333;
 }
 .page .whitecon {
   background: #FFF;
@@ -218,24 +239,24 @@
   float:left;
   margin:0;
 }
-.page .slide-navi {
+.page .slide-navi-type1 {
   margin:0;
   background:rgba(0, 0, 0, 0.25);
   width: inherit;
 }
-.page .slide-navi li {
+.page .slide-navi-type1 li {
   margin: 10px 0 10px 10px;
   float: left;
 }
-.page .slide-navi li img {
+.page .slide-navi-type1 li img {
   cursor:pointer;
 }
-.page .slide-navi1 {
+.page .slide-navi-type2 {
   list-style: none;
   margin:0;
   position: absolute;
 }
-.page .slide-navi1 li {
+.page .slide-navi-type2 li {
   background: #FFC40D;
   border: 4px solid #FFF;
   border-radius:20px;
@@ -248,17 +269,17 @@
   user-select:none;
   cursor: pointer;
 }
-.page .slide-navi1 li.active {
+.page .slide-navi-type2 li.active {
   background:#F83;
   border-color:#FFC40D;
   box-shadow: 0 0 2px #F33;
 }
-.page .slide-navi2 {
+.page .slide-navi-type3 {
   list-style:none;
   margin:0;
   position:absolute;
 }
-.page .slide-navi2 li {
+.page .slide-navi-type3 li {
   background:#FFF;
   border:2px solid #F83;
   border-radius: 6px;
@@ -272,26 +293,28 @@
   user-select:none;
   cursor:pointer;
 }
-.page .slide-navi2 li.active {
+.page .slide-navi-type3 li.active {
   background:#F83;
   color:#FFF;
 }
-.page h4.tag {
+.page .tag {
   font-size:24px;
   line-height:24px;
   color:#333;
-  padding:10px 24px 10px 10px;
+  padding:9px 30px 11px 10px;
   background:#FFC40D;
   border-radius:0 22px 22px 0;
 }
-.page h4.tag:after {
+.page .tag:after {
   content:'\00B7';
   display:block;
   font-family:"Courier New";
-  font-size:50px;
+  font-size:100px;
   position: absolute;
-  right:4px;
-  top:15px;
+  right:-4px;
+  top:12px;
+  text-shadow: none;
+  color:#F0F0F0;
 }
 
 /**

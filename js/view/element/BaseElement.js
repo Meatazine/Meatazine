@@ -20,6 +20,7 @@ jQuery.namespace('Meatazine.view.element');
     initialize: function () {
       this.$el = $(this.el);
       this.template = this.el.innerHTML.replace(/[\r\n]/gm, '');
+      this.tagName = this.template != '' ? $(this.template)[0].tagName : '';
       this.collection.on('edit', this.collection_editHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
@@ -96,6 +97,9 @@ jQuery.namespace('Meatazine.view.element');
             zoom: model.get('zoom'),
           },
           map = new google.maps.Map(container[0], options);
+          google.maps.event.addListener(map, 'tilesloaded', function () {
+            self.trigger('change');
+          });
       if (model.get('markers') instanceof Array) {
         for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
           var point = new google.maps.Point(Math.floor(i / 9) * 22, i % 9 * 32);
@@ -218,7 +222,7 @@ jQuery.namespace('Meatazine.view.element');
     },
     renderItem: function (url, scale) {
       var item;
-      if (this.token.length > 0) {
+      if (this.token != null && this.token.length > 0) {
         var index = this.token.eq(0).index();
         this.collection.at(index).set({img: url}, {silent: true});
         item = $(this.createItem(this.collection.at(index)));
@@ -351,7 +355,7 @@ jQuery.namespace('Meatazine.view.element');
       this.trigger('change', this.collection);
     },
     collection_sortHandler: function (start, end) {
-      var item = this.$el.children().eq(start).remove();
+      var item = this.$el.children(this.tagName).eq(start).remove();
       if (end == 0) {
         this.$el.prepend(item);
       } else {

@@ -53,6 +53,18 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
       this.$('.page-list-scroll').prop('disabled', true);
     }
   },
+  addButton_clickHandler: function (event) {
+    var item = this.createItem();
+    this.list.sortable({
+      items: 'li.item'
+    });
+    this.$('li').disableSelection();
+    var model = this.collection.create();
+    item.attr('data-cid', model.cid);
+    item.trigger('click');
+    this.refreshScroll();
+    this.refreshPageNumber();
+  },
   item_clickHandler: function (event) {
     if (this.currentItem != null) {
       if (this.currentItem.index() === $(event.currentTarget).index()) {
@@ -67,18 +79,6 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   },
   item_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
-  },
-  addButton_clickHandler: function (event) {
-    var item = this.createItem();
-    this.list.sortable({
-      items: 'li.item'
-    });
-    this.$('li').disableSelection();
-    var model = this.collection.create();
-    item.attr('data-cid', model.cid);
-    item.trigger('click');
-    this.refreshScroll();
-    this.refreshPageNumber();
   },
   removeButton_clickHandler: function (event) {
     var target = this.removeButton.parent();
@@ -106,9 +106,6 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.collection.add(model, {at: ui.item.index()});
     this.refreshPageNumber();
   },
-  resizeHandler: function (w, h) {
-    this.$('#page-list-outer').height(h - 120); // 把按钮和数字空出来
-  },
   refreshHandler: function () {
     this.length = 0;
     this.list.find('li.item').remove();
@@ -123,6 +120,10 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     });
     this.$('li').disableSelection();
     this.emptyItems.shift().trigger('click');
+    this.refreshScroll();
+  },
+  resizeHandler: function (w, h) {
+    this.$('#page-list-outer').height(h - 120); // 把按钮和数字空出来
   },
   page_changeHandler: function (thumb) {
     this.currentItem.html(thumb);

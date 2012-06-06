@@ -6,7 +6,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     "focusin .editable": "editable_focusInHandler",
     "focusout .editable": "editable_focusOutHandler",
     "click .editable": "editable_clickHandler",
-    "dblclick .editable": "editable_dbClickHandler"
+    "dblclick .editable": "editable_dbClickHandler",
+    "resizestop .ui-resizable": "resizable_resizeStopHandler",
+    "dragstop .ui-draggable": "draggable_dragStopHandler",
   },
   initialize: function () {
     var self = this;
@@ -46,7 +48,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     }, this);
     
     this.$('.editable')
-      .attr('title', '双击开启编辑')
+      .attr('title', '双击开启编辑');
     this.$('.ui-draggable')
       .draggable({cursor: 'move'})
       .css('cursor', 'move');
@@ -54,14 +56,23 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.refreshThumbnail();
   },
   getFilteredHTML: function () {
-    var html = this.$el.clone();
+    var self = this,
+        html = this.$el.clone();
     html.find('.placeholder').removeClass('placeholder');
     html.find('[data-config]').removeAttr('data-config');
     html.find('.editable')
       .removeClass('editable')
-      .removeProp('contenteditable');
-    html.find('.ui-draggable').draggable('destroy');
-    html.find('.ui-resizable').resizable('destroy');
+      .removeAttr('contenteditable title');
+    // 移除draggable和resizable产生的多余内容
+    html.find('.ui-draggable, .ui-resizable').removeClass('ui-draggable ui-resizable');
+    html.find('.ui-resizable-handle').remove();
+    // 把Google Map的内容写到html里
+    html.find('.map-container').each(function (i) {
+      var model = self.$el.find('.map-container').eq(i).data('model');
+      if (model instanceof Backbone.Model) {
+        $(this).attr('data-map', JSON.stringify(model.toJSON()));
+      }
+    });
     return '<div class="page">' + html.html() + '</div>';
   },
   refreshThumbnail: function () {
@@ -69,6 +80,7 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     html2canvas(this.$el, {onrendered: function (canvas) {
       self.trigger('change', canvas);
     }});
+    this.saveTemplate();
     this.model.set('renderedHTML', this.getFilteredHTML());
   },
   saveTemplate: function () {
@@ -77,6 +89,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     }
     var template = this.$el.clone(),
         oldTemplate = $('<div>' + this.model.get('template') + '</div>');
+    template.find('.ui-resizable-handle').remove();
+    template.find('.editable').removeAttr('contenteditable title');
     template.find('[data-config]').each(function (i) {
       $(this).html(oldTemplate.find('[data-config]').eq(i).html());
     });
@@ -102,6 +116,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.options.source.fetch(this.model.get('templateType'));
     this.showLoading();
   },
+  draggable_dragStopHandler: function (event) {
+    this.refreshThumbnail();
+  },
   editable_focusInHandler: function (event) {
     $(event.target).on({
       'mousedown': this.stopEvent,
@@ -114,7 +131,6 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       .removeClass('editing')
       .prop('contenteditable', false)
       .css('cursor', 'move')
-      .draggable({ cursor: "move"})
       .off({
         'mousedown': this.stopEvent,
         'mousemove': this.stopEvent,
@@ -134,7 +150,6 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
   },
   editable_dbClickHandler: function (event) {
     $(event.target)
-      .draggable('destroy')
       .css('cursor', 'text')
       .prop('contenteditable', true)
       .focus();
@@ -153,9 +168,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     this.isSentByMe = this.options.source.get('type') != this.model.get('templateType');
     this.options.source.set('type', this.model.get('templateType'));
   },
-  resizeHandler: function (w, h) {
-    this.$el.width(w);
-    this.$el.height(h);
+  resizable_resizeStopHandler:function (event, ui) {
+    this.refreshThumbnail();
   },
   source_selectHandler: function () {
     if (this.isSentByMe) {
@@ -172,5 +186,9 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       this.options.source.off('complete', this.source_completeHandler);
       this.render();
     }
+  },
+  resizeHandler: function (w, h) {
+    this.$el.width(w);
+    this.$el.height(h);
   },
 });

@@ -1,8 +1,11 @@
-<h4 class="fixed l10 t10 editable tag ui-draggable">
-  标题
-</h4>
+<div class="fixed l10 t10 tag ui-draggable">
+  <h4 class="editable">
+    标题
+  </h4>
+</div>
 <ul class="fixed l10 t20 grid w80 h70 ui-draggable ui-resizable" data-config='{"type": "list", "number": 9, "cols": 3}'>
-  <li style="width:33%;height:33%;margin:0 0.5% 0.5% 0">
+  <li style="width:33%;height:33%;margin:0 0.5% 0.5% 0;overflow:hidden">
     <img width="100%" height="100%" src="{{img}}" alt="{{title}}" class="placeholder" />
+    <p class="blackcon p20 fixed">{{description}}</p>
   </li>
 </ul>

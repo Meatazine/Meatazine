@@ -31,6 +31,32 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   getTemplateType: function (value) {
     return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
   },
+  refreshSourceList: function (collection) {
+    if (collection instanceof Meatazine.model.element.ElementCollection) {
+      //只更新collection里的内容
+      // TODO 目前的状况是，如果一堆图里夹一个地图，那么地图的数据无法正常显示
+      var index = _.indexOf(this.pageContent.get('contents'), collection),
+          template = this.model.getSourceTemplate(collection.at(0));
+      // 重新渲染
+      if (this.$('#source-list').find('dd').length > index) {
+        this.$('#source-list').find('dd').eq(index)
+          .empty()
+          .html(Mustache.render(template.match(/<ul>[\S\s]+<\/ul>/)[0], {elements: collection.toJSON()}));
+      } else {
+        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}));
+      }
+    } else {
+      // 更新全部内容
+      this.$('#source-list').empty();
+      _.each(this.pageContent.get('contents'), function (collection, index) {
+        var template = this.model.getSourceTemplate(collection.at(0));
+        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}))
+      }, this);
+    }
+    this.$('#source-list ul')
+      .sortable()
+      .disableSelection();
+  },
   input_focusOutHandler: function (event) {
     var target = $(event.target),
         mIndex = target.parent().index(),
@@ -62,34 +88,12 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     if (this.pageContent.checkIsModified()) {
       this.$('.btn').eq(1).trigger('click');
     }
-    if (collection instanceof Meatazine.model.element.ElementCollection) {
-      //只更新collection里的内容
-      // TODO 目前的状况是，如果一堆图里夹一个地图，那么地图的数据无法正常显示
-      var index = _.indexOf(this.pageContent.get('contents'), collection),
-          template = this.model.getSourceTemplate(collection.at(0));
-      // 重新渲染
-      if (this.$('#source-list').find('dd').length > index) {
-        this.$('#source-list').find('dd').eq(index)
-          .empty()
-          .html(Mustache.render(template.match(/<ul>[\S\s]+<\/ul>/)[0], {elements: collection.toJSON()}));
-      } else {
-        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}));
-      }
-    } else {
-      // 更新全部内容
-      this.$('#source-list').empty();
-      _.each(this.pageContent.get('contents'), function (collection, index) {
-        var template = this.model.getSourceTemplate(collection.at(0));
-        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}))
-      }, this);
-    }
-    this.$('#source-list ul')
-      .sortable()
-      .disableSelection();
+    this.refreshSourceList(collection);
   },
   pageList_selectHandler: function (model) {
     this.$('.btn').eq(0).trigger('click');
     this.pageContent = model;
+    this.refreshSourceList();
   },
   removeButton_clickHandler: function (event) {
     var target = $(event.target).parent(),

@@ -44,7 +44,7 @@ Meatazine.utils.FileZip = function () {
       base64: false,
       compression: "DEFLATE"
     });
-    file.save('肉大师导出.zip', content, 'application/zip');
+    file.save('肉大师导出.zip', '', content, 'application/zip');
   }
   this.generate = function (base64, compression) {
     return zip.generate({

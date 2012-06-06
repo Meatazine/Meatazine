@@ -15,8 +15,17 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
     data.pages = this.get('pages').toJSON();
     localStorage.setItem('book', JSON.stringify(data));
   },
+  checkSameDomain : function (url) {
+    if (url.indexOf('//') == -1) {
+      return true;
+    }
+    var link = url.replace('filesystem:', '').match(/\/\/([^\/+]+)\//)[1],
+        domain = location.hostname;
+    return link == domain;
+  },
   createZip: function () {
-    var data = _.pick(this.attributes, 'width', 'height'),
+    var self = this,
+        data = _.pick(this.attributes, 'width', 'height'),
         zip = new Meatazine.utils.FileZip();
     data.content = '';
     _.each(this.attributes.pages.models, function (model, i) {
@@ -30,8 +39,15 @@ Meatazine.model.BookProperties = Backbone.Model.extend({
         template = Mustache.render(template, data);
         // 将用到的素材添加到zip中，依次为link、script、有src属性的
         template = template.replace(/(href|src)="(\S+)"/gmi, function () {
+          // TODO 跨域问题暂时不考虑，以后可能会用服务器中介
           var url = arguments[2],
               src = url.split('/').pop();
+          if (src == '#') {
+            return arguments[0];
+          }
+          if (!self.checkSameDomain(url)) {
+            return arguments[0];
+          }
           zip.addFile(src, null, url);
           return arguments[1] + '="' + src + '"';
         });

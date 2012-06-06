@@ -2,9 +2,10 @@ BookReader = function (el, w, h) {
   var self = this,
       id = el,
       $el = $('#' + el),
-      totalPage = 0,
+      currentPage = null;
       scroll = null,
       style = null,
+      totalPage = 0,
       width = parseInt(w),
       height = parseInt(h);
   this.start = function () {
@@ -15,27 +16,52 @@ BookReader = function (el, w, h) {
       momentum: false,
       hScrollbar: false,
       vScroll: false,
-      onScrollStart: function () {
-        self.disablePage();
-      },
       onScrollEnd: function () {
-        self.enablePage();
+        enablePage();
       }
     });
-    this.window_resizeHandler();
+    fitScreen();
     turnToPage(0);
   }
   this.addContent = function (html) {
     $('#container').html(html);
     this.start();
   }
-  this.disablePage = function () {
-    //$el.find('.page').eq(scroll.currPageX).find('.slide-navi img').off('click', slideNavi_clickHandler);
+  function createMap(container, data) {
+    var self = this,
+        position = new google.maps.LatLng(data.lat, data.lng),
+        options = {
+          center: position,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          zoom: data.zoom,
+        },
+        map = new google.maps.Map(container, options);
+    if (data.markers instanceof Array) {
+      var size = new google.maps.Size(22, 32);
+      for (var i = 0, len = data.markers.length; i < len; i++) {
+        var point = new google.maps.Point(Math.floor(i / 9) * 22, i % 9 * 32),
+            image = new google.maps.MarkerImage('mapmarkers.png', size, point),
+            latlng = new google.maps.LatLng(data.markers[i].x, data.markers[i].y),
+            mapmarker = new google.maps.Marker({
+              icon: image,
+              map: map,
+              position: latlng,
+            });
+      }
+    }
   }
-  this.enablePage = function () {
-    $el.find('.page').eq(scroll.currPageX).find('.slide-navi img').on('click', slideNavi_clickHandler);
+  function enablePage() {
+    if (currentPage != null) {
+      currentPage.find('.slide-navi').children().off('click');
+    }
+    currentPage = $el.find('.page').eq(scroll.currPageX);
+    currentPage.find('.slide-navi').children().on('click', slideNavi_clickHandler);
+    currentPage.find('.map-container').each(function (i) {
+      var data = JSON.parse($(this).attr('data-map'));
+      createMap(this, data);
+    });
   }
-  this.window_resizeHandler = function (event) {
+  function fitScreen() {
     var ww = $(window).width(),
         wh = $(window).height()
         fitWidth = 0,
@@ -73,9 +99,14 @@ BookReader = function (el, w, h) {
     var target = $(event.target),
         parent = target.closest('.page'),
         body = parent.find('.slide-main');
-    body.find('img').attr('src', target.attr('src'));
+    body.find('img').attr('src', target.attr('src') || target.attr('data-src'));
+    target.siblings().removeClass('active');
+    target.addClass('active');
+  }
+  function window_resizeHandler(event) {
+    fitScreen();
   }
   
-  this.window_resizeHandler();
-  $(window).on('resize', this.window_resizeHandler);
+  fitScreen();
+  //$(window).on('resize', this.window_resizeHandler);
 }
