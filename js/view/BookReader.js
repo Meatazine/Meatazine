@@ -4,6 +4,7 @@ BookReader = function (el, w, h) {
       $el = $('#' + el),
       totalPage = 0,
       scroll = null,
+      style = null,
       width = parseInt(w),
       height = parseInt(h);
   this.start = function () {
@@ -54,14 +55,16 @@ BookReader = function (el, w, h) {
       }
       margin = (wh - fitHeight >> 1) + 'px ' + (ww - fitWidth>> 1) + 'px';
     }
-    $el
-      .css('margin', margin)
-      .width(fitWidth)
-      .height(fitHeight);
-    $el.find('.page').width(fitWidth);
-    if (totalPage > 0) {
-      $('#container').width(fitWidth * totalPage);
+    // 写成style
+    if (style != null) {
+      style.remove();
     }
+    style = $('<style>');
+    style
+      .append('#' + id + ', .page {width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
+      .append('#' + id + ' {margin:' + margin + '}\n')
+      .append('#container {width:' + fitWidth * totalPage + 'px}')
+      .appendTo($('head'));
   }
   function turnToPage(index) {
     scroll.scrollToPage(index, 0);

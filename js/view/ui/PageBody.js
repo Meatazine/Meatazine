@@ -58,8 +58,10 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
     html.find('.placeholder').removeClass('placeholder');
     html.find('[data-config]').removeAttr('data-config');
     html.find('.editable')
-      .removeClass('editable ui-draggable ui-resizable')
+      .removeClass('editable')
       .removeProp('contenteditable');
+    html.find('.ui-draggable').draggable('destroy');
+    html.find('.ui-resizable').resizable('destroy');
     return '<div class="page">' + html.html() + '</div>';
   },
   refreshThumbnail: function () {
