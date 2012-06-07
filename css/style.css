@@ -58,6 +58,9 @@ body {
 .fixed {
   position:absolute !important;
 }
+.left {
+  left:0;
+}
 .l5 {
   left:5%;
 }
@@ -234,10 +237,11 @@ body {
 .page .grid {
   position: relative;
 }
-.page .grid, .grid li {
+.page .grid, .page .grid li {
   list-style: none;
   float:left;
   margin:0;
+  position: relative;
 }
 .page .slide-navi-type1 {
   margin:0;
