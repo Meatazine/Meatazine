@@ -15,7 +15,8 @@ jQuery.namespace('Meatazine.view.element');
       "dragenter img": "img_dragEnterHandler",
       "dragleave img": "img_dragLeaveHandler",
       "click img": "img_clickHandler",
-      "click canvas": "canvas_clickHandler" 
+      "click canvas": "canvas_clickHandler",
+      "click [data-toggle]": "toggle_clickHandler",
     },
     initialize: function () {
       this.$el = $(this.el);
@@ -47,6 +48,7 @@ jQuery.namespace('Meatazine.view.element');
       this.handleChildrenState();
     },
     remove: function () {
+      this.collection.off(null, null, this);
       this.off();
       this.$el.remove();
     },
@@ -89,7 +91,7 @@ jQuery.namespace('Meatazine.view.element');
     createMap: function (container, model) {
       var self = this,
           position = new google.maps.LatLng(model.get('lat'), model.get('lng')),
-          container = container[0].tagName.match(/img|video|audio/i) != null ? container.parent() : container,
+          container = (/img|video|audio/i).test(container[0].tagName) ? container.parent() : container,
           options = {
             center: position,
             draggable: false,
@@ -154,7 +156,7 @@ jQuery.namespace('Meatazine.view.element');
       context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     },
     getSourceImageUrl: function (url) {
-      if (url.match(/\/source\//) != null) {
+      if ((/\/source\//i).test(url)) {
         return url;
       }
       return url.substr(0, url.lastIndexOf('/')) + '/source' + url.substr(url.lastIndexOf('/'));
@@ -406,14 +408,14 @@ jQuery.namespace('Meatazine.view.element');
     startEditHandler: function (target) {
       if (target instanceof google.maps.Map) {
         this.startEditMap(target);
-      } else if (target[0].tagName.match(/img|canvas/i) != null) {
+      } else if ((/img|canvas/i).test(target[0].tagName)) {
         this.startEditImage(target);
       }
     },
     stopEditHandler: function (target) {
       if (target instanceof google.maps.Map) {
         this.stopEditMap(target);
-      } else if (target[0].tagName.match(/img|canvas/i) != null) {
+      } else if ((/img|canvas/i).test(target[0].tagName)) {
         this.stopEditImage(target);
       }
     },
@@ -450,6 +452,24 @@ jQuery.namespace('Meatazine.view.element');
       var map = this.createMap(image.parent(), model);
       this.trigger('change', this.collection);
       this.trigger('select', this, map, Meatazine.view.ui.ContextButtonBype.MAP);
-    }
+    },
+    toggle_clickHandler: function (event) {
+      var handle = $(event.target),
+          target = handle.siblings('.' + handle.attr('data-toggle')),
+          config = JSON.parse(target.attr('data-animate')),
+          position = target.position(),
+          origin = {};
+      target.css('top', position.top).css('left', position.left);
+      for (var prop in config) {
+        origin[prop] = target.css(prop);
+      }
+      target
+        .animate(config)
+        .click(function (event) {
+          $(this)
+            .animate(origin)
+            .off('click', arguments.callee);
+        });
+    },
   });
 })(Meatazine.view.element);

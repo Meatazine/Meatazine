@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>文本滚动测试</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+  #container {
+    border:1px solid #CCC;
+    width: 200px;
+    height: 270px;
+    font:12px/18px simsun;
+    overflow:hidden;
+  }
+  #scroller {
+    width:200px;
+  }
+</style>
+<script src="../js/libs/iscroll.js"></script>
+<script src="../js/libs/zepto.min.js"></script>
+<script>
+  $(function () {
+    if ($('#container').children().height() > $('#container').height()) {
+      var myscroll = new iScroll($('#container')[0]);
+    }
+    
+  });
+</script>
+<div id="container">
+  <div id="scroller">
+    <p>
+      这就是经典的纽约谎言，每个人都在撒谎或者隐瞒，都在鼓吹和谐。勒布朗-詹姆斯的确不该来这儿，因为他最可贵的品质就是表达不满。而在杜兰的球队，即使到了自残明志的地步，人们还是不愿说真话，不愿被曼哈顿抛弃。德安东尼为不得不辞去这份世界上最糟糕的教练工作失魂落魄，在两个月的隐居生活里没看一场NBA转播，重返人间后仍对更衣室发生过的一切讳莫如深。一位前方记者告诉我，为了避免在交易截止日前被球队送走，斯塔德迈尔故意向外界渲染了自己当时的伤势。只有听说史蒂夫-纳什明确拒绝考虑加盟尼克斯时，你才能从这个昔日搭档的眼光里觉察到一抹真诚。“(史蒂夫)为什么不来……”斯塔德迈尔苦笑着问记者，“因为这儿一团糟？”
+    </p>
+    <p>
+      尼克斯鼓舞人心的赛季口号是“我们没问题”，小牛是“哥不后悔”。马克-库班发明了以不变应万变的不后悔体，具体应用于各种访谈。无论记者抛出如何尖锐的问题，只要一句淡定的：“是的，哥不后悔。”他不后悔钱德勒，不后悔巴里亚，不后悔文森哥，不后悔巴特勒，不后悔奥多姆，不后悔卡特，不后悔易建联(微博)，不后悔过去一年为球队所做的一切。
+    </p>
+  </div>
+</div>

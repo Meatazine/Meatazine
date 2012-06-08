@@ -4,6 +4,7 @@ BookReader = function (el, w, h) {
       $el = $('#' + el),
       currentPage = null;
       scroll = null,
+      scrolls = [],
       style = null,
       totalPage = 0,
       width = parseInt(w),
@@ -16,9 +17,7 @@ BookReader = function (el, w, h) {
       momentum: false,
       hScrollbar: false,
       vScroll: false,
-      onScrollEnd: function () {
-        enablePage();
-      }
+      onScrollEnd: enablePage,
     });
     fitScreen();
     turnToPage(0);
@@ -53,12 +52,24 @@ BookReader = function (el, w, h) {
   function enablePage() {
     if (currentPage != null) {
       currentPage.find('.slide-navi').children().off('click');
+      currentPage.find('[data-toggle]').off();
     }
     currentPage = $el.find('.page').eq(scroll.currPageX);
+    // 幻灯片
     currentPage.find('.slide-navi').children().on('click', slideNavi_clickHandler);
+    // 切换效果
+    currentPage.find('[data-toggle]').on('tap', dataToggle_tapHandler);
+    // 地图
     currentPage.find('.map-container').each(function (i) {
       var data = JSON.parse($(this).attr('data-map'));
       createMap(this, data);
+    });
+    // 超出范围无法正常显示的文字
+    currentPage.find('p').each(function (i) {
+      var self = $(this);
+      if (self.height() > self.parent().height()) {
+        scrolls.push(new iScroll(self.parent()[0], {scrollbarClass: 'scrollBar', onScrollEnd: null}));
+      }
     });
   }
   function fitScreen() {
@@ -92,14 +103,36 @@ BookReader = function (el, w, h) {
       .append('#container {width:' + fitWidth * totalPage + 'px}')
       .appendTo($('head'));
   }
+  function stopEvent(event) {
+    event.stopPropagation();
+  }
   function turnToPage(index) {
     scroll.scrollToPage(index, 0);
   }
+  function dataToggle_tapHandler(event) {
+    var target = $(event.target).siblings('.' + $(event.target).attr('data-toggle')),
+        config = JSON.parse(target.attr('data-animate')),
+        offset = target.offset(),
+        parentOffset = target.parent().offset(),
+        origin = {};
+    target.css('top', offset.top - parentOffset.top).css('left', offset.left - parentOffset.left);
+    for (var prop in config) {
+      origin[prop] = target.css(prop);
+    }
+    target
+      .animate(config, '200')
+      .one('tap', function (event) {
+        $(this)
+          .animate(origin, '200')
+          .off('mouseup', stopEvent);
+      });
+  }
   function slideNavi_clickHandler(event) {
-    var target = $(event.target),
+    var target = $(event.currentTarget),
         parent = target.closest('.page'),
-        body = parent.find('.slide-main');
-    body.find('img').attr('src', target.attr('src') || target.attr('data-src'));
+        body = parent.find('.slide-main'),
+        src = target.attr('src') || $(event.target).attr('src') || target.find('img').attr('src');
+    body.find('img').attr('src', src);
     target.siblings().removeClass('active');
     target.addClass('active');
   }
@@ -108,5 +141,5 @@ BookReader = function (el, w, h) {
   }
   
   fitScreen();
-  //$(window).on('resize', this.window_resizeHandler);
+  $(window).on('resize', this.window_resizeHandler);
 }

@@ -18,7 +18,7 @@ Meatazine.utils.FileReferrence = function () {
     if (file.fileSize > 10 * 1024 * 1024) {
       throw new Error('不能使用超过10M的素材');
     }
-    if (file.type.match(/image/) == null) {
+    if (!(/image/gi).test(file.type)) {
       throw new Error('只能上传图片类素材');
     }
     targetFile = file;

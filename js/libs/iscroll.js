@@ -171,6 +171,7 @@ iScroll.prototype = {
 	wheelZoomCount: 0,
 	
 	handleEvent: function (e) {
+	  e.stopPropagation();
 		var that = this;
 		switch(e.type) {
 			case START_EV:
