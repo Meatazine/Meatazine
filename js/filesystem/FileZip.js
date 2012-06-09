@@ -1,7 +1,7 @@
-jQuery.namespace('Meatazine.utils');
-Meatazine.utils.FileZip = function () {
+jQuery.namespace('Meatazine.filesystem');
+Meatazine.filesystem.FileZip = function () {
   var self = this,
-      file = new Meatazine.utils.FileReferrence(),
+      file = new Meatazine.filesystem.FileReferrence(),
       isLoading = false,
       isAutoDownload = false,
       zip = new JSZip(),

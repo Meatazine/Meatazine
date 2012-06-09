@@ -1,14 +1,14 @@
 jQuery.namespace('Meatazine.view.element');
 (function (ns) {
   var isSentByMe = false,
+      localFile = new Meatazine.filesystem.FileReferrence();
+      imageResizer = new Meatazine.filesystem.ImageResizer();
       markerSize = new google.maps.Size(22, 32),
       originPoint = new google.maps.Point(0, 0),
       markerImage = new google.maps.MarkerImage('img/mapmarkers.png', markerSize, originPoint);
   ns.BaseElement = Backbone.View.extend({
     canvas: null,
     token: null,
-    isLoading: false,
-    fileQueue: [],
     events: {
       "drop img": "img_dropHandler",
       "dragover img": "img_dragOverHandler",
@@ -25,6 +25,8 @@ jQuery.namespace('Meatazine.view.element');
       this.collection.on('edit', this.collection_editHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
+      imageResizer.on('complete:one', this.file_readyHandler, this);
+      imageResizer.on('complete:all', this.file_completeHandler, this);
       this.render();
     },
     render: function () {
@@ -166,61 +168,15 @@ jQuery.namespace('Meatazine.view.element');
       this.$el.children().slice(this.collection.config.number).addClass('hide');
     },
     handleFiles: function (files) {
-      var usableFiles = [];
       // 暂时只认图片
       // TODO 加入对音频文件（.mp3）和视频文件（.avi）的支持
-      for (var i = 0, len = files.length; i < len; i++) {
-        if (files[i].type.substr(0, 5) == 'image') {
-          this.fileQueue.push(files[i]);
-        }
-      }
-      Meatazine.utils.fileAPI.on('complete:clone', this.file_completeHandler, this);
-      Meatazine.utils.fileAPI.on('complete:save', this.file_savedHandler, this);
-      if (!this.isLoading) {
-        this.isLoading = true;
-        this.next();
-      }
-    },
-    /**
-     * 将图片根据目标尺寸缩放，并保留最终图片
-     * @param {Object} url
-     */
-    handleImages: function (url) {
-      var image = new Image(),
-          sample = this.$el.children().first(),
-          canvas = $('<canvas>')[0],
-          context = canvas.getContext('2d');
-      canvas.width = sample.filter('img').add(sample.find('img')).width();
-      canvas.height = sample.filter('img').add(sample.find('img')).height();
-      image.onload = function () {
-        var sourceWidth,
-            sourceHeight,
-            scale;
-        if (image.width / image.height > canvas.width / canvas.height) {
-          sourceHeight = image.height;
-          sourceWidth = image.height * canvas.width / canvas.height;
-          scale = canvas.height / image.height;
-        } else {
-          sourceWidth = image.width;
-          sourceHeight = image.width * canvas.height / canvas.width;
-          scale = canvas.width / image.width;
-        }
-        context.drawImage(image, image.width - sourceWidth >> 1, image.height - sourceHeight >> 1, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
-        Meatazine.utils.fileAPI.save(url.substr(url.lastIndexOf('/') + 1), '', atob(canvas.toDataURL('image/jpeg').split(',')[1]), 'image/jpeg', scale);
-      }
-      image.src = url;
-    },
-    next: function () {
-      if (this.fileQueue.length > 0) {
-        Meatazine.utils.fileAPI.clone(this.fileQueue.shift(), 'source');
-      } else {
-        this.isLoading = false;
-        this.handleChildrenState();
-        this.trigger('change', this.collection);
-        this.trigger('ready');
-        Meatazine.utils.fileAPI.off('complete:clone', null, this);
-        Meatazine.utils.fileAPI.off('complete:save', null, this);
-      }
+      var sample = this.$el.children().eq(0),
+          sample = sample.find('img').add(sample.filter('img')),
+          size = {
+            width: sample.width(),
+            height: sample.height()
+          }
+      imageResizer.addFiles(files, size);
     },
     renderItem: function (url, scale) {
       var item;
@@ -236,7 +192,6 @@ jQuery.namespace('Meatazine.view.element');
         this.$el.append(item);
       }
       item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).data('scale', scale).removeClass('placeholder');
-      this.next();
     },
     saveCanvas: function (callback, event) {
       if (this.canvas == null) {
@@ -249,8 +204,8 @@ jQuery.namespace('Meatazine.view.element');
             callback: callback,
             args: event
           } : null;
-      Meatazine.utils.fileAPI.on('complete:save', this.canvas_savedHandler, this);
-      Meatazine.utils.fileAPI.save(name.substr(name.lastIndexOf('/') + 1), '', content, 'image/jpeg', callback);
+      localFile.on('complete:save', this.canvas_savedHandler, this);
+      localFile.save(name.substr(name.lastIndexOf('/') + 1), '', content, 'image/jpeg', callback);
     },
     startEditImage: function (image) {
       if (this.canvas != null) {
@@ -333,7 +288,7 @@ jQuery.namespace('Meatazine.view.element');
       this.canvas[0].getContext('2d').clearRect(0, 0, this.canvas.width(), this.canvas.height());
       this.canvas.off();
       this.canvas = null;
-      Meatazine.utils.fileAPI.off('complete:save', null, this);
+      localFile.off('complete:save', null, this);
       if (callback != null) {
         callback.callback.call(this, callback.args);
       }
@@ -365,10 +320,12 @@ jQuery.namespace('Meatazine.view.element');
       }
       this.handleChildrenState();
     },
-    file_completeHandler: function (url) {
-      this.handleImages(url);
+    file_completeHandler: function () {
+      this.handleChildrenState();
+      this.trigger('change', this.collection);
+      this.trigger('ready');
     },
-    file_savedHandler: function (url, scale) {
+    file_readyHandler: function (url, scale) {
       this.renderItem(url, scale);
     },
     img_clickHandler: function (event) {
