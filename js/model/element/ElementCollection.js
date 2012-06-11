@@ -13,13 +13,7 @@ jQuery.namespace('Meatazine.model.element');
       var init = _.extend({count: this.length + 1}, attributes);
           model = new this.model(init);
       this.add(model);
-      this.trigger('add', model, this, options);
       return model;
-    },
-    initModel: function (object) {
-      this.model = Backbone.Model.extend({
-        defaults: object
-      });
     },
     createItems: function (array) {
       array = array || [{}];
@@ -30,6 +24,17 @@ jQuery.namespace('Meatazine.model.element');
     },
     createMapModel : function () {
       return new Backbone.Model(mapDefaults);
+    },
+    initModel: function (object) {
+      this.model = Backbone.Model.extend({
+        defaults: object
+      });
+    },
+    offAll: function () {
+      this.off();
+      this.each(function (model) {
+        model.off();
+      });
     },
     removeAt: function (index, silent) {
       this.remove(this.at(index), {silent: silent});

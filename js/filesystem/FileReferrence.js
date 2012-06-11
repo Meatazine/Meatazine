@@ -27,7 +27,7 @@ Meatazine.filesystem.FileReferrence = function () {
     fileName = fileDir ? fileDir + '/' + fileName : fileName;
     if (fileDir) {
       this.on('complete:createDirs', function () {
-        this.off('complate:createDirs');
+        this.off('complete:createDirs');
         fileSystem.root.getFile(fileName, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
       }, this);
       folders = dir.split('/');
@@ -54,7 +54,7 @@ Meatazine.filesystem.FileReferrence = function () {
     params = argus;
     if (fileDir) {
       this.on('complete:createDirs', function () {
-        this.off('complate:createDirs');
+        this.off('complete:createDirs');
         fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
       }, this);
       folders = dir.split('/');

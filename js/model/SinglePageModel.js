@@ -15,7 +15,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   },
   reset: function () {
     _.each(this.get('contents'), function (collection, i) {
-      collection.off();
+      collection.offAll();
     }, this);
     this.set('contents', []);
   },
@@ -23,12 +23,6 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     var json = Backbone.Model.prototype.toJSON.call(this);
     delete json.renderedHTML;
     return json;
-  },
-  addElement: function (element) {
-    var contents = this.get('contents').concat(),
-        index = contents.push(element) - 1;
-    this.set('contents', contents);
-    return index;
   },
   checkIsModified: function () {
     return _.any(this.attributes.contents, function (collection) {

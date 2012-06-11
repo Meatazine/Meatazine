@@ -16,7 +16,7 @@ Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.ext
   setModel: function (model) {
     if (model == null) return;
     this.model = model;
-    this.$el.html(this.createItem(this.model.toJSON()));
+    this.$el.html(this.createItem(this.model));
   },
   img_dropHandler: function (event) {
     this.navi.img_dropHandler(event);

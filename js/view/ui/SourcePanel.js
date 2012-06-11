@@ -2,7 +2,7 @@ jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   currentPanel: null,
   enabled: false,
-  pageContent: null,
+  contents: null,
   removeButton: null,
   currentDragItemIndex: 0,
   events: {
@@ -28,26 +28,48 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   render: function () {
   	this.$('#source-list').hide();
   },
+  createSourceItem: function (model) {
+    var template = this.model.getSourceTemplate(model),
+        item = $(Meatazine.utils.render(template, model));
+    model.on('change', function (model) {
+      item.replaceWith(this.createSourceItem(model));
+      model.off('change', arguments.callee);
+    }, this);
+    return item;
+  },
+  createSourceList: function (collection, ul) {
+    if (ul.length == 0) {
+      var container = $(this.model.get('template'));
+      container.appendTo(this.$('#source-list'));
+      ul = container.find('ul');
+    }
+    if (ul.data('collection') != collection) {
+      if (ul.data('collection') instanceof Meatazine.model.element.ElementCollection) {
+        ul.data('collection').offAll();
+      }
+      ul.empty();
+      ul.data('collection', collection);
+      console.log(ul);
+      collection.on('add', function (model, collection, options) {
+        ul.append(this.createSourceItem(model));
+      }, this);
+      collection.each(function (model) {
+        ul.append(this.createSourceItem(model));
+      }, this);
+    }
+  },
   getTemplateType: function (value) {
     return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
   },
   refreshSourceList: function () {
     // 更新全部内容
-    this.$('#source-list').empty();
-    _.each(this.pageContent.get('contents'), function (collection, index) {
-      var ul = $(this.model.get('template'));
-      this.$('#source-list').append(ul);
-      collection.each(function (model) {
-        var template = this.model.getSourceTemplate(model);
-        ul.append(Meatazine.utils.render(template, model));
-      });
-      collection.on('add', function (model, collection, options) {
-        var template = this.model.getSourceTemplate(model);
-        ul.append(Meatazine.utils.render(template, model));
-      }, this);
+    var list = this.$('#source-list');
+    _.each(this.contents.get('contents'), function (collection, index) {
+      this.createSourceList(collection, list.find('ul').eq(index));
     }, this);
-    
-    this.$('#source-list ul')
+    list.find('dt:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
+    list.find('dd:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
+    list.find('ul')
       .sortable()
       .disableSelection();
   },
@@ -58,7 +80,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         value = target.val(),
         key = target.attr('name');
     target.replaceWith('<span class>' + value + '</span>');
-    this.pageContent.getContentAt(cIndex).at(mIndex).set(key, value);
+    this.contents.getContentAt(cIndex).at(mIndex).set(key, value);
   },
   input_keydownHandler: function (event) {
     if (event.keyCode == 13) {
@@ -79,8 +101,11 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     }
   },
   pageList_selectHandler: function (model) {
-    this.$('.btn').eq(0).trigger('click');
-    this.pageContent = model;
+    if (this.contents instanceof Meatazine.model.SinglePageModel) {
+      this.contents.off();
+    }
+    this.contents = model;
+    this.contents.on('change:contents', this.refreshSourceList, this);
     this.refreshSourceList();
   },
   removeButton_clickHandler: function (event) {
@@ -90,13 +115,13 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     if (target.siblings().length > 0) {
       target.remove();
     }
-    this.pageContent.getContentAt(cIndex).removeAt(mIndex);
+    this.contents.getContentAt(cIndex).removeAt(mIndex);
   },
   source_sortactivateHandler: function (event, ui) {
     this.currentDragItemIndex = ui.item.index();
   },
   source_sortdeactivateHandler: function (event, ui) {
-    var collection = this.pageContent.getContentAt(ui.item.parent().index() >> 1);
+    var collection = this.contents.getContentAt(ui.item.parent().index() >> 1);
     var model = collection.at(this.currentDragItemIndex);
     collection.remove(model, {silent: true});
     collection.add(model, {at: ui.item.index(), silent: true});
