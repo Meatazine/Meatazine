@@ -154,9 +154,8 @@ Meatazine.view.ui.PageBody = Backbone.View.extend({
       .prop('contenteditable', true)
       .focus();
   },
-  element_changeHandler: function (collection) {
+  element_changeHandler: function () {
     this.refreshThumbnail();
-    this.trigger('edit', collection);
   },
   element_selectHandler: function (target, image, type) {
     this.options.contextButtons.showButtonsAs(type, target, image);

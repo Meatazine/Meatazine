@@ -10,13 +10,11 @@ jQuery.namespace('Meatazine.model.element');
     config: null,
     isModified: false,
     create: function (attributes, options) {
-      var model = new this.model(attributes);
-      model.set('count', this.length + 1);
+      var init = _.extend({count: this.length + 1}, attributes);
+          model = new this.model(init);
       this.add(model);
+      this.trigger('add', model, this, options);
       return model;
-    },
-    initialize: function () {
-      this.on('add', this.addHandler, this);
     },
     initModel: function (object) {
       this.model = Backbone.Model.extend({
@@ -27,7 +25,6 @@ jQuery.namespace('Meatazine.model.element');
       array = array || [{}];
       for (var i = 0, len = array.length; i < len; i++) {
         var model = new this.model({file: array[i]});
-        model.on('change', this.model_changeHandler, this);
         this.add(model);
       }
     },
@@ -37,16 +34,10 @@ jQuery.namespace('Meatazine.model.element');
     removeAt: function (index, silent) {
       this.remove(this.at(index), {silent: silent});
     },
-    replaceAt: function (model, index) {
+    replaceAt: function (model, index, silent) {
+      silent = silent == null ? true : silent;
       this.removeAt(index, true);
-      this.add(model, {at: index});
+      this.add(model, {at: index, silent: silent});
     },
-    addHandler: function (model) {
-      model.on('change', this.model_changeHandler, this);
-    },
-    model_changeHandler: function (model) {
-      this.isModified = true;
-      this.trigger('edit', _.indexOf(this.models, model));
-    }
   });
 })(Meatazine.model.element);

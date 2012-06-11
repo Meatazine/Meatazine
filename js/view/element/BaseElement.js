@@ -22,7 +22,6 @@ jQuery.namespace('Meatazine.view.element');
       this.$el = $(this.el);
       this.template = this.el.innerHTML.replace(/[\r\n]/gm, '');
       this.tagName = this.template != '' ? $(this.template)[0].tagName : '';
-      this.collection.on('edit', this.collection_editHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
       imageResizer.on('complete:one', this.file_readyHandler, this);
@@ -33,19 +32,10 @@ jQuery.namespace('Meatazine.view.element');
       this.$el.empty();
       _.each(this.collection.models, function (model, i) {
         // 判断是否是地图
-        if (model.attributes.hasOwnProperty('lat')) {
-          var item = $(this.template);
-          this.$el.append(item);
-          this.createMap(item, model);
-        } else {
-          this.$el.append(this.createItem(model));
-        }
+        this.createItem(model);
       }, this);
-      this.$('.placeholder[src!="img/spacer.gif"]').removeClass('placeholder');
       for (var i = this.collection.config.number - this.collection.length; i > 0; i--) {
-        item = $(this.createItem(this.collection.create()));
-        this.$el.append(item);
-        this.token = this.token == null ? item : this.token.add(item);
+        this.createItem(this.collection.create(), true);
       }
       this.handleChildrenState();
     },
@@ -86,9 +76,26 @@ jQuery.namespace('Meatazine.view.element');
       model.set({'markers': markers}, {silent: true});
       event.stopPropagation();
     },
-    createItem: function (data) {
-      data = data.toJSON != null ? data.toJSON() : data;
-      return Meatazine.utils.render(this.template, data).replace(/\s{2,}/gm, '');
+    createItem: function (model, isToken) {
+      var item = $(Meatazine.utils.render(this.template, model).replace(/\s{2,}/gm, ''));
+      if (model.has('lat')) {
+        this.createMap(item, model);
+      }
+      if (isToken) {
+        this.token = this.token == null ? item : this.token.add(item);
+      } else {
+        this.$('.placeholder[src!="img/spacer.gif"]').removeClass('placeholder');
+      }
+      this.$el.append(item);
+      model.on('change', function (model) {
+        var data = item.filter('img').add(item.find('img')).data();
+            newItem = this.createItem(model);
+        item.replaceWith(newItem);
+        newItem.filter('img').add(newItem.find('img')).data(data);
+        model.off('change', arguments.callee);
+        this.trigger('change');
+      }, this);
+      return item;
     },
     createMap: function (container, model) {
       var self = this,
@@ -189,7 +196,6 @@ jQuery.namespace('Meatazine.view.element');
       } else {
         var model = this.collection.create({img: url});
         item = $(this.createItem(model));
-        this.$el.append(item);
       }
       item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).data('scale', scale).removeClass('placeholder');
     },
@@ -293,23 +299,11 @@ jQuery.namespace('Meatazine.view.element');
         callback.callback.call(this, callback.args);
       }
     },
-    collection_editHandler: function (index) {
-      if (isSentByMe) {
-        isSentByMe = false;
-        return;
-      }
-      var oldItem = this.$el.children().eq(index),
-          data = oldItem.filter('img').add(oldItem.find('img')).data();
-          newItem = $(this.createItem(this.collection.at(index)));
-      oldItem.replaceWith(newItem);
-      newItem.filter('img').add(oldItem.find('img')).data(data);
-      newItem.filter('.placeholder').add(newItem.find('.placeholder')).removeClass('placeholder');
-      this.trigger('change', this.collection);
-    },
     collection_removeHandler: function (model, collection, options) {
+      model.off('change', null, this);
       this.$el.children().eq(options.index).remove();
       this.handleChildrenState();
-      this.trigger('change', this.collection);
+      this.trigger('change');
     },
     collection_sortHandler: function (start, end) {
       var item = this.$el.children(this.tagName).eq(start).remove();

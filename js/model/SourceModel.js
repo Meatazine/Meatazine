@@ -9,7 +9,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   },
   defaults: {
     type: '',
-    sourceListTemplate: ''
+    template: ''
   },
   fetch: function (type) {
     if (type && _.indexOf(this.loadQueue, type) == -1) {
@@ -40,20 +40,16 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     return _.has(this.templates, type);
   },
   getSourceTemplate: function (model) {
-    if (model instanceof Backbone.Model) {
-      var obj = model.attributes,
-          template = '';
-      for (var prop in obj) {
-        if (prop == 'img') {
-          template += '<img src="{{img}}" width="160" /><br />';
-        } else {
-          template += '<span class="' + prop + '">{{' + prop + '}}</span><br />';
-        }
+    var obj = model.attributes,
+        template = '';
+    for (var prop in obj) {
+      if (prop == 'img') {
+        template += '<img src="{{img}}" width="160" /><br />';
+      } else {
+        template += '<span class="' + prop + '">{{' + prop + '}}</span><br />';
       }
-      template = this.get('sourceListTemplate').replace('<li></li>', '<li>' + template + '</li>');
-      return template;
     }
-    return '';
+    return '<li>' + template + '</li>';
   },
   getTemplate: function (type) {
     return this.templates[type];
@@ -62,7 +58,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   setSourceTemplate: function (str) {
     str = str.replace(/[\r\n]/gm, '');
     str = str.replace(/\s{2,}/gm, '');
-    this.set('sourceListTemplate', str);
+    this.set('template', str);
   },
   span_focusInHandler: function (event) {
     $(event.target).addClass('editing');

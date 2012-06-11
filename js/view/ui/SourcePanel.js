@@ -31,28 +31,22 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   getTemplateType: function (value) {
     return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
   },
-  refreshSourceList: function (collection) {
-    if (collection instanceof Meatazine.model.element.ElementCollection) {
-      //只更新collection里的内容
-      // TODO 目前的状况是，如果一堆图里夹一个地图，那么地图的数据无法正常显示
-      var index = _.indexOf(this.pageContent.get('contents'), collection),
-          template = this.model.getSourceTemplate(collection.at(0));
-      // 重新渲染
-      if (this.$('#source-list').find('dd').length > index) {
-        this.$('#source-list').find('dd').eq(index)
-          .empty()
-          .html(Mustache.render(template.match(/<ul>[\S\s]+<\/ul>/)[0], {elements: collection.toJSON()}));
-      } else {
-        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}));
-      }
-    } else {
-      // 更新全部内容
-      this.$('#source-list').empty();
-      _.each(this.pageContent.get('contents'), function (collection, index) {
-        var template = this.model.getSourceTemplate(collection.at(0));
-        this.$('#source-list').append(Mustache.render(template, {elements: collection.toJSON()}))
+  refreshSourceList: function () {
+    // 更新全部内容
+    this.$('#source-list').empty();
+    _.each(this.pageContent.get('contents'), function (collection, index) {
+      var ul = $(this.model.get('template'));
+      this.$('#source-list').append(ul);
+      collection.each(function (model) {
+        var template = this.model.getSourceTemplate(model);
+        ul.append(Meatazine.utils.render(template, model));
+      });
+      collection.on('add', function (model, collection, options) {
+        var template = this.model.getSourceTemplate(model);
+        ul.append(Meatazine.utils.render(template, model));
       }, this);
-    }
+    }, this);
+    
     this.$('#source-list ul')
       .sortable()
       .disableSelection();
@@ -83,12 +77,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       this.enabled = true;
       this.$('#template-list li').eq(index).trigger('click');
     }
-  },
-  page_editHandler: function (collection) {
-    if (this.pageContent.checkIsModified()) {
-      this.$('.btn').eq(1).trigger('click');
-    }
-    this.refreshSourceList(collection);
   },
   pageList_selectHandler: function (model) {
     this.$('.btn').eq(0).trigger('click');

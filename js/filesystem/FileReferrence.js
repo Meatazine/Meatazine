@@ -148,4 +148,3 @@ Meatazine.filesystem.FileReferrence = function () {
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   window.webkitRequestFileSystem(TEMPORARY, 128 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
 }
-Meatazine.utils.fileAPI = new Meatazine.utils.FileReferrence();

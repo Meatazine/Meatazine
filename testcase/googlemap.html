@@ -7,7 +7,7 @@
   body {
     padding-top:60px;
   }
-  #map {
+  #map, #dmap {
     width:400px;
     height:300px;
   }
@@ -25,12 +25,15 @@
 <script src="../js/libs/jquery-1.7.2.min.js"></script>
 <script>
   $(function () {
-    var options = {
+    var dmap = $('<div>', {
+          "id": "dmap"
+        }),
+        options = {
           zoom: 15,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           center: new google.maps.LatLng(10.28114, 103.974609)
         },
-        map = new google.maps.Map($('#map')[0], options),
+        map = new google.maps.Map(dmap[0], options),
         coder = new google.maps.Geocoder(),
         markers = [];
     if (navigator.geolocation) {
@@ -109,6 +112,7 @@
       });
       event.stopPropagation();
     });
+    $('body').append(dmap);
   });
 </script>
 <div class="container">
