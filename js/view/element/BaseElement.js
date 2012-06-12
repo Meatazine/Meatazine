@@ -32,7 +32,7 @@ jQuery.namespace('Meatazine.view.element');
       });
       _.each(this.collection.models, function (model, i) {
         // 判断是否是地图
-        this.createItem(model);
+        this.createItem(model, !this.collection.isModelChanged(model));
       }, this);
       for (var i = this.collection.config.number - this.collection.length; i > 0; i--) {
         this.createItem(this.collection.create(), true);

@@ -41,7 +41,7 @@
     </style>
     <script>
       $(function () {
-        Meatazine.utils.FileReferrence.on('complete:clone', function (url) {
+        Meatazine.filesystem.FileReferrence.on('complete:clone', function (url) {
           fileURL = url;
           $('#file-here').removeClass('active');
           $('#pic-container')
@@ -62,7 +62,7 @@
               }
             }
             if (file != null) {
-              Meatazine.utils.FileReferrence.load(file);
+              Meatazine.filesystem.FileReferrence.load(file);
             }
           })
           .on('dragover', function (event) {
@@ -82,12 +82,12 @@
           var zip = new JSZip(),
               fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
           zip.file('file.txt', fileName);
-          Meatazine.utils.FileReferrence.on('complete:read', function (file) {
+          Meatazine.filesystem.FileReferrence.on('complete:read', function (file) {
             zip.file(fileName, file, {binary: true});
             var content = zip.generate();
             location.href = "data:application/zip;base64," + content;
           });
-          Meatazine.utils.FileReferrence.read(fileURL);
+          Meatazine.filesystem.FileReferrence.read(fileURL);
         });
       });
       var fileURL;

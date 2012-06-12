@@ -4,7 +4,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   enabled: false,
   contents: null,
   removeButton: null,
-  currentDragItemIndex: 0,
   events: {
     "click .btn": "tab_changeHandler",
     "click #template-list li": "template_clickHandler",
@@ -49,7 +48,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       }
       ul.empty();
       ul.data('collection', collection);
-      console.log(ul);
       collection.on('add', function (model, collection, options) {
         ul.append(this.createSourceItem(model));
       }, this);
@@ -75,12 +73,12 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   input_focusOutHandler: function (event) {
     var target = $(event.target),
-        mIndex = target.parent().index(),
-        cIndex = target.parentsUntil(this.$('#source-list'), 'dd').index() >> 1,
+        index = target.parent().index(),
+        collection = target.closest('ul').data('collection'),
         value = target.val(),
         key = target.attr('name');
     target.replaceWith('<span class>' + value + '</span>');
-    this.contents.getContentAt(cIndex).at(mIndex).set(key, value);
+    collection.at(index).set(key, value);
   },
   input_keydownHandler: function (event) {
     if (event.keyCode == 13) {
@@ -110,22 +108,18 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   removeButton_clickHandler: function (event) {
     var target = $(event.target).parent(),
-        mIndex = target.index(),
-        cIndex = target.parentsUntil(this.$('#source-list'), 'dd').index() >> 1;
-    if (target.siblings().length > 0) {
-      target.remove();
-    }
-    this.contents.getContentAt(cIndex).removeAt(mIndex);
+        index = target.index(),
+        ul = target.closest('ul');
+    target.remove();
+    ul.data('collection').removeAt(index)
   },
   source_sortactivateHandler: function (event, ui) {
-    this.currentDragItemIndex = ui.item.index();
+    ui.item.data('index', ui.item.index());
   },
   source_sortdeactivateHandler: function (event, ui) {
-    var collection = this.contents.getContentAt(ui.item.parent().index() >> 1);
-    var model = collection.at(this.currentDragItemIndex);
-    collection.remove(model, {silent: true});
-    collection.add(model, {at: ui.item.index(), silent: true});
-    collection.trigger('sort', this.currentDragItemIndex, ui.item.index());
+    var collection = ui.item.closest('ul').data('collection');
+        start = ui.item.data('index');
+    collection.setModelIndex(start, ui.item.index());
   },
   sourceItem_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);

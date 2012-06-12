@@ -22,18 +22,7 @@ Meatazine.filesystem.FileZip = function () {
       return;
     }
     isLoading = true;
-    if (url.substr(0, 10) == 'filesystem') {
-      // 加载本地图片
-      file.read(url);
-      return;
-    }
-    // 加载远程内容
-    $.ajax({
-      url: url,
-      dataType: 'text',
-      context: this,
-      success: loadCompleteHandler
-    });
+    next();
   }
   this.downloadZip = function () {
     if (queue.length > 0) {
@@ -52,21 +41,22 @@ Meatazine.filesystem.FileZip = function () {
       compression: compression
     });
   }
-  function readCompleteHandler(content) {
+  function file_readCompleteHandler(content) {
     var item = queue.shift();
     zip.file(item.name, content, {binary: true});
     next();
   }
-  function loadCompleteHandler(data) {
+  function ajax_successHandler(data) {
     var item = queue.shift();
     zip.file(item.name, data);
     next();
   }
-  function saveCompleteHandler(url) {
+  function file_saveCompleteHandler(url) {
     location.href = url;
   }
   function next() {
     if (queue.length > 0) {
+      self.trigger('complete:one', queue.length);
       var data = queue[0];
       if (data.url.substr(0, 10) == 'filesystem') {
         file.read(data.url);
@@ -75,7 +65,7 @@ Meatazine.filesystem.FileZip = function () {
           url: data.url,
           dataType: 'text',
           context: this,
-          success: loadCompleteHandler
+          success: ajax_successHandler
         });
       }
     } else {
@@ -89,6 +79,6 @@ Meatazine.filesystem.FileZip = function () {
   
   _.extend(this, Backbone.Events);
   
-  file.on('complete:read', readCompleteHandler, this);
-  file.on('complete:save', saveCompleteHandler, this);
+  file.on('complete:read', file_readCompleteHandler, this);
+  file.on('complete:save', file_saveCompleteHandler, this);
 }

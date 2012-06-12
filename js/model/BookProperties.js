@@ -17,18 +17,10 @@ jQuery.namespace('Meatazine.model');
       data.pages = this.get('pages').toJSON();
       localStorage.setItem('book', JSON.stringify(data));
     },
-    checkSameDomain : function (url) {
-      if (url.indexOf('//') == -1) {
-        return true;
-      }
-      var link = url.replace('filesystem:', '').match(/\/\/([^\/+]+)\//)[1],
-          domain = location.hostname;
-      return link == domain;
-    },
     createZip: function () {
       var self = this,
           data = _.pick(this.attributes, 'width', 'height'),
-          zip = new Meatazine.utils.FileZip();
+          zip = new Meatazine.filesystem.FileZip();
       data.content = '';
       _.each(this.attributes.pages.models, function (model, i) {
         data.content += model.get('renderedHTML');
@@ -47,7 +39,7 @@ jQuery.namespace('Meatazine.model');
             if (src == '#') {
               return arguments[0];
             }
-            if (!self.checkSameDomain(url)) {
+            if (!self.isSameDomain(url)) {
               return arguments[0];
             }
             zip.addFile(src, null, url);
@@ -62,6 +54,7 @@ jQuery.namespace('Meatazine.model');
       var zip = this.createZip();
       zip.on('ready', function () {
         zip.downloadZip();
+        $('#export-zip').modal('hide');
       });
     },
     fill: function (data) {
@@ -79,6 +72,14 @@ jQuery.namespace('Meatazine.model');
           GUI.publishStatus.finish();
         },
       })
+    },
+    isSameDomain : function (url) {
+      if (url.indexOf('//') == -1) {
+        return true;
+      }
+      var link = url.replace('filesystem:', '').match(/\/\/([^\/+]+)\//)[1],
+          domain = location.hostname;
+      return link == domain;
     },
     load: function () {
       var store = localStorage.getItem('book'),
