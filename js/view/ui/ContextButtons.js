@@ -9,7 +9,6 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     "click a": "selectHandler",
     "click button:not([data-toggle])": "button_clickHandler",
     "click button[data-type='upload']": "uploadButton_clickHandker",
-    "click button[data-type='edit']": "editButton_clickHandler",
     "click button[data-type='switch']": "switchButton_clickHandler",
     "click button[data-type='add-marker']": "addMarkerButton_clickHandler",
     "click .geo-search button": "geoSearchButton_clickHandler",
