@@ -1,32 +1,20 @@
 jQuery.namespace('Meatazine.view');
 Meatazine.view.GUI = Backbone.View.extend({
-  navbar: null,
-  config: null,
-  welcome: null,
-  screenSelector: null,
-  publishStatus: null,
   book: null,
-  initialize: function () {
-    this.config = this.options.config;
-    this.book = this.options.book;
+  config: null,
+  contextButtons: null,
+  navbar: null,
+  welcome: null,
+  initialize: function (options) {
+    this.config = options.config;
+    this.book = options.book;
     this.book.on('change:size', this.book_sizeChangeHandler, this);
-    this.welcome = new Meatazine.view.windows.Welcome({
-      el: '#welcome',
-      model: this.config
-    });
-    this.screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
-      el: '#screen-size',
-      model: this.book,
-      infoText: '#screen-size-info'
-    });
-    this.publishStatus = new Meatazine.view.windows.PublishStatus({
-      el: '#publish',
-      model: this.book
-    });
     this.navbar = new Meatazine.view.ui.NavBar({
       el: '#navbar'
     });
     this.navbar.on('select', this.navbar_selectHandler, this);
+    this.contextButtons = options.contextButtons;
+    this.welcome = options.welcome;
     this.render();
     delete this.options;
   },

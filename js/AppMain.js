@@ -21,11 +21,25 @@ $(function () {
         el: '#page-body',
         book: book,
         source: source.model,
-        contextButtons: contextButtons
+      }),
+      welcome = new Meatazine.view.windows.Welcome({
+        el: '#welcome',
+        model: config
+      }),
+      screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
+        el: '#screen-size',
+        model: book,
+        infoText: '#screen-size-info'
+      }),
+      publishStatus = new Meatazine.view.windows.PublishStatus({
+        el: '#publish',
+        model: book
       });
   GUI = new Meatazine.view.GUI({
     config: config,
-    book: book
+    book: book,
+    contextButtons: contextButtons,
+    welcome: welcome,
   });
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);

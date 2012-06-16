@@ -43,6 +43,7 @@ jQuery.namespace('Meatazine.model.element');
     },
     removeAt: function (index, isSilent) {
       var model = this.at(index);
+      model.off();
       this.remove(model, {silent: isSilent});
       return model;
     },

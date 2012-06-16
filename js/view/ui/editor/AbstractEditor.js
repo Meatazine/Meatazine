@@ -17,6 +17,17 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
   stopEdit: function () {
     
   },
+  editButton_clickHandler: function (event) {
+    var target = $(event.target);
+    if (target.hasClass('active')) {
+      this.stopEdit();
+    } else {
+      this.startEdit();
+    }
+    target
+      .toggleClass('active')
+      .closest('.btn-group').siblings('.btn-group').andSelf().find('[data-group=edit]').prop('disabled', !target.hasClass('active'));
+  }
 });
 Meatazine.view.ui.editor.EditorManager = {
   switchType: function (type) {

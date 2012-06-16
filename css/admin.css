@@ -322,3 +322,10 @@ body {
   box-shadow:inset 0 0 2px #CCC;
   background:#DEF;
 }
+
+/** ====================
+ *   覆盖类库的样式
+ *=====================*/
+.ui-resizable {
+  cursor: move;
+}
