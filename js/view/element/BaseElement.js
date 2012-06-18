@@ -14,6 +14,7 @@ jQuery.namespace('Meatazine.view.element');
       "dragenter img": "img_dragEnterHandler",
       "dragleave img": "img_dragLeaveHandler",
       "click img": "img_clickHandler",
+      "click .map-container": "map_clickHandler",
       "click [data-toggle]": "toggle_clickHandler",
     },
     initialize: function () {
@@ -40,6 +41,7 @@ jQuery.namespace('Meatazine.view.element');
       this.handleChildrenState();
     },
     remove: function () {
+      imageEditor.off(null, null, this);
       this.collection.off(null, null, this);
       this.off();
       this.$el.remove();
@@ -175,12 +177,11 @@ jQuery.namespace('Meatazine.view.element');
     img_dragLeaveHandler: function (event) {
       $(event.currentTarget).removeClass('active-img');
     },
-    startEditHandler: function (target) {
-      if (target instanceof google.maps.Map) {
-        this.startEditMap(target);
-      } else if ((/img|canvas/i).test(target[0].tagName)) {
-        this.startEditImage(target);
-      }
+    map_clickHandler: function (event) {
+      mapEditor.setTarget($(event.target).data('map'));
+    },
+    switchImageHandler: function (map) {
+      
     },
     switchMapHandler: function (image) {
       if (currentEditor != null) {
@@ -195,7 +196,7 @@ jQuery.namespace('Meatazine.view.element');
           return false;
         }
       });
-      this.token = this.token.not(this.children.eq(index));
+      this.token = this.token.not(this.$el.children().eq(index));
       
       this.collection.replaceAt(model, index); 
       var map = this.createMap(image.parent(), model);

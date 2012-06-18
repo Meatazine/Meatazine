@@ -7,7 +7,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         if (text.is(value)) {
           return;
         }
-        text.stopEdit();
+        this.stopEdit();
       }
       text = $(value);
       text
@@ -26,7 +26,13 @@ jQuery.namespace('Meatazine.view.ui.editor');
     stopEdit: function (event) {
       text
         .removeClass('editing')
-        .prop('contenteditable', false);
+        .prop('contenteditable', false)
+        .off({
+          'mousedown': this.stopEventPropagation,
+          'mousemove': this.stopEventPropagation,
+          'keydown': this.stopEventPropagation,
+        });
+      this.buttons.find('[data-type="edit"]').removeClass('active');
       this.trigger('change');
     },
     stopEventPropagation: function (event) {
@@ -40,15 +46,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
         'keydown': self.stopEventPropagation,
       });
     },
-    editable_focusOutHandler: function (event) {
-      var self = event.data.self;
-      $(event.target)
-        .off({
-          'mousedown': self.stopEventPropagation,
-          'mousemove': self.stopEventPropagation,
-          'keydown': self.stopEventPropagation,
-        });
-      self.stopEdit();
+    text_focusOutHandler: function (event) {
+      event.data.self.stopEdit();
     },
   });
 })(Meatazine.view.ui.editor);

@@ -1,19 +1,23 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
+  const MARKER_WIDTH = 22,
+        MARKER_HEIGHT = 32;
   var map = null,
       model = null,
       div = null;
   ns.MapEditor = ns.AbstractEditor.extend({
-    addMapMarker: function (map) {
+    addMapMarker: function (x, y) {
       var self = this,
           markers = model.get('markers') ? model.get('markers').concat() : [],
           tmpMarker = $('<div>', {"class": "tmp-marker"});
       tmpMarker
-        .css('background-position', -Math.floor(markers.length / 9) * 22 + 'px ' + -markers.length % 9 * 32 + 'px')
+        .css('background-position', -Math.floor(markers.length / 9) * MARKER_WIDTH + 'px ' + -markers.length % 9 * MARKER_HEIGHT + 'px')
+        .css('left', x - MARKER_WIDTH / 2)
+        .css('top', y - MARKER_HEIGHT);
       $('body')
         .append(tmpMarker)
         .mousemove(function (event) {
-          tmpMarker.css('left', event.pageX - tmpMarker.width() / 2).css('top', event.pageY - tmpMarker.height());
+          tmpMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
         })
         .one('click', function (event) {
           tmpMarker.remove();
@@ -24,7 +28,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         var image = self.createMarkerImage(markers.length),
             mapmarker = new google.maps.Marker({
               clickable: false,
-              icon: markerImage,
+              icon: image,
               map: map,
               position: event.latLng,
             });
@@ -32,28 +36,25 @@ jQuery.namespace('Meatazine.view.ui.editor');
         google.maps.event.clearListeners(map, 'click');
       });
       model.set('markers', markers);
-      event.stopPropagation();
     },
     createMarkerImage: function (index) {
-      var size = new google.maps.Size(22, 32),
-          point = new google.maps.Point(Math.floor(index / 9) * 22, index % 9 * 32);
+      var size = new google.maps.Size(MARKER_WIDTH, MARKER_HEIGHT),
+          point = new google.maps.Point(Math.floor(index / 9) * MARKER_WIDTH, index % 9 * MARKER_HEIGHT);
       return new google.maps.MarkerImage('img/mapmarkers.png', size, point);
     },
     initButtons: function () {
       var self = this;
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('[data-type="add-marker"]').on('click', function (event) {
-        self.addMapMarker();
-      });
+      this.buttons.find('[data-type="add-marker"]').on('click', {self: this}, this.addMarkerButton_clickHandler);
       this.buttons.find('.geo-search button').on('click', this.geoSearchButton_clickHandler);
     },
     setTarget: function (value) {
       map = value;
-      div = map.getDiv();
+      div = $(map.getDiv());
       model = div.data('model');
       GUI.contextButtons.showButtons(this.buttons);
     },
-    startEdit: function (map) {
+    startEdit: function () {
       map.setOptions({
         draggable: true,
       });
@@ -61,7 +62,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         event.stopPropagation();
       });
     },
-    stopEdit: function (map) {
+    stopEdit: function (s) {
       map.setOptions({
         draggable: false,
       });
@@ -74,10 +75,16 @@ jQuery.namespace('Meatazine.view.ui.editor');
         zoom: zoom,
       });
     },
+    addMarkerButton_clickHandler: function (event) {
+      event.data.self.addMapMarker(event.pageX, event.pageY);
+      event.stopPropagation();
+    },
     geoSearchButton_clickHandler: function (event) {
       var coder = new google.maps.Geocoder(),
-          search = this.buttons.find('.geo-search');
-      search.removeClass('error');
+          search = $(event.target).parent();
+      search
+        .removeClass('error')
+        .find('input,button').prop('disabled', true);
       coder.geocode({
         address: search.find('input').val()
       }, function (array, status) {
@@ -104,7 +111,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
         } else {
           search.addClass('error');
         }
-      })
+        search.find('input,button').prop('disabled', false);
+      });
+      event.stopPropagation();
     },
   });
 })(Meatazine.view.ui.editor);

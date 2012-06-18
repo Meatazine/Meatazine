@@ -51,7 +51,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       ns.AbstractEditor.prototype.initButtons.call(this);
       this.buttons.find('.scale input').on('change', {self: this}, this.scale_changeHandler);
       this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
-      this.buttons.find("[data-type='switch']").on('click', this.switchButton_clickHandler);
+      this.buttons.find("[data-type='switch']").on('click', {self: this}, this.switchButton_clickHandler);
     },
     initScaleRange: function () {
       scale = image.data('scale');
@@ -164,7 +164,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     switchButton_clickHandler: function (event) {
       var type = $(event.target).attr('data-class');
-      this.trigger('switch:' + type, image);
+      event.data.self.trigger('switch:' + type, image);
     },
     uploadButton_clickHandker: function (event) {
       uploader.click();
