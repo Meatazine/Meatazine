@@ -1,12 +1,1 @@
-jQuery.namespace = function() {
-  var parent = null, ns;
-  for (var i = 0; i < arguments.length; i = i + 1) {
-    ns = arguments[i].split(".");
-    parent = window;
-    for (var j = 0; j < ns.length; j = j + 1) {
-      parent[ns[j]] = parent[ns[j]] || {};
-      parent = parent[ns[j]];
-    }
-  }
-  return parent;
-};
+jQuery.namespace=function(){for(var a=null,c,d=0;d<arguments.length;d+=1){c=arguments[d].split(".");for(var a=window,b=0;b<c.length;b+=1)a[c[b]]=a[c[b]]||{},a=a[c[b]]}return a};
