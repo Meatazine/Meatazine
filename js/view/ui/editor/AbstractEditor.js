@@ -1,12 +1,12 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
   buttons: null,
-  initialize: function (options) {
-    this.buttons = $(options.buttons);
+  initialize: function (buttons) {
+    this.buttons = $(buttons);
     this.initButtons();
   },
   initButtons: function () {
-    this.buttons.find("[data-type='edit']").on('click', this.editButton_clickHandler);
+    this.buttons.find("[data-type='edit']").on('click', {self: this}, this.editButton_clickHandler);
   },
   setTarget: function (value) {
     
@@ -20,9 +20,9 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
   editButton_clickHandler: function (event) {
     var target = $(event.target);
     if (target.hasClass('active')) {
-      this.stopEdit();
+      event.data.self.stopEdit();
     } else {
-      this.startEdit();
+      event.data.self.startEdit();
     }
     target
       .toggleClass('active')

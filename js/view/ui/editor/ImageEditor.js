@@ -1,6 +1,6 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
-  var localFile = new Meatazine.filesystem.FileReference(),
+  var localFile = new Meatazine.filesystem.FileReferrence(),
       args = null,
       callback = null,
       canvas = null,
@@ -15,9 +15,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
       var image = canvas.data('image'),
           context = canvas[0].getContext('2d'),
           sourceWidth = canvas[0].width / scale,
-          sourceHeight = canvas[0].height() / scale,
-          sourceX = (image.width - sourceWidth >> 1) - offsetX / scale,
-          sourceY = (image.height - sourceHeight >> 1) - offsetY / scale,
+          sourceHeight = canvas[0].height / scale,
+          sourceX = (image.width - sourceWidth >> 1) - x / scale,
+          sourceY = (image.height - sourceHeight >> 1) - y / scale,
           destWidth = 0,
           destHeight = 0,
           destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas[0].width : 0,
@@ -49,18 +49,18 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('.scale input').on('change', this.scale_changeHandler, this);
-      this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker, this);
-      this.buttons.find("[data-type='switch']").on('click', this.switchButton_clickHandler, this);
+      this.buttons.find('.scale input').on('change', {self: this}, this.scale_changeHandler);
+      this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
+      this.buttons.find("[data-type='switch']").on('click', this.switchButton_clickHandler);
     },
     initScaleRange: function () {
-      var value = image.data('scale'),
-          scaleMin = value < 0.5 ? value : 0.5,
-          scaleMax = value > 1.5 ? value : 1.5,
+      scale = image.data('scale');
+      var scaleMin = scale < 0.5 ? scale : 0.5,
+          scaleMax = scale > 1.5 ? scale : 1.5,
           scaleRanger = this.buttons.find('[data-type="scale"]');
       scaleRanger
-        .find('input').attr('max', scaleMax).attr('min', scaleMin).val(value).end()
-        .find('span').text(Math.round(value * 10000) / 100 + '%');
+        .find('input').attr('max', scaleMax).attr('min', scaleMin).val(scale).end()
+        .find('span').text(Math.round(scale * 10000) / 100 + '%');
     },
     initUploader: function () {
       // 因为input必须change才能触发事件，所以有必要移除已经之前的标签
@@ -68,9 +68,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
         uploader.remove();
         uploader.off();
       }
-      uploader = $('<input type="file" multiple="multiple" accept="image/*" />');
-      uploader.on("change", this.uploader_selectHandler, this);
-      this.buttons.append(this.uploader);
+      uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
+      uploader
+        .on("change", {self: this}, this.uploader_selectHandler)
+        .appendTo(this.buttons.first());
     },
     saveCanvas: function () {
       if (canvas == null) {
@@ -93,6 +94,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         return;
       }
       image = $(value);
+      url = image.attr('src');
       this.initScaleRange();
       this.initUploader();
       GUI.contextButtons.showButtons(this.buttons);
@@ -110,13 +112,15 @@ jQuery.namespace('Meatazine.view.ui.editor');
       canvas
         .data('image', loader)
         .on('mousedown', function (event) {
-          var startX = event.pageX,
+          var currentX = x,
+              currentY = y,
+              startX = event.pageX,
               startY = event.pageY;
           $(this).on('mousemove', function (event) {
             offsetX = event.pageX - startX;
             offsetY = event.pageY - startY;
-            x + offsetX;
-            y += offsetY;
+            x = currentX + offsetX;
+            y = currentY + offsetY;
             self.drawImage();
             event.stopPropagation();
           });
@@ -131,6 +135,11 @@ jQuery.namespace('Meatazine.view.ui.editor');
       image.replaceWith(canvas);
     },
     stopEdit: function () {
+      image.data({
+        scale: scale,
+        x: x,
+        y: y,
+      })
       this.saveCanvas();
     },
     canvas_clickHandler: function (event) {
@@ -148,9 +157,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
     },
     scale_changeHandler: function (event) {
-      var value = $(event.target).val();
-      this.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
-      this.setCanvasScale(value); 
+      var self = event.data.self,
+          value = $(event.target).val();
+      self.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
+      self.setCanvasScale(value); 
     },
     switchButton_clickHandler: function (event) {
       var type = $(event.target).attr('data-class');
@@ -161,8 +171,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
       event.stopPropagation();
     },
     uploader_selectHandler: function (event) {
-      this.trigger('select:image', uploader[0].files);
-      this.buttons.find('[data-type="edit"]').prop('disabled', false);
+      var self = event.data.self;
+      self.trigger('select:image', uploader[0].files);
+      self.buttons.find('[data-type="edit"]').prop('disabled', false);
     },
   });
 })(Meatazine.view.ui.editor);

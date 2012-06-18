@@ -25,8 +25,14 @@ $(function () {
       welcome = new Meatazine.view.windows.Welcome({
         el: '#welcome',
         model: config
-      }),
-      screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
+      });
+  window.GUI = new Meatazine.view.GUI({
+    config: config,
+    book: book,
+    contextButtons: contextButtons,
+    welcome: welcome,
+  });
+  var screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
         el: '#screen-size',
         model: book,
         infoText: '#screen-size-info'
@@ -35,14 +41,7 @@ $(function () {
         el: '#publish',
         model: book
       });
-  GUI = new Meatazine.view.GUI({
-    config: config,
-    book: book,
-    contextButtons: contextButtons,
-    welcome: welcome,
-  });
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);
 });
-var GUI;

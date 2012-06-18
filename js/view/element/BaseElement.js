@@ -4,8 +4,8 @@ jQuery.namespace('Meatazine.view.element');
       isSentByMe = false,
       imageResizer = new Meatazine.filesystem.ImageResizer(),
       localFile = new Meatazine.filesystem.FileReferrence(),
-      imageEditor = new Meatazine.view.ui.editor.ImageEditor(),
-      mapEditor = new Meatazine.view.ui.MapEditor();
+      imageEditor = new Meatazine.view.ui.editor.ImageEditor('.group2'),
+      mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5');
   ns.BaseElement = Backbone.View.extend({
     token: null,
     events: {

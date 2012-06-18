@@ -1,6 +1,6 @@
 jQuery.namespace('Meatazine.view.ui');
 (function (ns) {
-  var textEditor = new ns.editor.TextEditor();
+  var textEditor = new ns.editor.TextEditor('.group1');
   ns.PageBody = Backbone.View.extend({
     items: [],
     isSentByMe: false,
@@ -77,12 +77,12 @@ jQuery.namespace('Meatazine.view.ui');
       if (this.$el.html().replace(/\W/gm,'') == '') {
         return;
       }
-      var template = this.$el.clone(),
-          oldTemplate = $('<div>' + this.model.get('template') + '</div>');
+      var self = this,
+          template = this.$el.clone();
       template.find('.ui-resizable-handle').remove();
       template.find('.editable').removeAttr('contenteditable title');
       template.find('[data-config]').each(function (i) {
-        $(this).html(this.items[i].template);
+        $(this).html(self.items[i].template);
       });
       this.model.set('template', template.html());
     },
@@ -110,7 +110,7 @@ jQuery.namespace('Meatazine.view.ui');
     draggable_dragStopHandler: function (event) {
       this.refreshThumbnail();
     },
-    editable_focusInHandler: function (event) {
+    editable_clickHandler: function (event) {
       textEditor.setTarget(event.target);
     },
     element_changeHandler: function () {

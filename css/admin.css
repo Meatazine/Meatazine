@@ -109,7 +109,7 @@ body {
   margin-right: 4px;
   border-radius: 2px;
 }
-#uploader {
+.uploader {
   visibility:hidden;
   position: absolute;
 }
