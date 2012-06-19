@@ -42,6 +42,9 @@ jQuery.namespace('Meatazine.model.element');
       });
     },
     removeAt: function (index, isSilent) {
+      if (index == -1 || index > this.length - 1) {
+        return;
+      }
       var model = this.at(index);
       model.off();
       this.remove(model, {silent: isSilent});

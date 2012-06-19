@@ -2,6 +2,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
   var text = null;
   ns.TextEditor = ns.AbstractEditor.extend({
+    initButtons: function () {
+      ns.AbstractEditor.prototype.initButtons.call(this);
+      this.buttons.find('.dropdown-menu a').click(this.menu_selectHandler);
+    },
     setTarget: function (value) {
       if (text != null) {
         if (text.is(value)) {
@@ -37,6 +41,22 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     stopEventPropagation: function (event) {
       event.stopPropagation();
+    },
+    menu_selectHandler: function (event) {
+      var target = $(event.target),
+          type = target.closest('[data-type]').attr('data-type');
+      switch (type) {
+        case 'font-size':
+          text.css('font-size', target.text() + 'px');
+          break;
+          
+        case 'color':
+          text.css('color', target.css('color'));
+          break;
+          
+        default:
+          break;
+      }
     },
     text_focusInHandler: function (event) {
       var self = event.data.self;

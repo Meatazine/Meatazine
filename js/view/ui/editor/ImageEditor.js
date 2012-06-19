@@ -88,7 +88,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     setTarget: function (value) {
       if (canvas != null) {
-        saveCanvas();
+        this.saveCanvas();
         callback = arguments.callee;
         args = value;
         return;
@@ -148,7 +148,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
     canvas_savedHandler: function (url) {
       image.attr('src', url).data('scale', scale);
       canvas.replaceWith(image);
-      canvas[0].getContext('2d').clearRect(0, 0, this.canvas.width(), this.canvas.height());
+      canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
       canvas = null;
       localFile.off('complete:save', null, this);

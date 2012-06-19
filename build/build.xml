@@ -1,0 +1,126 @@
+<project name="Meatazine" default="all" basedir="../">
+  <property name="build" location="build/" />
+  <property name="temp" location="temp/" />
+  <property name="dist" location="bin" />
+  
+  <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="${build}/compiler.jar" />
+  
+  <target name="init">
+    <delete dir="${dist}" />
+    <mkdir dir="${dist}" />
+    <mkdir dir="${temp}" />
+  </target>
+  
+  <target name="-concat.js.libs.files">
+    <mkdir dir="${dist}/js" />
+    <concat destfile="${dist}/js/libs.js" encoding="UTF-8" fixlastline="yes">
+      <filelist dir="js/libs/">
+        <file name="jquery-1.7.2.min.js" />
+        <file name="jquery-ui-1.8.21.custom.min.js" />
+        <file name="jquery.namespace.js" />
+        <file name="mustache.js" />
+        <file name="bootstrap.min.js" />
+        <file name="underscore-min.js" />
+        <file name="backbone-min.js" />
+        <file name="html2canvas.js" />
+        <file name="jszip.js" />
+        <file name="jszip-deflate.js" />
+      </filelist>
+    </concat>
+  </target>
+  
+  <target name="-concat.js.apps.files">
+    <concat destfile="${temp}/apps.js" encoding="UTF-8" fixlastline="yes">
+      <filelist dir="js/">
+        <file name="utils/Utils.js" />
+        <file name="filesystem/FileReferrence.js" />
+        <file name="filesystem/FileZip.js" />
+        <file name="filesystem/ImageResizer.js" />
+        <file name="model/ConfigModel.js" />
+        <file name="model/BookProperties.js" />
+        <file name="model/element/ElementCollection.js" />
+        <file name="model/SinglePageModel.js" />
+        <file name="model/PageCollection.js" />
+        <file name="model/SourceModel.js" />
+        <file name="view/windows/Welcome.js" />
+        <file name="view/windows/ScreenSizeSelector.js" />
+        <file name="view/windows/PublishStatus.js" />
+        <file name="view/ui/editor/AbstractEditor.js" />
+        <file name="view/ui/editor/ImageEditor.js" />
+        <file name="view/ui/editor/MapEditor.js" />
+        <file name="view/ui/editor/TextEditor.js" />
+        <file name="view/element/BaseElement.js" />
+        <file name="view/element/SlideNaviElement.js" />
+        <file name="view/element/SlideBodyElement.js" />
+        <file name="view/element/ListElement.js" />
+        <file name="view/element/ElementFactory.js" />
+        <file name="view/ui/PageBody.js" />
+        <file name="view/ui/PageList.js" />
+        <file name="view/ui/SourcePanel.js" />
+        <file name="view/ui/NavBar.js" />
+        <file name="view/ui/ContextButtons.js" />
+        <file name="view/GUI.js" />
+        <file name="AppMain.js" />
+      </filelist>
+    </concat>
+  </target>
+  
+  <target name="-copy.html.files">
+    <copy file="index.html" todir="${dist}" />
+    <copy file="preview.html" todir="${dist}" />
+    <copy todir="${dist}/template/">
+      <fileset dir="template/" />
+    </copy>
+  </target>
+  
+  <target name="-copy.image.files">
+    <copy todir="${dist}/img/">
+      <fileset dir="img/" />
+    </copy>
+  </target>
+  
+  <target name="-copy.css.files">
+    <copy todir="${dist}/css/">
+      <fileset dir="css/" />
+    </copy>
+  </target>
+  
+  <target name="reader" depends="init">
+    <copy todir="${dist}/css/">
+      <filelist dir="css/">
+        <file name="bootstrap.min.css" />
+        <file name="bootstrap-responsive.min.css" />
+        <file name="style.css" />
+      </filelist>
+    </copy>
+    <copy todir="${dist}/js/libs/">
+      <filelist dir="js/libs/">
+        <file name="iscroll.js" />
+        <file name="zepto.min.js" />
+      </filelist>
+    </copy>
+    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/BookReader.js" encoding="UTF-8">
+      <warning group="internetExplorerChecks" level="OFF" />
+      <warning group="globalThis" level="OFF" />
+      <sources dir="js/">
+        <file name="BookReader.js" />
+      </sources>
+    </jscomp>
+  </target>
+  
+  <target name="maker" depends="init, -copy.html.files, -copy.image.files,
+    -copy.css.files, -concat.js.libs.files, -concat.js.apps.files">
+    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/apps.js" encoding="UTF-8">
+      <warning group="internetExplorerChecks" level="OFF" />
+      <warning group="globalThis" level="OFF" />
+      <sources dir="${temp}">
+        <file name="apps.js" />
+      </sources>
+    </jscomp>
+    <delete dir="${temp}" />
+  </target>
+  
+  <target name="all" depends="reader, maker">
+  </target>
+  
+</project>

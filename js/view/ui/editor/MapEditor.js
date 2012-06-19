@@ -1,10 +1,10 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
-  const MARKER_WIDTH = 22,
-        MARKER_HEIGHT = 32;
   var map = null,
       model = null,
-      div = null;
+      div = null,
+      MARKER_WIDTH = 22,
+      MARKER_HEIGHT = 32;
   ns.MapEditor = ns.AbstractEditor.extend({
     addMapMarker: function (x, y) {
       var self = this,
