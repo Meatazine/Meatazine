@@ -16,6 +16,16 @@ Meatazine.view.GUI = Backbone.View.extend({
     this.contextButtons = options.contextButtons;
     this.welcome = options.welcome;
     this.render();
+    $('body').on({
+      'keydown': function (event) {
+        if (event.keyCode == 8) { // backspace
+          return false;
+        }
+      },
+      'drop': function (event) {
+        return false;
+      },
+    });
     delete this.options;
   },
   render: function () {
@@ -41,6 +51,7 @@ Meatazine.view.GUI = Backbone.View.extend({
         break;
         
       case 'publish':
+        return;
         this.publishStatus.reset();
         this.publishStatus.showStep(1);
         break;

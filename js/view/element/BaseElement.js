@@ -196,7 +196,9 @@ jQuery.namespace('Meatazine.view.element');
           return false;
         }
       });
-      this.token = this.token.not(this.$el.children().eq(index));
+      if (this.token != null) {
+        this.token = this.token.not(this.$el.children().eq(index));
+      }
       
       this.collection.replaceAt(model, index); 
       var map = this.createMap(image.parent(), model);

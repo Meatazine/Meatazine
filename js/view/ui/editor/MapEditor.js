@@ -58,15 +58,13 @@ jQuery.namespace('Meatazine.view.ui.editor');
       map.setOptions({
         draggable: true,
       });
-      div.on('mousemove', function (event) {
-        event.stopPropagation();
-      });
+      div.closest('.ui-draggable').draggable('disable');
     },
     stopEdit: function (s) {
       map.setOptions({
         draggable: false,
       });
-      div.off('mousemove');
+      div.closest('.ui-draggable').draggable('enable');
       var latlng = map.getCenter(),
           zoom = map.getZoom();
       model.set({

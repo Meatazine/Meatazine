@@ -136,6 +136,11 @@ body {
   width:22px;
   z-index: 100;
 }
+.uploader {
+  visible:hidden;
+  position:absolute;
+  bottom: -50px;
+}
 
 /*========================
  * page
@@ -225,11 +230,6 @@ body {
 #page-body .editable:hover .ui-resizable-handle,
 #page-body .editing .ui-resizable-handle {
   display:block;
-}
-.uploader {
-  visible:hidden;
-  position:absolute;
-  bottom: -50px;
 }
 
 #panel {
@@ -332,4 +332,9 @@ body {
  *=====================*/
 .ui-resizable {
   cursor: move;
+}
+.ui-state-disabled,
+.ui-widget-content .ui-state-disabled,
+.ui-widget-header .ui-state-disabled {
+  opacity: 1;
 }
