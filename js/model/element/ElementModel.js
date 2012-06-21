@@ -3,7 +3,7 @@ Meatazine.model.element.ElementModel = Backbone.Model.extend({
   defaults: {
     title: '标题',
     description: '内容',
-    link: 'http://blog.meathill.net/',
+    link: '//blog.meathill.net/',
     img: 'img/spacer.gif',
   },
   initialize: function () {
