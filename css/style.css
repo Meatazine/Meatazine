@@ -12,6 +12,9 @@ body {
   background: #F0F0F0;
   text-shadow: 0 1px 0 #FFF;
 }
+.invisible {
+  visibility: hidden;
+}
 .page,
 .page p {
   color:#FFF;
@@ -363,6 +366,11 @@ body {
 .page {
   float:left;
   position:relative;
+}
+.dummy {
+  width:0;
+  height:0;
+  visibility: hidden;
 }
 
 /**
