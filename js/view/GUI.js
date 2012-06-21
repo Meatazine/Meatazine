@@ -44,8 +44,6 @@ Meatazine.view.GUI = Backbone.View.extend({
         
       case 'publish':
         return;
-        this.publishStatus.reset();
-        this.publishStatus.showStep(1);
         break;
     }
     this.book[type]();

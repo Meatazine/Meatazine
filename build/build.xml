@@ -42,10 +42,10 @@
         <file name="model/SinglePageModel.js" />
         <file name="model/PageCollection.js" />
         <file name="model/SourceModel.js" />
-        <file name="view/windows/Welcome.js" />
-        <file name="view/windows/ScreenSizeSelector.js" />
-        <file name="view/windows/PublishStatus.js" />
-        <file name="view/windows/PopupManager.js" />
+        <file name="popup/Welcome.js" />
+        <file name="popup/ScreenSizeSelector.js" />
+        <file name="popup/PublishStatus.js" />
+        <file name="popup/PopupManager.js" />
         <file name="view/ui/editor/AbstractEditor.js" />
         <file name="view/ui/editor/ImageEditor.js" />
         <file name="view/ui/editor/MapEditor.js" />
@@ -123,6 +123,12 @@
       <substitution expression="\&lt;script src='js/libs.js'\&gt;\&lt;/script\&gt;&#xD;&#xA;\&lt;script src='js/apps.js'\&gt;\&lt;/script\&gt;" />
       <fileset dir="${dist}/" includes="index.html" />
     </replaceregexp>
+    <tstamp>
+      <format property="build.time" pattern="MMddHHmm" />
+    </tstamp>
+    <replace file="${dist}/index.html" encoding="UTF-8">
+      <replacefilter token="@version@" value="${build.time}" />
+    </replace>
     <delete dir="${temp}" />
   </target>
   

@@ -27,7 +27,7 @@ $(function () {
     book: book,
     contextButtons: contextButtons,
   });
-  Meatazine.view.windows.PopupManager.init('.modal', config, book);
+  Meatazine.popup.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);

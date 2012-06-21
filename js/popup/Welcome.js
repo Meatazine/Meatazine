@@ -1,5 +1,5 @@
-jQuery.namespace('Meatazine.view.windows');
-Meatazine.view.windows.Welcome = Backbone.View.extend({
+jQuery.namespace('Meatazine.popup');
+Meatazine.popup.Welcome = Backbone.View.extend({
   version: 0.1,
   initialize: function () {
     var view = this;

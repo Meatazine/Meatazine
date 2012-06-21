@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.view.windows');
+jQuery.namespace('Meatazine.popup');
 (function (ns) {
   var publish,
       welcome,
@@ -13,11 +13,11 @@ jQuery.namespace('Meatazine.view.windows');
           bookModel = book;
           this.$el = $(className);
           this.$el.on('show', this.modal_showHandler);
-          welcome = new Meatazine.view.windows.Welcome({
+          welcome = new Meatazine.popup.Welcome({
             el: '#welcome',
             model: config
           });
-          screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
+          screenSelector = new Meatazine.popup.ScreenSizeSelector({
             el: '#screen-size',
             model: book,
             infoText: '#screen-size-info'
@@ -27,7 +27,7 @@ jQuery.namespace('Meatazine.view.windows');
           switch ($(event.target).attr('id')) {
             case 'publish':
               if (publish == null) {
-                publish = new Meatazine.view.windows.PublishStatus({
+                publish = new Meatazine.popup.PublishStatus({
                   el: '#publish',
                   model: book,
                 });
@@ -36,4 +36,4 @@ jQuery.namespace('Meatazine.view.windows');
         }
       };
    ns.PopupManager = manager;
-})(Meatazine.view.windows);
+})(Meatazine.popup);
