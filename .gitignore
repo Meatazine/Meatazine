@@ -3,6 +3,5 @@ temp/
 jqueryui/
 export/
 img/source/
-img/welcome/
 build/*.jar
 web.config

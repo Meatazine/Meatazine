@@ -338,3 +338,9 @@ body {
 .ui-widget-header .ui-state-disabled {
   opacity: 1;
 }
+.carousel h4 {
+  padding-bottom:4px;
+}
+.carousel p {
+  line-height:20px;
+}

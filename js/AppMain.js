@@ -21,26 +21,13 @@ $(function () {
         el: '#page-body',
         book: book,
         source: source.model,
-      }),
-      welcome = new Meatazine.view.windows.Welcome({
-        el: '#welcome',
-        model: config
       });
   window.GUI = new Meatazine.view.GUI({
     config: config,
     book: book,
     contextButtons: contextButtons,
-    welcome: welcome,
   });
-  var screenSelector = new Meatazine.view.windows.ScreenSizeSelector({
-        el: '#screen-size',
-        model: book,
-        infoText: '#screen-size-info'
-      }),
-      publishStatus = new Meatazine.view.windows.PublishStatus({
-        el: '#publish',
-        model: book
-      });
+  Meatazine.view.windows.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);

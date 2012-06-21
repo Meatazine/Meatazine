@@ -45,6 +45,7 @@
         <file name="view/windows/Welcome.js" />
         <file name="view/windows/ScreenSizeSelector.js" />
         <file name="view/windows/PublishStatus.js" />
+        <file name="view/windows/PopupManager.js" />
         <file name="view/ui/editor/AbstractEditor.js" />
         <file name="view/ui/editor/ImageEditor.js" />
         <file name="view/ui/editor/MapEditor.js" />

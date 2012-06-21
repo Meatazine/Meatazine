@@ -2,11 +2,8 @@ jQuery.namespace('Meatazine.model');
 Meatazine.model.ConfigModel = Backbone.Model.extend({
   KEY: 'config',
   initialize: function () {
-    this.on('change', this.save, this);
+    this.on('change', this.changeHandler, this);
     this.fetch();
-  },
-  defaults: {
-    isWelcomeViewed: false
   },
   fetch: function () {
     var store = JSON.parse(localStorage.getItem(this.KEY));
@@ -14,5 +11,8 @@ Meatazine.model.ConfigModel = Backbone.Model.extend({
   },
   save: function () {
     localStorage.setItem(this.KEY, JSON.stringify(this.toJSON()));
+  },
+  changeHandler: function () {
+    this.save();
   }
 })

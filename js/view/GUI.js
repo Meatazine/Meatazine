@@ -4,7 +4,6 @@ Meatazine.view.GUI = Backbone.View.extend({
   config: null,
   contextButtons: null,
   navbar: null,
-  welcome: null,
   initialize: function (options) {
     this.config = options.config;
     this.book = options.book;
@@ -14,8 +13,7 @@ Meatazine.view.GUI = Backbone.View.extend({
     });
     this.navbar.on('select', this.navbar_selectHandler, this);
     this.contextButtons = options.contextButtons;
-    this.welcome = options.welcome;
-    this.render();
+    this.removeLoading();
     $('body').on({
       'keydown': function (event) {
         if (event.keyCode == 8) { // backspace
@@ -27,12 +25,6 @@ Meatazine.view.GUI = Backbone.View.extend({
       },
     });
     delete this.options;
-  },
-  render: function () {
-    this.removeLoading();
-    if (!this.config.get('isWelcomeViewed')) {
-      this.welcome.show();
-    }
   },
   removeLoading: function () {
     $('#loading').fadeOut();
