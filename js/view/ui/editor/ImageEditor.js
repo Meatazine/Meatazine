@@ -12,12 +12,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
       y = 0;
   ns.ImageEditor = ns.AbstractEditor.extend({
     drawImage : function () {
-      var image = canvas.data('image'),
+      var source = canvas.data('image'),
           context = canvas[0].getContext('2d'),
           sourceWidth = canvas[0].width / scale,
           sourceHeight = canvas[0].height / scale,
-          sourceX = (image.width - sourceWidth >> 1) - x / scale,
-          sourceY = (image.height - sourceHeight >> 1) - y / scale,
+          sourceX = (source.width - sourceWidth >> 1) - x / scale,
+          sourceY = (source.height - sourceHeight >> 1) - y / scale,
           destWidth = 0,
           destHeight = 0,
           destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas[0].width : 0,
@@ -26,20 +26,20 @@ jQuery.namespace('Meatazine.view.ui.editor');
         sourceWidth += sourceX;
         sourceX = 0;
       }
-      if (sourceX + sourceWidth > image.width) {
-        sourceWidth = image.width - sourceX;
+      if (sourceX + sourceWidth > source.width) {
+        sourceWidth = source.width - sourceX;
       }
       if (sourceY < 0) {
         sourceHeight += sourceY;
         sourceY = 0;
       }
-      if (sourceY + sourceHeight > image.height) {
-        sourceHeight = image.height - sourceY;
+      if (sourceY + sourceHeight > source.height) {
+        sourceHeight = source.height - sourceY;
       }
       destWidth = sourceWidth * scale;
       destHeight = sourceHeight * scale;
       context.clearRect(0, 0, canvas[0].width, canvas[0].height);
-      context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+      context.drawImage(source, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     },
     getSourceImageUrl: function (url) {
       if ((/\/source\//i).test(url)) {
@@ -47,11 +47,13 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       return url.substr(0, url.lastIndexOf('/')) + '/source' + url.substr(url.lastIndexOf('/'));
     },
+    getTarget: function () {
+      return image;
+    },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
       this.buttons.find('.scale input').on('change', {self: this}, this.scale_changeHandler);
       this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
-      this.buttons.find("[data-type='switch']").on('click', {self: this}, this.switchButton_clickHandler);
     },
     initScaleRange: function () {
       scale = image.data('scale');
@@ -161,10 +163,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
           value = $(event.target).val();
       self.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
       self.setCanvasScale(value); 
-    },
-    switchButton_clickHandler: function (event) {
-      var type = $(event.target).attr('data-class');
-      event.data.self.trigger('switch:' + type, image);
     },
     uploadButton_clickHandker: function (event) {
       uploader.click();

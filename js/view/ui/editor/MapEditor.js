@@ -42,6 +42,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
           point = new google.maps.Point(Math.floor(index / 9) * MARKER_WIDTH, index % 9 * MARKER_HEIGHT);
       return new google.maps.MarkerImage('img/mapmarkers.png', size, point);
     },
+    getTarget: function () {
+      return map;
+    },
     initButtons: function () {
       var self = this;
       ns.AbstractEditor.prototype.initButtons.call(this);
