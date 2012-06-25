@@ -25,6 +25,7 @@ jQuery.namespace('Meatazine.view.element');
       this.collection.on('sort', this.collection_sortHandler, this);
       imageEditor.on('select:image', this.editor_selectImagesHandler, this);
       imageEditor.on('switch:map', this.switchMapHandler, this);
+      mapEditor.on('switch:image', this.switchImageHandler, this);
       this.render();
     },
     render: function () {
@@ -42,6 +43,7 @@ jQuery.namespace('Meatazine.view.element');
     },
     remove: function () {
       imageEditor.off(null, null, this);
+      mapEditor.off(null, null, this);
       this.collection.off(null, null, this);
       this.off();
       this.$el.remove();
@@ -159,6 +161,7 @@ jQuery.namespace('Meatazine.view.element');
     },
     img_clickHandler: function (event) {
       imageEditor.setTarget(event.target);
+      currentEditor = imageEditor;
       event.stopPropagation();
     },
     img_dropHandler: function (event) {
@@ -178,17 +181,24 @@ jQuery.namespace('Meatazine.view.element');
       $(event.currentTarget).removeClass('active-img');
     },
     map_clickHandler: function (event) {
-      mapEditor.setTarget($(event.target).data('map'));
+      mapEditor.setTarget($(event.currentTarget).data('map'));
+      currentEditor = mapEditor;
     },
-    switchImageHandler: function (map) {
-      
+    switchImageHandler: function (editor) {
+      var map = editor.getTarget(),
+          div = map.getDiv(),
+          model = new this.collection.model(),
+          index = $(div).index();
+      var item = this.createItem(model, true);
+      this.$el.children().eq(index).remove();
+      item.insertAfter(this.$el.children().eq(index - 1));
+      imageEditor.setTarget(item.find('.placeholder'));
     },
-    switchMapHandler: function (image) {
-      if (currentEditor != null) {
-        currentEditor.stopEdit();
-      }
+    switchMapHandler: function (editor) {
+      currentEditor.stopEdit();
       // 改变类型的时候需要替换model
       var index = -1,
+          image = editor.getTarget(),
           model = this.collection.createMapModel();
       this.$el.children().each(function (i) {
         if ($.contains(this, image[0]) || this == image[0]) {
@@ -201,7 +211,7 @@ jQuery.namespace('Meatazine.view.element');
       }
       
       this.collection.replaceAt(model, index); 
-      var map = this.createMap(image.parent(), model);
+      var map = this.createMap(image.closest(this.tagName), model);
       mapEditor.setTarget(map);
     },
     toggle_clickHandler: function (event) {
