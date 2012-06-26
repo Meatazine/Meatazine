@@ -17,16 +17,8 @@ function BookReader(el, w, h) {
       vScroll: false,
       onScrollEnd: resetPages,
     });
-    var PAGE_SEPERATOR = '<div class="page">';
-        content = $('#book-content').html(),
-        lastIndex = 0,
-        index = content.indexOf(PAGE_SEPERATOR, 1);
-    while (index != -1) {
-      pages.push(content.substring(lastIndex, index));
-      lastIndex = index;
-      index = content.indexOf(PAGE_SEPERATOR, lastIndex);
-    }
-    pages.push(content.substring(lastIndex));
+    var content = $('#book-content').html(),
+        pages = content.split('###');
     totalPage = pages.length;
     body.width($el.width() * totalPage).append(dummy);
     turnToPage(0);
@@ -98,18 +90,49 @@ function BookReader(el, w, h) {
       .appendTo($('head'));
   }
   /**
+   * 设置当前页为不可见页
+   * @param {Object} page 当前页
+   */
+  function initInvisiblePages(page, dir) {
+    page.removeClass('no-image visible');
+  }
+  /**
+   * 设置当前页为无图页
+   * 同时移除事件和地图
+   * @param {Object} page 当前页
+   */
+  function initNoImagePages(page, dir) {
+    if (page.hasClass('no-image')) {
+      return;
+    }
+    page
+      .addClass('no-image')
+      .find('img')
+        .attr('src', 'spacer.gif');
+    page.find('.slide-navi').children().off();
+    page.find('[data-toggle]').off();
+    page.find('.map-container').each(function (i) {
+      $(this).empty();
+    });
+    page.find('p').each(function (i) {
+      var self = $(this);
+      if (self.data('scroll') != null) {
+        self.data('scroll').destroy();
+        self.data('scroll', null);
+      }
+    });
+  }
+  /**
    * 设置当前页为可见页
    * 添加事件
    * 插入地图
    * @param {Object} page 当前页
    */
   function initVisiblePages(page) {
-    if (page.parent().length == 0) {
-      body.append(page);
-    }
     if (page.hasClass('visible')) {
       return;
     }
+    page.addClass('visible');
     // 图片
     page.find('img').attr('src', function (i) {
       return this.osrc || this.src;
@@ -131,62 +154,6 @@ function BookReader(el, w, h) {
         self.data('scroll', scroll);
       }
     });
-    page.addClass('visible');
-  }
-  /**
-   * 设置当前页为无图页
-   * 同时移除事件和地图
-   * @param {Object} page 当前页
-   */
-  function initNoImagePages(page, dir) {
-    if (page.hasClass('dummy') || page.hasClass('no-image') || page.length == 0 || page.parent().length == 0) {
-      return;
-    }
-    page
-      .removeClass('visible')
-      .addClass('no-image')
-      .find('img')
-        .attr('osrc', function (index, attr) {
-          return $(this).attr('src');
-        })
-        .attr('src', 'spacer.gif');
-    page.find('.slide-navi').children().off();
-    page.find('[data-toggle]').off();
-    page.find('.map-container').each(function (i) {
-      $(this).empty();
-    });
-    page.find('p').each(function (i) {
-      var self = $(this);
-      if (self.data('scroll') != null) {
-        self.data('scroll').destroy();
-        self.data('scroll', null);
-      }
-    });
-    initInvisiblePages(dir < 0 ? page.prev() : page.next(), dir);
-  }
-  /**
-   * 设置当前页为不可见页
-   * @param {Object} page 当前页
-   */
-  function initInvisiblePages(page, dir) {
-    if (page.hasClass('dummy')) {
-      return;
-    }
-    page.removeClass('no-image').addClass('invisible');
-    if (dir < 0) {
-      page.prev().remove();
-      replaceByDummy(pages.indexOf(page));
-    } else {
-      page.next().remove();
-    }
-  }
-  /**
-   * 设置dummy的长度，防止滚动条乱动
-   * @param {Number} number dummy需要达到多少页的长度
-   */
-  function replaceByDummy(number) {
-    number = number < 0 ? 0 : number;
-    dummy.width(number * width);
   }
   /**
    * 重要函数，用来根据滚动的位置重新设置各页的属性
@@ -223,6 +190,7 @@ function BookReader(el, w, h) {
     for (i = max + 1, end = pageNumber + 3 < totalPage ? pageNumber + 4 : totalPage - 1; i < end; i++) {
       body.append(createItem(i, pageNumber));
     }
+    dummy.width((pageNumber - 3 > 0 ? pageNumber - 3 : 0) * width);
   }
   function stopEvent(event) {
     event.stopPropagation();

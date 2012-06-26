@@ -360,7 +360,7 @@ body {
 #container {
   height:100%;
 }
-#container .show {
+#container .visible {
   visibility: visible;
 }
 .page {

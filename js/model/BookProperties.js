@@ -20,11 +20,9 @@ jQuery.namespace('Meatazine.model');
     createZip: function () {
       var self = this,
           data = _.pick(this.attributes, 'width', 'height'),
-          zip = new Meatazine.filesystem.FileZip();
-      data.content = '';
-      _.each(this.attributes.pages.models, function (model, i) {
-        data.content += model.get('renderedHTML');
-      }, this);
+          zip = new Meatazine.filesystem.FileZip(),
+          htmls = _.pluck(this.get('pages').models, 'renderedHTML');
+      data.content = htmls.join('###');
       // 加载模板
       $.ajax({
         url: 'template/index.html',
