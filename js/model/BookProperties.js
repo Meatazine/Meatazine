@@ -45,6 +45,12 @@ jQuery.namespace('Meatazine.model');
             zip.addFile(src, null, url);
             return arguments[1] + '="' + src + '"';
           });
+          // 把img真正的src藏起来，换上空白的
+          template = template.replace(/<img(\s\w+="\w+")* src="([\/\.\w]+)"/gmi, function (str, attrs, src) {
+            return str.replace(src, 'spacer.gif') + ' ori="' + src + '"';
+          });
+          // 删掉assets节点
+          template = template.replace(/<assets[\S\s]*\/assets>/, '');
           zip.addFile('index.html', template);
         }
       });

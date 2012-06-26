@@ -12,9 +12,6 @@ body {
   background: #F0F0F0;
   text-shadow: 0 1px 0 #FFF;
 }
-.invisible {
-  visibility: hidden;
-}
 .page,
 .page p {
   color:#FFF;
@@ -363,9 +360,13 @@ body {
 #container {
   height:100%;
 }
+#container .show {
+  visibility: visible;
+}
 .page {
   float:left;
   position:relative;
+  visibility: hidden;
 }
 .dummy {
   width:0;

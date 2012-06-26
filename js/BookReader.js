@@ -4,14 +4,12 @@ function BookReader(el, w, h) {
       body = $('#container'),
       scroll = null,
       style = null,
-      dummy = $('<div class="dummy"></div>');
+      dummy = $('<div class="dummy"></div>'),
       pages = [],
       totalPage = 0,
       width = parseInt(w),
       height = parseInt(h);
   this.start = function () {
-    totalPage = $el.find('.page').length;
-    body.width($el.width() * totalPage);
     scroll = new iScroll(id, {
       snap: true,
       momentum: false,
@@ -19,16 +17,32 @@ function BookReader(el, w, h) {
       vScroll: false,
       onScrollEnd: resetPages,
     });
-    fitScreen();
-    $('.page').each(function (i) {
-      pages[i] = $(this).remove();
-    });
-    body.append(dummy);
+    var PAGE_SEPERATOR = '<div class="page">';
+        content = $('#book-content').html(),
+        lastIndex = 0,
+        index = content.indexOf(PAGE_SEPERATOR, 1);
+    while (index != -1) {
+      pages.push(content.substring(lastIndex, index));
+      lastIndex = index;
+      index = content.indexOf(PAGE_SEPERATOR, lastIndex);
+    }
+    pages.push(content.substring(lastIndex));
+    totalPage = pages.length;
+    body.width($el.width() * totalPage).append(dummy);
     turnToPage(0);
   }
   this.addContent = function (html) {
     body.html(html);
     this.start();
+  }
+  function createItem(index, curr) {
+    var page = $(pages[index]);
+    page.data('index', index);
+    if (Math.abs(index - curr) == 2) {
+      initNoImagePages(page);
+      return true;
+    }
+    initVisiblePages(page);
   }
   function createMap(container, data) {
     var position = new google.maps.LatLng(data.lat, data.lng),
@@ -51,6 +65,37 @@ function BookReader(el, w, h) {
             });
       }
     }
+  }
+  function fitScreen() {
+    var ww = $(window).width(),
+        wh = $(window).height()
+        fitWidth = 0,
+        fitHeight = 0,
+        margin = '';
+    if (ww > width && wh > height) {
+      fitWidth = width;
+      fitHeight = height;
+      margin = (wh - height >> 1) + 'px auto';
+    } else {
+      if (ww / wh > width / height) {
+        fitHeight = wh;
+        fitWidth = width * wh / height;
+      } else {
+        fitWidth = ww;
+        fitHeight = height * ww / width;
+      }
+      margin = (wh - fitHeight >> 1) + 'px ' + (ww - fitWidth>> 1) + 'px';
+    }
+    // 写成style
+    if (style != null) {
+      style.remove();
+    }
+    style = $('<style>');
+    style
+      .append('#' + id + ', .page {width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
+      .append('#' + id + ' {margin:' + margin + '}\n')
+      .append('#container {width:' + fitWidth * totalPage + 'px}')
+      .appendTo($('head'));
   }
   /**
    * 设置当前页为可见页
@@ -143,50 +188,40 @@ function BookReader(el, w, h) {
     number = number < 0 ? 0 : number;
     dummy.width(number * width);
   }
-  function fitScreen() {
-    var ww = $(window).width(),
-        wh = $(window).height()
-        fitWidth = 0,
-        fitHeight = 0,
-        margin = '';
-    if (ww > width && wh > height) {
-      fitWidth = width;
-      fitHeight = height;
-      margin = (wh - height >> 1) + 'px auto';
-    } else {
-      if (ww / wh > width / height) {
-        fitHeight = wh;
-        fitWidth = width * wh / height;
-      } else {
-        fitWidth = ww;
-        fitHeight = height * ww / width;
-      }
-      margin = (wh - fitHeight >> 1) + 'px ' + (ww - fitWidth>> 1) + 'px';
-    }
-    // 写成style
-    if (style != null) {
-      style.remove();
-    }
-    style = $('<style>');
-    style
-      .append('#' + id + ', .page {width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
-      .append('#' + id + ' {margin:' + margin + '}\n')
-      .append('#container {width:' + fitWidth * totalPage + 'px}')
-      .appendTo($('head'));
-  }
   /**
    * 重要函数，用来根据滚动的位置重新设置各页的属性
    */
   function resetPages() {
-    var currentPage = scroll.currPageX;
-    initVisiblePages(pages[currentPage]);
-    if (currentPage > 0) {
-      initVisiblePages(pages[currentPage - 1]);
-      initNoImagePages(pages[currentPage - 1].prev(), -1);
+    var pageNumber = scroll.currPageX,
+        list,
+        min = 0,
+        max = -1;
+    $('.page', body).each(function (page) {
+      var index = page.data('index');
+      if (Math.abs(index - pageNumber) > 3) {
+        page.remove();
+        return true;
+      }
+      if (Math.abs(index - pageNumber) == 3) {
+        initInvisiblePages(page);
+        return true;
+      }
+      if (Math.abs(index - pageNumber) == 2) {
+        initNoImagePages(page);
+        return true;
+      }
+      initVisiblePages(page);
+    });
+    list = $('.page', body);
+    if (list.length > 0) {
+      min = $('.page', body).first().data('index'),
+      max = $('.page', body).last().data('index');
+    } 
+    for (var i = min - 1, end = pageNumber - 3 > 0 ? pageNumber - 4 : -1; i > end; i--) {
+      body.prepend(createItem(i, pageNumber));
     }
-    if (currentPage < totalPage - 1) {
-      initVisiblePages(pages[currentPage + 1]);
-      initNoImagePages(pages[currentPage + 1].next(), 1);
+    for (i = max + 1, end = pageNumber + 3 < totalPage ? pageNumber + 4 : totalPage - 1; i < end; i++) {
+      body.append(createItem(i, pageNumber));
     }
   }
   function stopEvent(event) {

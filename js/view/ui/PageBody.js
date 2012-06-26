@@ -38,8 +38,7 @@ jQuery.namespace('Meatazine.view.ui');
         this.items[index] = element;
       }, this);
       
-      this.$('.editable')
-        .attr('title', '双击开启编辑');
+      this.$('.editable');
       this.$('.ui-draggable')
         .draggable()
       this.$('.ui-resizable').resizable();
