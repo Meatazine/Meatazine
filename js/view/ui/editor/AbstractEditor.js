@@ -7,8 +7,12 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
   },
   initButtons: function () {
     this.buttons.find("[data-type='edit']").on('click', {self: this}, this.editButton_clickHandler);
+    this.buttons.find("[data-type='switch']").on('click', {self: this}, this.switchButton_clickHandler);
   },
   setTarget: function (value) {
+    
+  },
+  getTarget: function () {
     
   },
   startEdit: function () {
@@ -27,10 +31,9 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
     target
       .toggleClass('active')
       .closest('.btn-group').siblings('.btn-group').andSelf().find('[data-group=edit]').prop('disabled', !target.hasClass('active'));
-  }
+  },
+  switchButton_clickHandler: function (event) {
+    var type = $(event.target).attr('data-class');
+    event.data.self.trigger('switch:' + type, event.data.self);
+  },
 });
-Meatazine.view.ui.editor.EditorManager = {
-  switchType: function (type) {
-    
-  }
-}

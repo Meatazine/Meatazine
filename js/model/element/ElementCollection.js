@@ -13,6 +13,9 @@ jQuery.namespace('Meatazine.model.element');
       var init = _.extend({count: this.length + 1}, attributes);
           model = new this.model(init);
       this.add(model);
+      if (options != null && !options.silent) {
+        this.trigger('add', model, this);
+      }
       return model;
     },
     createItems: function (array) {

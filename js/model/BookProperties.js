@@ -20,11 +20,9 @@ jQuery.namespace('Meatazine.model');
     createZip: function () {
       var self = this,
           data = _.pick(this.attributes, 'width', 'height'),
-          zip = new Meatazine.filesystem.FileZip();
-      data.content = '';
-      _.each(this.attributes.pages.models, function (model, i) {
-        data.content += model.get('renderedHTML');
-      }, this);
+          zip = new Meatazine.filesystem.FileZip(),
+          htmls = _.pluck(this.get('pages').models, 'renderedHTML');
+      data.content = htmls.join('###');
       // 加载模板
       $.ajax({
         url: 'template/index.html',
@@ -45,6 +43,12 @@ jQuery.namespace('Meatazine.model');
             zip.addFile(src, null, url);
             return arguments[1] + '="' + src + '"';
           });
+          // 把img真正的src藏起来，换上空白的
+          template = template.replace(/<img(\s\w+="\w+")* src="([\/\.\w]+)"/gmi, function (str, attrs, src) {
+            return str.replace(src, 'spacer.gif') + ' ori="' + src + '"';
+          });
+          // 删掉assets节点
+          template = template.replace(/<assets[\S\s]*\/assets>/, '');
           zip.addFile('index.html', template);
         }
       });
