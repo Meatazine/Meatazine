@@ -10,6 +10,11 @@ function BookReader(el, w, h) {
       width = parseInt(w),
       height = parseInt(h);
   this.start = function () {
+    var content = $('#book-content').val();
+    $('#book-content').remove();
+    pages = content.split('###');
+    totalPage = pages.length;
+    body.width(width * totalPage).append(dummy);
     scroll = new iScroll(id, {
       snap: true,
       momentum: false,
@@ -17,11 +22,7 @@ function BookReader(el, w, h) {
       vScroll: false,
       onScrollEnd: resetPages,
     });
-    var content = $('#book-content').html(),
-        pages = content.split('###');
-    totalPage = pages.length;
-    body.width($el.width() * totalPage).append(dummy);
-    turnToPage(0);
+    resetPages();
   }
   this.addContent = function (html) {
     body.html(html);
@@ -32,9 +33,14 @@ function BookReader(el, w, h) {
     page.data('index', index);
     if (Math.abs(index - curr) == 2) {
       initNoImagePages(page);
-      return true;
+      return page;
+    }
+    if (Math.abs(index - curr) == 3) {
+      initInvisiblePages(page);
+      return page;
     }
     initVisiblePages(page);
+    return page;
   }
   function createMap(container, data) {
     var position = new google.maps.LatLng(data.lat, data.lng),
@@ -84,16 +90,18 @@ function BookReader(el, w, h) {
     }
     style = $('<style>');
     style
-      .append('#' + id + ', .page {width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
+      .append('#' + id + ', .page, .dummy {width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
       .append('#' + id + ' {margin:' + margin + '}\n')
       .append('#container {width:' + fitWidth * totalPage + 'px}')
       .appendTo($('head'));
+    width = fitWidth;
+    height = fitHeight;
   }
   /**
    * 设置当前页为不可见页
    * @param {Object} page 当前页
    */
-  function initInvisiblePages(page, dir) {
+  function initInvisiblePages(page) {
     page.removeClass('no-image visible');
   }
   /**
@@ -101,11 +109,12 @@ function BookReader(el, w, h) {
    * 同时移除事件和地图
    * @param {Object} page 当前页
    */
-  function initNoImagePages(page, dir) {
+  function initNoImagePages(page) {
     if (page.hasClass('no-image')) {
       return;
     }
     page
+      .removeClass('visible')
       .addClass('no-image')
       .find('img')
         .attr('src', 'spacer.gif');
@@ -132,15 +141,15 @@ function BookReader(el, w, h) {
     if (page.hasClass('visible')) {
       return;
     }
-    page.addClass('visible');
+    page.removeClass('no-image').addClass('visible');
     // 图片
     page.find('img').attr('src', function (i) {
-      return this.osrc || this.src;
+      return $(this).attr('ori') || this.src;
     })
     // 幻灯片
-    page.find('.slide-navi').children().on('click', slideNavi_clickHandler);
+    page.find('.slide-navi').children().on('tap', slideNavi_tapHandler);
     // 切换效果
-    page.find('[data-toggle]').on('click', dataToggle_clickHandler);
+    page.find('[data-toggle]').on('tap', dataToggle_tapHandler);
     // 地图
     page.find('.map-container').each(function (i) {
       var data = JSON.parse($(this).attr('data-map'));
@@ -163,7 +172,8 @@ function BookReader(el, w, h) {
         list,
         min = 0,
         max = -1;
-    $('.page', body).each(function (page) {
+    $('.page', body).each(function (pos, page) {
+      page = $(page);
       var index = page.data('index');
       if (Math.abs(index - pageNumber) > 3) {
         page.remove();
@@ -185,12 +195,12 @@ function BookReader(el, w, h) {
       max = $('.page', body).last().data('index');
     } 
     for (var i = min - 1, end = pageNumber - 3 > 0 ? pageNumber - 4 : -1; i > end; i--) {
-      body.prepend(createItem(i, pageNumber));
+      createItem(i, pageNumber).insertAfter(dummy);
     }
     for (i = max + 1, end = pageNumber + 3 < totalPage ? pageNumber + 4 : totalPage - 1; i < end; i++) {
       body.append(createItem(i, pageNumber));
     }
-    dummy.width((pageNumber - 3 > 0 ? pageNumber - 3 : 0) * width);
+    dummy.width((pageNumber - 3 > 0 ? pageNumber - 3 : 0) * width + 'px');
   }
   function stopEvent(event) {
     event.stopPropagation();
@@ -198,7 +208,7 @@ function BookReader(el, w, h) {
   function turnToPage(index) {
     scroll.scrollToPage(index, 0);
   }
-  function dataToggle_clickHandler(event) {
+  function dataToggle_tapHandler(event) {
     var target = $(event.target).siblings('.' + $(event.target).attr('data-toggle')),
         config = JSON.parse(target.attr('data-animate')),
         offset = target.offset(),
@@ -210,17 +220,17 @@ function BookReader(el, w, h) {
     }
     target
       .animate(config, '200')
-      .one('click', function (event) {
+      .one('tap', function (event) {
         $(this)
           .animate(origin, '200')
           .off('mouseup', stopEvent);
       });
   }
-  function slideNavi_clickHandler(event) {
+  function slideNavi_tapHandler(event) {
     var target = $(event.currentTarget),
         parent = target.closest('.page'),
         body = parent.find('.slide-main'),
-        src = target.attr('src') || $(event.target).attr('src') || target.find('img').attr('src');
+        src = target.attr('ori') || $(event.target).attr('src') || target.find('img').attr('src');
     body.find('img').attr('src', src);
     target.siblings().removeClass('active');
     target.addClass('active');
