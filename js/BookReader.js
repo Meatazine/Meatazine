@@ -2,6 +2,7 @@ function BookReader(el, w, h) {
   var id = el,
       $el = $('#' + el),
       body = $('#container'),
+      config = null,
       scroll = null,
       style = null,
       dummy = $('<div class="dummy"></div>'),
@@ -28,18 +29,32 @@ function BookReader(el, w, h) {
     body.html(html);
     this.start();
   }
+  /**
+   * 检查页所处的位置
+   * 设置可见读、图片性质
+   * @param {Zepto Object} page 页
+   * @param {Number} index 页的页码
+   * @param {Number} curr 当前页的页码
+   */
+  function checkPagePosition(page, index, curr) {
+    if (Math.abs(index - curr) > config.max + 2) {
+      page.remove();
+      return;
+    }
+    if (Math.abs(index - curr) == config.max + 2) {
+      initInvisiblePages(page);
+      return;
+    }
+    if (Math.abs(index - curr) == config.max + 1) {
+      initNoImagePages(page);
+      return;
+    }
+    initVisiblePages(page);
+  }
   function createItem(index, curr) {
     var page = $(pages[index]);
     page.data('index', index);
-    if (Math.abs(index - curr) == 2) {
-      initNoImagePages(page);
-      return page;
-    }
-    if (Math.abs(index - curr) == 3) {
-      initInvisiblePages(page);
-      return page;
-    }
-    initVisiblePages(page);
+    checkPagePosition(page, index, curr);
     return page;
   }
   function createMap(container, data) {
@@ -96,6 +111,17 @@ function BookReader(el, w, h) {
       .appendTo($('head'));
     width = fitWidth;
     height = fitHeight;
+  }
+  /**
+   * 通过读取当前平台的配置
+   * 判定如何配置可以使得效果最佳
+   * TODO 因为缺乏测试数据，此函数暂时空置，将来有数据再进一步调整
+   */
+  function initConfig() {
+    config = {
+      size: 3,
+      max: 2,
+    }
   }
   /**
    * 设置当前页为不可见页
@@ -173,34 +199,20 @@ function BookReader(el, w, h) {
         min = 0,
         max = -1;
     $('.page', body).each(function (pos, page) {
-      page = $(page);
-      var index = page.data('index');
-      if (Math.abs(index - pageNumber) > 3) {
-        page.remove();
-        return true;
-      }
-      if (Math.abs(index - pageNumber) == 3) {
-        initInvisiblePages(page);
-        return true;
-      }
-      if (Math.abs(index - pageNumber) == 2) {
-        initNoImagePages(page);
-        return true;
-      }
-      initVisiblePages(page);
+      checkPagePosition($(page), $(page).data('index'), pageNumber);
     });
     list = $('.page', body);
     if (list.length > 0) {
       min = $('.page', body).first().data('index'),
       max = $('.page', body).last().data('index');
     } 
-    for (var i = min - 1, end = pageNumber - 3 > 0 ? pageNumber - 4 : -1; i > end; i--) {
+    for (var i = min - 1, end = pageNumber - config.size > 0 ? pageNumber - config.size : 0; i >= end; i--) {
       createItem(i, pageNumber).insertAfter(dummy);
     }
-    for (i = max + 1, end = pageNumber + 3 < totalPage ? pageNumber + 4 : totalPage - 1; i < end; i++) {
+    for (i = max + 1, end = pageNumber + config.size < totalPage ? pageNumber + config.size : totalPage - 1; i <= end; i++) {
       body.append(createItem(i, pageNumber));
     }
-    dummy.width((pageNumber - 3 > 0 ? pageNumber - 3 : 0) * width + 'px');
+    dummy.width((pageNumber - config.size > 0 ? pageNumber - config.size - 1 : 0) * width + 'px');
   }
   function stopEvent(event) {
     event.stopPropagation();
@@ -239,6 +251,7 @@ function BookReader(el, w, h) {
     fitScreen();
   }
   
+  initConfig();
   fitScreen();
   $(window).resize(window_resizeHandler);
 }
