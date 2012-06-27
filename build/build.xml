@@ -70,7 +70,7 @@
     <copy file="index.html" todir="${dist}" />
     <copy file="preview.html" todir="${dist}" />
     <copy todir="${dist}/template/">
-      <fileset dir="template/" />
+      <fileset dir="template/" excludes="qa.html" />
     </copy>
   </target>
   
@@ -129,6 +129,14 @@
     <replace file="${dist}/index.html" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
     </replace>
+    <concat destfile="${dist}/index.html" encoding="UTF-8" fixlastline="yes">
+      <filelist dir="${dist}/">
+        <file name="index.html" />
+      </filelist>
+      <filelist dir="template/">
+        <file name="ga.html" />
+      </filelist>
+    </concat>
     <delete dir="${temp}" />
   </target>
   
