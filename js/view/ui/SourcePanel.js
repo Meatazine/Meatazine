@@ -79,6 +79,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         key = target.attr('name');
     target.replaceWith('<span class>' + value + '</span>');
     collection.at(index).set(key, value);
+    _gaq.push(['_trackEvent', 'source', 'edit']);
   },
   input_keydownHandler: function (event) {
     if (event.keyCode == 13) {
@@ -111,7 +112,8 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         index = target.index(),
         ul = target.closest('ul');
     target.remove();
-    ul.data('collection').removeAt(index)
+    ul.data('collection').removeAt(index);
+    _gaq.push(['_trackEvent', 'source', 'delete']);
   },
   source_sortactivateHandler: function (event, ui) {
     ui.item.data('index', ui.item.index());
@@ -120,6 +122,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     var collection = ui.item.closest('ul').data('collection');
         start = ui.item.data('index');
     collection.setModelIndex(start, ui.item.index());
+    _gaq.push(['_trackEvent', 'source', 'sort']);
   },
   sourceItem_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
@@ -161,7 +164,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     currentTemplate = $(event.currentTarget);
     currentTemplate.addClass('active');
     this.model.set('type', this.getTemplateType(currentTemplate.find('img').attr('src')));
-    return false;
+    _gaq.push(['_trackEvent', 'template', 'select', this.model.get('type')]);
   },
   resizeHandler: function (w, h) {
     this.$('#template-list, #source-list').height(h - 110); // 空出按钮的位置

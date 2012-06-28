@@ -6,7 +6,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       canvas = null,
       value = null,
       scale = 1,
-      uploader = null,s
+      uploader = null,
       url = '',
       x = 0,
       y = 0;
@@ -135,6 +135,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         });
       loader.src = sourceUrl;
       image.replaceWith(canvas);
+      _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
       image.data({
@@ -143,6 +144,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         y: y,
       })
       this.saveCanvas();
+      _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
     canvas_clickHandler: function (event) {
       GUI.contextButtons.showButtons(this.buttons);
@@ -162,10 +164,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
       var self = event.data.self,
           value = $(event.target).val();
       self.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
-      self.setCanvasScale(value); 
+      self.setCanvasScale(value);
+      _gaq.push(['_trackEvent', 'image', 'resize']);
     },
     uploadButton_clickHandker: function (event) {
       uploader.click();
+      _gaq.push(['_trackEvent', 'image', 'upload']);
       event.stopPropagation();
     },
     uploader_selectHandler: function (event) {

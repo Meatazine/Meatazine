@@ -33,6 +33,9 @@ Meatazine.popup.ScreenSizeSelector = Backbone.View.extend({
     this.model.setSize($('#device-width').val(), $('#device-height').val());
     this.showInfo();
     this.hide();
+    if (event != null) {
+      _gaq.push(['_trackEvent', 'popup', 'screen-size', this.model.get('width') + '-' + this.model.get('height')]);
+    }
   },
   device_clickHandler: function (event) {
     var target = this.$(event.currentTarget);

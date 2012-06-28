@@ -36,6 +36,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         google.maps.event.clearListeners(map, 'click');
       });
       model.set('markers', markers);
+      _gaq.push(['_trackEvent', 'map', 'marker', markers.length]);
     },
     createMarkerImage: function (index) {
       var size = new google.maps.Size(MARKER_WIDTH, MARKER_HEIGHT),
@@ -62,6 +63,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         draggable: true,
       });
       div.closest('.ui-draggable').draggable('disable');
+      _gaq.push(['_trackEvent', 'map', 'edit-start']);
     },
     stopEdit: function (s) {
       map.setOptions({
@@ -75,6 +77,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         lng: latlng.lng(),
         zoom: zoom,
       });
+      _gaq.push(['_trackEvent', 'map', 'edit-stop']);
     },
     addMarkerButton_clickHandler: function (event) {
       event.data.self.addMapMarker(event.pageX, event.pageY);
@@ -114,6 +117,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         }
         search.find('input,button').prop('disabled', false);
       });
+      _gaq.push(['_trackEvent', 'map', 'search', search.find('input').val(), search.siblings().length - 1]);
       event.stopPropagation();
     },
   });

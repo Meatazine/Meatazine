@@ -24,7 +24,8 @@ jQuery.namespace('Meatazine.popup');
           });
         },
         modal_showHandler: function (event) {
-          switch ($(event.target).attr('id')) {
+          var id = $(event.target).attr('id');
+          switch (id) {
             case 'publish':
               if (publish == null) {
                 publish = new Meatazine.popup.PublishStatus({
@@ -32,7 +33,9 @@ jQuery.namespace('Meatazine.popup');
                   model: book,
                 });
               }
+              break;
           }
+          _gaq.push(['_trackEvent', 'popup', id]);
         }
       };
    ns.PopupManager = manager;

@@ -46,6 +46,7 @@ Meatazine.view.GUI = Backbone.View.extend({
         return;
         break;
     }
+    _gaq.push(['_trackEvent', 'book', type]);
     this.book[type]();
   }
 });

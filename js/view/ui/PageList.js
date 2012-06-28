@@ -49,6 +49,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     var model = this.collection.create();
     item.data('cid', model.cid).trigger('click');
     this.refreshPageNumber();
+    _gaq.push(['_trackEvent', 'page', 'add']);
   },
   book_refreshHandler: function () {
     this.length = 0;
@@ -79,6 +80,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.currentItem.addClass('active');
     this.refreshPageNumber();
     this.trigger('select', this.collection.getByCid(this.currentItem.data('cid')));
+    _gaq.push(['_trackEvent', 'page', 'select']);
   },
   item_mouseOverHandler: function (event) {
     $(event.currentTarget).append(this.removeButton);
@@ -97,7 +99,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     target
       .off()
       .remove();
-    return false;
+    _gaq.push(['_trackEvent', 'page', 'delete']);
   },
   page_changeHandler: function (thumb) {
     var canvas = $('<canvas>')[0];
@@ -117,5 +119,6 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.collection.remove(model);
     this.collection.add(model, {at: ui.item.index()});
     this.refreshPageNumber();
+    _gaq.push(['_trackEvent', 'page', 'sort']);
   },
 })

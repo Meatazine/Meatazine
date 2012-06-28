@@ -193,6 +193,7 @@ jQuery.namespace('Meatazine.view.element');
       this.$el.children().eq(index).remove();
       item.insertAfter(this.$el.children().eq(index - 1));
       imageEditor.setTarget(item.find('.placeholder'));
+      _gaq.push(['_trackEvent', 'map', 'image']);
     },
     switchMapHandler: function (editor) {
       currentEditor.stopEdit();
@@ -213,6 +214,7 @@ jQuery.namespace('Meatazine.view.element');
       this.collection.replaceAt(model, index); 
       var map = this.createMap(image.closest(this.tagName), model);
       mapEditor.setTarget(map);
+      _gaq.push(['_trackEvent', 'image', 'map']);
     },
     toggle_clickHandler: function (event) {
       var handle = $(event.target),

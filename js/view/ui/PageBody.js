@@ -108,6 +108,7 @@ jQuery.namespace('Meatazine.view.ui');
     },
     draggable_dragStopHandler: function (event) {
       this.refreshThumbnail();
+      _gaq.push(['_trackEvent', 'text', 'drag']);
     },
     editable_clickHandler: function (event) {
       textEditor.setTarget(event.target);
@@ -124,6 +125,7 @@ jQuery.namespace('Meatazine.view.ui');
     },
     resizable_resizeStopHandler:function (event, ui) {
       this.refreshThumbnail();
+      _gaq.push(['_trackEvent', 'text', 'resize']);
     },
     source_selectHandler: function () {
       if (this.isSentByMe) {

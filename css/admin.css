@@ -205,6 +205,9 @@ body {
   float: left;
   position: relative;
 }
+#page-body.page {
+  visibility: visible;
+}
 #page-body canvas {
   box-shadow:0 0 1px #000;
 }

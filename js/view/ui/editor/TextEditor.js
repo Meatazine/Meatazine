@@ -26,6 +26,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       text
         .prop('contenteditable', true)
         .focus();
+      _gaq.push(['_trackEvent', 'text', 'edit-start']);
     },
     stopEdit: function (event) {
       text
@@ -38,6 +39,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         });
       this.buttons.find('[data-type="edit"]').removeClass('active');
       this.trigger('change');
+      _gaq.push(['_traceEvent', 'text', 'edit-stop'])
     },
     stopEventPropagation: function (event) {
       event.stopPropagation();
@@ -48,10 +50,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
       switch (type) {
         case 'font-size':
           text.css('font-size', target.text() + 'px');
+          _gaq.push(['_traceEvent', 'text', 'size', target.text()]);
           break;
           
         case 'color':
           text.css('color', target.css('color'));
+          _gaq.push(['_trackEvent', 'text', 'color', target.css('color')]);
           break;
           
         default:
