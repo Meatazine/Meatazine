@@ -14,12 +14,11 @@ jQuery.namespace('Meatazine.view.ui');
       this.$el = $(this.el);
       this.options.book.on('change:size', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_selectHandler, this);
+      this.options.source.on('complete', this.source_completeHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
-      while (this.items.length > 0) {
-        this.items.shift().remove();
-      }
+      this.empty();
       this.$el.html(this.model.get('template'));
       var count = 0;
       _.each(this.$('[data-config]'), function (elementDom, index) {
@@ -38,11 +37,29 @@ jQuery.namespace('Meatazine.view.ui');
         this.items[index] = element;
       }, this);
       
-      this.$('.editable');
-      this.$('.ui-draggable')
-        .draggable()
+      this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
+      this.$('.editable').click(this.editable_clickHandler);
       this.refreshThumbnail();
+    },
+    addEditableText: function (x, y) {
+      var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');
+      text
+        .css('left', x)
+        .css('top', y)
+        .draggable()
+        .resizable()
+        .appendTo(this.$el)
+        .find('.editable').click();
+      // 添加后，导致所有editable的事件消失，所以手工加一下
+      this.$('.editable').click(this.editable_clickHandler);
+    },
+    empty: function () {
+      while (this.items.length > 0) {
+        this.items.shift().remove();
+      }
+      this.$('.ui-draggable').draggable('destroy');
+      this.$('.ui-resizable').resizable('destroy');
     },
     getFilteredHTML: function () {
       var self = this,
@@ -98,7 +115,6 @@ jQuery.namespace('Meatazine.view.ui');
         this.render();
         return;
       }
-      this.options.source.on('complete', this.source_completeHandler, this);
       this.options.source.fetch(this.model.get('templateType'));
       this.showLoading();
     },
@@ -139,7 +155,6 @@ jQuery.namespace('Meatazine.view.ui');
     source_completeHandler: function () {
       if (this.options.source.hasTemplate(this.model.get('templateType'))) {
         this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
-        this.options.source.off('complete', this.source_completeHandler);
         this.render();
       }
     },

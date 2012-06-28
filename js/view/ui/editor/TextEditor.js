@@ -5,12 +5,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
       this.buttons.find('.dropdown-menu a').click(this.menu_selectHandler);
+      this.buttons.find('[data-type=delete]').click(this.deleteButton_clickHandler);
     },
     setTarget: function (value) {
       if (text != null) {
-        if (text.is(value)) {
-          return;
-        }
         this.stopEdit();
       }
       text = $(value);
@@ -43,6 +41,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     stopEventPropagation: function (event) {
       event.stopPropagation();
+    },
+    deleteButton_clickHandler: function (event) {
+      text.off();
+      text.parent().remove();
     },
     menu_selectHandler: function (event) {
       var target = $(event.target),

@@ -162,7 +162,6 @@ jQuery.namespace('Meatazine.view.element');
     img_clickHandler: function (event) {
       imageEditor.setTarget(event.target);
       currentEditor = imageEditor;
-      event.stopPropagation();
     },
     img_dropHandler: function (event) {
       this.handleFiles(event.originalEvent.dataTransfer.files, event.target);

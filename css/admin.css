@@ -43,16 +43,17 @@ body {
   vertical-align: text-top;
 }
 
-#remove-button {
+.remove-button {
   position:absolute;
   top:3px;
-  right:3px;
+  right:9px;
   display: block;
   cursor: pointer;
   background-color:#EEE;
-  opacity:0.4;
+  z-index:10;
+  opacity: 0.6;
 }
-#remove-button:hover {
+.remove-button:hover {
   opacity:1;
 }
 /*========================
@@ -141,6 +142,23 @@ body {
   position:absolute;
   bottom: -50px;
 }
+.group1 + .group1,
+.group2 + .group2,
+.group5 + .group5 {
+  margin-left: -5px;
+}
+.group1 + .group1 .btn,
+.group2 + .group2 .btn,
+.group5 + .group5 .btn {
+  border-radius:0;
+}
+.text-helper {
+  border:1px solid #666;
+  padding:10px 20px;
+  background:#FFF;
+  position:absolute;
+}
+
 
 /*========================
  * page
@@ -164,6 +182,7 @@ body {
   overflow-x:hidden;
   overflow-y:auto;
   padding:5px 5px 0;
+  position: relative;
 }
 #page-list-inner li.item {
   min-height: 60px;
@@ -175,14 +194,14 @@ body {
   cursor:pointer;
   position:relative;
 }
-#page-list-inner li.item #remove-button {
+#page-list-inner li.item .remove-button {
   display:none;
 }
 #page-list-inner li.item:hover {
   border-color:#08C;
   box-shadow:0 0 1px rgba(0, 105, 214, 0.25);
 }
-#page-list-inner li.item:hover #remove-button {
+#page-list-inner li.item:hover .remove-button {
   display:block;
 }
 #page-list-inner li.active {
@@ -307,10 +326,10 @@ body {
   border-bottom: 1px dashed #EEE;
   position:relative;
 }
-#source-list li #remove-button {
+#source-list li .remove-button {
   display:none;
 }
-#source-list li:hover #remove-button {
+#source-list li:hover .remove-button {
   display:block;
 }
 #source-list li:last-child {

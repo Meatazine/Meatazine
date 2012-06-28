@@ -13,11 +13,11 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     "keydown #source-list input": "input_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
     "sortdeactivate #source-list ul": "source_sortdeactivateHandler",
-    "click #remove-button": "removeButton_clickHandler"
+    "click .remove-button": "removeButton_clickHandler"
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.removeButton = $('#remove-button');
+    this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
     this.currentPanel = this.$('#template-list');
     this.options.book.on('change:size', this.resizeHandler, this);
     this.model.setSourceTemplate(this.$('#source-list').html());

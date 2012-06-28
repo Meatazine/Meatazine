@@ -10,13 +10,14 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     "click .add-button": "addButton_clickHandler",
     "click li.item": "item_clickHandler",
     "mouseover li.item": "item_mouseOverHandler",
-    "click #remove-button": "removeButton_clickHandler",
+    "mouseout li.item": "item_mouseOutHandler",
+    "click .remove-button": "removeButton_clickHandler",
     "sortactivate #page-list-inner": "sortactivateHandler",
     "sortdeactivate #page-list-inner": "sortdeactivateHandler",
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.removeButton = $('#remove-button');
+    this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
     this.list = this.$('#page-list-inner');
     this.options.book.on('change:size', this.book_resizeHandler, this);
     this.options.book.on('refresh', this.book_refreshHandler, this);
@@ -82,11 +83,23 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.trigger('select', this.collection.getByCid(this.currentItem.data('cid')));
     _gaq.push(['_trackEvent', 'page', 'select']);
   },
+  item_mouseOutHandler: function (event) {
+    var pos = $(event.target).offset();
+    pos.width = $(event.target).width();
+    pos.height = $(event.target).height();
+    if (pos.left > event.pageX || pos.top > event.pageY || pos.left + pos.width < event.pageX || pos.top + pos.height < event.pageY) {
+      this.removeButton.remove();
+    }
+  },
   item_mouseOverHandler: function (event) {
-    $(event.currentTarget).append(this.removeButton);
+    var position = $(event.currentTarget).position();
+    this.removeButton
+      .css('top', position.top + 4)
+      .data('target', $(event.currentTarget))
+      .appendTo(this.list);
   },
   removeButton_clickHandler: function (event) {
-    var target = this.removeButton.parent();
+    var target = this.removeButton.data('target');
     this.length--;
     if (target.index() === this.currentItem.index() && this.length > 0) {
       if (target.index() > 0) {
@@ -99,6 +112,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     target
       .off()
       .remove();
+    this.removeButton.remove();
     _gaq.push(['_trackEvent', 'page', 'delete']);
   },
   page_changeHandler: function (thumb) {

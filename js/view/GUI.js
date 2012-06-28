@@ -1,18 +1,16 @@
 jQuery.namespace('Meatazine.view');
 Meatazine.view.GUI = Backbone.View.extend({
-  book: null,
-  config: null,
   contextButtons: null,
   navbar: null,
+  page: null,
   initialize: function (options) {
-    this.config = options.config;
-    this.book = options.book;
-    this.book.on('change:size', this.book_sizeChangeHandler, this);
+    this.options.book.on('change:size', this.book_sizeChangeHandler, this);
+    this.options.book.get('pages').on('add', this.pages_addHandler, this);
+    this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
     this.navbar = new Meatazine.view.ui.NavBar({
       el: '#navbar'
     });
     this.navbar.on('select', this.navbar_selectHandler, this);
-    this.contextButtons = options.contextButtons;
     this.removeLoading();
     $('body').on({
       'keydown': function (event) {
@@ -48,5 +46,13 @@ Meatazine.view.GUI = Backbone.View.extend({
     }
     _gaq.push(['_trackEvent', 'book', type]);
     this.book[type]();
+  },
+  pages_addHandler: function (model, collection, options) {
+    this.contextButtons.enableButtons();
+  },
+  pages_removeHandler: function (model, collection, options) {
+    if (collection.length == 0) {
+      this.contextButtons.disableButtons();
+    }
   }
 });

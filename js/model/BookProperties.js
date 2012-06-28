@@ -6,7 +6,7 @@ jQuery.namespace('Meatazine.model');
       width: 1024,
       height: 768,
       id: -1,
-      platform: 1, // 1-android, 2-ios, 3-wp
+      platform: 1, // 1-android, 2-ios, 4-wp
       icon: '',
       cover: '',
       gallery: -1,
