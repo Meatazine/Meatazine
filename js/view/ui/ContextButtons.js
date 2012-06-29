@@ -29,19 +29,26 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   addTextButton_clickHandler: function (event) {
     var helper = $('<div class="text-helper">请添加到您喜欢的位置</div>');
     helper.css('left', event.pageX + 2).css('top', event.pageY + 2).appendTo('body');
-    $('body').on('mousemove', function (event) {
+    function mouseMoveHandler(event) {
       helper.css('left', event.pageX + 2).css('top', event.pageY + 2);
-    }).one('click', function (event) {
-      $(this).off('mousemove');
-      $('#page-body').off();
+    }
+    function clickHandler(event) {
+      $('body').off({
+        'mousemove': mouseMoveHandler,
+        'click': clickHandler,
+      });
+      $('#page-body').off('click', clickHandler);
       helper.remove();
+      if (event.currentTarget == $('#page-body')[0]) {
+        var pos = $(this).offset();
+        GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
+      }
+    }
+    $('body').on({
+      'mousemove': mouseMoveHandler,
+      'click': clickHandler,
     });
-    $('#page-body').one('click', function (event) {
-      var pos = $(this).offset();
-      GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
-      $('body').off('mousemove');
-      helper.remove();
-    });
+    $('#page-body').on('click', clickHandler);
     event.stopPropagation();
   },
   body_clickHandler: function (event) {

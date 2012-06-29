@@ -39,7 +39,7 @@ jQuery.namespace('Meatazine.view.ui');
       
       this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
-      this.$('.editable').click(this.editable_clickHandler);
+      //this.$('.editable').click(this.editable_clickHandler);
       this.refreshThumbnail();
     },
     addEditableText: function (x, y) {
@@ -52,7 +52,7 @@ jQuery.namespace('Meatazine.view.ui');
         .appendTo(this.$el)
         .find('.editable').click();
       // 添加后，导致所有editable的事件消失，所以手工加一下
-      this.$('.editable').click(this.editable_clickHandler);
+      //this.$('.editable').click(this.editable_clickHandler);
     },
     empty: function () {
       while (this.items.length > 0) {
