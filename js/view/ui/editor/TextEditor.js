@@ -4,7 +4,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
   ns.TextEditor = ns.AbstractEditor.extend({
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('.dropdown-menu a').click(this.menu_selectHandler);
+      this.buttons.find('.dropdown-menu a').click({self: this}, this.menu_selectHandler);
       this.buttons.find('[data-type=delete]').click(this.deleteButton_clickHandler);
     },
     setTarget: function (value) {
@@ -19,6 +19,17 @@ jQuery.namespace('Meatazine.view.ui.editor');
           'focusout': this.text_focusOutHandler
           },  {self: this});
       GUI.contextButtons.showButtons(this.buttons);
+    },
+    setTargetClass: function (className) {
+      if (/h1|h2|h3/.test(className)) {
+        text.replaceWith($('<' + className + ' class="editable">' + text.text() + '</' + className + '>'));
+        return;
+      }
+      text
+        .addClass('p20')
+        .parent()
+          .removeClass()
+          .addClass('fixed ' + className);
     },
     startEdit: function (event) {
       text
@@ -58,6 +69,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
         case 'color':
           text.css('color', target.css('color'));
           _gaq.push(['_trackEvent', 'text', 'color', target.css('color')]);
+          break;
+          
+        case 'class':
+          event.data.self.setTargetClass(target.attr('class'));
           break;
           
         default:

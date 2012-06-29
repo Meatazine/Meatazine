@@ -67,7 +67,7 @@ jQuery.namespace('Meatazine.view.ui');
       html.find('.placeholder').removeClass('placeholder');
       html.find('[data-config]').removeAttr('data-config');
       html.find('.editable')
-        .removeClass('editable')
+        .removeClass('editable editing')
         .removeAttr('contenteditable title');
       // 移除draggable和resizable产生的多余内容
       html.find('.ui-draggable, .ui-resizable').removeClass('ui-draggable ui-resizable');
@@ -96,7 +96,7 @@ jQuery.namespace('Meatazine.view.ui');
       var self = this,
           template = this.$el.clone();
       template.find('.ui-resizable-handle').remove();
-      template.find('.editable').removeAttr('contenteditable title');
+      template.find('.editable').removeClass('editing').removeAttr('contenteditable title');
       template.find('[data-config]').each(function (i) {
         $(this).html(self.items[i].template);
       });
