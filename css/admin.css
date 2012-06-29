@@ -72,7 +72,7 @@ body {
 #screen-size .active {
   background-color: #F5F5F5;
   border: 2px solid #EEE;
-  border: 2px solid rgba(0, 0, 0, 0.05);
+  /* @alternate */ border: 2px solid rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   font-weight:bold;
 }
@@ -138,7 +138,7 @@ body {
   z-index: 100;
 }
 .uploader {
-  visible:hidden;
+  visibility:hidden;
   position:absolute;
   bottom: -50px;
 }
@@ -302,8 +302,8 @@ body {
 }
 #source-list dt {
   background: #EEE;
-  background: -moz-linear-gradient(top, #FFF, #EEE);
-  background: -webkit-linear-gradient(top, #FFF, #EEE);
+  /* @alternate */ background: -moz-linear-gradient(top, #FFF, #EEE);
+  /* @alternate */ background: -webkit-linear-gradient(top, #FFF, #EEE);
   padding: 5px 8px 4px;
   border: 1px solid #CCC;
   border-radius: 4px 4px 0 0;

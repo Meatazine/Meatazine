@@ -276,7 +276,6 @@ body {
   margin:0 0 15px -20px;
   text-align: center;
   width:32px;
-  user-select:none;
   cursor: pointer;
 }
 .page .slide-navi-type2 li.active {
@@ -300,7 +299,6 @@ body {
   margin:0 15px 0 0;
   text-align:center;
   width:40px;
-  user-select:none;
   cursor:pointer;
 }
 .page .slide-navi-type3 li.active {

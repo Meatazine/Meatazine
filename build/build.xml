@@ -80,10 +80,17 @@
     </copy>
   </target>
   
-  <target name="-copy.css.files">
-    <copy todir="${dist}/css/">
-      <fileset dir="css/" />
+  <target name="-compile.css.files">
+    <copy todir="${dist}/css">
+      <fileset dir="css/">
+        <exclude name="admin.css" />
+        <exclude name="style.css" />
+      </fileset>
     </copy>
+    <java jar="${build}/closure-stylesheets.jar" fork="true">
+      <arg line="--output-file ${dist}/css/admin.css" />
+      <arg line="css/admin.css" />
+    </java>
   </target>
   
   <target name="reader" depends="init">
@@ -91,9 +98,12 @@
       <filelist dir="css/">
         <file name="bootstrap.min.css" />
         <file name="bootstrap-responsive.min.css" />
-        <file name="style.css" />
       </filelist>
     </copy>
+    <java jar="${build}/closure-stylesheets.jar" fork="true">
+      <arg line="--output-file ${dist}/css/style.css" />
+      <arg line="css/style.css" />
+    </java>
     <copy todir="${dist}/js/libs/">
       <filelist dir="js/libs/">
         <file name="iscroll.js" />
@@ -110,7 +120,7 @@
   </target>
   
   <target name="maker" depends="init, -copy.html.files, -copy.image.files,
-    -copy.css.files, -concat.js.libs.files, -concat.js.apps.files">
+    -compile.css.files, -concat.js.libs.files, -concat.js.apps.files">
     <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/apps.js" encoding="UTF-8">
       <warning group="internetExplorerChecks" level="OFF" />
       <warning group="globalThis" level="OFF" />
