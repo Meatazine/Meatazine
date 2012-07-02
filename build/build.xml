@@ -70,7 +70,7 @@
     <copy file="index.html" todir="${dist}" />
     <copy file="preview.html" todir="${dist}" />
     <copy todir="${dist}/template/">
-      <fileset dir="template/" excludes="qa.html" />
+      <fileset dir="template/" />
     </copy>
   </target>
   
@@ -81,12 +81,6 @@
   </target>
   
   <target name="-compile.css.files">
-    <copy todir="${dist}/css">
-      <fileset dir="css/">
-        <exclude name="admin.css" />
-        <exclude name="style.css" />
-      </fileset>
-    </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
       <arg line="--output-file ${dist}/css/admin.css" />
       <arg line="css/admin.css" />

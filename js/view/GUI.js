@@ -39,10 +39,6 @@ Meatazine.view.GUI = Backbone.View.extend({
           keyboard: false,
         });
         break;
-        
-      case 'publish':
-        return;
-        break;
     }
     _gaq.push(['_trackEvent', 'book', type]);
     this.book[type]();

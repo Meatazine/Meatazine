@@ -372,36 +372,38 @@
             <label class="control-label" for="book-icon">应用图标</label>
             <div class="controls">
               <img src="" />
-              <input type="file" />
+              <input type="file" id="book-icon" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" for="book-cover">应用封面</label>
             <div class="controls">
               <img src="" />
-              <input type="file" />
+              <input type="file" id="book-cover" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label">目标平台</label>
             <div class="controls btn-group" data-toggle="buttons-checkbox">
-              <button class="btn active">Android</button>
-              <button class="btn">iOS</button>
-              <button class="btn">Windows Phone</button>
+              <button class="platform btn active">Android</button>
+              <button class="platform btn active">iOS</button>
+              <button class="platform btn" disabled="true">Windows Phone</button>
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">应用模板</label>
+            <label class="control-label" for="book-type">应用模板</label>
             <div class="controls">
-              
+              <select id="book-type">
+                <option value="megazine">杂志</option>
+                <option value="parallax" disabled="true">视差滚动</option>
+              </select>
             </div>
           </div>
         </fieldset>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary">确定</button>
-      <button class="btn" data-dismiss="modal">取消</button>
+      <button class="btn btn-primary">关闭</button>
     </div>
   </div>
   <div id="publish" class="modal hide">
@@ -409,7 +411,7 @@
       <h3>发布</h3>
     </div>
     <div class="modal-body">
-      <!--<p>
+      <p>
         受网速和服务器负载影响，发布需要几分钟到十几分钟时间，请耐心等待。<br />
         期间请不要关闭浏览器或电脑。发布完成后，可以点击下方的按钮下载应用安装包。
       </p>
@@ -419,13 +421,13 @@
         <li>服务器打包成应用</li>
         <li>
           完成！请下载<br />
-          <button class="btn btn-success download" data-target=".apk"><i class="icon-download icon-white"></i> 下载APK</button>
+          <button class="btn btn-success download" data-target="apk"><i class="icon-download icon-white"></i> 下载Android安装包</button>
+          <button class="btn btn-success download" data-target="ipa"><i class="icon-download icon-white"></i> 下载iOS安装包</button>
         </li>
-      </ol>-->
-      <p>发布功能暂时不能使用，请静待肉大师提高功力</p>
+      </ol>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" data-dismiss="modal">关闭</button>
+      <button class="btn btn-primary" data-dismiss="modal" disabled="true">关闭</button>
     </div>
   </div>
   <div id="export-zip" class="modal hide">

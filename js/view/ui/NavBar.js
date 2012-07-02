@@ -11,8 +11,23 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   initialize: function () {
     this.setElement(this.el);
   },
+  disableNavs: function (type) {
+    switch (type) {
+      case Meatazine.view.ui.NavType.PUBLISH:
+        this.$('[href=#book-config], [href=#publish]')
+          .parent()
+            .addClass('disabled')
+            .html(function (i, oldhtml) {
+              return $(oldhtml).text();
+            });
+        break;
+    }
+  },
   button_clickHandler: function (event) {
     var target = $(event.target).attr('href').match(/(\w+)(\.html)?/)[1];
     this.trigger('select', target);
   }
 });
+Meatazine.view.ui.NavType = {
+  PUBLISH: 0,
+}

@@ -366,3 +366,7 @@ body {
 .carousel p {
   line-height:20px;
 }
+.dropdown-menu .disabled {
+  color:#CCC;
+  padding:3px 15px;
+}

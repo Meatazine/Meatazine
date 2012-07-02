@@ -6,16 +6,30 @@ jQuery.namespace('Meatazine.model');
       width: 1024,
       height: 768,
       id: -1,
-      platform: 1, // 1-android, 2-ios, 4-wp
+      platform: 3, // 1-android, 2-ios, 4-wp
       icon: '',
       cover: '',
       gallery: -1,
       pages: null
     },
-    save: function () {
-      var data = _.clone(this.attributes);
-      data.pages = this.get('pages').toJSON();
-      localStorage.setItem('book', JSON.stringify(data));
+    initialize: function () {
+      var id = localStorage.getItem('bookid');
+      if (id != null) {
+        this.set('id', id);
+        return;
+      }
+      $.ajax({
+        url: './api/init.php',
+        dataType: 'text',
+        context: this,
+        success: function (id) {
+          this.set('id', id);
+          localStorage.setItem('bookid', id);
+        },
+        error: function () {
+          GUI.navbar.disableNavs(Meatazine.view.ui.NavType.PUBLISH);
+        }
+      });
     },
     createZip: function () {
       var self = this,
@@ -25,7 +39,7 @@ jQuery.namespace('Meatazine.model');
       data.content = htmls.join('###');
       // 加载模板
       $.ajax({
-        url: 'template/index.html',
+        url: './template/index.html',
         dataType: 'html',
         success: function (template) {
           template = Mustache.render(template, data);
@@ -67,13 +81,13 @@ jQuery.namespace('Meatazine.model');
     },
     getAppPack: function () {
       $.ajax({
-        url: '/meatazine/api/publish.php',
+        url: './api/publish.php',
         data: {
           id: this.get('id')
         },
         context: this,
         success: function () {
-          GUI.publishStatus.finish();
+          this.trigger('publish:complete');
         },
       })
     },
@@ -111,19 +125,23 @@ jQuery.namespace('Meatazine.model');
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
         $.ajax({
-          url: '/meatazine/api/save.php',
+          url: './api/save.php',
           type: 'POST',
           contentType: 'application/octet-stream',
           processData: false,
           data: byteArray.buffer,
           success: function (data) {
-            GUI.publishStatus.showStep(3);
-            self.set('id', data);
+            self.trigger('publish:uploaded');
             self.getAppPack();
           },
         });
-        GUI.publishStatus.showStep(2);
+        self.trigger('publish:start')
       });
+    },
+    save: function () {
+      var data = _.clone(this.attributes);
+      data.pages = this.get('pages').toJSON();
+      localStorage.setItem('book', JSON.stringify(data));
     },
     setSize: function (w, h) {
       w = parseInt(w), h = parseInt(h);

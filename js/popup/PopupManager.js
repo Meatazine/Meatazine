@@ -30,10 +30,18 @@ jQuery.namespace('Meatazine.popup');
               if (publish == null) {
                 publish = new Meatazine.popup.PublishStatus({
                   el: '#publish',
-                  model: book,
+                  model: bookModel,
                 });
               }
               break;
+              
+            case 'config':
+              if (config == null) {
+                config = new Meatazine.popup.BookConfig({
+                  el: '#book-config',
+                  model: bookModel,
+                })
+              }
           }
           _gaq.push(['_trackEvent', 'popup', id]);
         }
