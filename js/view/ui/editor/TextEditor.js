@@ -8,7 +8,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.buttons.find('[data-type=delete]').click(this.deleteButton_clickHandler);
     },
     setTarget: function (value) {
-      if (text != null) {
+      if (text != null && !text.is(value)) {
         this.stopEdit();
       }
       text = $(value);
@@ -33,6 +33,11 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     startEdit: function (event) {
       text
+        .on({
+          'mousedown': this.stopEventPropagation,
+          'mousemove': this.stopEventPropagation,
+          'keydown': this.stopEventPropagation,
+        })
         .prop('contenteditable', true)
         .focus();
       _gaq.push(['_trackEvent', 'text', 'edit-start']);
