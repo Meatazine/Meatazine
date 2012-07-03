@@ -6,6 +6,30 @@
  * 将资源添加进去
  * 通知用户下载
  */
+ 
+/*function chmodr($path, $filemode) { 
+  if (!is_dir($path)) {
+    return chmod($path, $filemode);
+  }
+  $dh = opendir($path); 
+  while (($file = readdir($dh)) !== false) { 
+    if($file != '.' && $file != '..') { 
+      $fullpath = $path.'/'.$file; 
+      if(is_link($fullpath)) 
+          return FALSE; 
+      elseif(!is_dir($fullpath) && !chmod($fullpath, $filemode)) 
+              return FALSE; 
+      elseif(!chmodr($fullpath, $filemode)) 
+          return FALSE; 
+    } 
+  }
+  
+  closedir($dh);
+  if(chmod($path, $filemode)) 
+      return TRUE; 
+  else 
+      return FALSE; 
+}*/
 
 $hasApk = (boolean)$_REQUEST['apk'];
 $hasIpa = (boolean)$_REQUEST['ipa'];
@@ -18,14 +42,14 @@ if (!is_dir('temp')) {
 // 先解压缩
 $temp_dir = 'temp/' . $id . '/';
 $filename = 'temp/' . $id . '.zip';
+$zip = new ZipArchive();
 $zip->open($filename);
 $zip->extractTo($temp_dir);
 $zip->close();
 
 // ipa部分
 if ($hasIpa) {
-  $zip = new ZipArchive();
-  $template = 'template.ipa';
+  $template = './Meatazine.ipa';
    
   $filename = 'static/' . $id . '.ipa';
   copy($template, $filename);
@@ -45,17 +69,24 @@ if ($hasApk) {
   if (!is_dir('temp/project')) {
     mkdir('temp/project');
   }
-  $template = '/Users/meathill/Phonegap/MeatazineSample';
-  $project = 'temp/project/' . $id;
-  system("cp $template $project");
+  $template = 'android/';
+  //$project = 'temp/project/' . $id;
+  //mkdir($project);
+  //system("cp -rf $template $project/");
   
   $mydir = dir($temp_dir);
   while ($file = $mydir->read()) {
-    copy($temp_dir . $file, $project . '/assets/www' . $file);
+    if ($file != '.' && $file != '..') {
+      copy($temp_dir . $file, $template . '/assets/www/' . $file);
+    }
   }
-  system("ant $project/build.xml release");
-  copy($project . '/bin/test-release.apk', 'static/' . $id . '.apk');
+  system("ant -file ./$template/build.xml release");
+  copy($template . '/bin/test-release.apk', 'static/' . $id . '.apk');
+  
+  rmdir($project);
 }
+
+rmdir($temp_dir);
 
 echo 'ok';
 ?>

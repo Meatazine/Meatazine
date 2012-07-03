@@ -13,7 +13,9 @@ if (!is_dir('temp')) {
 if (!is_dir('static')) {
   mkdir('static');
 }
+
 $filename = 'temp/' . $id . '.zip';
+
 $fp = fopen($filename, 'w');
 fwrite($fp, $HTTP_RAW_POST_DATA);
 fclose($fp);

@@ -35,8 +35,11 @@ jQuery.namespace('Meatazine.model');
     createZip: function () {
       var self = this,
           data = _.pick(this.attributes, 'width', 'height'),
-          zip = new Meatazine.filesystem.FileZip(),
-          htmls = _.pluck(this.get('pages').models, 'renderedHTML');
+          zip = new Meatazine.filesystem.FileZip();
+          htmls = [];
+      for (var i = 0, len = this.get('pages').length; i < len; i++) {
+        htmls.push(this.get('pages').at(i).get('renderedHTML'));
+      }
       data.content = htmls.join('###');
       // 加载模板
       $.ajax({
@@ -69,11 +72,11 @@ jQuery.namespace('Meatazine.model');
       });
       return zip;
     },
-    exportZip: function () {
+    export: function () {
       var zip = this.createZip();
       zip.on('ready', function () {
         zip.downloadZip();
-        $('#export-zip').modal('hide');
+        $('#export').modal('hide');
       });
     },
     fill: function (data) {
@@ -85,7 +88,9 @@ jQuery.namespace('Meatazine.model');
       $.ajax({
         url: './api/publish.php',
         data: {
-          id: this.get('id')
+          id: this.get('id'),
+          apk: this.get('platform') >> 1 & 0x1,
+          ipa: this.get('platform') & 0x1,
         },
         context: this,
         success: function () {
@@ -127,7 +132,7 @@ jQuery.namespace('Meatazine.model');
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
         $.ajax({
-          url: './api/save.php',
+          url: './api/save.php?id=' + self.get('id'),
           type: 'POST',
           contentType: 'application/octet-stream',
           processData: false,
