@@ -1,4 +1,7 @@
 bin/
+api/assets/
+api/static/
+api/temp/
 temp/
 jqueryui/
 export/

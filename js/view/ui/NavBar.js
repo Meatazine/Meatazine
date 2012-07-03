@@ -15,6 +15,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     switch (type) {
       case Meatazine.view.ui.NavType.PUBLISH:
         this.$('[href=#book-config], [href=#publish]')
+          .off('click')
           .parent()
             .addClass('disabled')
             .html(function (i, oldhtml) {
@@ -25,7 +26,13 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   },
   button_clickHandler: function (event) {
     var target = $(event.target).attr('href').match(/(\w+)(\.html)?/)[1];
-    this.trigger('select', target);
+    // 有一些功能不能这样直接触发
+    if (/publish/i.test(target)) {
+      return;
+    }
+    
+    this.model[target]();
+    _gaq.push(['_trackEvent', 'book', target]);
   }
 });
 Meatazine.view.ui.NavType = {

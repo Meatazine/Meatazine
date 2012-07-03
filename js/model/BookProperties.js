@@ -9,6 +9,7 @@ jQuery.namespace('Meatazine.model');
       platform: 3, // 1-android, 2-ios, 4-wp
       icon: '',
       cover: '',
+      name: '',
       gallery: -1,
       pages: null
     },
@@ -76,8 +77,9 @@ jQuery.namespace('Meatazine.model');
       });
     },
     fill: function (data) {
-      this.setSize(data.width, data.height);
       this.get('pages').fill(data.pages);
+      delete data.pages;
+      this.set(data);
     },
     getAppPack: function () {
       $.ajax({

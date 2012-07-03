@@ -93,6 +93,12 @@ body {
   color:#46a546;
 }
 
+#book-config .icon, #book-config .cover {
+  max-height:150px;
+  border:1px solid #CCC;
+  padding:1px;
+}
+
 /** ======================
  * context menu
  * 功能菜单项  

@@ -298,7 +298,7 @@
               <h4>请大家暂时使用人肉编译法</h4>
               <p>
                 另外附上可编译的工程压缩包下载：
-                <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.ipa.zip" target="_blank">iOS工程</a>
+                <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.xcarchive.zip" target="_blank">iOS工程</a>
                 <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.apk.zip" target="_blank">Android工程</a><br />
                 将导出的zip文件解压到工程的www目录下，然后编译即可。
               </p>
@@ -371,14 +371,14 @@
           <div class="control-group">
             <label class="control-label" for="book-icon">应用图标</label>
             <div class="controls">
-              <img src="" />
+              <img src="" class="icon" />
               <input type="file" id="book-icon" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" for="book-cover">应用封面</label>
             <div class="controls">
-              <img src="" />
+              <img src="" class="cover" />
               <input type="file" id="book-cover" />
             </div>
           </div>
@@ -403,7 +403,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary">关闭</button>
+      <button class="btn btn-info" disabled="true"></button>
     </div>
   </div>
   <div id="publish" class="modal hide">
@@ -421,8 +421,8 @@
         <li>服务器打包成应用</li>
         <li>
           完成！请下载<br />
-          <button class="btn btn-success download" data-target="apk"><i class="icon-download icon-white"></i> 下载Android安装包</button>
-          <button class="btn btn-success download" data-target="ipa"><i class="icon-download icon-white"></i> 下载iOS安装包</button>
+          <button class="btn btn-success download" data-target="apk" disabled="true"><i class="icon-download icon-white"></i> 下载Android安装包</button>
+          <button class="btn btn-success download" data-target="ipa" disabled="true"><i class="icon-download icon-white"></i> 下载iOS安装包</button>
         </li>
       </ol>
     </div>
@@ -495,6 +495,7 @@
 <script src="js/popup/Welcome.js"></script>
 <script src="js/popup/ScreenSizeSelector.js"></script>
 <script src="js/popup/PublishStatus.js"></script>
+<script src="js/popup/BookConfig.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

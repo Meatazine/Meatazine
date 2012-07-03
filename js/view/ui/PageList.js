@@ -65,7 +65,9 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
       items: 'li.item'
     });
     this.$('li').disableSelection();
-    this.emptyItems.shift().trigger('click');
+    if (this.emptyItems.length > 0) {
+      this.emptyItems.shift().trigger('click');
+    }
   },
   book_resizeHandler: function (w, h) {
     this.list.height(h - 54); // 把按钮和数字空出来

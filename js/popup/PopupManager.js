@@ -35,7 +35,7 @@ jQuery.namespace('Meatazine.popup');
               }
               break;
               
-            case 'config':
+            case 'book-config':
               if (config == null) {
                 config = new Meatazine.popup.BookConfig({
                   el: '#book-config',

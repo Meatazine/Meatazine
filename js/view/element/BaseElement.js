@@ -72,7 +72,8 @@ jQuery.namespace('Meatazine.view.element');
     createMap: function (container, model) {
       var self = this,
           position = new google.maps.LatLng(model.get('lat'), model.get('lng')),
-          container = (/img|video|audio/i).test(container[0].tagName) ? container.parent() : container,
+          parent = container.parent().length > 0 ? container.parent() : this.$el,
+          container = (/img|video|audio/i).test(container[0].tagName) ? parent : container,
           options = {
             center: position,
             draggable: false,
@@ -83,7 +84,9 @@ jQuery.namespace('Meatazine.view.element');
           google.maps.event.addListener(map, 'tilesloaded', function () {
             self.trigger('change');
           });
-          container.addClass('map-container');
+          container.addClass('map-container').on('click', function (event) {
+            self.map_clickHandler(event);
+          });
       if (model.get('markers') instanceof Array) {
         for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
           var image = mapEditor.createMarkerImage(i),
