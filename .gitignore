@@ -4,6 +4,7 @@ api/*.apk
 api/assets/
 api/static/
 api/temp/
+api/android/
 temp/
 jqueryui/
 export/

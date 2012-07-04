@@ -25,16 +25,16 @@ $zip->close();
 
 // ipa部分
 if ($hasIpa) {
-  $template = './Meatazine.ipa';
+  $template = './Sample.ipa';
    
   $filename = 'static/' . $id . '.ipa';
   copy($template, $filename);
   $zip->open($filename);
-  $zip->deleteName('Payload/Meatazine.app/www/');
+  //$zip->deleteName('Payload/Meatazine.app/www/');
   $mydir = dir($temp_dir);
   while ($file = $mydir->read()) {
     if ($file != '.' && $file != '..') {
-      echo $file . ' : ' . $zip->addFile($temp_dir . $file, 'Payload/Meatazine/www/' . $file) . "<br />\n";
+      echo $file . ' : ' . $zip->addFile($temp_dir . $file, 'Payload/Meatazine.app/www/' . $file) . "<br />\n";
     }
   }
   $zip->close();
