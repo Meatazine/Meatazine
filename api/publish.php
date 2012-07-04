@@ -6,30 +6,6 @@
  * 将资源添加进去
  * 通知用户下载
  */
- 
-/*function chmodr($path, $filemode) { 
-  if (!is_dir($path)) {
-    return chmod($path, $filemode);
-  }
-  $dh = opendir($path); 
-  while (($file = readdir($dh)) !== false) { 
-    if($file != '.' && $file != '..') { 
-      $fullpath = $path.'/'.$file; 
-      if(is_link($fullpath)) 
-          return FALSE; 
-      elseif(!is_dir($fullpath) && !chmod($fullpath, $filemode)) 
-              return FALSE; 
-      elseif(!chmodr($fullpath, $filemode)) 
-          return FALSE; 
-    } 
-  }
-  
-  closedir($dh);
-  if(chmod($path, $filemode)) 
-      return TRUE; 
-  else 
-      return FALSE; 
-}*/
 
 $hasApk = (boolean)$_REQUEST['apk'];
 $hasIpa = (boolean)$_REQUEST['ipa'];
@@ -70,18 +46,19 @@ if ($hasApk) {
     mkdir('temp/project');
   }
   $template = 'android/';
-  //$project = 'temp/project/' . $id;
-  //mkdir($project);
-  //system("cp -rf $template $project/");
+  $project = 'temp/project/' . $id;
+  mkdir($project);
+  system("cp -rf $template $project");
   
   $mydir = dir($temp_dir);
   while ($file = $mydir->read()) {
     if ($file != '.' && $file != '..') {
-      copy($temp_dir . $file, $template . '/assets/www/' . $file);
+      copy($temp_dir . $file, $project . '/assets/www/' . $file);
     }
   }
-  system("ant -file ./$template/build.xml release");
-  copy($template . '/bin/test-release.apk', 'static/' . $id . '.apk');
+  system("chmod -R 777 ./$project");
+  system("ant -q -l ./$project/build.log -file ./$project/build.xml release");
+  copy($project . '/bin/test-release.apk', 'static/' . $id . '.apk');
   
   rmdir($project);
 }

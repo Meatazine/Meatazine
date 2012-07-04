@@ -1,4 +1,6 @@
 bin/
+api/*.ipa
+api/*.apk
 api/assets/
 api/static/
 api/temp/
