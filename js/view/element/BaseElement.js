@@ -24,8 +24,8 @@ jQuery.namespace('Meatazine.view.element');
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
       imageEditor.on('select:image', this.editor_selectImagesHandler, this);
-      imageEditor.on('switch:map', this.switchMapHandler, this);
-      mapEditor.on('switch:image', this.switchImageHandler, this);
+      imageEditor.on('convert:map', this.editor_convertMapHandler, this);
+      mapEditor.on('convert:image', this.editor_convertImageHandler, this);
       this.render();
     },
     render: function () {
@@ -147,6 +147,50 @@ jQuery.namespace('Meatazine.view.element');
       }
       this.handleChildrenState();
     },
+    editor_convertImageHandler: function (editor) {
+      var map = editor.getTarget(),
+          div = map.getDiv(),
+          model = new this.collection.model();
+      var item = this.createItem(model, true);
+      if (div == this.$el[0]) {
+        this.$el
+          .empty()
+          .append(item);
+        this.collection.replaceAt(model, 0);
+        this.token = this.token != null ? this.token.add(item) : item;
+      } else {
+        var index = $(div).index();
+        this.$el.children().eq(index).remove();
+        item.insertAfter(this.$el.children().eq(index - 1));
+        this.collection.replaceAt(model, index);
+        this.token = this.token != null ? this.token.eq(index).prevAll().add(item).add(this.token.eq(index - 1).nextAll()) : item;
+      }
+      $(div).removeClass('map-container');
+      google.maps.event.clearInstanceListeners(map);
+      imageEditor.setTarget(item.find('.placeholder'));
+      _gaq.push(['_trackEvent', 'map', 'image']);
+    },
+    editor_convertMapHandler: function (editor) {
+      currentEditor.stopEdit();
+      // 改变类型的时候需要替换model
+      var index = -1,
+          image = editor.getTarget(),
+          model = this.collection.createMapModel();
+      this.$el.children().each(function (i) {
+        if ($.contains(this, image[0]) || this == image[0]) {
+          index = i;
+          return false;
+        }
+      });
+      if (this.token != null) {
+        this.token = this.token.not(this.$el.children().eq(index));
+      }
+      
+      this.collection.replaceAt(model, index); 
+      var map = this.createMap(image.closest(this.tagName), model);
+      mapEditor.setTarget(map);
+      _gaq.push(['_trackEvent', 'image', 'map']);
+    },
     editor_selectImagesHandler: function (files) {
       this.handleFiles(files);
     },
@@ -182,38 +226,6 @@ jQuery.namespace('Meatazine.view.element');
     map_clickHandler: function (event) {
       mapEditor.setTarget($(event.currentTarget).data('map'));
       currentEditor = mapEditor;
-    },
-    switchImageHandler: function (editor) {
-      var map = editor.getTarget(),
-          div = map.getDiv(),
-          model = new this.collection.model(),
-          index = $(div).index();
-      var item = this.createItem(model, true);
-      this.$el.children().eq(index).remove();
-      item.insertAfter(this.$el.children().eq(index - 1));
-      imageEditor.setTarget(item.find('.placeholder'));
-      _gaq.push(['_trackEvent', 'map', 'image']);
-    },
-    switchMapHandler: function (editor) {
-      currentEditor.stopEdit();
-      // 改变类型的时候需要替换model
-      var index = -1,
-          image = editor.getTarget(),
-          model = this.collection.createMapModel();
-      this.$el.children().each(function (i) {
-        if ($.contains(this, image[0]) || this == image[0]) {
-          index = i;
-          return false;
-        }
-      });
-      if (this.token != null) {
-        this.token = this.token.not(this.$el.children().eq(index));
-      }
-      
-      this.collection.replaceAt(model, index); 
-      var map = this.createMap(image.closest(this.tagName), model);
-      mapEditor.setTarget(map);
-      _gaq.push(['_trackEvent', 'image', 'map']);
     },
     toggle_clickHandler: function (event) {
       var handle = $(event.target),
