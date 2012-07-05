@@ -4,6 +4,7 @@ Meatazine.filesystem.FileZip = function () {
       file = new Meatazine.filesystem.FileReferrence(),
       isLoading = false,
       isAutoDownload = false,
+      total = 0,
       zip = new JSZip(),
       queue = [];
   this.addFile = function (name, content, url) {
@@ -18,6 +19,8 @@ Meatazine.filesystem.FileZip = function () {
       name: name,
       url: url
     });
+    total += 1;
+    this.trigger('add', total);
     if (isLoading) {
       return;
     }
@@ -56,7 +59,7 @@ Meatazine.filesystem.FileZip = function () {
   }
   function next() {
     if (queue.length > 0) {
-      self.trigger('complete:one', queue.length);
+      self.trigger('progress', total - queue.length, total);
       var data = queue[0];
       if (data.url.substr(0, 10) == 'filesystem') {
         file.read(data.url);
@@ -70,6 +73,7 @@ Meatazine.filesystem.FileZip = function () {
       }
     } else {
       isLoading = false;
+      total = 0;
       self.trigger('ready');
       if (isAutoDownload) {
         self.downloadZip();

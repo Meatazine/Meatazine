@@ -30,7 +30,6 @@ if ($hasIpa) {
   $filename = 'static/' . $id . '.ipa';
   copy($template, $filename);
   $zip->open($filename);
-  //$zip->deleteName('Payload/Meatazine.app/www/');
   $mydir = dir($temp_dir);
   while ($file = $mydir->read()) {
     if ($file != '.' && $file != '..') {
