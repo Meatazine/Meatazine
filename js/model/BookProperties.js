@@ -75,7 +75,7 @@ jQuery.namespace('Meatazine.model');
       });
       return zip;
     },
-    export: function () {
+    exportZip: function () {
       var zip = this.createZip();
       zip.on('ready', function () {
         zip.downloadZip();

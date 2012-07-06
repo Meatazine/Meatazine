@@ -67,7 +67,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     self.model.on('publish:start', self.model_publishStartHandler, self);
     self.model.on('publish:uploaded', self.model_publishUploadedHandler, self);
     self.model.on('publish:complete', self.model_publishCompleteHandler, self);
-    self.model.on('zip:progress', self.model_zipProgressHandler, self);
+    //self.model.on('zip:progress', self.model_zipProgressHandler, self);
     
     self.model.publish();
   }

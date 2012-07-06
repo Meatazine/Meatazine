@@ -8,7 +8,6 @@ jQuery.namespace('Meatazine.model.element');
   };
   ns.ElementCollection = Backbone.Collection.extend({
     config: null,
-    isModified: false,
     create: function (attributes, options) {
       var init = _.extend({count: this.length + 1}, attributes);
           model = new this.model(init);

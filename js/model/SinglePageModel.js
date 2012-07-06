@@ -1,5 +1,6 @@
 jQuery.namespace('Meatazine.model');
 Meatazine.model.SinglePageModel = Backbone.Model.extend({
+  isModified: false,
   defaults: {
     templateType: 'face',
     template: '',
@@ -19,15 +20,14 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     }, this);
     this.set('contents', []);
   },
+  set: function (attributes, options) {
+    this.isModified = options != null ? options.isModified : false;
+    Backbone.Model.prototype.set.call(this, attributes, options);
+  },
   toJSON: function () {
     var json = Backbone.Model.prototype.toJSON.call(this);
     delete json.renderedHTML;
     return json;
-  },
-  checkIsModified: function () {
-    return _.any(this.attributes.contents, function (collection) {
-      return collection.isModified;
-    });
   },
   createElement: function (index, init, array) {
     var contents = this.get('contents').concat(),

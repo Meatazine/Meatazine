@@ -19,7 +19,7 @@ jQuery.namespace('Meatazine.view.element');
     },
     initialize: function () {
       this.$el = $(this.el);
-      this.template = this.el.innerHTML.replace(/[\r\n]/gm, '');
+      this.template = this.el.innerHTML;
       this.tagName = this.template != '' ? $(this.template)[0].tagName : '';
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);

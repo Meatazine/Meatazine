@@ -158,7 +158,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     if ($(event.currentTarget).hasClass('active')) {
       return;
     }
-    if (this.model.hasChanged("contents")) {
+    if (this.contents.isModified) {
       if (!window.confirm('替换模板后，您所编辑的内容会丢失。确认替换么？')) {
         return;
       }

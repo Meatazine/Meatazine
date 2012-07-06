@@ -29,6 +29,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   },
   parse: function (response) {
     var type = this.loadQueue.shift();
+    response = response.replace(/[\r\n]/gm, '').replace(/\s{2,}/gm, '');
     this.isLoading = false;
     this.templates[type] = response;
     this.set('type', type);
@@ -69,8 +70,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   },
   // 元素列表模板
   setSourceTemplate: function (str) {
-    str = str.replace(/[\r\n]/gm, '');
-    str = str.replace(/\s{2,}/gm, '');
+    str = str.replace(/[\r\n]/gm, '').replace(/\s{2,}/gm, '');
     this.set('template', str);
   },
   span_focusInHandler: function (event) {

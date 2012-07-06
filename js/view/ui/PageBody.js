@@ -3,7 +3,6 @@ jQuery.namespace('Meatazine.view.ui');
   var textEditor = new ns.editor.TextEditor('.group1');
   ns.PageBody = Backbone.View.extend({
     items: [],
-    isSentByMe: false,
     events: {
       "click .editable": "editable_clickHandler",
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
@@ -38,7 +37,7 @@ jQuery.namespace('Meatazine.view.ui');
       
       this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
-      this.refreshThumbnail();
+      this.refreshThumbnail(true);
     },
     addEditableText: function (x, y) {
       var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');
@@ -57,7 +56,16 @@ jQuery.namespace('Meatazine.view.ui');
       this.$('.ui-draggable').draggable('destroy');
       this.$('.ui-resizable').resizable('destroy');
     },
-    getFilteredHTML: function () {
+    refreshThumbnail: function (isReset) {
+      isReset = isReset || false;
+      var self = this;
+      html2canvas(this.$el, {onrendered: function (canvas) {
+        self.trigger('change', canvas);
+      }});
+      this.saveRenderedHTML();
+      this.saveTemplate(isReset);
+    },
+    saveRenderedHTML: function () {
       var self = this,
           html = this.$el.clone();
       html.find('.placeholder').removeClass('placeholder');
@@ -75,17 +83,9 @@ jQuery.namespace('Meatazine.view.ui');
           $(this).attr('data-map', JSON.stringify(model.toJSON()));
         }
       });
-      return '<div class="page">' + html.html() + '</div>';
+      this.model.set('renderedHTML', '<div class="page">' + html.html() + '</div>');
     },
-    refreshThumbnail: function () {
-      var self = this;
-      html2canvas(this.$el, {onrendered: function (canvas) {
-        self.trigger('change', canvas);
-      }});
-      this.saveTemplate();
-      this.model.set('renderedHTML', this.getFilteredHTML());
-    },
-    saveTemplate: function () {
+    saveTemplate: function (isReset) {
       if (this.$el.html().replace(/\W/gm,'') == '') {
         return;
       }
@@ -96,10 +96,7 @@ jQuery.namespace('Meatazine.view.ui');
       template.find('[data-config]').each(function (i) {
         $(this).html(self.items[i].template);
       });
-      this.model.set('template', template.html());
-    },
-    showLoading: function () {
-      this.$el.html('<p align="center" style="padding-top:40px"><img src="img/loading.gif" /><br />加载中，请稍后</p>');
+      this.model.set({template: template.html()}, {isModified: !isReset});
     },
     book_resizeHandler: function (w, h) {
       this.$el.width(w);
@@ -128,14 +125,14 @@ jQuery.namespace('Meatazine.view.ui');
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
     source_selectHandler: function () {
-      if (this.model.get('templateType') == this.options.source.get('type')) {
+      if (this.model.get('template') && this.model.get('templateType') == this.options.source.get('type')) {
         return;
       }
       this.model.reset();
       this.model.set({
         templateType: this.options.source.get('type'),
         template: this.options.source.getTemplate(this.options.source.get('type')),
-      });
+      }, {isModified: false});
       this.render();
     },
     textEditor_changeHandler: function () {

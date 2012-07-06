@@ -27,7 +27,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   button_clickHandler: function (event) {
     var target = $(event.target).attr('href').match(/(\w+)(\.html)?/)[1];
     // 有一些功能不能这样直接触发
-    if (/publish|export/i.test(target)) {
+    if (/publish|export\-zip/i.test(target)) {
       return;
     }
     
