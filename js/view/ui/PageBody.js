@@ -41,6 +41,7 @@ jQuery.namespace('Meatazine.view.ui');
       this.$('.ui-resizable').resizable();
       //this.$('.editable').click(this.editable_clickHandler);
       this.refreshThumbnail();
+      this.trigger('page-render-over');
     },
     addEditableText: function (x, y) {
       var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');
