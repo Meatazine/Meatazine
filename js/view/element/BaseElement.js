@@ -58,11 +58,17 @@ jQuery.namespace('Meatazine.view.element');
       } else {
         this.$('.placeholder[src!="img/spacer.gif"]').removeClass('placeholder');
       }
-      this.$el.append(item);
+      item
+        .on('click', function (event) {
+          model.trigger('select');
+        })
+        .appendTo(this.$el);
       model.on('change', function (model) {
         var data = item.filter('img').add(item.find('img')).data();
             newItem = this.createItem(model);
-        item.replaceWith(newItem);
+        item
+          .off('click')
+          .replaceWith(newItem);
         newItem.filter('img').add(newItem.find('img')).data(data);
         model.off('change', arguments.callee);
         this.trigger('change');

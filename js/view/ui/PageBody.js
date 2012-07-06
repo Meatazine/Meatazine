@@ -14,7 +14,6 @@ jQuery.namespace('Meatazine.view.ui');
       this.$el = $(this.el);
       this.options.book.on('change:size', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_selectHandler, this);
-      this.options.source.on('complete', this.source_completeHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
@@ -39,7 +38,6 @@ jQuery.namespace('Meatazine.view.ui');
       
       this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
-      //this.$('.editable').click(this.editable_clickHandler);
       this.refreshThumbnail();
     },
     addEditableText: function (x, y) {
@@ -51,8 +49,6 @@ jQuery.namespace('Meatazine.view.ui');
         .resizable()
         .appendTo(this.$el)
         .find('.editable').click();
-      // 添加后，导致所有editable的事件消失，所以手工加一下
-      //this.$('.editable').click(this.editable_clickHandler);
     },
     empty: function () {
       while (this.items.length > 0) {
@@ -105,19 +101,6 @@ jQuery.namespace('Meatazine.view.ui');
     showLoading: function () {
       this.$el.html('<p align="center" style="padding-top:40px"><img src="img/loading.gif" /><br />加载中，请稍后</p>');
     },
-    useTemplate: function(isFromPage) {
-      if (isFromPage && this.model.get('template') != '') {
-        this.render();
-        return;
-      }
-      if (this.options.source.hasTemplate(this.model.get('templateType'))){
-        this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
-        this.render();
-        return;
-      }
-      this.options.source.fetch(this.model.get('templateType'));
-      this.showLoading();
-    },
     book_resizeHandler: function (w, h) {
       this.$el.width(w);
       this.$el.height(h);
@@ -134,29 +117,23 @@ jQuery.namespace('Meatazine.view.ui');
     },
     pageList_selectHandler: function (model) {
       this.saveTemplate();
+      if (model.get('template') == '') {
+        model.set('template', this.options.source.getTemplate(model.get('templateType')));
+      }
       this.model = model;
-      this.useTemplate(true);
-      this.isSentByMe = this.options.source.get('type') != this.model.get('templateType');
-      this.options.source.set('type', this.model.get('templateType'));
+      this.render();
     },
     resizable_resizeStopHandler:function (event, ui) {
       this.refreshThumbnail();
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
     source_selectHandler: function () {
-      if (this.isSentByMe) {
-        this.isSentByMe = false;
-        return;
-      }
       this.model.reset();
-      this.model.set('templateType', this.options.source.get('type'));
-      this.useTemplate();
-    },
-    source_completeHandler: function () {
-      if (this.options.source.hasTemplate(this.model.get('templateType'))) {
-        this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
-        this.render();
-      }
+      this.model.set({
+        templateType: this.options.source.get('type'),
+        template: this.options.source.getTemplate(this.options.source.get('type')),
+      });
+      this.render();
     },
     textEditor_changeHandler: function () {
       this.refreshThumbnail();

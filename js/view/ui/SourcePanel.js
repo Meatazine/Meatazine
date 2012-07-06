@@ -1,9 +1,10 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.SourcePanel = Backbone.View.extend({
-  currentPanel: null,
   enabled: false,
   contents: null,
   removeButton: null,
+  templatelist: null,
+  sourceList: null,
   events: {
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
@@ -16,20 +17,24 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.templateList = this.$('#template-list');
+    this.sourceList = this.$('#source-list');
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
-    this.currentPanel = this.$('#template-list');
     this.options.book.on('change:size', this.resizeHandler, this);
     this.options.book.get('pages').on('add', this.pages_addHandler, this);
     this.model.setSourceTemplate(this.$('#source-list').html());
-    this.model.on('change:type', this.model_typeChangeHandler, this);
     delete this.options;
   },
   createSourceItem: function (model) {
     var template = this.model.getSourceTemplate(model),
         item = $(Meatazine.utils.render(template, model));
     model.on('change', function (model) {
-      item.replaceWith(this.createSourceItem(model));
+      model.off('select');
       model.off('change', arguments.callee);
+      item.replaceWith(this.createSourceItem(model));
+    }, this);
+    model.on('select', function () {
+      this.highlightOn(item);
     }, this);
     return item;
   },
@@ -56,17 +61,37 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   getTemplateType: function (value) {
     return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
   },
+  highlightOn: function (item) {
+    this.$('.btn').eq(1).click();
+    item.addClass('animated flash');
+    item[0].scrollIntoView();
+    setTimeout(function () {
+      item.removeClass('animated flash');
+    }, 1000);
+  },
   refreshSourceList: function () {
     // 更新全部内容
-    var list = this.$('#source-list');
     _.each(this.contents.get('contents'), function (collection, index) {
-      this.createSourceList(collection, list.find('ul').eq(index));
+      this.createSourceList(collection, this.sourceList.find('ul').eq(index));
     }, this);
-    list.find('dt:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
-    list.find('dd:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
-    list.find('ul')
+    this.sourceList.find('dt:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
+    this.sourceList.find('dd:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
+    this.sourceList.find('ul')
       .sortable()
       .disableSelection();
+  },
+  setTemplateType: function (type, silent) {
+    silent = silent == null ? true : silent;
+    this.model.set({type: type}, {silent: true});
+    var target = this.model.get('type');
+        img = _.find(this.templateList.find('img'), function (element, i) {
+          return this.getTemplateType(element.src) == target;
+        }, this);
+    if (img != null) {
+      $(img).parent()
+        .addClass('active')
+          .siblings('.active').removeClass('active');
+    }
   },
   input_focusOutHandler: function (event) {
     var target = $(event.target),
@@ -83,21 +108,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       $(event.target).focusout();
     }
   },
-  model_typeChangeHandler: function (event) {
-    var target = this.model.get('type'),
-        index = -1;
-    _.each(this.$('#template-list img'), function (element, i) {
-      if (this.getTemplateType(element.src) == target) {
-        index = i;
-      }
-    }, this);
-    if (index != -1) {
-      this.enabled = true;
-      this.$('#template-list li').eq(index).trigger('click');
-    }
-  },
   pages_addHandler: function (model) {
-    
+    this.enabled = true;
+    this.$('.btn').eq(0).click();
   },
   pageList_selectHandler: function (model) {
     if (this.contents instanceof Meatazine.model.SinglePageModel) {
@@ -106,6 +119,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.contents = model;
     this.contents.on('change:contents', this.refreshSourceList, this);
     this.refreshSourceList();
+    this.setTemplateType(model.get('templateType'));
   },
   removeButton_clickHandler: function (event) {
     var target = $(event.target).parent(),
@@ -149,16 +163,13 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         return;
       }
     }
-    var currentTemplate = this.$('#template-list .active');
-    if (currentTemplate.length > 0) {
-      currentTemplate.removeClass('active');
-    }
-    currentTemplate = $(event.currentTarget);
-    currentTemplate.addClass('active');
+    var currentTemplate = $(event.currentTarget);
+    currentTemplate.addClass('active')
+      .siblings('.active').removeClass('active');
     this.model.set('type', this.getTemplateType(currentTemplate.find('img').attr('src')));
     _gaq.push(['_trackEvent', 'template', 'select', this.model.get('type')]);
   },
   resizeHandler: function (w, h) {
-    this.$('#template-list, #source-list').height(h - 110); // 空出按钮的位置
+    this.templateList.add(this.sourceList).height(h - 110); // 空出按钮的位置
   },
 })
