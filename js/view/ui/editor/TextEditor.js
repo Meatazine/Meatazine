@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
-  var text = null;
+  var text = null,
+      stashClass = '';
   ns.TextEditor = ns.AbstractEditor.extend({
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
@@ -11,6 +12,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       if (text != null && !text.is(value)) {
         this.stopEdit();
       }
+      stashClass = '';
       text = $(value);
       text
         .addClass('editing')
@@ -40,10 +42,15 @@ jQuery.namespace('Meatazine.view.ui.editor');
         })
         .prop('contenteditable', true)
         .focus();
+      if (text.hasClass('bighead')) {
+        stashClass = 'bighead';
+        text.removeClass('bighead');
+      }
       _gaq.push(['_trackEvent', 'text', 'edit-start']);
     },
     stopEdit: function (event) {
       text
+        .addClass(stashClass)
         .removeClass('editing')
         .prop('contenteditable', false)
         .off({

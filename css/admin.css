@@ -270,8 +270,11 @@ body {
   border-top-color:#CCC;
   margin:10px 0;
 }
-#panel .btn-group button {
-  width:150px;
+#panel .btn-group .btn {
+  width:128px;
+}
+#panel .nav-tabs {
+  border:none;
 }
 #panel .well {
   width:260px;
@@ -315,7 +318,7 @@ body {
   border-radius: 4px 4px 0 0;
 }
 #source-list dd {
-  padding: 10px;
+  padding:5px;
   border: 1px solid #CCC;
   border-top: none;
   margin: 0 0 10px;
@@ -326,7 +329,7 @@ body {
   margin:0;
 }
 #source-list li {
-  padding:0 0 5px;
+  padding:5px;
   margin:0 0 10px;
   list-style: none;
   border-bottom: 1px dashed #EEE;
@@ -341,7 +344,6 @@ body {
 #source-list li:last-child {
   border:none;
   margin:0;
-  padding:0;
 }
 #source-list li img {
   border:1px solid #CCC;

@@ -1,3 +1,8 @@
+api/android
+api/assets
+api/static
+api/temp
+api/*.ipa
 bin/
 api/*.ipa
 api/*.apk

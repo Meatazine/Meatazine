@@ -134,7 +134,7 @@
       </div>
       <div class="btn-group group2">
         <button class="btn btn-mini" data-type="upload"><i class="icon-upload"></i> 上传</button>
-        <button class="btn btn-mini" data-type="switch" data-class="map"><i class="icon-map-marker"></i> 转换为地图</button>
+        <button class="btn btn-mini" data-type="convert" data-class="map"><i class="icon-map-marker"></i> 转换为地图</button>
         <button class="btn btn-mini" data-type="edit" disabled="true"><i class="icon-edit"></i> 编辑图片</button>
       </div>
       <div class="btn-group group2">
@@ -164,7 +164,7 @@
         </ul>
       </div>
       <div class="btn-group group5">
-        <button class="btn btn-mini" data-type="switch" data-class="image"><i class="icon-picture"></i> 转换为图片</button>
+        <button class="btn btn-mini" data-type="convert" data-class="image"><i class="icon-picture"></i> 转换为图片</button>
         <button class="btn btn-mini" data-type="add-marker">添加标记</button>
         <button class="btn btn-mini" data-type="edit"><i class="icon-edit"></i> 编辑地图</button>
       </div>
@@ -197,69 +197,71 @@
     </div>
     <div id="page-body" class="page">
     </div>
-    <div id="panel">
-      <div class="btn-group" data-toggle="buttons-radio">
-        <button class="btn active" data-for="template-list">样式模板</button>
-        <button class="btn" data-for="source-list">素材</button>
+    <div id="panel" class="tabbable">
+      <div class="btn-group nav-tabs" data-toggle="buttons-radio">
+        <a class="btn active" data-toggle="tab" href="#template-list">样式模板</a>
+        <a class="btn" data-toggle="tab" href="#source-list">素材</a>
       </div>
       <hr />
-      <ul id="template-list" class="well">
-        <li>
-          <img src="img/elements/face.png" alt="封面" />
-        </li>
-        <li>
-          <img src="img/elements/face1.png" alt="文章封面1" />
-        </li>
-        <li>
-          <img src="img/elements/face2.png" alt="文章封面2" />
-        </li>
-        <li>
-          <img src="img/elements/face3.png" alt="文章封面3" />
-        </li>
-        <li>
-          <img src="img/elements/page5.png" alt="文章内页5" />
-        </li>
-        <li>
-          <img src="img/elements/page1.png" alt="文章内页1" />
-        </li>
-        <li>
-          <img src="img/elements/page2.png" alt="文章内页2" />
-        </li>
-        <li>
-          <img src="img/elements/page3.png" alt="文章内页3" />
-        </li>
-        <li>
-          <img src="img/elements/page4.png" alt="文章内页4" />
-        </li>
-        <li>
-          <img src="img/elements/grid1.png" alt="图片矩阵1" />
-        </li>
-        <li>
-          <img src="img/elements/grid2.png" alt="图片矩阵2" />
-        </li>
-        <li>
-          <img src="img/elements/slide.png" alt="Slide" />
-        </li>
-        <li>
-          <img src="img/elements/slide1.png" alt="Slide1" />
-        </li>
-        <li>
-          <img src="img/elements/slide2.png" alt="Slide2" />
-        </li>
-        <li>
-          <img src="img/elements/back.png" alt="封底" />
-        </li>
-        <li>
-          <img src="img/elements/back1.png" alt="封底1" />
-        </li>
-      </ul>
-      <dl id="source-list" class="well">
-        <dt>元素</dt>
-        <dd>
-          <ul>
-          </ul>
-        </dd>
-      </dl>
+      <div class="tab-content">
+        <ul id="template-list" class="well tab-pane active">
+          <li>
+            <img src="img/elements/face.png" alt="封面" />
+          </li>
+          <li>
+            <img src="img/elements/face1.png" alt="文章封面1" />
+          </li>
+          <li>
+            <img src="img/elements/face2.png" alt="文章封面2" />
+          </li>
+          <li>
+            <img src="img/elements/face3.png" alt="文章封面3" />
+          </li>
+          <li>
+            <img src="img/elements/page5.png" alt="文章内页5" />
+          </li>
+          <li>
+            <img src="img/elements/page1.png" alt="文章内页1" />
+          </li>
+          <li>
+            <img src="img/elements/page2.png" alt="文章内页2" />
+          </li>
+          <li>
+            <img src="img/elements/page3.png" alt="文章内页3" />
+          </li>
+          <li>
+            <img src="img/elements/page4.png" alt="文章内页4" />
+          </li>
+          <li>
+            <img src="img/elements/grid1.png" alt="图片矩阵1" />
+          </li>
+          <li>
+            <img src="img/elements/grid2.png" alt="图片矩阵2" />
+          </li>
+          <li>
+            <img src="img/elements/slide.png" alt="Slide" />
+          </li>
+          <li>
+            <img src="img/elements/slide1.png" alt="Slide1" />
+          </li>
+          <li>
+            <img src="img/elements/slide2.png" alt="Slide2" />
+          </li>
+          <li>
+            <img src="img/elements/back.png" alt="封底" />
+          </li>
+          <li>
+            <img src="img/elements/back1.png" alt="封底1" />
+          </li>
+        </ul>
+        <dl id="source-list" class="well tab-pane">
+          <dt>元素</dt>
+          <dd>
+            <ul>
+            </ul>
+          </dd>
+        </dl>
+      </div>
     </div>
   </div>
   <hr />
@@ -468,6 +470,7 @@
 <link rel="stylesheet" href="css/bootstrap.min.css" />
 <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
 <link rel="stylesheet" href="css/jquery-ui-1.8.21.custom.css" />
+<link rel="stylesheet" href="css/animate.css" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/admin.css" />
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>

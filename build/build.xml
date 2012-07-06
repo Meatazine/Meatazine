@@ -93,6 +93,7 @@
       <filelist dir="css/">
         <file name="bootstrap.min.css" />
         <file name="bootstrap-responsive.min.css" />
+        <file name="animate.css" />
       </filelist>
     </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
