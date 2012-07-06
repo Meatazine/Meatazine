@@ -418,8 +418,8 @@
         期间请不要关闭浏览器或电脑。发布完成后，可以点击下方的按钮下载应用安装包。
       </p>
       <ol>
-        <li>生成压缩包</li>
-        <li>上传压缩包</li>
+        <li>生成压缩包 <span class="zip-progress"></span></li>
+        <li>上传压缩包 <span class="upload-progress"></span></li>
         <li>服务器打包成应用</li>
         <li>
           完成！请下载<br />
@@ -440,9 +440,10 @@
       <p>导出的zip暂时无法导入再次编辑。<br />
         压缩时间和杂志大小有关，请不要关闭浏览器或电脑。
       </p>
-      <ol>
-        <li>压缩文件中，请耐心等待。</li>
-      </ol>
+      <p>
+        压缩文件中，请耐心等待。<br />
+        <span class="progress"></span>
+      </p>
     </div>
   </div>
   <div id="help" class="modal fade hide">
@@ -499,6 +500,7 @@
 <script src="js/popup/ScreenSizeSelector.js"></script>
 <script src="js/popup/PublishStatus.js"></script>
 <script src="js/popup/BookConfig.js"></script>
+<script src="js/popup/Export.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

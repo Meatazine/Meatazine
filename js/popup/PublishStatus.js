@@ -9,6 +9,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
      'shown': this.shownHandler,
      'hidden': this.hiddenHandler, 
     }, {self: this});
+    this.model.on('change:platform', this.model_platformChangeHandler, this);
   },
   showStep: function (index) {
     this.$('li').eq(index - 1).toggleClass('active');
@@ -27,6 +28,19 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   downloadHandler: function (event) {
     location.href = './api/static/' + this.model.get('id') + '.' + $(event.target).attr('data-target');
   },
+  model_platformChangeHandler: function () {
+    var platform = this.model.get('platform');
+    if (platform >> 1 & 0x1) {
+      this.$('[data-target=apk]').show();
+    } else {
+      this.$('[data-target=apk]').hide();
+    }
+    if (platform & 0x1) {
+      this.$('[data-target=ipa]').show();
+    } else {
+      this.$('[data-target=ipa]').hide();
+    }
+  },
   model_publishStartHandler: function () {
     this.showStep(2);
   },
@@ -36,11 +50,8 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   model_publishCompleteHandler: function () {
     this.finish();
   },
-  model_zipAddHandler: function (total) {
-    
-  },
   model_zipProgressHandler: function (progress, total) {
-    
+    this.$('.zip-progress').text('（' + progress + '/' + total + '）');
   },
   hiddenHandler: function (event) {
     event.data.self.model.off(null, null, event.data.self);
@@ -51,7 +62,6 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     self.model.on('publish:start', self.model_publishStartHandler, self);
     self.model.on('publish:uploaded', self.model_publishUploadedHandler, self);
     self.model.on('publish:complete', self.model_publishCompleteHandler, self);
-    self.model.on('zip:add', self.model_zipAddHandler, self);
     self.model.on('zip:progress', self.model_zipProgressHandler, self);
     
     self.model.publish();

@@ -41,9 +41,6 @@ jQuery.namespace('Meatazine.model');
         htmls.push(this.get('pages').at(i).get('renderedHTML'));
       }
       data.content = htmls.join('###');
-      zip.on('add', function (total) {
-        this.trigger('zip:add', total);
-      });
       zip.on('progress', function (progress, total) {
         this.trigger('zip:progress', progress, total);
       }, this);

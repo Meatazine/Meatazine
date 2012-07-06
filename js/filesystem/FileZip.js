@@ -20,7 +20,6 @@ Meatazine.filesystem.FileZip = function () {
       url: url
     });
     total += 1;
-    this.trigger('add', total);
     if (isLoading) {
       return;
     }
