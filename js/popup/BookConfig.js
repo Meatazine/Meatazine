@@ -54,7 +54,13 @@ Meatazine.popup.BookConfig = Backbone.View.extend({
     this.model.set({name: event.target.value}, {silent: true});
   },
   bookType_changeHandler: function (event) {
-    
+    var value = 0;
+    this.$('.platform').each(function (i) {
+      if ($(this).hasClass('active')) {
+        value += 1 << i;
+      }
+    });
+    this.model.set('platform', value);
   },
   img_errorHandler: function (event) {
     $(event.target).addClass('hide');

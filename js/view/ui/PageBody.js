@@ -128,6 +128,9 @@ jQuery.namespace('Meatazine.view.ui');
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
     source_selectHandler: function () {
+      if (this.model.get('templateType') == this.options.source.get('type')) {
+        return;
+      }
       this.model.reset();
       this.model.set({
         templateType: this.options.source.get('type'),

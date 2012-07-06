@@ -9,6 +9,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
      'shown': this.shownHandler,
      'hidden': this.hiddenHandler, 
     }, {self: this});
+    this.initDownloadButtons();
     this.model.on('change:platform', this.model_platformChangeHandler, this);
   },
   showStep: function (index) {
@@ -19,7 +20,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   },
   finish: function () {
     this.showStep(4);
-    this.$('button').removeProp('disabled');
+    this.$('button').prop('disabled', false);
   },
   reset: function () {
     this.$('li').removeClass('active pass');
@@ -28,7 +29,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   downloadHandler: function (event) {
     location.href = './api/static/' + this.model.get('id') + '.' + $(event.target).attr('data-target');
   },
-  model_platformChangeHandler: function () {
+  initDownloadButtons: function () {
     var platform = this.model.get('platform');
     if (platform >> 1 & 0x1) {
       this.$('[data-target=apk]').show();
@@ -40,6 +41,9 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     } else {
       this.$('[data-target=ipa]').hide();
     }
+  },
+  model_platformChangeHandler: function () {
+    this.initDownloadButtons();
   },
   model_publishStartHandler: function () {
     this.showStep(2);
@@ -58,6 +62,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   },
   shownHandler: function (event) {
     var self = event.data.self;
+    self.reset();
     self.showStep(1);
     self.model.on('publish:start', self.model_publishStartHandler, self);
     self.model.on('publish:uploaded', self.model_publishUploadedHandler, self);
