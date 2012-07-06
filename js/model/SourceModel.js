@@ -28,12 +28,25 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     });
   },
   parse: function (response) {
+    var type = this.loadQueue.shift();
     this.isLoading = false;
-    this.templates[this.loadQueue.shift()] = response;
-    this.trigger('complete');
+    this.templates[type] = response;
+    this.set('type', type);
     if(this.loadQueue.length > 0) {
       this.fetch();
     }
+  },
+  set: function (attributes, options) {
+    if (_.isObject(attributes)) {
+      if (attributes.hasOwnProperty('type') && attributes.type != '' && !this.hasTemplate(attributes.type)) {
+        this.fetch(attributes.type);
+        delete attributes.type;
+      }
+    } else if (attributes == 'type' && !this.hasTemplate(options)) {
+      this.fetch(options);
+      return;
+    }
+    Backbone.Model.prototype.set.call(this, attributes, options);
   },
   // 页面模板
   hasTemplate: function (type) {
