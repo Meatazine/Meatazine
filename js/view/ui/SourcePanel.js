@@ -5,7 +5,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   contents: null,
   removeButton: null,
   events: {
-    "click .btn": "tab_changeHandler",
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
@@ -20,12 +19,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
     this.currentPanel = this.$('#template-list');
     this.options.book.on('change:size', this.resizeHandler, this);
+    this.options.book.get('pages').on('add', this.pages_addHandler, this);
     this.model.setSourceTemplate(this.$('#source-list').html());
     this.model.on('change:type', this.model_typeChangeHandler, this);
-    this.render();
-  },
-  render: function () {
-  	this.$('#source-list').hide();
+    delete this.options;
   },
   createSourceItem: function (model) {
     var template = this.model.getSourceTemplate(model),
@@ -99,6 +96,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       this.$('#template-list li').eq(index).trigger('click');
     }
   },
+  pages_addHandler: function (model) {
+    
+  },
   pageList_selectHandler: function (model) {
     if (this.contents instanceof Meatazine.model.SinglePageModel) {
       this.contents.off();
@@ -136,14 +136,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         });
     target.replaceWith(input);
     input.focus();
-  },
-  tab_changeHandler: function (event) {
-    if (this.currentPanel != null) {
-      this.currentPanel.hide();
-    }
-    var target = $(event.currentTarget).attr('data-for');
-    this.currentPanel = this.$('#' + target);
-    this.currentPanel.show();
   },
   template_clickHandler: function (event) {
     if (!this.enabled) {

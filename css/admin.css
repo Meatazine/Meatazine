@@ -264,8 +264,11 @@ body {
   border-top-color:#CCC;
   margin:10px 0;
 }
-#panel .btn-group button {
-  width:150px;
+#panel .btn-group .btn {
+  width:128px;
+}
+#panel .nav-tabs {
+  border:none;
 }
 #panel .well {
   width:260px;
