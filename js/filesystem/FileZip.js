@@ -42,6 +42,7 @@ Meatazine.filesystem.FileZip = function () {
       base64: base64,
       compression: compression
     });
+    self.trigger('complete');
   }
   function file_readCompleteHandler(content) {
     var item = queue.shift();
@@ -73,9 +74,10 @@ Meatazine.filesystem.FileZip = function () {
     } else {
       isLoading = false;
       total = 0;
+      self.trigger('progress', total, total);
       self.trigger('ready');
       if (isAutoDownload) {
-        self.downloadZip();
+        setTimeout(self.downloadZip, 20);
       }
     }
   }

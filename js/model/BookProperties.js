@@ -130,21 +130,25 @@ jQuery.namespace('Meatazine.model');
           zip = this.createZip();
       zip.on('ready', function () {
         var zipData = zip.generate(false, 'DEFLATE'),
-            byteArray = new Uint8Array(zipData.length);
+            byteArray = new Uint8Array(zipData.length)
+            xhr;
         for (var i = 0, len = zipData.length; i < len; i++) {
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
-        $.ajax({
-          url: './api/save.php?id=' + self.get('id'),
-          type: 'POST',
-          contentType: 'application/octet-stream',
-          processData: false,
-          data: byteArray.buffer,
-          success: function (data) {
-            self.trigger('publish:uploaded');
-            self.getAppPack();
-          },
-        });
+        xhr = $.ajax({
+                url: './api/save.php?id=' + self.get('id'),
+                type: 'POST',
+                contentType: 'application/octet-stream',
+                processData: false,
+                data: byteArray.buffer,
+                success: function (data) {
+                  self.trigger('publish:uploaded');
+                  self.getAppPack();
+                },
+              });
+        xhr.upload.addEventListener('progress', function (event) {
+          self.trigger('upload:progress', event.loaded / event.total);
+        })
         self.trigger('publish:start')
       });
     },

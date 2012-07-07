@@ -45,6 +45,9 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   model_platformChangeHandler: function () {
     this.initDownloadButtons();
   },
+  model_uploadProgressHandler: function (value) {
+    this.$('.upload-progress').text('（' + value + '%）');
+  },
   model_publishStartHandler: function () {
     this.showStep(2);
   },
@@ -67,7 +70,8 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     self.model.on('publish:start', self.model_publishStartHandler, self);
     self.model.on('publish:uploaded', self.model_publishUploadedHandler, self);
     self.model.on('publish:complete', self.model_publishCompleteHandler, self);
-    //self.model.on('zip:progress', self.model_zipProgressHandler, self);
+    self.model.on('zip:progress', self.model_zipProgressHandler, self);
+    self.model.on('upload:progress', self.model_uploadProgressHandler, self);
     
     self.model.publish();
   }
