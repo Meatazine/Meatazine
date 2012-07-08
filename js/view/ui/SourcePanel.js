@@ -1,6 +1,5 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.SourcePanel = Backbone.View.extend({
-  enabled: false,
   contents: null,
   removeButton: null,
   templatelist: null,
@@ -20,8 +19,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.templateList = this.$('#template-list');
     this.sourceList = this.$('#source-list');
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
-    this.options.book.on('change:size', this.resizeHandler, this);
+    this.options.book.on('change:size', this.book_resizeHandler, this);
     this.options.book.get('pages').on('add', this.pages_addHandler, this);
+    this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
     this.model.setSourceTemplate(this.$('#source-list').html());
     delete this.options;
   },
@@ -93,6 +93,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
           .siblings('.active').removeClass('active');
     }
   },
+  book_resizeHandler: function (w, h) {
+    this.templateList.add(this.sourceList).height(h - 110); // 空出按钮的位置
+  },
   input_focusOutHandler: function (event) {
     var target = $(event.target),
         index = target.parent().index(),
@@ -109,8 +112,14 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     }
   },
   pages_addHandler: function (model) {
-    this.enabled = true;
+    this.templateList.removeClass('disabled');
     this.$('.btn').eq(0).click();
+  },
+  pages_removeHandler: function (model, collection, option) {
+    if (collection.length == 0) {
+      this.templateList.addClass('disabled');
+      this.sourceList.empty();
+    }
   },
   pageList_selectHandler: function (model) {
     if (this.contents instanceof Meatazine.model.SinglePageModel) {
@@ -152,7 +161,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     input.focus();
   },
   template_clickHandler: function (event) {
-    if (!this.enabled) {
+    if (this.templateList.hasClass('disabled')) {
       return;
     }
     if ($(event.currentTarget).hasClass('active')) {
@@ -168,8 +177,5 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       .siblings('.active').removeClass('active');
     this.model.set('type', this.getTemplateType(currentTemplate.find('img').attr('src')));
     _gaq.push(['_trackEvent', 'template', 'select', this.model.get('type')]);
-  },
-  resizeHandler: function (w, h) {
-    this.templateList.add(this.sourceList).height(h - 110); // 空出按钮的位置
   },
 })

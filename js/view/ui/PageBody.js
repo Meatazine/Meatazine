@@ -51,10 +51,11 @@ jQuery.namespace('Meatazine.view.ui');
     },
     empty: function () {
       while (this.items.length > 0) {
-        this.items.shift().remove();
+        this.items.shift().off().remove();
       }
       this.$('.ui-draggable').draggable('destroy');
       this.$('.ui-resizable').resizable('destroy');
+      this.$el.empty();
     },
     refreshThumbnail: function (isReset) {
       isReset = isReset || false;

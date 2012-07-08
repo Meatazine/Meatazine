@@ -33,10 +33,13 @@ Meatazine.view.GUI = Backbone.View.extend({
   },
   pages_addHandler: function (model, collection, options) {
     this.contextButtons.enableButtons();
+    this.navbar.setBookButtonsStatus(false);
   },
   pages_removeHandler: function (model, collection, options) {
     if (collection.length == 0) {
+      this.page.empty();
       this.contextButtons.disableButtons();
+      this.navbar.setBookButtonsStatus(true);
     }
   }
 });
