@@ -38,11 +38,12 @@ Meatazine.filesystem.FileZip = function () {
     file.save('肉大师导出.zip', '', content, 'application/zip');
   }
   this.generate = function (base64, compression) {
-    return zip.generate({
+    var zippedData = zip.generate({
       base64: base64,
       compression: compression
     });
-    self.trigger('complete');
+    this.trigger('complete');
+    return zippedData;
   }
   function file_readCompleteHandler(content) {
     var item = queue.shift();

@@ -130,8 +130,8 @@ jQuery.namespace('Meatazine.model');
           zip = this.createZip();
       zip.on('ready', function () {
         var zipData = zip.generate(false, 'DEFLATE'),
-            byteArray = new Uint8Array(zipData.length)
-            xhr;
+            byteArray = new Uint8Array(zipData.length),
+            xhr = null;
         for (var i = 0, len = zipData.length; i < len; i++) {
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
