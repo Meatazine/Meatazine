@@ -6,6 +6,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       canvas = null,
       value = null,
       scale = 1,
+      image = null,
       uploader = null,
       url = '',
       x = 0,
@@ -89,6 +90,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.drawImage();
     },
     setTarget: function (value) {
+      GUI.contextButtons.showButtons(this.buttons);
+      if (image != null && image.is(value)) {
+        return;
+      }
       if (canvas != null) {
         this.saveCanvas();
         callback = arguments.callee;
@@ -99,7 +104,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
       url = image.attr('src');
       this.initScaleRange();
       this.initUploader();
-      GUI.contextButtons.showButtons(this.buttons);
     },
     startEdit: function () {
       canvas = $('<canvas>');
