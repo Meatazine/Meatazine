@@ -23,9 +23,12 @@ Meatazine.view.GUI = Backbone.View.extend({
         return false;
       },
     });
-    this.guide = new Meatazine.view.guide.Guide(this.options.page);
-    this.guide.showGuide();
     delete this.options;
+  },
+  setPage: function (page) {
+    this.page = page;
+    this.guide = new Meatazine.view.guide.GuideManager(page);
+    this.guide.showGuide();
   },
   removeLoading: function () {
     $('#loading').fadeOut();

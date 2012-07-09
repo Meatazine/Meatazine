@@ -25,10 +25,9 @@ $(function () {
   window.GUI = new Meatazine.view.GUI({
     config: config,
     book: book,
-    page: page,
   });
   GUI.contextButtons = contextButtons;
-  GUI.page = page;
+  GUI.setPage(page);
   Meatazine.popup.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);

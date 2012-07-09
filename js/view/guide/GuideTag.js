@@ -13,7 +13,7 @@ var guideTagDataCollection = [
     title: 'Select Model',
     content: 'Select a suitable model from here.',
     seq: 2,
-    targetStr: '[data-for="template-list"]',
+    targetStr: '[href="#template-list"]',
     position: 'left',
   },
   {
@@ -40,8 +40,13 @@ var guideTagDataCollection = [
 ]
 
 
-Meatazine.view.guide.GuideTag = function(title,content,seq,targetStr,position){
-  var targetObj = $(targetStr),
+Meatazine.view.guide.GuideTag = function (guideTagData) {
+  var title = guideTagData.title,
+      content = guideTagData.content,
+      seq = guideTagData.seq,
+      targetStr = guideTagData.targetStr,
+      position = guideTagData.position,
+      targetObj = $(targetStr),
       self = this;
       DIVHEIGHT = 50,
       DIVWIDTH = 200,
@@ -49,14 +54,15 @@ Meatazine.view.guide.GuideTag = function(title,content,seq,targetStr,position){
       topBar = $('.container-fluid:first');
   this.seq = seq;
   this.state = 1;
-  function chooseTitle(){
+  function chooseTitle() {
     if(seq == self.state){
       return 'Step ' + seq;
-    }
-    else
+    }else{
       return title;
+    }
   }
-  function choosePosition(divElement , triggerElement){
+  
+  function choosePosition(divElement , triggerElement) {
     var triggerTarget;
     for(var i = 0,j = targetObj.length; i<j; i++){
       if(triggerElement===targetObj[i]){
@@ -99,23 +105,23 @@ Meatazine.view.guide.GuideTag = function(title,content,seq,targetStr,position){
     return 'right';
   }
   
-  this.refreshTarget = function (){
+  this.refreshTarget = function () {
     targetObj = $(targetStr);
     this.pop();
   }
-  this.setState = function(state){
+  this.setState = function (state) {
     this.state = state;
   }
-  this.hide = function(){
+  this.hide = function () {
     targetObj.popover('hide');
   }
-  this.pop = function(){
+  this.pop = function () {
     if(seq != 0)
       targetObj.popover({title: chooseTitle , content: content , placement: choosePosition});
     else
       targetObj.popover({title: title , content: content , placement: choosePosition});
   }
-  this.show = function(){
+  this.show = function () {
     targetObj.popover('show');
   }
   
