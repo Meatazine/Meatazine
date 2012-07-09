@@ -2,6 +2,7 @@ jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.ListElement = Meatazine.view.element.BaseElement.extend({
   handleChildrenState: function () {
     var children = this.$el.children(this.tagName);
+    children.eq(0).find('img').click();
     children.slice(0, this.collection.config.number).removeClass('hide');
     children.slice(this.collection.config.number).addClass('hide');
     

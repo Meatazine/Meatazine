@@ -8,6 +8,7 @@ api/*.log
 bin/
 temp/
 jqueryui/
+js/libs/backbone.js
 export/
 img/source/
 build/*.jar

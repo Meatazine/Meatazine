@@ -118,7 +118,8 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   pages_removeHandler: function (model, collection, option) {
     if (collection.length == 0) {
-      this.templateList.addClass('disabled');
+      this.templateList.addClass('disabled')
+        .find('.active').removeClass('active');
       this.sourceList.empty();
     }
   },

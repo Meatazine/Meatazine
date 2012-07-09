@@ -8,7 +8,7 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
     this.$el.children()
       .on('click', {self: this}, this.item_clickHandler);
     if (this.collection.isModelChanged(this.collection.at(0))) {
-      this.$el.children().eq(0).trigger('click');
+      this.$el.children().eq(0).click();
     }
   },
   item_clickHandler: function (event) {

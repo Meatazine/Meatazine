@@ -4,9 +4,10 @@ Meatazine.view.GUI = Backbone.View.extend({
   navbar: null,
   page: null,
   initialize: function (options) {
-    this.options.book.on('change:size', this.book_sizeChangeHandler, this);
-    this.options.book.get('pages').on('add', this.pages_addHandler, this);
-    this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
+    var book = options.book;
+    book.on('change:size', this.book_sizeChangeHandler, this);
+    book.get('pages').on('add', this.pages_addHandler, this);
+    book.get('pages').on('remove', this.pages_removeHandler, this);
     this.navbar = new Meatazine.view.ui.NavBar({
       el: '#navbar',
       model: this.options.book,
@@ -23,9 +24,11 @@ Meatazine.view.GUI = Backbone.View.extend({
       },
     });
     window.onbeforeunload = function (event) {
-      if (!window.confirm('离开的话，您所有未保存的内容将会丢失，您确认要离开么？')) {
-        event.preventDefault();
-        return '离开的话，您所有未保存的内容将会丢失，您确认要离开么？';
+      if (book.isModified()) {
+        if(!window.confirm('离开的话，您所有未保存的内容将会丢失，您确认要离开么？')) {
+          event.preventDefault();
+          return '离开的话，您所有未保存的内容将会丢失，您确认要离开么？';
+        }
       }
     }
     delete this.options;

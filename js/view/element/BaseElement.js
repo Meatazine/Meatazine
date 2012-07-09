@@ -118,6 +118,7 @@ jQuery.namespace('Meatazine.view.element');
       return size;
     },
     handleChildrenState: function () {
+      this.$el.children().eq(0).find('img').click();
       this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
       this.$el.children().slice(this.collection.config.number).addClass('hide');
     },

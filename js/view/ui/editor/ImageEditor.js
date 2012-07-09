@@ -58,6 +58,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     initScaleRange: function () {
       scale = image.data('scale');
+      x = image.data('x') || 0;
+      y = image.data('y') || 0;
       var scaleMin = scale < 0.5 ? scale : 0.5,
           scaleMax = scale > 1.5 ? scale : 1.5,
           scaleRanger = this.buttons.find('[data-type="scale"]');
@@ -68,8 +70,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
     initUploader: function () {
       // 因为input必须change才能触发事件，所以有必要移除已经之前的标签
       if (uploader != null) {
-        uploader.remove();
-        uploader.off();
+        uploader
+          .remove()
+          .off('change');
       }
       uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
       uploader
@@ -95,7 +98,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
         return;
       }
       if (canvas != null) {
-        this.saveCanvas();
+        this.buttons.find('[data-type=edit]').removeClass('active');
+        this.stopEdit();
         callback = arguments.callee;
         args = value;
         return;
@@ -142,11 +146,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
-      image.data({
-        scale: scale,
-        x: x,
-        y: y,
-      })
       this.saveCanvas();
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
@@ -154,7 +153,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
       GUI.contextButtons.showButtons(this.buttons);
     },
     canvas_savedHandler: function (url) {
-      image.attr('src', url).data('scale', scale);
+      image.attr('src', url)
+        .data({
+          scale : scale,
+          x: x,
+          y: y
+        });
       canvas.replaceWith(image);
       canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
