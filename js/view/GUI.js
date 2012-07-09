@@ -22,6 +22,12 @@ Meatazine.view.GUI = Backbone.View.extend({
         return false;
       },
     });
+    window.onbeforeunload = function (event) {
+      if (!window.confirm('离开的话，您所有未保存的内容将会丢失，您确认要离开么？')) {
+        event.preventDefault();
+        return '离开的话，您所有未保存的内容将会丢失，您确认要离开么？';
+      }
+    }
     delete this.options;
   },
   removeLoading: function () {

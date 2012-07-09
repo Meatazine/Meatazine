@@ -8,6 +8,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
+    "mouseout #source-list li": "sourceItem_mouseOutHandler",
     "focusout #source-list input": "input_focusOutHandler",
     "keydown #source-list input": "input_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
@@ -131,7 +132,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.setTemplateType(model.get('templateType'));
   },
   removeButton_clickHandler: function (event) {
-    var target = $(event.target).parent(),
+    var target = this.removeButton.data('target'),
         index = target.index(),
         ul = target.closest('ul');
     target.remove();
@@ -147,8 +148,23 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     collection.setModelIndex(start, ui.item.index());
     _gaq.push(['_trackEvent', 'source', 'sort']);
   },
+  sourceItem_mouseOutHandler: function (event) {
+    var pos = $(event.target).offset();
+    pos.width = $(event.target).width();
+    pos.height = $(event.target).height();
+    if (pos.left > event.pageX || pos.top > event.pageY || pos.left + pos.width < event.pageX || pos.top + pos.height < event.pageY) {
+      this.removeButton.remove();
+    }
+  },
   sourceItem_mouseOverHandler: function (event) {
-    $(event.currentTarget).append(this.removeButton);
+    var target = $(event.currentTarget),
+        position = target.offset(),
+        outter = this.sourceList.offset();
+    this.removeButton
+      .css('left', position.left - outter.left + target.width() - 9)
+      .css('top', position.top - outter.top + this.sourceList.scrollTop() + 4)
+      .data('target', target)
+      .appendTo(this.sourceList);
   },
   span_clickHandler: function (event) {
     var target = $(event.target),

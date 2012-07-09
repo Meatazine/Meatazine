@@ -47,9 +47,10 @@ jQuery.namespace('Meatazine.model.element');
       if (index == -1 || index > this.length - 1) {
         return;
       }
+      isSilent = isSilent == null ? false : isSilent;
       var model = this.at(index);
-      model.off();
       this.remove(model, {silent: isSilent});
+      model.off();
       return model;
     },
     replaceAt: function (model, index, silent) {

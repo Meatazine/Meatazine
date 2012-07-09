@@ -142,7 +142,6 @@ jQuery.namespace('Meatazine.view.element');
       item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).data('scale', scale).removeClass('placeholder');
     },
     collection_removeHandler: function (model, collection, options) {
-      model.off('change', null, this);
       this.$el.children().eq(options.index).remove();
       this.handleChildrenState();
       this.trigger('change');
