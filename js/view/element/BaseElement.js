@@ -63,6 +63,7 @@ jQuery.namespace('Meatazine.view.element');
           model.trigger('select');
         })
         .appendTo(this.$el);
+      item.filter('img').add(item.find('img')).data('model', model);
       model.on('change', function (model) {
         var data = item.filter('img').add(item.find('img')).data();
             newItem = this.createItem(model);
@@ -118,9 +119,9 @@ jQuery.namespace('Meatazine.view.element');
       return size;
     },
     handleChildrenState: function () {
-      this.$el.children().eq(0).find('img').click();
-      this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
-      this.$el.children().slice(this.collection.config.number).addClass('hide');
+      var children = this.$el.children(this.tagName);
+      children.slice(0, this.collection.config.number).removeClass('hide');
+      children.slice(this.collection.config.number).addClass('hide');
     },
     handleFiles: function (files) {
       // 暂时只认图片
@@ -133,14 +134,20 @@ jQuery.namespace('Meatazine.view.element');
       var item;
       if (this.token != null && this.token.length > 0) {
         var index = this.token.eq(0).index();
-        this.collection.at(index).set("img", url);
+        this.collection.at(index).set({
+          img: url,
+          scale: scale,
+        });
         this.token = this.token.slice(1);
         item = this.$el.children().eq(index);
       } else {
-        var model = this.collection.create({img: url});
+        var model = this.collection.create({
+          img: url,
+          scale: scale,
+        });
         item = $(this.createItem(model));
       }
-      item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).data('scale', scale).removeClass('placeholder');
+      item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).removeClass('placeholder');
     },
     collection_removeHandler: function (model, collection, options) {
       this.$el.children().eq(options.index).remove();
@@ -204,6 +211,9 @@ jQuery.namespace('Meatazine.view.element');
       this.handleFiles(files);
     },
     file_completeHandler: function () {
+      var firstImg = this.$el.children().eq(0);
+      firstImg = firstImg.is('img') ? firstImg : firstImg.find('img');
+      firstImg.click();
       imageResizer.off(null, null, this);
       this.handleChildrenState();
       this.trigger('change', this.collection);

@@ -17,10 +17,14 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     this.$('.btn-group:not(.always-show)').hide();
   },
   showButtons: function (buttons) {
+    // 不同元素的编辑按钮切换时，可能需要先终止上一个元素的编辑状态
+    if (this.$('[data-type=edit]').filter(':visible').hasClass('active')) {
+      this.$('[data-type=edit]').filter(':visible').click();
+    }
     this.hide();
     buttons.show();
     var self = this;
-    // 为避免冒泡中触发时间，暂停一下才绑定
+    // 为避免冒泡中触发事件，暂停一下才绑定
     setTimeout(function () {
       $('body').one('click', {self: self}, self.body_clickHandler);
     }, 50);

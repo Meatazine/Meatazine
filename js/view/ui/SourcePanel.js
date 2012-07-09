@@ -30,8 +30,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     var template = this.model.getSourceTemplate(model),
         item = $(Meatazine.utils.render(template, model));
     model.on('change', function (model) {
-      model.off('select');
-      model.off('change', arguments.callee);
+      var changed = model.changedAttributes();
+      _.each(_.keys(changed), function (key) {
+        key == 'img' ? item.find('img').attr('src', changed[key]) : item.find(key).text(changed[key]);
+      });
       item.replaceWith(this.createSourceItem(model));
     }, this);
     model.on('select', function () {
@@ -65,7 +67,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   highlightOn: function (item) {
     this.$('.btn').eq(1).click();
     item.addClass('animated flash');
-    item[0].scrollIntoView();
+    item[0].scrollIntoView(false);
     setTimeout(function () {
       item.removeClass('animated flash');
     }, 1000);
@@ -103,7 +105,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         collection = target.closest('ul').data('collection'),
         value = target.val(),
         key = target.attr('name');
-    target.replaceWith('<span class>' + value + '</span>');
+    target.replaceWith('<span class="key">' + value + '</span>');
     collection.at(index).set(key, value);
     _gaq.push(['_trackEvent', 'source', 'edit']);
   },
