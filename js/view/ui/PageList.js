@@ -48,7 +48,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     });
     this.$('li').disableSelection();
     var model = this.collection.create();
-    item.data('cid', model.cid).trigger('click');
+    item.trigger('click');
     this.refreshPageNumber();
     _gaq.push(['_trackEvent', 'page', 'add']);
   },
@@ -58,21 +58,22 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     for (var i = 0, len = this.collection.length; i < len; i++) {
       var model = this.collection.at(i),
           item = this.createItem();
-      item.data('cid', model.cid);
       this.emptyItems.push(item);
     }
     this.list.sortable({
       items: 'li.item'
     });
     this.$('li').disableSelection();
-    this.emptyItems.shift().trigger('click');
+    if (this.emptyItems.length > 0) {
+      this.emptyItems.shift().trigger('click');
+    }
   },
   book_resizeHandler: function (w, h) {
     this.list.height(h - 54); // 把按钮和数字空出来
   },
   item_clickHandler: function (event) {
     if (this.currentItem != null) {
-      if (this.currentItem.index() === $(event.currentTarget).index()) {
+      if (this.currentItem.is(event.currentTarget)) {
         return;
       }
       this.currentItem.removeClass('active');
@@ -80,7 +81,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.currentItem = $(event.currentTarget);
     this.currentItem.addClass('active');
     this.refreshPageNumber();
-    this.trigger('select', this.collection.getByCid(this.currentItem.data('cid')));
+    this.trigger('select', this.collection.at(this.currentItem.index()));
     _gaq.push(['_trackEvent', 'page', 'select']);
   },
   item_mouseOutHandler: function (event) {
@@ -101,14 +102,14 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   removeButton_clickHandler: function (event) {
     var target = this.removeButton.data('target');
     this.length--;
-    if (target.index() === this.currentItem.index() && this.length > 0) {
+    if (this.currentItem.is(target) && this.length > 0) {
       if (target.index() > 0) {
         this.getItem(target.index() - 1).trigger('click');
       } else {
-        this.getItem(target.index() + 1).trigger('click');
+        this.getItem(0).trigger('click');
       }
     }
-    this.collection.remove(this.collection.getByCid(target.data('cid')));
+    this.collection.removeAt(target.index());
     target
       .off()
       .remove();

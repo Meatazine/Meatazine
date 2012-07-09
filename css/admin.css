@@ -93,6 +93,12 @@ body {
   color:#46a546;
 }
 
+#book-config .icon, #book-config .cover {
+  max-height:150px;
+  border:1px solid #CCC;
+  padding:1px;
+}
+
 /** ======================
  * context menu
  * 功能菜单项  
@@ -299,6 +305,12 @@ body {
   border-color:#08C;
   box-shadow:0 1px 4px rgba(0, 105, 214, 0.25);
 }
+#template-list.disabled li:hover {
+  opacity: 0.8;
+  border-color: #DDD;
+  box-shadow:0 1px 1px rgba(0, 0, 0, 0.075);
+  cursor: default;
+}
 #template-list li.active {
   border-color: #08C;
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
@@ -367,4 +379,13 @@ body {
 }
 .carousel p {
   line-height:20px;
+}
+.dropdown-menu .disabled {
+  color:#CCC;
+  padding:3px 15px;
+  cursor: default;
+}
+.dropdown-menu .disabled:hover {
+  color:#CCC;
+  background-color: #FFF;
 }

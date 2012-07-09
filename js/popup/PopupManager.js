@@ -3,6 +3,7 @@ jQuery.namespace('Meatazine.popup');
   var publish,
       welcome,
       config,
+      exportPopup,
       screenSize,
       configModel,
       bookModel,
@@ -30,8 +31,26 @@ jQuery.namespace('Meatazine.popup');
               if (publish == null) {
                 publish = new Meatazine.popup.PublishStatus({
                   el: '#publish',
-                  model: book,
+                  model: bookModel,
                 });
+              }
+              break;
+              
+            case 'export-zip':
+              if (exportPopup == null) {
+                exportPopup = new Meatazine.popup.Export({
+                  el: '#export',
+                  model: bookModel,
+                })
+              }
+              break;
+              
+            case 'book-config':
+              if (config == null) {
+                config = new Meatazine.popup.BookConfig({
+                  el: '#book-config',
+                  model: bookModel,
+                })
               }
               break;
           }

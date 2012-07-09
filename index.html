@@ -46,14 +46,14 @@
               文件 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#save" class="system-button">保存</a></li>
+              <li><a href="#save" class="system-button disabled">保存</a></li>
               <li><a href="#load" class="system-button">读取</a></li>
-              <li><a href="#exportZip" class="system-button">导出</a></li>
+              <li><a href="#export-zip" class="system-button disabled">导出</a></li>
               <li class="divider"></li>
-              <li><a href="#preview" class="system-button" target="_blank">预览</a></li>
+              <li><a href="#preview" class="system-button disabled" target="_blank">预览</a></li>
               <li class="divider"></li>
               <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
-              <li><a href="#publish" class="system-button" title="目前只支持发布Android应用" data-toggle="modal">发布</a></li>
+              <li><a href="#publish" class="system-button disabled" data-toggle="modal">发布</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -204,7 +204,7 @@
       </div>
       <hr />
       <div class="tab-content">
-        <ul id="template-list" class="well tab-pane active">
+        <ul id="template-list" class="well tab-pane active disabled">
           <li>
             <img src="img/elements/face.png" alt="封面" />
           </li>
@@ -300,7 +300,7 @@
               <h4>请大家暂时使用人肉编译法</h4>
               <p>
                 另外附上可编译的工程压缩包下载：
-                <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.ipa.zip" target="_blank">iOS工程</a>
+                <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.xcarchive.zip" target="_blank">iOS工程</a>
                 <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.apk.zip" target="_blank">Android工程</a><br />
                 将导出的zip文件解压到工程的www目录下，然后编译即可。
               </p>
@@ -373,37 +373,39 @@
           <div class="control-group">
             <label class="control-label" for="book-icon">应用图标</label>
             <div class="controls">
-              <img src="" />
-              <input type="file" />
+              <img src="" class="icon" />
+              <input type="file" id="book-icon" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" for="book-cover">应用封面</label>
             <div class="controls">
-              <img src="" />
-              <input type="file" />
+              <img src="" class="cover" />
+              <input type="file" id="book-cover" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label">目标平台</label>
             <div class="controls btn-group" data-toggle="buttons-checkbox">
-              <button class="btn active">Android</button>
-              <button class="btn">iOS</button>
-              <button class="btn">Windows Phone</button>
+              <button class="platform btn active">iOS</button>
+              <button class="platform btn active">Android</button>
+              <button class="platform btn" disabled="true">Windows Phone</button>
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">应用模板</label>
+            <label class="control-label" for="book-type">应用模板</label>
             <div class="controls">
-              
+              <select id="book-type">
+                <option value="megazine">杂志</option>
+                <option value="parallax" disabled="true">视差滚动</option>
+              </select>
             </div>
           </div>
         </fieldset>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary">确定</button>
-      <button class="btn" data-dismiss="modal">取消</button>
+      <button class="btn btn-info" disabled="true"></button>
     </div>
   </div>
   <div id="publish" class="modal hide">
@@ -411,23 +413,23 @@
       <h3>发布</h3>
     </div>
     <div class="modal-body">
-      <!--<p>
+      <p>
         受网速和服务器负载影响，发布需要几分钟到十几分钟时间，请耐心等待。<br />
         期间请不要关闭浏览器或电脑。发布完成后，可以点击下方的按钮下载应用安装包。
       </p>
       <ol>
-        <li>生成压缩包</li>
-        <li>上传压缩包</li>
+        <li>生成压缩包 <span class="zip-progress"></span></li>
+        <li>上传压缩包 <span class="upload-progress"></span></li>
         <li>服务器打包成应用</li>
         <li>
           完成！请下载<br />
-          <button class="btn btn-success download" data-target=".apk"><i class="icon-download icon-white"></i> 下载APK</button>
+          <button class="btn btn-success download" data-target="apk" disabled="true"><i class="icon-download icon-white"></i> 下载Android安装包</button>
+          <button class="btn btn-success download" data-target="ipa" disabled="true"><i class="icon-download icon-white"></i> 下载iOS安装包</button>
         </li>
-      </ol>-->
-      <p>发布功能暂时不能使用，请静待肉大师提高功力</p>
+      </ol>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" data-dismiss="modal">关闭</button>
+      <button class="btn btn-primary" data-dismiss="modal" disabled="true">关闭</button>
     </div>
   </div>
   <div id="export-zip" class="modal hide">
@@ -438,9 +440,10 @@
       <p>导出的zip暂时无法导入再次编辑。<br />
         压缩时间和杂志大小有关，请不要关闭浏览器或电脑。
       </p>
-      <ol>
-        <li>压缩文件中，请耐心等待。</li>
-      </ol>
+      <p>
+        压缩文件中，请耐心等待。<br />
+        <span class="progress"></span>
+      </p>
     </div>
   </div>
   <div id="help" class="modal fade hide">
@@ -496,6 +499,8 @@
 <script src="js/popup/Welcome.js"></script>
 <script src="js/popup/ScreenSizeSelector.js"></script>
 <script src="js/popup/PublishStatus.js"></script>
+<script src="js/popup/BookConfig.js"></script>
+<script src="js/popup/Export.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

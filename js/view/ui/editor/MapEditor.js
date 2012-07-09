@@ -53,8 +53,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.buttons.find('.geo-search button').on('click', this.geoSearchButton_clickHandler);
     },
     setTarget: function (value) {
+      if (div != null) {
+        div.off('click', this.div_clickHandler);
+      }
       map = value;
       div = $(map.getDiv());
+      div.on('click', {buttons: this.buttons}, this.div_clickHandler);
       model = div.data('model');
       GUI.contextButtons.showButtons(this.buttons);
     },
@@ -82,6 +86,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
     addMarkerButton_clickHandler: function (event) {
       event.data.self.addMapMarker(event.pageX, event.pageY);
       event.stopPropagation();
+    },
+    div_clickHandler: function (event) {
+      GUI.contextButtons.showButtons(event.data.buttons);
     },
     geoSearchButton_clickHandler: function (event) {
       var coder = new google.maps.Geocoder(),

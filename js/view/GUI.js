@@ -9,13 +9,13 @@ Meatazine.view.GUI = Backbone.View.extend({
     this.options.book.get('pages').on('add', this.pages_addHandler, this);
     this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
     this.navbar = new Meatazine.view.ui.NavBar({
-      el: '#navbar'
+      el: '#navbar',
+      model: this.options.book,
     });
-    this.navbar.on('select', this.navbar_selectHandler, this);
     this.removeLoading();
     $('body').on({
       'keydown': function (event) {
-        if (event.keyCode == 8) { // backspace
+        if (event.keyCode == 8 && !(/input|textarea/i).test(event.target.tagName)) { // backspace
           return false;
         }
       },
@@ -37,28 +37,15 @@ Meatazine.view.GUI = Backbone.View.extend({
   book_sizeChangeHandler: function (w) {
     $('#page-area').width(474 + w);
   },
-  navbar_selectHandler: function (type) {
-    switch (type) {
-      case 'exportZip':
-        $('#export-zip').modal({
-          show: true,
-          keyboard: false,
-        });
-        break;
-        
-      case 'publish':
-        return;
-        break;
-    }
-    _gaq.push(['_trackEvent', 'book', type]);
-    this.book[type]();
-  },
   pages_addHandler: function (model, collection, options) {
     this.contextButtons.enableButtons();
+    this.navbar.setBookButtonsStatus(false);
   },
   pages_removeHandler: function (model, collection, options) {
     if (collection.length == 0) {
+      this.page.empty();
       this.contextButtons.disableButtons();
+      this.navbar.setBookButtonsStatus(true);
     }
   }
 });

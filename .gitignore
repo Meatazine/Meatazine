@@ -1,8 +1,10 @@
-api/android
-api/assets
-api/static
-api/temp
+api/assets/
+api/static/
+api/temp/
+api/android/
 api/*.ipa
+api/*.apk
+api/*.log
 bin/
 temp/
 jqueryui/
