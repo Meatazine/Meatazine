@@ -50,7 +50,7 @@
               <li><a href="#load" class="system-button">读取</a></li>
               <li><a href="#export-zip" class="system-button disabled">导出</a></li>
               <li class="divider"></li>
-              <li><a href="#preview" class="system-button disabled" target="_blank">预览</a></li>
+              <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
               <li class="divider"></li>
               <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
               <li><a href="#publish" class="system-button disabled" data-toggle="modal">发布</a></li>
@@ -466,6 +466,15 @@
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>
     </div>
   </div>
+  <div id="preview" class="modal fade hide">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>预览</h3>
+    </div>
+    <div class="modal-body">
+      
+    </div>
+  </div>
 </div>
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -502,6 +511,7 @@
 <script src="js/popup/PublishStatus.js"></script>
 <script src="js/popup/BookConfig.js"></script>
 <script src="js/popup/Export.js"></script>
+<script src="js/popup/Preview.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

@@ -10,8 +10,11 @@ function BookReader(el, w, h) {
       totalPage = 0,
       width = parseInt(w),
       height = parseInt(h);
-  this.start = function () {
-    var content = $('#book-content').val();
+  this.start = function (content) {
+    content = content || $('#book-content').val();
+    if (!content) {
+      return;
+    }
     $('#book-content').remove();
     pages = content.split('###');
     totalPage = pages.length;
@@ -26,8 +29,7 @@ function BookReader(el, w, h) {
     resetPages();
   }
   this.addContent = function (html) {
-    body.html(html);
-    this.start();
+    this.start(html);
   }
   /**
    * 检查页所处的位置
@@ -105,7 +107,8 @@ function BookReader(el, w, h) {
     }
     style = $('<style>');
     style
-      .append('#' + id + ', .page, .dummy {width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
+      .append('#' + id + ', .page{width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
+      .append('.dummy {width:' + fitWidth + 'px;}')
       .append('#' + id + ' {margin:' + margin + '}\n')
       .append('#container {width:' + fitWidth * totalPage + 'px}')
       .appendTo($('head'));
@@ -173,9 +176,9 @@ function BookReader(el, w, h) {
       return $(this).attr('ori') || this.src;
     })
     // 幻灯片
-    page.find('.slide-navi').children().on('tap', slideNavi_tapHandler);
+    page.find('.slide-navi').on('click', 'li', slideNavi_clickHandler);
     // 切换效果
-    page.find('[data-toggle]').on('tap', dataToggle_tapHandler);
+    page.find('[data-toggle]').on('click', dataToggle_clickHandler);
     // 地图
     page.find('.map-container').each(function (i) {
       var data = JSON.parse($(this).attr('data-map'));
@@ -220,7 +223,7 @@ function BookReader(el, w, h) {
   function turnToPage(index) {
     scroll.scrollToPage(index, 0);
   }
-  function dataToggle_tapHandler(event) {
+  function dataToggle_clickHandler(event) {
     var target = $(event.target).siblings('.' + $(event.target).attr('data-toggle')),
         config = JSON.parse(target.attr('data-animate')),
         offset = target.offset(),
@@ -232,13 +235,13 @@ function BookReader(el, w, h) {
     }
     target
       .animate(config, '200')
-      .one('tap', function (event) {
+      .one('click', function (event) {
         $(this)
           .animate(origin, '200')
           .off('mouseup', stopEvent);
       });
   }
-  function slideNavi_tapHandler(event) {
+  function slideNavi_clickHandler(event) {
     var target = $(event.currentTarget),
         parent = target.closest('.page'),
         body = parent.find('.slide-main'),
