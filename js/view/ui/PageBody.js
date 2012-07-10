@@ -120,7 +120,9 @@ jQuery.namespace('Meatazine.view.ui');
         model.set('template', this.options.source.getTemplate(model.get('templateType')));
       }
       this.model = model;
-      this.render();
+      if (model.get('template')) {
+        this.render();
+      }
     },
     resizable_resizeStopHandler:function (event, ui) {
       this.refreshThumbnail();
