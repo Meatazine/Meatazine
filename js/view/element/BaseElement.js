@@ -42,7 +42,7 @@ jQuery.namespace('Meatazine.view.element');
       this.handleChildrenState();
     },
     remove: function () {
-      if (currentEditor.isEditing) {
+      if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor && currentEditor.isEditing) {
         currentEditor.buttons.find('[data-type=edit]').click();
       }
       imageEditor.off(null, null, this);
