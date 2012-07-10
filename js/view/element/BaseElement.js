@@ -42,6 +42,9 @@ jQuery.namespace('Meatazine.view.element');
       this.handleChildrenState();
     },
     remove: function () {
+      if (currentEditor.isEditing) {
+        currentEditor.buttons.find('[data-type=edit]').click();
+      }
       imageEditor.off(null, null, this);
       mapEditor.off(null, null, this);
       this.collection.off(null, null, this);
@@ -60,7 +63,9 @@ jQuery.namespace('Meatazine.view.element');
       }
       item
         .on('click', function (event) {
-          model.trigger('select');
+          if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
+            model.trigger('select');
+          }
         })
         .appendTo(this.$el);
       item.filter('img').add(item.find('img')).data('model', model);

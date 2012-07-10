@@ -1,5 +1,6 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
+  isEditing: false,
   buttons: null,
   initialize: function (buttons) {
     this.buttons = $(buttons);
@@ -16,10 +17,10 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
     
   },
   startEdit: function () {
-    
+    this.isEditing = true;
   },
   stopEdit: function () {
-    
+    this.isEditing = false;
   },
   editButton_clickHandler: function (event) {
     var target = $(event.target);

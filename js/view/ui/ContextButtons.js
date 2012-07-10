@@ -43,16 +43,18 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
       });
       $('#page-body').off('click', clickHandler);
       helper.remove();
-      if (event.currentTarget == $('#page-body')[0]) {
+      if ($('#page-body').is(event.currentTarget)) {
         var pos = $(this).offset();
         GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
       }
+      Meatazine.utils.Mouse.status = Meatazine.utils.Mouse.NORMAL;
     }
     $('body').on({
       'mousemove': mouseMoveHandler,
       'click': clickHandler,
     });
     $('#page-body').on('click', clickHandler);
+    Meatazine.utils.Mouse.status = Meatazine.utils.Mouse.ADD;
     event.stopPropagation();
   },
   body_clickHandler: function (event) {

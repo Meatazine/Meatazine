@@ -93,7 +93,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       if (image != null && image.is(value)) {
         return;
       }
-      if (canvas != null) {
+      if (this.isEditing) {
         this.buttons.find('[data-type=edit]').click();
         callback = arguments.callee;
         args = value;
@@ -105,6 +105,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.initUploader();
     },
     startEdit: function () {
+      this.isEditing = true;
       canvas = $('<canvas>');
       var self = this,
           sourceUrl = this.getSourceImageUrl(image.attr('src')),
@@ -143,6 +144,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
+      this.isEditing = false;
       this.saveCanvas();
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },

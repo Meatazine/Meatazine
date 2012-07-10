@@ -33,6 +33,7 @@
     <concat destfile="${temp}/apps.js" encoding="UTF-8" fixlastline="yes">
       <filelist dir="js/">
         <file name="utils/Utils.js" />
+        <file name="utils/Mouse.js" />
         <file name="filesystem/FileReferrence.js" />
         <file name="filesystem/FileZip.js" />
         <file name="filesystem/ImageResizer.js" />
