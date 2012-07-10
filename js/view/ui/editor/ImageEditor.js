@@ -101,6 +101,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       image = $(value);
       model = image.data('model');
+      this.buttons.find('[data-type="edit"]').prop('disabled', image.hasClass('placeholder'));
       this.initScaleRange();
       this.initUploader();
     },
@@ -180,7 +181,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
     uploader_selectHandler: function (event) {
       var self = event.data.self;
       self.trigger('select:image', uploader[0].files);
-      self.buttons.find('[data-type="edit"]').prop('disabled', false);
     },
   });
 })(Meatazine.view.ui.editor);

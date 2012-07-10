@@ -3,6 +3,7 @@ Meatazine.view.GUI = Backbone.View.extend({
   contextButtons: null,
   navbar: null,
   page: null,
+  VERSION: '0.1.5.@version@',
   initialize: function (options) {
     var book = options.book;
     book.on('change:size', this.book_sizeChangeHandler, this);
