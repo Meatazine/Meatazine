@@ -137,7 +137,7 @@
     <replace file="${dist}/index.html" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
     </replace>
-    <replace file="${dist}/apps.js" encoding="UTF-8">
+    <replace file="${dist}/js/apps.js" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
     </replace>
     <delete dir="${temp}" />

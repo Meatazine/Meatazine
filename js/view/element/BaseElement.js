@@ -59,7 +59,7 @@ jQuery.namespace('Meatazine.view.element');
       if (isToken) {
         this.token = this.token == null ? item : this.token.add(item);
       } else {
-        this.$('.placeholder[src!="img/spacer.gif"]').removeClass('placeholder');
+        item.find('.placeholder').add(item.filter('.placeholder')).removeClass('placeholder');
       }
       item
         .on('click', function (event) {
