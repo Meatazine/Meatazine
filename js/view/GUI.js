@@ -2,7 +2,6 @@ jQuery.namespace('Meatazine.view');
 Meatazine.view.GUI = Backbone.View.extend({
   contextButtons: null,
   navbar: null,
-  guide: null,
   page: null,
   initialize: function (options) {
     this.options.book.on('change:size', this.book_sizeChangeHandler, this);
@@ -24,11 +23,6 @@ Meatazine.view.GUI = Backbone.View.extend({
       },
     });
     delete this.options;
-  },
-  setPage: function (page) {
-    this.page = page;
-    this.guide = new Meatazine.view.guide.GuideManager(page);
-    this.guide.showGuide();
   },
   removeLoading: function () {
     $('#loading').fadeOut();

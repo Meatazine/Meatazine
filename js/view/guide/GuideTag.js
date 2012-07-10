@@ -1,129 +1,185 @@
 jQuery.namespace('Meatazine.view.guide');
 //title , content , seq can be changed .The others are remained.
 //seq=0 means it's a non-main guide.otherwise it's a main guide.
-var guideTagDataCollection = [
+//ps: targetStr means the target(s) that will be clicked
+Meatazine.view.guide.GuideTagDataCollection = [
   {
     title: 'Add Page',
     content: 'Click here to add a new page.',
     seq: 1,
     targetStr: '.add-button',
-    position: 'right',
   },
   {
     title: 'Select Model',
     content: 'Select a suitable model from here.',
     seq: 2,
-    targetStr: '[href="#template-list"]',
-    position: 'left',
+    targetStr: '#template-list li',
   },
   {
     title: 'Upload Picture',
     content: 'Upload your picture here.',
     seq: 3,
     targetStr: '#page-body img',
-    position: 'right',
   },
   {
     title: 'Motify words',
     content: 'Motify the words here.',
-    seq: 4,
+    seq: 3,
     targetStr: '#page-body .editable',
-    position: 'top',
   },
   {
     title: 'Save It',
     content: 'You have done a lot.Save it:)',
-    seq: 5,
-    targetStr: '[href="#"][data-toggle="dropdown"]:first',
-    position: 'bottom',
+    seq: 4,
+    targetStr: '[data-toggle="dropdown"]:first',
   },
 ]
 
 
-Meatazine.view.guide.GuideTag = function (guideTagData) {
-  var title = guideTagData.title,
-      content = guideTagData.content,
-      seq = guideTagData.seq,
-      targetStr = guideTagData.targetStr,
-      position = guideTagData.position,
-      targetObj = $(targetStr),
-      self = this;
-      DIVHEIGHT = 50,
-      DIVWIDTH = 200,
+Meatazine.view.guide.GuideTag = function (tagData) {
+  var targetObj = $(tagData.targetStr+':first'),
+      targetStrList = tagData.targetStr.split(' '),
+      targetObjHostStr = targetStrList[0],
+      targetSubObjStr = targetStrList.slice(1).join(),
+      self = this,
+      clickRegisted = false,
+      DIVHEIGHT = 100,
+      DIVWIDTH = 289,
       htmlBody = $('body'),
       topBar = $('.container-fluid:first');
-  this.seq = seq;
+  this.seq = tagData.seq;
   this.state = 1;
-  function chooseTitle() {
-    if(seq == self.state){
-      return 'Step ' + seq;
-    }else{
-      return title;
-    }
+  function clickRegist() {
+    $(targetObjHostStr).on('click',targetSubObjStr,function () {
+      self.trigger('click:next',targetObjHostStr);
+    });
+  }
+  function clickUnregist() {
+    $(targetObjHostStr).off('click',targetSubObjStr);
   }
   
-  function choosePosition(divElement , triggerElement) {
-    var triggerTarget;
-    for(var i = 0,j = targetObj.length; i<j; i++){
-      if(triggerElement===targetObj[i]){
-        triggerTarget = $(targetStr+':eq('+i+')');
-        break;
-      }
-    };
-    var targetPosition = triggerTarget.offset(),
+  function choosePosition() {
+    var targetPosition = targetObj.offset(),
         y = targetPosition.top,
         x = targetPosition.left,
-        height = triggerTarget.height(),
-        width = triggerTarget.width(),
-        right = true,
-        left = true,
-        top = true,
-        bottom = true;
-        
-    if( $('body').scrollLeft() > x + width/2 - DIVWIDTH/2)
-      left = top = bottom = false;
-    if( $('body').scrollLeft() + window.outerWidth < x + width)
-      right = top = bottom = false;
-    if( $('body').scrollTop() + window.outerHeight < y + height)
-      bottom = left = right = false;
-    if($('body').scrollTop() + $('.container-fluid:first').height() > y + height/2 - DIVHEIGHT/2)
-      top = left = right = false;
-    if($('body').scrollLeft() > x - DIVWIDTH)
-      left = false;
-    if($('body').scrollTop() + $('.container-fluid:first').height() > y - DIVHEIGHT)
-      top = false;
-    if($('body').scrollTop() + window.outerHeight < y + height + DIVHEIGHT)
-      bottom = false;
-    if($('body').scrollLeft() + window.outerWidth < x + width + DIVWIDTH)
-      right = false;
+        height = targetObj.height(),
+        width = targetObj.width(),
+        visualPart = [ 0/*left*/,
+                       0/*right*/,
+                       0/*top*/,
+                       0/*bottom*/,
+                     ],
+        temp1,
+        temp2,
+        temp3,
+        maxNum = 0,
+        maxInd = 0;
     
-    if(right) return 'right';
-    if(left) return 'left';
-    if(top) return 'top';
-    if(bottom) return 'bottom';
-    
-    return 'right';
+    visualPart[0] = function () {
+      temp1 = x - DIVWIDTH - htmlBody.scrollLeft();
+      temp2 = y - DIVHEIGHT/2 + height/2 - htmlBody.scrollTop() - topBar.height();
+      temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height/2 + DIVHEIGHT/2);
+      if (temp1>0) temp1 = 0;
+      if (temp2>0) temp2 = 0;
+      if (temp3>0) temp3 = 0;
+      temp1 = temp1 + DIVWIDTH;
+      temp2 = temp2 + temp3 + DIVHEIGHT;
+      if (temp1<0) return 0;
+      if (temp2<0) return 0;
+      return temp1 * temp2;
+    }();
+    visualPart[1] = function () {
+      temp1 = htmlBody.scrollLeft() + window.innerWidth - x - width - DIVWIDTH;
+      temp2 = y - DIVHEIGHT/2 + height/2 - htmlBody.scrollTop() - topBar.height();
+      temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height/2 + DIVHEIGHT/2);
+      if (temp1>0) temp1 = 0;
+      if (temp2>0) temp2 = 0;
+      if (temp3>0) temp3 = 0;
+      temp1 = temp1 + DIVWIDTH;
+      temp2 = temp2 + temp3 + DIVHEIGHT;
+      if (temp1<0) return 0;
+      if (temp2<0) return 0;
+      return temp1 * temp2;
+    }();
+    visualPart[2] = function () {
+      temp1 = x - DIVWIDTH/2 + width/2 - htmlBody.scrollLeft();
+      temp2 = htmlBody.scrollLeft() + window.innerWidth - (x + width/2 + DIVWIDTH/2);
+      temp3 = y - DIVHEIGHT - htmlBody.scrollTop() - topBar.height();
+      if (temp1>0) temp1 = 0;
+      if (temp2>0) temp2 = 0;
+      if (temp3>0) temp3 = 0;
+      temp1 = temp1 + temp2 + DIVWIDTH;
+      temp2 = temp3 + DIVHEIGHT;
+      if (temp1<0) return 0;
+      if (temp2<0) return 0;
+      return temp1 * temp2;
+    }();
+    visualPart[3] = function () {
+      temp1 = x - DIVWIDTH/2 + width/2 - htmlBody.scrollLeft();
+      temp2 = htmlBody.scrollLeft() + window.innerWidth - (x + width/2 + DIVWIDTH/2);
+      temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height + DIVHEIGHT);
+      if (temp1>0) temp1 = 0;
+      if (temp2>0) temp2 = 0;
+      if (temp3>0) temp3 = 0;
+      temp1 = temp1 + temp2 + DIVWIDTH;
+      temp2 = temp3 + DIVHEIGHT;
+      if (temp1<0) return 0;
+      if (temp2<0) return 0;
+      return temp1 * temp2;
+    }();
+    maxNum = visualPart[0];
+    for(var i=1,j=visualPart.length; i<j; i++){
+      if(maxNum < visualPart[i]){
+        maxNum = visualPart[i];
+        maxInd = i;
+      }
+    }
+    switch (maxInd) {
+      case 0: return 'left';
+      case 1: return 'right';
+      case 2: return 'top';
+      case 3: return 'bottom';
+      default: return 'right';
+    }
   }
-  
+  function chooseTitle() {
+    if(tagData.seq == self.state){
+      return 'Step ' + tagData.seq;
+    } else {
+      return tagData.title;
+    }
+  }
+
+  this.hide = function () {
+    clickUnregist();
+    clickRegisted = false;
+    targetObj.popover('hide');
+  }
+  this.offGuide = function () {
+    targetObj.off();
+  }
+  this.pop = function () {
+    if (self.seq != 0) {
+      targetObj.popover({title: chooseTitle , content: tagData.content , placement: choosePosition});
+    } else {
+      targetObj.popover({title: tagData.title , content: tagData.content , placement: choosePosition});
+    }
+  }
   this.refreshTarget = function () {
-    targetObj = $(targetStr);
+    targetObj = $(tagData.targetStr+':first'),
     this.pop();
   }
   this.setState = function (state) {
     this.state = state;
   }
-  this.hide = function () {
-    targetObj.popover('hide');
-  }
-  this.pop = function () {
-    if(seq != 0)
-      targetObj.popover({title: chooseTitle , content: content , placement: choosePosition});
-    else
-      targetObj.popover({title: title , content: content , placement: choosePosition});
-  }
   this.show = function () {
+    //if (!clickRegisted) {
+      clickRegist();
+      clickRegisted = true;
+    //}
     targetObj.popover('show');
   }
   
+  _.extend(this, Backbone.Events);
   this.pop();
 }

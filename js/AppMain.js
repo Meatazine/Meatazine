@@ -27,7 +27,8 @@ $(function () {
     book: book,
   });
   GUI.contextButtons = contextButtons;
-  GUI.setPage(page);
+  GUI.page = page;
+  Meatazine.view.guide.GuideManager.init(page);
   Meatazine.popup.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
