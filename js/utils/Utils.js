@@ -7,5 +7,12 @@ Meatazine.utils = {
       data = {section: data};
     }
     return Mustache.render(template, data);
-  }
+  },
+  clearSelection: function () {
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    } else if (document.getSelection) {
+      document.getSelection().empty();
+    }
+  },
 }

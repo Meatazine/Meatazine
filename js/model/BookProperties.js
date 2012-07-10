@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.model');
 (function (ns) {
-  var file = new Meatazine.filesystem.FileReferrence();
+  var isModified = false,
+      file = new Meatazine.filesystem.FileReferrence();
   ns.BookProperties = Backbone.Model.extend({
     defaults: {
       width: 1024,
@@ -14,6 +15,7 @@ jQuery.namespace('Meatazine.model');
       pages: null
     },
     initialize: function () {
+      this.get('pages').on('change', this.pages_changeHandler, this);
       var id = localStorage.getItem('bookid');
       if (id != null) {
         this.set('id', id);
@@ -101,6 +103,9 @@ jQuery.namespace('Meatazine.model');
         },
       })
     },
+    isModified: function () {
+      return isModified;
+    },
     isSameDomain : function (url) {
       if (url.indexOf('//') == -1) {
         return true;
@@ -156,6 +161,7 @@ jQuery.namespace('Meatazine.model');
       var data = _.clone(this.attributes);
       data.pages = this.get('pages').toJSON();
       localStorage.setItem('book', JSON.stringify(data));
+      isModified = false;
     },
     setSize: function (w, h) {
       w = parseInt(w), h = parseInt(h);
@@ -164,6 +170,9 @@ jQuery.namespace('Meatazine.model');
         height: h
       }, {silent: true});
       this.trigger('change:size', w, h);
+    },
+    pages_changeHandler: function () {
+      isModified = true;
     },
     saveCompleteHandler: function (url) {
       file.off('complete:save', null, this);

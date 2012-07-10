@@ -42,6 +42,9 @@ jQuery.namespace('Meatazine.view.element');
       this.handleChildrenState();
     },
     remove: function () {
+      if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor && currentEditor.isEditing) {
+        currentEditor.buttons.find('[data-type=edit]').click();
+      }
       imageEditor.off(null, null, this);
       mapEditor.off(null, null, this);
       this.collection.off(null, null, this);
@@ -56,13 +59,16 @@ jQuery.namespace('Meatazine.view.element');
       if (isToken) {
         this.token = this.token == null ? item : this.token.add(item);
       } else {
-        this.$('.placeholder[src!="img/spacer.gif"]').removeClass('placeholder');
+        item.find('.placeholder').add(item.filter('.placeholder')).removeClass('placeholder');
       }
       item
         .on('click', function (event) {
-          model.trigger('select');
+          if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
+            model.trigger('select');
+          }
         })
         .appendTo(this.$el);
+      item.filter('img').add(item.find('img')).data('model', model);
       model.on('change', function (model) {
         var data = item.filter('img').add(item.find('img')).data();
             newItem = this.createItem(model);
@@ -118,8 +124,9 @@ jQuery.namespace('Meatazine.view.element');
       return size;
     },
     handleChildrenState: function () {
-      this.$el.children().slice(0, this.collection.config.number).removeClass('hide');
-      this.$el.children().slice(this.collection.config.number).addClass('hide');
+      var children = this.$el.children(this.tagName);
+      children.slice(0, this.collection.config.number).removeClass('hide');
+      children.slice(this.collection.config.number).addClass('hide');
     },
     handleFiles: function (files) {
       // 暂时只认图片
@@ -132,17 +139,22 @@ jQuery.namespace('Meatazine.view.element');
       var item;
       if (this.token != null && this.token.length > 0) {
         var index = this.token.eq(0).index();
-        this.collection.at(index).set("img", url);
+        this.collection.at(index).set({
+          img: url,
+          scale: scale,
+        });
         this.token = this.token.slice(1);
         item = this.$el.children().eq(index);
       } else {
-        var model = this.collection.create({img: url});
+        var model = this.collection.create({
+          img: url,
+          scale: scale,
+        });
         item = $(this.createItem(model));
       }
-      item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).data('scale', scale).removeClass('placeholder');
+      item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).removeClass('placeholder');
     },
     collection_removeHandler: function (model, collection, options) {
-      model.off('change', null, this);
       this.$el.children().eq(options.index).remove();
       this.handleChildrenState();
       this.trigger('change');
@@ -204,6 +216,9 @@ jQuery.namespace('Meatazine.view.element');
       this.handleFiles(files);
     },
     file_completeHandler: function () {
+      var firstImg = this.$el.children().eq(0);
+      firstImg = firstImg.is('img') ? firstImg : firstImg.find('img');
+      firstImg.click();
       imageResizer.off(null, null, this);
       this.handleChildrenState();
       this.trigger('change', this.collection);

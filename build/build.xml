@@ -33,6 +33,7 @@
     <concat destfile="${temp}/apps.js" encoding="UTF-8" fixlastline="yes">
       <filelist dir="js/">
         <file name="utils/Utils.js" />
+        <file name="utils/Mouse.js" />
         <file name="filesystem/FileReferrence.js" />
         <file name="filesystem/FileZip.js" />
         <file name="filesystem/ImageResizer.js" />
@@ -134,6 +135,9 @@
       <format property="build.time" pattern="MMddHHmm" />
     </tstamp>
     <replace file="${dist}/index.html" encoding="UTF-8">
+      <replacefilter token="@version@" value="${build.time}" />
+    </replace>
+    <replace file="${dist}/js/apps.js" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
     </replace>
     <delete dir="${temp}" />

@@ -8,6 +8,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
+    "mouseout #source-list li": "sourceItem_mouseOutHandler",
     "focusout #source-list input": "input_focusOutHandler",
     "keydown #source-list input": "input_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
@@ -29,8 +30,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     var template = this.model.getSourceTemplate(model),
         item = $(Meatazine.utils.render(template, model));
     model.on('change', function (model) {
-      model.off('select');
-      model.off('change', arguments.callee);
+      var changed = model.changedAttributes();
+      _.each(_.keys(changed), function (key) {
+        key == 'img' ? item.find('img').attr('src', changed[key]) : item.find(key).text(changed[key]);
+      });
       item.replaceWith(this.createSourceItem(model));
     }, this);
     model.on('select', function () {
@@ -64,7 +67,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   highlightOn: function (item) {
     this.$('.btn').eq(1).click();
     item.addClass('animated flash');
-    item[0].scrollIntoView();
+    item[0].scrollIntoView(false);
     setTimeout(function () {
       item.removeClass('animated flash');
     }, 1000);
@@ -102,7 +105,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         collection = target.closest('ul').data('collection'),
         value = target.val(),
         key = target.attr('name');
-    target.replaceWith('<span class>' + value + '</span>');
+    target.replaceWith('<span class="key">' + value + '</span>');
     collection.at(index).set(key, value);
     _gaq.push(['_trackEvent', 'source', 'edit']);
   },
@@ -117,7 +120,8 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   pages_removeHandler: function (model, collection, option) {
     if (collection.length == 0) {
-      this.templateList.addClass('disabled');
+      this.templateList.addClass('disabled')
+        .find('.active').removeClass('active');
       this.sourceList.empty();
     }
   },
@@ -131,7 +135,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.setTemplateType(model.get('templateType'));
   },
   removeButton_clickHandler: function (event) {
-    var target = $(event.target).parent(),
+    var target = this.removeButton.data('target'),
         index = target.index(),
         ul = target.closest('ul');
     target.remove();
@@ -147,8 +151,23 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     collection.setModelIndex(start, ui.item.index());
     _gaq.push(['_trackEvent', 'source', 'sort']);
   },
+  sourceItem_mouseOutHandler: function (event) {
+    var pos = $(event.target).offset();
+    pos.width = $(event.target).width();
+    pos.height = $(event.target).height();
+    if (pos.left > event.pageX || pos.top > event.pageY || pos.left + pos.width < event.pageX || pos.top + pos.height < event.pageY) {
+      this.removeButton.remove();
+    }
+  },
   sourceItem_mouseOverHandler: function (event) {
-    $(event.currentTarget).append(this.removeButton);
+    var target = $(event.currentTarget),
+        position = target.offset(),
+        outter = this.sourceList.offset();
+    this.removeButton
+      .css('left', position.left - outter.left + target.width() - 9)
+      .css('top', position.top - outter.top + this.sourceList.scrollTop() + 4)
+      .data('target', target)
+      .appendTo(this.sourceList);
   },
   span_clickHandler: function (event) {
     var target = $(event.target),

@@ -4,20 +4,18 @@ jQuery.namespace('Meatazine.view.ui.editor');
       args = null,
       callback = null,
       canvas = null,
-      value = null,
-      scale = 1,
-      uploader = null,
-      url = '',
-      x = 0,
-      y = 0;
+      image = null,
+      model = null,
+      uploader = null;
   ns.ImageEditor = ns.AbstractEditor.extend({
     drawImage : function () {
-      var source = canvas.data('image'),
+      var scale = model.get('scale'),
+          source = canvas.data('image'),
           context = canvas[0].getContext('2d'),
           sourceWidth = canvas[0].width / scale,
           sourceHeight = canvas[0].height / scale,
-          sourceX = (source.width - sourceWidth >> 1) - x / scale,
-          sourceY = (source.height - sourceHeight >> 1) - y / scale,
+          sourceX = (source.width - sourceWidth >> 1) - model.get('x') / scale,
+          sourceY = (source.height - sourceHeight >> 1) - model.get('y') / scale,
           destWidth = 0,
           destHeight = 0,
           destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas[0].width : 0,
@@ -56,8 +54,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
     },
     initScaleRange: function () {
-      scale = image.data('scale');
-      var scaleMin = scale < 0.5 ? scale : 0.5,
+      var scale = model.get('scale'),
+          scaleMin = scale < 0.5 ? scale : 0.5,
           scaleMax = scale > 1.5 ? scale : 1.5,
           scaleRanger = this.buttons.find('[data-type="scale"]');
       scaleRanger
@@ -67,8 +65,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
     initUploader: function () {
       // 因为input必须change才能触发事件，所以有必要移除已经之前的标签
       if (uploader != null) {
-        uploader.remove();
-        uploader.off();
+        uploader
+          .remove()
+          .off('change');
       }
       uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
       uploader
@@ -79,29 +78,35 @@ jQuery.namespace('Meatazine.view.ui.editor');
       if (canvas == null) {
         return;
       }
-      var name = url.substr(url.lastIndexOf('/') + 1),
+      var url = model.get('img'),
+          name = url.substr(url.lastIndexOf('/') + 1),
           content = atob(canvas[0].toDataURL('image/jpeg').split(',')[1]);
       localFile.on('complete:save', this.canvas_savedHandler, this);
       localFile.save(name, '', content, 'image/jpeg');
     },
     setCanvasScale: function (value) {
-      scale = value;
+      model.set({scale: value}, {silent: true});
       this.drawImage();
     },
     setTarget: function (value) {
-      if (canvas != null) {
-        this.saveCanvas();
+      GUI.contextButtons.showButtons(this.buttons);
+      if (image != null && image.is(value)) {
+        return;
+      }
+      if (this.isEditing) {
+        this.buttons.find('[data-type=edit]').click();
         callback = arguments.callee;
         args = value;
         return;
       }
       image = $(value);
-      url = image.attr('src');
+      model = image.data('model');
+      this.buttons.find('[data-type="edit"]').prop('disabled', image.hasClass('placeholder'));
       this.initScaleRange();
       this.initUploader();
-      GUI.contextButtons.showButtons(this.buttons);
     },
     startEdit: function () {
+      this.isEditing = true;
       canvas = $('<canvas>');
       var self = this,
           sourceUrl = this.getSourceImageUrl(image.attr('src')),
@@ -114,15 +119,17 @@ jQuery.namespace('Meatazine.view.ui.editor');
       canvas
         .data('image', loader)
         .on('mousedown', function (event) {
-          var currentX = x,
-              currentY = y,
+          var currentX = model.get('x'),
+              currentY = model.get('y'),
               startX = event.pageX,
               startY = event.pageY;
           $(this).on('mousemove', function (event) {
             offsetX = event.pageX - startX;
             offsetY = event.pageY - startY;
-            x = currentX + offsetX;
-            y = currentY + offsetY;
+            model.set({
+              x: currentX + offsetX,
+              y: currentY + offsetY,
+            }, {silent: true});
             self.drawImage();
             event.stopPropagation();
           });
@@ -138,11 +145,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
-      image.data({
-        scale: scale,
-        x: x,
-        y: y,
-      })
+      this.isEditing = false;
       this.saveCanvas();
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
@@ -150,14 +153,17 @@ jQuery.namespace('Meatazine.view.ui.editor');
       GUI.contextButtons.showButtons(this.buttons);
     },
     canvas_savedHandler: function (url) {
-      image.attr('src', url).data('scale', scale);
+      image.attr('src', url);
       canvas.replaceWith(image);
       canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
       canvas = null;
       localFile.off('complete:save', null, this);
+      image.data('model', model);
       if (callback != null) {
         callback.call(this, args);
+        callback = null;
+        args = null;
       }
     },
     scale_changeHandler: function (event) {
@@ -175,7 +181,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
     uploader_selectHandler: function (event) {
       var self = event.data.self;
       self.trigger('select:image', uploader[0].files);
-      self.buttons.find('[data-type="edit"]').prop('disabled', false);
     },
   });
 })(Meatazine.view.ui.editor);

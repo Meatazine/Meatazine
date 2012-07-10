@@ -57,6 +57,7 @@ jQuery.namespace('Meatazine.view.ui');
       this.$('.ui-draggable').draggable('destroy');
       this.$('.ui-resizable').resizable('destroy');
       this.$el.empty();
+      GUI.contextButtons.hide();
     },
     refreshThumbnail: function (isReset) {
       isReset = isReset || false;

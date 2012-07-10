@@ -48,7 +48,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     });
     this.$('li').disableSelection();
     var model = this.collection.create();
-    item.trigger('click');
+    item.click();
     this.refreshPageNumber();
     _gaq.push(['_trackEvent', 'page', 'add']);
   },
@@ -65,7 +65,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     });
     this.$('li').disableSelection();
     if (this.emptyItems.length > 0) {
-      this.emptyItems.shift().trigger('click');
+      this.emptyItems.shift().click();
     }
   },
   book_resizeHandler: function (w, h) {
@@ -104,9 +104,9 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.length--;
     if (this.currentItem.is(target) && this.length > 0) {
       if (target.index() > 0) {
-        this.getItem(target.index() - 1).trigger('click');
+        this.getItem(target.index() - 1).click();
       } else {
-        this.getItem(0).trigger('click');
+        this.getItem(0).click();
       }
     }
     this.collection.removeAt(target.index());
@@ -114,6 +114,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
       .off()
       .remove();
     this.removeButton.remove();
+    this.refreshPageNumber();
     _gaq.push(['_trackEvent', 'page', 'delete']);
   },
   page_changeHandler: function (thumb) {
@@ -123,7 +124,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     canvas.getContext('2d').drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
     this.currentItem.html(canvas);
     if (this.emptyItems.length > 0) {
-      this.emptyItems.shift().trigger('click');
+      this.emptyItems.shift().click();
     }
   },
   sortactivateHandler: function (event, ui) {
