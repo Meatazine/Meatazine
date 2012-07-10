@@ -54,7 +54,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
     },
     initScaleRange: function () {
-      var scale = model.get('scale');
+      var scale = model.get('scale'),
           scaleMin = scale < 0.5 ? scale : 0.5,
           scaleMax = scale > 1.5 ? scale : 1.5,
           scaleRanger = this.buttons.find('[data-type="scale"]');
@@ -162,6 +162,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       if (callback != null) {
         callback.call(this, args);
         callback = null;
+        args = null;
       }
     },
     scale_changeHandler: function (event) {

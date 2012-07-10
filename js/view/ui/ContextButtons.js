@@ -18,6 +18,9 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   },
   showButtons: function (buttons) {
     // 不同元素的编辑按钮切换时，可能需要先终止上一个元素的编辑状态
+    if (buttons.is(':visible')) {
+      return;
+    }
     if (this.$('[data-type=edit]').filter(':visible').hasClass('active')) {
       this.$('[data-type=edit]').filter(':visible').click();
     }
