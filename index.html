@@ -65,7 +65,7 @@
               <li><a href="#tutorial">向导</a></li>
             </ul>
           </li>
-          <li><a href="#">设置</a></li>
+          <li><a href="#user-config" data-toggle="modal">设置</a></li>
           <li><a href="#help" data-toggle="modal">帮助</a></li>
         </ul>
         <p class="navbar-text pull-right">欢迎你， <a href="#">肉山</a></p>
@@ -461,6 +461,24 @@
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>
     </div>
   </div>
+  <div id="user-config" class="modal fade hide">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>设置</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        <li><div>设置自动保存？（每5min一次）</div>
+          <div align="right">
+            <input id="setAutoSave" type="button" class="btn" value="启用">
+          </div>
+        </li>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-dismiss="modal">关闭</button>
+    </div>
+  </div>
 </div>
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -492,6 +510,7 @@
 <script src="js/model/SourceModel.js"></script>
 <script src="js/popup/Welcome.js"></script>
 <script src="js/popup/ScreenSizeSelector.js"></script>
+<script src="js/popup/UserConfig.js"></script>
 <script src="js/popup/PublishStatus.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
