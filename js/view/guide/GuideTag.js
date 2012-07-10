@@ -173,10 +173,10 @@ Meatazine.view.guide.GuideTag = function (tagData) {
     this.state = state;
   }
   this.show = function () {
-    //if (!clickRegisted) {
+    if (!clickRegisted) {
       clickRegist();
       clickRegisted = true;
-    //}
+    }
     targetObj.popover('show');
   }
   

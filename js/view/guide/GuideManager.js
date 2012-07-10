@@ -63,7 +63,7 @@ Meatazine.view.guide.GuideManager = {
     _.each(this.guideTags, function (guideTag) {
       guideTag.hide();
       guideTag.refreshTarget();
-    })
+    });
     if(this.stateShow)
       this.showGuide();
   },
