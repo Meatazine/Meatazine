@@ -11,10 +11,11 @@ jQuery.namespace('Meatazine.view.ui.editor');
     setTarget: function (value) {
       GUI.contextButtons.showButtons(this.buttons);
       if (text && text.is(value)) {
+        text.toggleClass('editing');
         return;
       }
       if (this.isEditing) {
-        this.stopEdit();
+        this.buttons.find('[data-type=edit]').click();
       }
       if (text != null) {
         text
@@ -29,7 +30,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
           'dblclick': this.text_dblclickHandler,
           'focusin': this.text_focusInHandler,
           'focusout': this.text_focusOutHandler
-          }, {self: this});
+        }, {self: this});
     },
     setTargetClass: function (className) {
       if (/h1|h2|h3/.test(className)) {
@@ -69,6 +70,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       this.isEditing = false;
       text
+        .removeClass('editing')
         .addClass(stashClass)
         .prop('contenteditable', false)
         .off({
@@ -124,8 +126,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
       });
     },
     text_focusOutHandler: function (event) {
-      var self = event.data.self;
-      self.stopEdit();
+      // TODO 因为focusout会先于click事件触发
+      // 所以无法在这个事件处理中stopEdit
+      // 也许将来能想到办法
     },
   });
 })(Meatazine.view.ui.editor);
