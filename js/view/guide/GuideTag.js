@@ -47,14 +47,6 @@ Meatazine.view.guide.GuideTag = function (tagData) {
       topBar = $('.container-fluid:first');
   this.seq = tagData.seq;
   this.state = 1;
-  function clickRegist() {
-    $(targetObjHostStr).on('click',targetSubObjStr,function () {
-      self.trigger('click:next');
-    });
-  }
-  function clickUnregist() {
-    $(targetObjHostStr).off('click',targetSubObjStr);
-  }
   
   function choosePosition(divElement , triggerElement) {
     var triggerTarget;
@@ -153,6 +145,14 @@ Meatazine.view.guide.GuideTag = function (tagData) {
     } else {
       return tagData.title;
     }
+  }
+  function clickRegist() {
+    $(targetObjHostStr).on('click',targetSubObjStr,function () {
+      self.trigger('click:next');
+    });
+  }
+  function clickUnregist() {
+    $(targetObjHostStr).off('click',targetSubObjStr);
   }
 
   this.hide = function () {
