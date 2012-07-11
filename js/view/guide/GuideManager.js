@@ -6,6 +6,7 @@ Meatazine.view.guide.GuideManager = {
   
   init : function (page) {
     var self = this;
+    page.on('render:start',this.hideGuidePageBody,this);
     page.on('render:over',this.refreshAll,this);
     for(var i = 0,j = Meatazine.view.guide.GuideTagDataCollection.length ; i < j; i++){
       this.guideTags[i] = new Meatazine.view.guide.GuideTag(Meatazine.view.guide.GuideTagDataCollection[i]);
@@ -31,15 +32,18 @@ Meatazine.view.guide.GuideManager = {
     }
   },
   
-  clickToNext : function (hostStr) {
+  clickToNext : function () {
     _.each(this.guideTags, function (guideTag) {
       guideTag.hide();
     });
     this.state++;
-    if (hostStr == '#template-list') {
-      return;
-    }
     this.showGuide();
+  },
+  
+  hideGuidePageBody : function () {
+    _.each(this.guideTags, function (guideTag) {
+      guideTag.hidePageBody();
+    })
   },
   
   hideGuide : function () {
@@ -61,7 +65,6 @@ Meatazine.view.guide.GuideManager = {
   
   refreshAll : function () {//page-body been refreshed
     _.each(this.guideTags, function (guideTag) {
-      guideTag.hide();
       guideTag.refreshTarget();
     });
     if(this.stateShow)

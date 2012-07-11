@@ -16,6 +16,7 @@ jQuery.namespace('Meatazine.view.ui');
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
+      this.trigger('render:start');
       this.empty();
       this.$el.html(this.model.get('template'));
       var count = 0;

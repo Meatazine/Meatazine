@@ -1,7 +1,6 @@
 jQuery.namespace('Meatazine.view.guide');
 //title , content , seq can be changed .The others are remained.
 //seq=0 means it's a non-main guide.otherwise it's a main guide.
-//ps: targetStr means the target(s) that will be clicked
 Meatazine.view.guide.GuideTagDataCollection = [
   {
     title: 'Add Page',
@@ -35,14 +34,13 @@ Meatazine.view.guide.GuideTagDataCollection = [
   },
 ]
 
-
 Meatazine.view.guide.GuideTag = function (tagData) {
-  var targetObj = $(tagData.targetStr+':first'),
+  var targetObj = $(tagData.targetStr),
       targetStrList = tagData.targetStr.split(' '),
       targetObjHostStr = targetStrList[0],
       targetSubObjStr = targetStrList.slice(1).join(),
       self = this,
-      clickRegisted = false,
+      show = false,
       DIVHEIGHT = 100,
       DIVWIDTH = 289,
       htmlBody = $('body'),
@@ -51,19 +49,26 @@ Meatazine.view.guide.GuideTag = function (tagData) {
   this.state = 1;
   function clickRegist() {
     $(targetObjHostStr).on('click',targetSubObjStr,function () {
-      self.trigger('click:next',targetObjHostStr);
+      self.trigger('click:next');
     });
   }
   function clickUnregist() {
     $(targetObjHostStr).off('click',targetSubObjStr);
   }
   
-  function choosePosition() {
-    var targetPosition = targetObj.offset(),
+  function choosePosition(divElement , triggerElement) {
+    var triggerTarget;
+    for(var i=0,j=targetObj.length; i<j; i++){
+      if (triggerElement === targetObj[i]){
+        triggerTarget = $(tagData.targetStr+':eq('+i+')');
+        break;
+      }
+    };
+    var targetPosition = triggerTarget.offset(),
         y = targetPosition.top,
         x = targetPosition.left,
-        height = targetObj.height(),
-        width = targetObj.width(),
+        height = triggerTarget.height(),
+        width = triggerTarget.width(),
         visualPart = [ 0/*left*/,
                        0/*right*/,
                        0/*top*/,
@@ -151,9 +156,17 @@ Meatazine.view.guide.GuideTag = function (tagData) {
   }
 
   this.hide = function () {
-    clickUnregist();
-    clickRegisted = false;
-    targetObj.popover('hide');
+    if (show) {
+      show = false; 
+      clickUnregist();
+      clickRegisted = false;
+      targetObj.popover('hide');
+    }
+  }
+  this.hidePageBody = function () {
+    if (targetObjHostStr == '#page-body'){
+      this.hide();
+    }
   }
   this.offGuide = function () {
     targetObj.off();
@@ -166,18 +179,18 @@ Meatazine.view.guide.GuideTag = function (tagData) {
     }
   }
   this.refreshTarget = function () {
-    targetObj = $(tagData.targetStr+':first'),
+    targetObj = $(tagData.targetStr),
     this.pop();
   }
   this.setState = function (state) {
     this.state = state;
   }
   this.show = function () {
-    if (!clickRegisted) {
+    if (!show) {
       clickRegist();
-      clickRegisted = true;
+      show = true;
     }
-    targetObj.popover('show');
+    $(tagData.targetStr+':first').popover('show');
   }
   
   _.extend(this, Backbone.Events);
