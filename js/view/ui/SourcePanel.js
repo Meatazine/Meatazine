@@ -67,7 +67,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   highlightOn: function (item) {
     this.$('.btn').eq(1).click();
     item.addClass('animated flash');
-    item[0].scrollIntoView(false);
+    if ($(window).height() > 143 + this.$el.height()) { // 60 + 36 + 2 + 18 + 27
+      item[0].scrollIntoView();
+    }
     setTimeout(function () {
       item.removeClass('animated flash');
     }, 1000);
