@@ -108,7 +108,7 @@ function BookReader(el, w, h) {
     style = $('<style>');
     style
       .append('#' + id + ', .page{width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
-      .append('.dummy {width:' + fitWidth + 'px;}')
+      .append('.dummy {height:' + fitHeight + 'px;}')
       .append('#' + id + ' {margin:' + margin + '}\n')
       .append('#container {width:' + fitWidth * totalPage + 'px}')
       .appendTo($('head'));

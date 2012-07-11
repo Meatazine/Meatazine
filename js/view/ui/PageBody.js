@@ -80,10 +80,11 @@ jQuery.namespace('Meatazine.view.ui');
       html.find('.ui-resizable-handle').remove();
       // 把Google Map的内容写到html里
       html.find('.map-container').each(function (i) {
-        var model = $(this).data('model');
+        var model = self.$('.map-container').eq(i).data('model');
         if (model instanceof Backbone.Model) {
           $(this).attr('data-map', JSON.stringify(model.toJSON()));
         }
+        this.innerHTML = '';
       });
       this.model.set('renderedHTML', '<div class="page">' + html.html() + '</div>');
     },
