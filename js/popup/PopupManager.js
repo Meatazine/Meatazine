@@ -19,7 +19,8 @@ jQuery.namespace('Meatazine.popup');
           });
           userSettings = new Meatazine.popup.userConfig({
             el: '#user-config',
-            model: book
+            model: configModel,
+            book: book
           }),
           screenSelector = new Meatazine.popup.ScreenSizeSelector({
             el: '#screen-size',
