@@ -23,9 +23,6 @@ jQuery.namespace('Meatazine.view.element');
       this.tagName = this.template != '' ? $(this.template)[0].tagName : '';
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
-      imageEditor.on('select:image', this.editor_selectImagesHandler, this);
-      imageEditor.on('convert:map', this.editor_convertMapHandler, this);
-      mapEditor.on('convert:image', this.editor_convertImageHandler, this);
       this.render();
     },
     render: function () {
@@ -55,6 +52,7 @@ jQuery.namespace('Meatazine.view.element');
       var item = $(Meatazine.utils.render(this.template, model));
       if (model instanceof Backbone.Model && model.has('lat')) {
         this.createMap(item, model);
+        return;
       }
       if (isToken) {
         this.token = this.token == null ? item : this.token.add(item);
@@ -85,20 +83,22 @@ jQuery.namespace('Meatazine.view.element');
       var self = this,
           position = new google.maps.LatLng(model.get('lat'), model.get('lng')),
           parent = container.parent().length > 0 ? container.parent() : this.$el,
-          container = (/img|video|audio/i).test(container[0].tagName) ? parent : container,
+          container = container.is('img, video, audio') ? parent : container,
           options = {
             center: position,
             draggable: false,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             zoom: model.get('zoom'),
           },
-          map = new google.maps.Map(container[0], options);
-          google.maps.event.addListener(map, 'tilesloaded', function () {
-            self.trigger('change');
-          });
-          container.addClass('map-container').on('click', function (event) {
-            self.map_clickHandler(event);
-          });
+          map = null;
+      container
+        .width(container.width())
+        .height(container.height())
+        .addClass('map-container');
+      map = new google.maps.Map(container[0], options);
+      google.maps.event.addListener(map, 'tilesloaded', function () {
+        self.trigger('change');
+      });
       if (model.get('markers') instanceof Array) {
         for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
           var image = mapEditor.createMarkerImage(i),
@@ -228,6 +228,9 @@ jQuery.namespace('Meatazine.view.element');
       this.renderImageItem(url, scale);
     },
     img_clickHandler: function (event) {
+      imageEditor.off();
+      imageEditor.on('select:image', this.editor_selectImagesHandler, this);
+      imageEditor.on('convert:map', this.editor_convertMapHandler, this);
       imageEditor.setTarget(event.target);
       currentEditor = imageEditor;
     },
@@ -248,6 +251,8 @@ jQuery.namespace('Meatazine.view.element');
       $(event.currentTarget).removeClass('active-img');
     },
     map_clickHandler: function (event) {
+      mapEditor.off();
+      mapEditor.on('convert:image', this.editor_convertImageHandler, this);
       mapEditor.setTarget($(event.currentTarget).data('map'));
       currentEditor = mapEditor;
     },

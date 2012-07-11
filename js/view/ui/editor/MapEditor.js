@@ -66,14 +66,19 @@ jQuery.namespace('Meatazine.view.ui.editor');
       map.setOptions({
         draggable: true,
       });
-      div.closest('.ui-draggable').draggable('disable');
+      div
+        .addClass('active')
+        .closest('.ui-draggable').draggable('disable');
+      GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'map', 'edit-start']);
     },
     stopEdit: function (s) {
       map.setOptions({
         draggable: false,
       });
-      div.closest('.ui-draggable').draggable('enable');
+      div
+        .removeClass('active')
+        .closest('.ui-draggable').draggable('enable');
       var latlng = map.getCenter(),
           zoom = map.getZoom();
       model.set({
@@ -81,6 +86,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         lng: latlng.lng(),
         zoom: zoom,
       });
+      GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'map', 'edit-stop']);
     },
     addMarkerButton_clickHandler: function (event) {
