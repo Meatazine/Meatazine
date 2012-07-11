@@ -227,6 +227,15 @@ body {
 #page-body.page {
   visibility: visible;
 }
+#page-body.editing img,
+#page-body.editing .editable {
+  opacity: 0.4;
+}
+#page-body.editing img.active,
+#page-body.editing .editing,
+#page-body.editing .active img {
+  opacity: 1;
+}
 #page-body canvas {
   box-shadow:0 0 1px #000;
 }
@@ -245,8 +254,8 @@ body {
 }
 #page-body .editable:hover,
 #page-body .editing {
-  background: rgba(255, 255, 255, 0.4);
-  box-shadow: inset 0 0 2px #CCC, 0 0 1px 1px #08C;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 2px #CCC, 0 0 2px 2px #08C;
   border-radius:4px;
 }
 #page-body .editable:hover .ui-resizable-handle,
