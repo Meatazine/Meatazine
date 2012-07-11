@@ -32,6 +32,7 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
     target
       .toggleClass('active')
       .closest('.btn-group').siblings('.btn-group').andSelf().find('[data-group=edit]').prop('disabled', !target.hasClass('active'));
+    event.stopPropagation();
   },
   convertButton_clickHandler: function (event) {
     var type = $(event.target).attr('data-class');

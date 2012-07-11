@@ -107,6 +107,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     startEdit: function () {
       this.isEditing = true;
+      image.closest('.ui-draggable').draggable('disable');
       canvas = $('<canvas>');
       var self = this,
           sourceUrl = this.getSourceImageUrl(image.attr('src')),
@@ -117,6 +118,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         self.drawImage();
       }
       canvas
+        .addClass('active')
         .data('image', loader)
         .on('mousedown', function (event) {
           var currentX = model.get('x'),
@@ -133,33 +135,41 @@ jQuery.namespace('Meatazine.view.ui.editor');
             self.drawImage();
             event.stopPropagation();
           });
-          $('body').one('mouseup', function (event) {
-            canvas.off('mousemove');
-          });
+          $('body').one('mouseup', self.canvas_mouseupHandler);
         })
-        .on('mouseup', function (event) {
-          $(this).off('mousemove');
-        });
+        .on('click', function (event) {
+          GUI.contextButtons.showButtons(self.buttons);
+        })
+        .on('mouseup', this.canvas_mouseupHandler);
       loader.src = sourceUrl;
       image.replaceWith(canvas);
+      GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
       this.isEditing = false;
       this.saveCanvas();
+      GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
     canvas_clickHandler: function (event) {
       GUI.contextButtons.showButtons(this.buttons);
     },
+    canvas_mouseupHandler: function () {
+      canvas.off('mousemove');
+      $('body').off('mouseup', arguments.callee);
+      canvas.off('mouseup', arguments.callee);
+    },
     canvas_savedHandler: function (url) {
-      image.attr('src', url);
       canvas.replaceWith(image);
       canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
       canvas = null;
       localFile.off('complete:save', null, this);
-      image.data('model', model);
+      image
+        .attr('src', url)
+        .data('model', model)
+        .closest('.ui-draggable').draggable('enable');
       if (callback != null) {
         callback.call(this, args);
         callback = null;

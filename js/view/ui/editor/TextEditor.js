@@ -9,8 +9,14 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.buttons.find('[data-type=delete]').click(this.deleteButton_clickHandler);
     },
     setTarget: function (value) {
-      if (text != null && !text.is(value)) {
-        this.stopEdit();
+      GUI.contextButtons.showButtons(this.buttons);
+      if (this.isEditing && !text.is(value)) {
+        this.buttons.find('[data-type=edit]').click();
+      }
+      if (text != null) {
+        text
+          .removeClass('editing')
+          .off('dbclick focusin');
       }
       stashClass = '';
       text = $(value);
@@ -19,9 +25,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .on({
           'dblclick': this.text_dblclickHandler,
           'focusin': this.text_focusInHandler,
-          'focusout': this.text_focusOutHandler
-          },  {self: this});
-      GUI.contextButtons.showButtons(this.buttons);
+        }, {self: this});
+      var self = this;
+      $('body').off('click', this.body_clickHandler);
+      setTimeout(function () {
+        $('body').one('click', {self: self}, self.body_clickHandler);
+      }, 50);
     },
     setTargetClass: function (className) {
       if (/h1|h2|h3/.test(className)) {
@@ -31,11 +40,16 @@ jQuery.namespace('Meatazine.view.ui.editor');
       text
         .addClass('p20')
         .parent()
-          .removeClass()
+          .removeClass('blackcon whitecon tag')
           .addClass('fixed ' + className);
     },
     startEdit: function (event) {
+      if (this.isEditing) {
+        return;
+      }
+      this.isEditing = true;
       text
+        .addClass('editing')
         .on({
           'mousedown': this.stopEventPropagation,
           'mousemove': this.stopEventPropagation,
@@ -47,12 +61,17 @@ jQuery.namespace('Meatazine.view.ui.editor');
         stashClass = 'bighead';
         text.removeClass('bighead');
       }
+      GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'text', 'edit-start']);
     },
     stopEdit: function (event) {
+      if (!this.isEditing) {
+        return;
+      }
+      this.isEditing = false;
       text
-        .addClass(stashClass)
         .removeClass('editing')
+        .addClass(stashClass)
         .prop('contenteditable', false)
         .off({
           'mousedown': this.stopEventPropagation,
@@ -60,12 +79,20 @@ jQuery.namespace('Meatazine.view.ui.editor');
           'keydown': this.stopEventPropagation,
         });
       Meatazine.utils.clearSelection();
-      this.buttons.find('[data-type="edit"]').removeClass('active');
       this.trigger('change');
+      GUI.page.$el.removeClass('editing');
       _gaq.push(['_traceEvent', 'text', 'edit-stop'])
     },
     stopEventPropagation: function (event) {
       event.stopPropagation();
+    },
+    body_clickHandler: function (event) {
+      var self = event.data.self;
+      if (self.isEditing) {
+        self.buttons.find('[data-type=edit]').click();
+      } else {
+        text.removeClass('editing');
+      }
     },
     deleteButton_clickHandler: function (event) {
       text.off();
@@ -95,8 +122,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     text_dblclickHandler: function (event) {
       var self = event.data.self;
-      self.startEdit();
       self.buttons.find('[data-type=edit]').addClass('active');
+      self.startEdit();
     },
     text_focusInHandler: function (event) {
       var self = event.data.self;
@@ -105,9 +132,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
         'mousemove': self.stopEventPropagation,
         'keydown': self.stopEventPropagation,
       });
-    },
-    text_focusOutHandler: function (event) {
-      event.data.self.stopEdit();
     },
   });
 })(Meatazine.view.ui.editor);
