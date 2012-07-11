@@ -137,6 +137,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
           });
           $('body').one('mouseup', self.canvas_mouseupHandler);
         })
+        .on('click', function (event) {
+          GUI.contextButtons.showButtons(self.buttons);
+        })
         .on('mouseup', this.canvas_mouseupHandler);
       loader.src = sourceUrl;
       image.replaceWith(canvas);
