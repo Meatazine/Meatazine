@@ -14,8 +14,8 @@ Meatazine.popup.userConfig = Backbone.View.extend({
     this.checkAutoSave();
   },
   checkAutoSave: function () {
-    var isAuto = this.model.get("isAutoSave");
-    if(isAuto || isAuto == undefined) {
+    var isAutoSave = this.model.get("isAutoSave");
+    if (isAutoSave || isAutoSave == undefined) {
       this.saveOnTime();
     } else {
       this.preventAutoSave();
@@ -36,7 +36,7 @@ Meatazine.popup.userConfig = Backbone.View.extend({
     this.model.set('isAutoSave', true);
     this.timeout = setInterval(function() {
       bookModel.save();
-    }, 1000*300);
+    }, 1000 * 300);
   },
   preventAutoSave: function () {
     this.$('#autoSaveButton')
