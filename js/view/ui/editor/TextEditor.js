@@ -10,16 +10,13 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     setTarget: function (value) {
       GUI.contextButtons.showButtons(this.buttons);
-      if (text && text.is(value)) {
-        return;
-      }
-      if (this.isEditing) {
-        this.stopEdit();
+      if (this.isEditing && !text.is(value)) {
+        this.buttons.find('[data-type=edit]').click();
       }
       if (text != null) {
         text
           .removeClass('editing')
-          .off('dbclick focusin focusout');
+          .off('dbclick focusin');
       }
       stashClass = '';
       text = $(value);
@@ -28,8 +25,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .on({
           'dblclick': this.text_dblclickHandler,
           'focusin': this.text_focusInHandler,
-          'focusout': this.text_focusOutHandler
-          }, {self: this});
+        }, {self: this});
+      var self = this;
+      $('body').off('click', this.body_clickHandler);
+      setTimeout(function () {
+        $('body').one('click', {self: self}, self.body_clickHandler);
+      }, 50);
     },
     setTargetClass: function (className) {
       if (/h1|h2|h3/.test(className)) {
@@ -69,6 +70,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       this.isEditing = false;
       text
+        .removeClass('editing')
         .addClass(stashClass)
         .prop('contenteditable', false)
         .off({
@@ -83,6 +85,14 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     stopEventPropagation: function (event) {
       event.stopPropagation();
+    },
+    body_clickHandler: function (event) {
+      var self = event.data.self;
+      if (self.isEditing) {
+        self.buttons.find('[data-type=edit]').click();
+      } else {
+        text.removeClass('editing');
+      }
     },
     deleteButton_clickHandler: function (event) {
       text.off();
@@ -122,10 +132,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
         'mousemove': self.stopEventPropagation,
         'keydown': self.stopEventPropagation,
       });
-    },
-    text_focusOutHandler: function (event) {
-      var self = event.data.self;
-      self.stopEdit();
     },
   });
 })(Meatazine.view.ui.editor);

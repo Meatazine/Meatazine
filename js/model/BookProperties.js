@@ -123,12 +123,12 @@ jQuery.namespace('Meatazine.model');
       }
     },
     preview: function () {
-      var html = '';
+      var html = [];
       _.each(this.attributes.pages.models, function (model, i) {
-        html += model.get('renderedHTML');
+        html.push(model.get('renderedHTML'));
       }, this);
       file.on('complete:save', this.saveCompleteHandler, this);
-      file.save('export.html', html);
+      file.save('export.html', '', html.join('###'));
     },
     publish: function () {
       var self = this,
@@ -176,7 +176,7 @@ jQuery.namespace('Meatazine.model');
     },
     saveCompleteHandler: function (url) {
       file.off('complete:save', null, this);
-      window.open('preview.html#width=' + this.get('width') + '&height=' + this.get('height'), 'preview');
+      this.trigger('preview:ready');
     },
   });
 })(Meatazine.model);

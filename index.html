@@ -50,7 +50,7 @@
               <li><a href="#load" class="system-button">读取</a></li>
               <li><a href="#export-zip" class="system-button disabled">导出</a></li>
               <li class="divider"></li>
-              <li><a href="#preview" class="system-button disabled" target="_blank">预览</a></li>
+              <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
               <li class="divider"></li>
               <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
               <li><a href="#publish" class="system-button disabled" data-toggle="modal">发布</a></li>
@@ -124,9 +124,11 @@
           <li><a href="#" class="h1">大标题</a></li>
           <li><a href="#" class="h2">二标题</a></li>
           <li><a href="#" class="h3">三标题</a></li>
+          <li class="divider"></li>
           <li><a href="#" class="blackcon">黑背景段落</a></li>
           <li><a href="#" class="whitecon">白背景段落</a></li>
           <li><a href="#" class="tag">标签</a></li>
+          <li><a href="#" class="">无背景</a></li>
         </ul>
       </div>
       <div class="btn-group group1">
@@ -159,8 +161,8 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" data-type="filter">
-          <li><a href="#">黑白</a></li>
-          <li><a href="#">LOMO</a></li>
+          <li><a href="#" title="没这个功能，等待填坑吧">黑白</a></li>
+          <li><a href="#" title="没这个功能，等待填坑吧">LOMO</a></li>
         </ul>
       </div>
       <div class="btn-group group5">
@@ -466,6 +468,15 @@
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>
     </div>
   </div>
+  <div id="preview" class="modal fade hide">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>预览</h3>
+    </div>
+    <div class="modal-body">
+      
+    </div>
+  </div>
 </div>
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -502,6 +513,7 @@
 <script src="js/popup/PublishStatus.js"></script>
 <script src="js/popup/BookConfig.js"></script>
 <script src="js/popup/Export.js"></script>
+<script src="js/popup/Preview.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

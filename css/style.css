@@ -5,6 +5,15 @@
 /**
  *   全局
  */
+* {
+  padding:0;
+  margin:0;
+  border:0;
+  outline:0;
+  font-size:100%;
+  vertical-align:baseline;
+  background:transparent;
+}
 body {
   background:#000;
 }
@@ -202,10 +211,6 @@ body {
   height:100%;
   overflow:hidden;
 }
-.nmp {
-  margin:0;
-  padding:0;
-}
 
 /**
  *   元素
@@ -242,9 +247,6 @@ body {
 .page .summary {
   max-width:30%;
 }
-.page .content {
-  margin:0;
-}
 .page .bighead:first-letter {
   font-size:250%;
   line-height:120%;
@@ -262,7 +264,6 @@ body {
 .page .grid, .page .grid li {
   list-style: none;
   float:left;
-  margin:0;
   position: relative;
 }
 .page .slide-navi-type1 {
@@ -286,7 +287,6 @@ body {
 }
 .page .slide-navi-type2 {
   list-style: none;
-  margin:0;
   position: absolute;
 }
 .page .slide-navi-type2 li {
@@ -308,7 +308,6 @@ body {
 }
 .page .slide-navi-type3 {
   list-style:none;
-  margin:0;
   position:absolute;
 }
 .page .slide-navi-type3 li {

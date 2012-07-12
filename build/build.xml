@@ -48,6 +48,7 @@
         <file name="popup/PublishStatus.js" />
         <file name="popup/BookConfig.js" />
         <file name="popup/Export.js" />
+        <file name="popup/Preview.js" />
         <file name="popup/PopupManager.js" />
         <file name="view/ui/editor/AbstractEditor.js" />
         <file name="view/ui/editor/ImageEditor.js" />
@@ -119,11 +120,20 @@
   
   <target name="maker" depends="init, -copy.html.files, -copy.image.files,
     -compile.css.files, -concat.js.libs.files, -concat.js.apps.files">
+    <echo message="Compile: apps.s" />
     <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/apps.js" encoding="UTF-8">
       <warning group="internetExplorerChecks" level="OFF" />
       <warning group="globalThis" level="OFF" />
       <sources dir="${temp}">
         <file name="apps.js" />
+      </sources>
+    </jscomp>
+    <echo message="Compile: PreviewMain.js" />
+    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/PreviewMain.js" encoding="UTF-8">
+      <warning group="internetExplorerChecks" level="OFF" />
+      <warning group="globalThis" level="OFF" />
+      <sources dir="js/">
+        <file name="PreviewMain.js" />
       </sources>
     </jscomp>
     <replaceregexp flags="gs" encoding="UTF-8">

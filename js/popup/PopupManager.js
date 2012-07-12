@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.popup');
 (function (ns) {
   var publish,
+      preview,
       welcome,
       config,
       exportPopup,
@@ -42,6 +43,15 @@ jQuery.namespace('Meatazine.popup');
                   el: '#export',
                   model: bookModel,
                 })
+              }
+              break;
+              
+            case 'preview':
+              if (preview == null) {
+                preview = new Meatazine.popup.Preview({
+                  el: '#preview',
+                  model: bookModel,
+                });
               }
               break;
               
