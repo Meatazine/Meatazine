@@ -474,15 +474,16 @@
       <h3>设置</h3>
     </div>
     <div class="modal-body">
-      <form class = "user-settings">
-      	<fieldset>
-  	      <div class = "setting-groups">
-  	        <label>设置自动保存？（每5min一次）</label>
-  	        <div align="right">
-  	          <input id="setAutoSave" type="button" class="btn" value="启用">
-  	        </div>
+      <form class="form-horizontal">
+      <fieldset>
+  	    <div class="control-group">
+  	      <label class="control-label" for="autoSaveButton">自动保存</label>
+  	      <div class="controls">
+  	        <input id="autoSaveButton" type="button" class="btn" value="启用">
+  	        <p class="help-block">若启用自动保存，则每五分钟自动保存一次</p>
   	      </div>
-        </fieldset>
+  	    </div>
+      </fieldset>
       </form>
     </div>
     <div class="modal-footer">

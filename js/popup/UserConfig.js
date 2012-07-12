@@ -2,9 +2,9 @@ jQuery.namespace('Meatazine.popup');
 Meatazine.popup.userConfig = Backbone.View.extend({
   timeout: 0,  
   events: {
-    "click #setAutoSave": "autoSaveButton_clickHandler", 
-    "mouseover #setAutoSave": "autoSaveButtonText_mouseoverHandler", 
-    "mouseout #setAutoSave": "autoSaveButtonText_mouseoutHandler", 
+    "click #autoSaveButton": "autoSaveButton_clickHandler", 
+    "mouseover #autoSaveButton": "autoSaveButton_mouseoverHandler", 
+    "mouseout #autoSaveButton": "autoSaveButton_mouseoutHandler", 
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -14,42 +14,45 @@ Meatazine.popup.userConfig = Backbone.View.extend({
     this.checkAutoSave();
   },
   checkAutoSave: function () {
-    var config_autoSave = this.model.get("isAutoSave");
-    if(config_autoSave || config_autoSave == undefined) {
+    var isAuto = this.model.get("isAutoSave");
+    if(isAuto || isAuto == undefined) {
       this.saveOnTime();
     } else {
-        this.preventAutoSave();
-      }
+      this.preventAutoSave();
+    }
   },
   autoSaveButton_clickHandler: function () {
-    this.$('#setAutoSave').hasClass('active') ?
-      this.preventAutoSave() : this.saveOnTime();
+  	if (this.$('#autoSaveButton').hasClass('active')) {
+  	  this.preventAutoSave();
+  	} else {
+  	  this.saveOnTime();
+  	}
   },
   saveOnTime: function () {
-    this.$('#setAutoSave')
+    var bookModel = this.options.book;
+    this.$('#autoSaveButton')
       .addClass('active')
       .val("已启用");
     this.model.set('isAutoSave', true);
-    var Model = this.options.book;
     this.timeout = setInterval(function() {
-      Model.save();
+      bookModel.save();
     }, 1000*300);
   },
   preventAutoSave: function () {
-    this.$('#setAutoSave')
+    this.$('#autoSaveButton')
       .removeClass('active')
       .val("启用");
     this.model.set('isAutoSave', false);
     clearInterval(this.timeout);
   },
-  autoSaveButtonText_mouseoverHandler: function () {
-    if(this.$('#setAutoSave').hasClass('active')) {
-      this.$("#setAutoSave").val("停用");
+  autoSaveButton_mouseoverHandler: function () {
+    if (this.$('#autoSaveButton').hasClass('active')) {
+      this.$("#autoSaveButton").val("停用");
     }
   },
-  autoSaveButtonText_mouseoutHandler: function () {
-    if(this.$('#setAutoSave').hasClass('active')) {
-      this.$("#setAutoSave").val("已启用");
+  autoSaveButton_mouseoutHandler: function () {
+    if (this.$('#autoSaveButton').hasClass('active')) {
+      this.$("#autoSaveButton").val("已启用");
     }
   }, 
 });
