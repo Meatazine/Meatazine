@@ -3,7 +3,6 @@ jQuery.namespace('Meatazine.view.ui');
   var textEditor = new ns.editor.TextEditor('.group1');
   ns.PageBody = Backbone.View.extend({
     items: [],
-    isSentByMe: false,
     events: {
       "click .editable": "editable_clickHandler",
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
@@ -14,7 +13,6 @@ jQuery.namespace('Meatazine.view.ui');
       this.$el = $(this.el);
       this.options.book.on('change:size', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_selectHandler, this);
-      this.options.source.on('complete', this.source_completeHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
@@ -39,8 +37,7 @@ jQuery.namespace('Meatazine.view.ui');
       
       this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
-      //this.$('.editable').click(this.editable_clickHandler);
-      this.refreshThumbnail();
+      this.refreshThumbnail(true);
     },
     addEditableText: function (x, y) {
       var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');
@@ -51,17 +48,26 @@ jQuery.namespace('Meatazine.view.ui');
         .resizable()
         .appendTo(this.$el)
         .find('.editable').click();
-      // 添加后，导致所有editable的事件消失，所以手工加一下
-      //this.$('.editable').click(this.editable_clickHandler);
     },
     empty: function () {
       while (this.items.length > 0) {
-        this.items.shift().remove();
+        this.items.shift().off().remove();
       }
       this.$('.ui-draggable').draggable('destroy');
       this.$('.ui-resizable').resizable('destroy');
+      this.$el.empty();
+      GUI.contextButtons.hide();
     },
-    getFilteredHTML: function () {
+    refreshThumbnail: function (isReset) {
+      isReset = isReset || false;
+      var self = this;
+      html2canvas(this.$el, {onrendered: function (canvas) {
+        self.trigger('change', canvas);
+      }});
+      this.saveRenderedHTML();
+      this.saveTemplate(isReset);
+    },
+    saveRenderedHTML: function () {
       var self = this,
           html = this.$el.clone();
       html.find('.placeholder').removeClass('placeholder');
@@ -74,22 +80,15 @@ jQuery.namespace('Meatazine.view.ui');
       html.find('.ui-resizable-handle').remove();
       // 把Google Map的内容写到html里
       html.find('.map-container').each(function (i) {
-        var model = $(this).data('model');
+        var model = self.$('.map-container').eq(i).data('model');
         if (model instanceof Backbone.Model) {
           $(this).attr('data-map', JSON.stringify(model.toJSON()));
         }
+        this.innerHTML = '';
       });
-      return '<div class="page">' + html.html() + '</div>';
+      this.model.set('renderedHTML', '<div class="page">' + html.html() + '</div>');
     },
-    refreshThumbnail: function () {
-      var self = this;
-      html2canvas(this.$el, {onrendered: function (canvas) {
-        self.trigger('change', canvas);
-      }});
-      this.saveTemplate();
-      this.model.set('renderedHTML', this.getFilteredHTML());
-    },
-    saveTemplate: function () {
+    saveTemplate: function (isReset) {
       if (this.$el.html().replace(/\W/gm,'') == '') {
         return;
       }
@@ -100,23 +99,7 @@ jQuery.namespace('Meatazine.view.ui');
       template.find('[data-config]').each(function (i) {
         $(this).html(self.items[i].template);
       });
-      this.model.set('template', template.html());
-    },
-    showLoading: function () {
-      this.$el.html('<p align="center" style="padding-top:40px"><img src="img/loading.gif" /><br />加载中，请稍后</p>');
-    },
-    useTemplate: function(isFromPage) {
-      if (isFromPage && this.model.get('template') != '') {
-        this.render();
-        return;
-      }
-      if (this.options.source.hasTemplate(this.model.get('templateType'))){
-        this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
-        this.render();
-        return;
-      }
-      this.options.source.fetch(this.model.get('templateType'));
-      this.showLoading();
+      this.model.set({template: template.html()}, {isModified: !isReset});
     },
     book_resizeHandler: function (w, h) {
       this.$el.width(w);
@@ -134,29 +117,28 @@ jQuery.namespace('Meatazine.view.ui');
     },
     pageList_selectHandler: function (model) {
       this.saveTemplate();
+      if (model.get('template') == '') {
+        model.set('template', this.options.source.getTemplate(model.get('templateType')));
+      }
       this.model = model;
-      this.useTemplate(true);
-      this.isSentByMe = this.options.source.get('type') != this.model.get('templateType');
-      this.options.source.set('type', this.model.get('templateType'));
+      if (model.get('template')) {
+        this.render();
+      }
     },
     resizable_resizeStopHandler:function (event, ui) {
       this.refreshThumbnail();
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
     source_selectHandler: function () {
-      if (this.isSentByMe) {
-        this.isSentByMe = false;
+      if (this.model.get('template') && this.model.get('templateType') == this.options.source.get('type')) {
         return;
       }
       this.model.reset();
-      this.model.set('templateType', this.options.source.get('type'));
-      this.useTemplate();
-    },
-    source_completeHandler: function () {
-      if (this.options.source.hasTemplate(this.model.get('templateType'))) {
-        this.model.set('template', this.options.source.getTemplate(this.model.get('templateType')));
-        this.render();
-      }
+      this.model.set({
+        templateType: this.options.source.get('type'),
+        template: this.options.source.getTemplate(this.options.source.get('type')),
+      }, {isModified: false});
+      this.render();
     },
     textEditor_changeHandler: function () {
       this.refreshThumbnail();

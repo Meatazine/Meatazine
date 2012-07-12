@@ -1,8 +1,10 @@
 jQuery.namespace('Meatazine.popup');
 (function (ns) {
   var publish,
+      preview,
       welcome,
       config,
+      exportPopup,
       screenSize,
       configModel,
       bookModel,
@@ -37,6 +39,33 @@ jQuery.namespace('Meatazine.popup');
                   el: '#publish',
                   model: bookModel,
                 });
+              }
+              break;
+              
+            case 'export-zip':
+              if (exportPopup == null) {
+                exportPopup = new Meatazine.popup.Export({
+                  el: '#export',
+                  model: bookModel,
+                })
+              }
+              break;
+              
+            case 'preview':
+              if (preview == null) {
+                preview = new Meatazine.popup.Preview({
+                  el: '#preview',
+                  model: bookModel,
+                });
+              }
+              break;
+              
+            case 'book-config':
+              if (config == null) {
+                config = new Meatazine.popup.BookConfig({
+                  el: '#book-config',
+                  model: bookModel,
+                })
               }
               break;
           }

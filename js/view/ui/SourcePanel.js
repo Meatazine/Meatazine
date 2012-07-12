@@ -1,14 +1,14 @@
 jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.SourcePanel = Backbone.View.extend({
-  currentPanel: null,
-  enabled: false,
   contents: null,
   removeButton: null,
+  templatelist: null,
+  sourceList: null,
   events: {
-    "click .btn": "tab_changeHandler",
     "click #template-list li": "template_clickHandler",
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
+    "mouseout #source-list li": "sourceItem_mouseOutHandler",
     "focusout #source-list input": "input_focusOutHandler",
     "keydown #source-list input": "input_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
@@ -17,22 +17,27 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.templateList = this.$('#template-list');
+    this.sourceList = this.$('#source-list');
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
-    this.currentPanel = this.$('#template-list');
-    this.options.book.on('change:size', this.resizeHandler, this);
+    this.options.book.on('change:size', this.book_resizeHandler, this);
+    this.options.book.get('pages').on('add', this.pages_addHandler, this);
+    this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
     this.model.setSourceTemplate(this.$('#source-list').html());
-    this.model.on('change:type', this.model_typeChangeHandler, this);
-    this.render();
-  },
-  render: function () {
-  	this.$('#source-list').hide();
+    delete this.options;
   },
   createSourceItem: function (model) {
     var template = this.model.getSourceTemplate(model),
         item = $(Meatazine.utils.render(template, model));
     model.on('change', function (model) {
+      var changed = model.changedAttributes();
+      _.each(_.keys(changed), function (key) {
+        key == 'img' ? item.find('img').attr('src', changed[key]) : item.find(key).text(changed[key]);
+      });
       item.replaceWith(this.createSourceItem(model));
-      model.off('change', arguments.callee);
+    }, this);
+    model.on('select', function () {
+      this.highlightOn(item);
     }, this);
     return item;
   },
@@ -59,17 +64,42 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   getTemplateType: function (value) {
     return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
   },
+  highlightOn: function (item) {
+    this.$('.btn').eq(1).click();
+    item.addClass('animated flash');
+    if ($(window).height() > 143 + this.$el.height()) { // 60 + 36 + 2 + 18 + 27
+      item[0].scrollIntoView();
+    }
+    setTimeout(function () {
+      item.removeClass('animated flash');
+    }, 1000);
+  },
   refreshSourceList: function () {
     // 更新全部内容
-    var list = this.$('#source-list');
     _.each(this.contents.get('contents'), function (collection, index) {
-      this.createSourceList(collection, list.find('ul').eq(index));
+      this.createSourceList(collection, this.sourceList.find('ul').eq(index));
     }, this);
-    list.find('dt:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
-    list.find('dd:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
-    list.find('ul')
+    this.sourceList.find('dt:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
+    this.sourceList.find('dd:gt(' + (this.contents.get('contents').length - 1) + ')').remove();
+    this.sourceList.find('ul')
       .sortable()
       .disableSelection();
+  },
+  setTemplateType: function (type, silent) {
+    silent = silent == null ? true : silent;
+    this.model.set({type: type}, {silent: true});
+    var target = this.model.get('type');
+        img = _.find(this.templateList.find('img'), function (element, i) {
+          return this.getTemplateType(element.src) == target;
+        }, this);
+    if (img != null) {
+      $(img).parent()
+        .addClass('active')
+          .siblings('.active').removeClass('active');
+    }
+  },
+  book_resizeHandler: function (w, h) {
+    this.templateList.add(this.sourceList).height(h - 110); // 空出按钮的位置
   },
   input_focusOutHandler: function (event) {
     var target = $(event.target),
@@ -77,7 +107,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         collection = target.closest('ul').data('collection'),
         value = target.val(),
         key = target.attr('name');
-    target.replaceWith('<span class>' + value + '</span>');
+    target.replaceWith('<span class="key">' + value + '</span>');
     collection.at(index).set(key, value);
     _gaq.push(['_trackEvent', 'source', 'edit']);
   },
@@ -86,17 +116,15 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       $(event.target).focusout();
     }
   },
-  model_typeChangeHandler: function (event) {
-    var target = this.model.get('type'),
-        index = -1;
-    _.each(this.$('#template-list img'), function (element, i) {
-      if (this.getTemplateType(element.src) == target) {
-        index = i;
-      }
-    }, this);
-    if (index != -1) {
-      this.enabled = true;
-      this.$('#template-list li').eq(index).trigger('click');
+  pages_addHandler: function (model) {
+    this.templateList.removeClass('disabled');
+    this.$('.btn').eq(0).click();
+  },
+  pages_removeHandler: function (model, collection, option) {
+    if (collection.length == 0) {
+      this.templateList.addClass('disabled')
+        .find('.active').removeClass('active');
+      this.sourceList.empty();
     }
   },
   pageList_selectHandler: function (model) {
@@ -106,9 +134,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.contents = model;
     this.contents.on('change:contents', this.refreshSourceList, this);
     this.refreshSourceList();
+    this.setTemplateType(model.get('templateType'));
   },
   removeButton_clickHandler: function (event) {
-    var target = $(event.target).parent(),
+    var target = this.removeButton.data('target'),
         index = target.index(),
         ul = target.closest('ul');
     target.remove();
@@ -124,8 +153,23 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     collection.setModelIndex(start, ui.item.index());
     _gaq.push(['_trackEvent', 'source', 'sort']);
   },
+  sourceItem_mouseOutHandler: function (event) {
+    var pos = $(event.target).offset();
+    pos.width = $(event.target).width();
+    pos.height = $(event.target).height();
+    if (pos.left > event.pageX || pos.top > event.pageY || pos.left + pos.width < event.pageX || pos.top + pos.height < event.pageY) {
+      this.removeButton.remove();
+    }
+  },
   sourceItem_mouseOverHandler: function (event) {
-    $(event.currentTarget).append(this.removeButton);
+    var target = $(event.currentTarget),
+        position = target.offset(),
+        outter = this.sourceList.offset();
+    this.removeButton
+      .css('left', position.left - outter.left + target.width() - 9)
+      .css('top', position.top - outter.top + this.sourceList.scrollTop() + 4)
+      .data('target', target)
+      .appendTo(this.sourceList);
   },
   span_clickHandler: function (event) {
     var target = $(event.target),
@@ -137,36 +181,22 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     target.replaceWith(input);
     input.focus();
   },
-  tab_changeHandler: function (event) {
-    if (this.currentPanel != null) {
-      this.currentPanel.hide();
-    }
-    var target = $(event.currentTarget).attr('data-for');
-    this.currentPanel = this.$('#' + target);
-    this.currentPanel.show();
-  },
   template_clickHandler: function (event) {
-    if (!this.enabled) {
+    if (this.templateList.hasClass('disabled')) {
       return;
     }
     if ($(event.currentTarget).hasClass('active')) {
       return;
     }
-    if (this.model.hasChanged("contents")) {
+    if (this.contents.isModified) {
       if (!window.confirm('替换模板后，您所编辑的内容会丢失。确认替换么？')) {
         return;
       }
     }
-    var currentTemplate = this.$('#template-list .active');
-    if (currentTemplate.length > 0) {
-      currentTemplate.removeClass('active');
-    }
-    currentTemplate = $(event.currentTarget);
-    currentTemplate.addClass('active');
+    var currentTemplate = $(event.currentTarget);
+    currentTemplate.addClass('active')
+      .siblings('.active').removeClass('active');
     this.model.set('type', this.getTemplateType(currentTemplate.find('img').attr('src')));
     _gaq.push(['_trackEvent', 'template', 'select', this.model.get('type')]);
-  },
-  resizeHandler: function (w, h) {
-    this.$('#template-list, #source-list').height(h - 110); // 空出按钮的位置
   },
 })

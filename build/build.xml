@@ -33,6 +33,7 @@
     <concat destfile="${temp}/apps.js" encoding="UTF-8" fixlastline="yes">
       <filelist dir="js/">
         <file name="utils/Utils.js" />
+        <file name="utils/Mouse.js" />
         <file name="filesystem/FileReferrence.js" />
         <file name="filesystem/FileZip.js" />
         <file name="filesystem/ImageResizer.js" />
@@ -45,6 +46,9 @@
         <file name="popup/Welcome.js" />
         <file name="popup/ScreenSizeSelector.js" />
         <file name="popup/PublishStatus.js" />
+        <file name="popup/BookConfig.js" />
+        <file name="popup/Export.js" />
+        <file name="popup/Preview.js" />
         <file name="popup/PopupManager.js" />
         <file name="view/ui/editor/AbstractEditor.js" />
         <file name="view/ui/editor/ImageEditor.js" />
@@ -70,7 +74,7 @@
     <copy file="index.html" todir="${dist}" />
     <copy file="preview.html" todir="${dist}" />
     <copy todir="${dist}/template/">
-      <fileset dir="template/" excludes="qa.html" />
+      <fileset dir="template/" />
     </copy>
   </target>
   
@@ -81,12 +85,6 @@
   </target>
   
   <target name="-compile.css.files">
-    <copy todir="${dist}/css">
-      <fileset dir="css/">
-        <exclude name="admin.css" />
-        <exclude name="style.css" />
-      </fileset>
-    </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
       <arg line="--output-file ${dist}/css/admin.css" />
       <arg line="css/admin.css" />
@@ -98,6 +96,7 @@
       <filelist dir="css/">
         <file name="bootstrap.min.css" />
         <file name="bootstrap-responsive.min.css" />
+        <file name="animate.css" />
       </filelist>
     </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
@@ -121,11 +120,20 @@
   
   <target name="maker" depends="init, -copy.html.files, -copy.image.files,
     -compile.css.files, -concat.js.libs.files, -concat.js.apps.files">
+    <echo message="Compile: apps.s" />
     <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/apps.js" encoding="UTF-8">
       <warning group="internetExplorerChecks" level="OFF" />
       <warning group="globalThis" level="OFF" />
       <sources dir="${temp}">
         <file name="apps.js" />
+      </sources>
+    </jscomp>
+    <echo message="Compile: PreviewMain.js" />
+    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/PreviewMain.js" encoding="UTF-8">
+      <warning group="internetExplorerChecks" level="OFF" />
+      <warning group="globalThis" level="OFF" />
+      <sources dir="js/">
+        <file name="PreviewMain.js" />
       </sources>
     </jscomp>
     <replaceregexp flags="gs" encoding="UTF-8">
@@ -137,6 +145,9 @@
       <format property="build.time" pattern="MMddHHmm" />
     </tstamp>
     <replace file="${dist}/index.html" encoding="UTF-8">
+      <replacefilter token="@version@" value="${build.time}" />
+    </replace>
+    <replace file="${dist}/js/apps.js" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
     </replace>
     <delete dir="${temp}" />

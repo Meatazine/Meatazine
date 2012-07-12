@@ -5,6 +5,12 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   },
   initialize: function () {
     this.$el = $(this.el);
+    this.$el.on({
+     'shown': this.shownHandler,
+     'hidden': this.hiddenHandler, 
+    }, {self: this});
+    this.initDownloadButtons();
+    this.model.on('change:platform', this.model_platformChangeHandler, this);
   },
   showStep: function (index) {
     this.$('li').eq(index - 1).toggleClass('active');
@@ -14,13 +20,59 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   },
   finish: function () {
     this.showStep(4);
-    this.$('button').removeProp('disabled');
+    this.$('button').prop('disabled', false);
   },
   reset: function () {
     this.$('li').removeClass('active pass');
     this.$('button').prop('disabled', true);
   },
   downloadHandler: function (event) {
-    location.href = './api/static/' + this.model.get('id') + $(event.target).attr('data-target');
+    location.href = './api/static/' + this.model.get('id') + '.' + $(event.target).attr('data-target');
+  },
+  initDownloadButtons: function () {
+    var platform = this.model.get('platform');
+    if (platform >> 1 & 0x1) {
+      this.$('[data-target=apk]').show();
+    } else {
+      this.$('[data-target=apk]').hide();
+    }
+    if (platform & 0x1) {
+      this.$('[data-target=ipa]').show();
+    } else {
+      this.$('[data-target=ipa]').hide();
+    }
+  },
+  model_platformChangeHandler: function () {
+    this.initDownloadButtons();
+  },
+  model_uploadProgressHandler: function (value) {
+    this.$('.upload-progress').text('（' + value + '%）');
+  },
+  model_publishStartHandler: function () {
+    this.showStep(2);
+  },
+  model_publishUploadedHandler: function () {
+    this.showStep(3);
+  },
+  model_publishCompleteHandler: function () {
+    this.finish();
+  },
+  model_zipProgressHandler: function (progress, total) {
+    this.$('.zip-progress').text('（' + progress + '/' + total + '）');
+  },
+  hiddenHandler: function (event) {
+    event.data.self.model.off(null, null, event.data.self);
+  },
+  shownHandler: function (event) {
+    var self = event.data.self;
+    self.reset();
+    self.showStep(1);
+    self.model.on('publish:start', self.model_publishStartHandler, self);
+    self.model.on('publish:uploaded', self.model_publishUploadedHandler, self);
+    self.model.on('publish:complete', self.model_publishCompleteHandler, self);
+    self.model.on('zip:progress', self.model_zipProgressHandler, self);
+    self.model.on('upload:progress', self.model_uploadProgressHandler, self);
+    
+    self.model.publish();
   }
 });

@@ -3,18 +3,20 @@ Meatazine.view.GUI = Backbone.View.extend({
   contextButtons: null,
   navbar: null,
   page: null,
+  VERSION: '0.1.5.@version@',
   initialize: function (options) {
-    this.options.book.on('change:size', this.book_sizeChangeHandler, this);
-    this.options.book.get('pages').on('add', this.pages_addHandler, this);
-    this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
+    var book = options.book;
+    book.on('change:size', this.book_sizeChangeHandler, this);
+    book.get('pages').on('add', this.pages_addHandler, this);
+    book.get('pages').on('remove', this.pages_removeHandler, this);
     this.navbar = new Meatazine.view.ui.NavBar({
-      el: '#navbar'
+      el: '#navbar',
+      model: this.options.book,
     });
-    this.navbar.on('select', this.navbar_selectHandler, this);
     this.removeLoading();
     $('body').on({
       'keydown': function (event) {
-        if (event.keyCode == 8) { // backspace
+        if (event.keyCode == 8 && !(/input|textarea/i).test(event.target.tagName)) { // backspace
           return false;
         }
       },
@@ -22,6 +24,14 @@ Meatazine.view.GUI = Backbone.View.extend({
         return false;
       },
     });
+    window.onbeforeunload = function (event) {
+      if (book.isModified()) {
+        if(!window.confirm('离开的话，您所有未保存的内容将会丢失，您确认要离开么？')) {
+          event.preventDefault();
+          return '离开的话，您所有未保存的内容将会丢失，您确认要离开么？';
+        }
+      }
+    }
     delete this.options;
   },
   removeLoading: function () {
@@ -31,28 +41,15 @@ Meatazine.view.GUI = Backbone.View.extend({
   book_sizeChangeHandler: function (w) {
     $('#page-area').width(474 + w);
   },
-  navbar_selectHandler: function (type) {
-    switch (type) {
-      case 'exportZip':
-        $('#export-zip').modal({
-          show: true,
-          keyboard: false,
-        });
-        break;
-        
-      case 'publish':
-        return;
-        break;
-    }
-    _gaq.push(['_trackEvent', 'book', type]);
-    this.book[type]();
-  },
   pages_addHandler: function (model, collection, options) {
     this.contextButtons.enableButtons();
+    this.navbar.setBookButtonsStatus(false);
   },
   pages_removeHandler: function (model, collection, options) {
     if (collection.length == 0) {
+      this.page.empty();
       this.contextButtons.disableButtons();
+      this.navbar.setBookButtonsStatus(true);
     }
   }
 });

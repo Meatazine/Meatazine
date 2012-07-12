@@ -1,7 +1,16 @@
+api/assets/
+api/static/
+api/temp/
+api/android/
+api/*.ipa
+api/*.apk
+api/*.log
 bin/
 temp/
 jqueryui/
+js/libs/backbone.js
 export/
 img/source/
 build/*.jar
 web.config
+~

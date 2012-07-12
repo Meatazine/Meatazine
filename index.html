@@ -46,14 +46,14 @@
               文件 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#save" class="system-button">保存</a></li>
+              <li><a href="#save" class="system-button disabled">保存</a></li>
               <li><a href="#load" class="system-button">读取</a></li>
-              <li><a href="#exportZip" class="system-button">导出</a></li>
+              <li><a href="#export-zip" class="system-button disabled">导出</a></li>
               <li class="divider"></li>
-              <li><a href="#preview" class="system-button" target="_blank">预览</a></li>
+              <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
               <li class="divider"></li>
               <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
-              <li><a href="#publish" class="system-button" title="目前只支持发布Android应用" data-toggle="modal">发布</a></li>
+              <li><a href="#publish" class="system-button disabled" data-toggle="modal">发布</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -124,9 +124,11 @@
           <li><a href="#" class="h1">大标题</a></li>
           <li><a href="#" class="h2">二标题</a></li>
           <li><a href="#" class="h3">三标题</a></li>
+          <li class="divider"></li>
           <li><a href="#" class="blackcon">黑背景段落</a></li>
           <li><a href="#" class="whitecon">白背景段落</a></li>
           <li><a href="#" class="tag">标签</a></li>
+          <li><a href="#" class="">无背景</a></li>
         </ul>
       </div>
       <div class="btn-group group1">
@@ -134,7 +136,7 @@
       </div>
       <div class="btn-group group2">
         <button class="btn btn-mini" data-type="upload"><i class="icon-upload"></i> 上传</button>
-        <button class="btn btn-mini" data-type="switch" data-class="map"><i class="icon-map-marker"></i> 转换为地图</button>
+        <button class="btn btn-mini" data-type="convert" data-class="map"><i class="icon-map-marker"></i> 转换为地图</button>
         <button class="btn btn-mini" data-type="edit" disabled="true"><i class="icon-edit"></i> 编辑图片</button>
       </div>
       <div class="btn-group group2">
@@ -159,12 +161,12 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" data-type="filter">
-          <li><a href="#">黑白</a></li>
-          <li><a href="#">LOMO</a></li>
+          <li><a href="#" title="没这个功能，等待填坑吧">黑白</a></li>
+          <li><a href="#" title="没这个功能，等待填坑吧">LOMO</a></li>
         </ul>
       </div>
       <div class="btn-group group5">
-        <button class="btn btn-mini" data-type="switch" data-class="image"><i class="icon-picture"></i> 转换为图片</button>
+        <button class="btn btn-mini" data-type="convert" data-class="image"><i class="icon-picture"></i> 转换为图片</button>
         <button class="btn btn-mini" data-type="add-marker">添加标记</button>
         <button class="btn btn-mini" data-type="edit"><i class="icon-edit"></i> 编辑地图</button>
       </div>
@@ -197,69 +199,71 @@
     </div>
     <div id="page-body" class="page">
     </div>
-    <div id="panel">
-      <div class="btn-group" data-toggle="buttons-radio">
-        <button class="btn active" data-for="template-list">样式模板</button>
-        <button class="btn" data-for="source-list">素材</button>
+    <div id="panel" class="tabbable">
+      <div class="btn-group nav-tabs" data-toggle="buttons-radio">
+        <a class="btn active" data-toggle="tab" href="#template-list">样式模板</a>
+        <a class="btn" data-toggle="tab" href="#source-list">素材</a>
       </div>
       <hr />
-      <ul id="template-list" class="well">
-        <li>
-          <img src="img/elements/face.png" alt="封面" />
-        </li>
-        <li>
-          <img src="img/elements/face1.png" alt="文章封面1" />
-        </li>
-        <li>
-          <img src="img/elements/face2.png" alt="文章封面2" />
-        </li>
-        <li>
-          <img src="img/elements/face3.png" alt="文章封面3" />
-        </li>
-        <li>
-          <img src="img/elements/page5.png" alt="文章内页5" />
-        </li>
-        <li>
-          <img src="img/elements/page1.png" alt="文章内页1" />
-        </li>
-        <li>
-          <img src="img/elements/page2.png" alt="文章内页2" />
-        </li>
-        <li>
-          <img src="img/elements/page3.png" alt="文章内页3" />
-        </li>
-        <li>
-          <img src="img/elements/page4.png" alt="文章内页4" />
-        </li>
-        <li>
-          <img src="img/elements/grid1.png" alt="图片矩阵1" />
-        </li>
-        <li>
-          <img src="img/elements/grid2.png" alt="图片矩阵2" />
-        </li>
-        <li>
-          <img src="img/elements/slide.png" alt="Slide" />
-        </li>
-        <li>
-          <img src="img/elements/slide1.png" alt="Slide1" />
-        </li>
-        <li>
-          <img src="img/elements/slide2.png" alt="Slide2" />
-        </li>
-        <li>
-          <img src="img/elements/back.png" alt="封底" />
-        </li>
-        <li>
-          <img src="img/elements/back1.png" alt="封底1" />
-        </li>
-      </ul>
-      <dl id="source-list" class="well">
-        <dt>元素</dt>
-        <dd>
-          <ul>
-          </ul>
-        </dd>
-      </dl>
+      <div class="tab-content">
+        <ul id="template-list" class="well tab-pane active disabled">
+          <li>
+            <img src="img/elements/face.png" alt="封面" />
+          </li>
+          <li>
+            <img src="img/elements/face1.png" alt="文章封面1" />
+          </li>
+          <li>
+            <img src="img/elements/face2.png" alt="文章封面2" />
+          </li>
+          <li>
+            <img src="img/elements/face3.png" alt="文章封面3" />
+          </li>
+          <li>
+            <img src="img/elements/page5.png" alt="文章内页5" />
+          </li>
+          <li>
+            <img src="img/elements/page1.png" alt="文章内页1" />
+          </li>
+          <li>
+            <img src="img/elements/page2.png" alt="文章内页2" />
+          </li>
+          <li>
+            <img src="img/elements/page3.png" alt="文章内页3" />
+          </li>
+          <li>
+            <img src="img/elements/page4.png" alt="文章内页4" />
+          </li>
+          <li>
+            <img src="img/elements/grid1.png" alt="图片矩阵1" />
+          </li>
+          <li>
+            <img src="img/elements/grid2.png" alt="图片矩阵2" />
+          </li>
+          <li>
+            <img src="img/elements/slide.png" alt="Slide" />
+          </li>
+          <li>
+            <img src="img/elements/slide1.png" alt="Slide1" />
+          </li>
+          <li>
+            <img src="img/elements/slide2.png" alt="Slide2" />
+          </li>
+          <li>
+            <img src="img/elements/back.png" alt="封底" />
+          </li>
+          <li>
+            <img src="img/elements/back1.png" alt="封底1" />
+          </li>
+        </ul>
+        <dl id="source-list" class="well tab-pane">
+          <dt>元素</dt>
+          <dd>
+            <ul>
+            </ul>
+          </dd>
+        </dl>
+      </div>
     </div>
   </div>
   <hr />
@@ -298,7 +302,7 @@
               <h4>请大家暂时使用人肉编译法</h4>
               <p>
                 另外附上可编译的工程压缩包下载：
-                <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.ipa.zip" target="_blank">iOS工程</a>
+                <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.xcarchive.zip" target="_blank">iOS工程</a>
                 <a href="//whale.dianjoy.com/meatazine/archive/Meatazine.apk.zip" target="_blank">Android工程</a><br />
                 将导出的zip文件解压到工程的www目录下，然后编译即可。
               </p>
@@ -371,37 +375,39 @@
           <div class="control-group">
             <label class="control-label" for="book-icon">应用图标</label>
             <div class="controls">
-              <img src="" />
-              <input type="file" />
+              <img src="" class="icon" />
+              <input type="file" id="book-icon" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" for="book-cover">应用封面</label>
             <div class="controls">
-              <img src="" />
-              <input type="file" />
+              <img src="" class="cover" />
+              <input type="file" id="book-cover" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label">目标平台</label>
             <div class="controls btn-group" data-toggle="buttons-checkbox">
-              <button class="btn active">Android</button>
-              <button class="btn">iOS</button>
-              <button class="btn">Windows Phone</button>
+              <button class="platform btn active">iOS</button>
+              <button class="platform btn active">Android</button>
+              <button class="platform btn" disabled="true">Windows Phone</button>
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">应用模板</label>
+            <label class="control-label" for="book-type">应用模板</label>
             <div class="controls">
-              
+              <select id="book-type">
+                <option value="megazine">杂志</option>
+                <option value="parallax" disabled="true">视差滚动</option>
+              </select>
             </div>
           </div>
         </fieldset>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary">确定</button>
-      <button class="btn" data-dismiss="modal">取消</button>
+      <button class="btn btn-info" disabled="true"></button>
     </div>
   </div>
   <div id="publish" class="modal hide">
@@ -409,23 +415,23 @@
       <h3>发布</h3>
     </div>
     <div class="modal-body">
-      <!--<p>
+      <p>
         受网速和服务器负载影响，发布需要几分钟到十几分钟时间，请耐心等待。<br />
         期间请不要关闭浏览器或电脑。发布完成后，可以点击下方的按钮下载应用安装包。
       </p>
       <ol>
-        <li>生成压缩包</li>
-        <li>上传压缩包</li>
+        <li>生成压缩包 <span class="zip-progress"></span></li>
+        <li>上传压缩包 <span class="upload-progress"></span></li>
         <li>服务器打包成应用</li>
         <li>
           完成！请下载<br />
-          <button class="btn btn-success download" data-target=".apk"><i class="icon-download icon-white"></i> 下载APK</button>
+          <button class="btn btn-success download" data-target="apk" disabled="true"><i class="icon-download icon-white"></i> 下载Android安装包</button>
+          <button class="btn btn-success download" data-target="ipa" disabled="true"><i class="icon-download icon-white"></i> 下载iOS安装包</button>
         </li>
-      </ol>-->
-      <p>发布功能暂时不能使用，请静待肉大师提高功力</p>
+      </ol>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" data-dismiss="modal">关闭</button>
+      <button class="btn btn-primary" data-dismiss="modal" disabled="true">关闭</button>
     </div>
   </div>
   <div id="export-zip" class="modal hide">
@@ -436,9 +442,10 @@
       <p>导出的zip暂时无法导入再次编辑。<br />
         压缩时间和杂志大小有关，请不要关闭浏览器或电脑。
       </p>
-      <ol>
-        <li>压缩文件中，请耐心等待。</li>
-      </ol>
+      <p>
+        压缩文件中，请耐心等待。<br />
+        <span class="progress"></span>
+      </p>
     </div>
   </div>
   <div id="help" class="modal fade hide">
@@ -454,7 +461,7 @@
         <li><a href="//www.meathill.net/meatazine/meatazine-v0-2-changelog.html" target="_blank">肉大师（V0.2）开发中，去评论里留下您的希望吧</a></li>
       </ul>
       <p>
-        当前版本：<span id="version">0.1.@version@</span>
+        当前版本：<span id="version">0.1.5.@version@</span>
       </p>
     </div>
     <div class="modal-footer">
@@ -482,11 +489,22 @@
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>
     </div>
   </div>
+  <div id="preview" class="modal fade hide">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>预览</h3>
+    </div>
+    <div class="modal-body">
+      
+    </div>
+  </div>
+
 </div>
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="css/bootstrap.min.css" />
 <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
 <link rel="stylesheet" href="css/jquery-ui-1.8.21.custom.css" />
+<link rel="stylesheet" href="css/animate.css" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/admin.css" />
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>
@@ -502,6 +520,7 @@
 <script src="js/libs/jszip.js"></script>
 <script src="js/libs/jszip-deflate.js"></script>
 <script src="js/utils/Utils.js"></script>
+<script src="js/utils/Mouse.js"></script>
 <script src="js/filesystem/FileReferrence.js"></script>
 <script src="js/filesystem/FileZip.js"></script>
 <script src="js/filesystem/ImageResizer.js"></script>
@@ -515,6 +534,9 @@
 <script src="js/popup/ScreenSizeSelector.js"></script>
 <script src="js/popup/UserConfig.js"></script>
 <script src="js/popup/PublishStatus.js"></script>
+<script src="js/popup/BookConfig.js"></script>
+<script src="js/popup/Export.js"></script>
+<script src="js/popup/Preview.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

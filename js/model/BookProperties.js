@@ -1,31 +1,54 @@
 jQuery.namespace('Meatazine.model');
 (function (ns) {
-  var file = new Meatazine.filesystem.FileReferrence();
+  var isModified = false,
+      file = new Meatazine.filesystem.FileReferrence();
   ns.BookProperties = Backbone.Model.extend({
     defaults: {
       width: 1024,
       height: 768,
       id: -1,
-      platform: 1, // 1-android, 2-ios, 4-wp
+      platform: 3, // 1-ios, 2-android, 4-wp
       icon: '',
       cover: '',
+      name: '',
       gallery: -1,
       pages: null
     },
-    save: function () {
-      var data = _.clone(this.attributes);
-      data.pages = this.get('pages').toJSON();
-      localStorage.setItem('book', JSON.stringify(data));
+    initialize: function () {
+      this.get('pages').on('change', this.pages_changeHandler, this);
+      var id = localStorage.getItem('bookid');
+      if (id != null) {
+        this.set('id', id);
+        return;
+      }
+      $.ajax({
+        url: './api/init.php',
+        dataType: 'text',
+        context: this,
+        success: function (id) {
+          this.set('id', id);
+          localStorage.setItem('bookid', id);
+        },
+        error: function () {
+          GUI.navbar.disabledPublishButtons();
+        }
+      });
     },
     createZip: function () {
       var self = this,
           data = _.pick(this.attributes, 'width', 'height'),
-          zip = new Meatazine.filesystem.FileZip(),
-          htmls = _.pluck(this.get('pages').models, 'renderedHTML');
+          zip = new Meatazine.filesystem.FileZip();
+          htmls = [];
+      for (var i = 0, len = this.get('pages').length; i < len; i++) {
+        htmls.push(this.get('pages').at(i).get('renderedHTML'));
+      }
       data.content = htmls.join('###');
+      zip.on('progress', function (progress, total) {
+        this.trigger('zip:progress', progress, total);
+      }, this);
       // 加载模板
       $.ajax({
-        url: 'template/index.html',
+        url: './template/index.html',
         dataType: 'html',
         success: function (template) {
           template = Mustache.render(template, data);
@@ -58,24 +81,30 @@ jQuery.namespace('Meatazine.model');
       var zip = this.createZip();
       zip.on('ready', function () {
         zip.downloadZip();
-        $('#export-zip').modal('hide');
+        $('#export').modal('hide');
       });
     },
     fill: function (data) {
-      this.setSize(data.width, data.height);
       this.get('pages').fill(data.pages);
+      delete data.pages;
+      this.set(data);
     },
     getAppPack: function () {
       $.ajax({
-        url: '/meatazine/api/publish.php',
+        url: './api/publish.php',
         data: {
-          id: this.get('id')
+          id: this.get('id'),
+          apk: this.get('platform') >> 1 & 0x1,
+          ipa: this.get('platform') & 0x1,
         },
         context: this,
         success: function () {
-          GUI.publishStatus.finish();
+          this.trigger('publish:complete');
         },
       })
+    },
+    isModified: function () {
+      return isModified;
     },
     isSameDomain : function (url) {
       if (url.indexOf('//') == -1) {
@@ -94,36 +123,45 @@ jQuery.namespace('Meatazine.model');
       }
     },
     preview: function () {
-      var html = '';
+      var html = [];
       _.each(this.attributes.pages.models, function (model, i) {
-        html += model.get('renderedHTML');
+        html.push(model.get('renderedHTML'));
       }, this);
       file.on('complete:save', this.saveCompleteHandler, this);
-      file.save('export.html', html);
+      file.save('export.html', '', html.join('###'));
     },
     publish: function () {
       var self = this,
           zip = this.createZip();
       zip.on('ready', function () {
         var zipData = zip.generate(false, 'DEFLATE'),
-            byteArray = new Uint8Array(zipData.length);
+            byteArray = new Uint8Array(zipData.length),
+            xhr = null;
         for (var i = 0, len = zipData.length; i < len; i++) {
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
-        $.ajax({
-          url: '/meatazine/api/save.php',
-          type: 'POST',
-          contentType: 'application/octet-stream',
-          processData: false,
-          data: byteArray.buffer,
-          success: function (data) {
-            GUI.publishStatus.showStep(3);
-            self.set('id', data);
-            self.getAppPack();
-          },
-        });
-        GUI.publishStatus.showStep(2);
+        xhr = $.ajax({
+                url: './api/save.php?id=' + self.get('id'),
+                type: 'POST',
+                contentType: 'application/octet-stream',
+                processData: false,
+                data: byteArray.buffer,
+                success: function (data) {
+                  self.trigger('publish:uploaded');
+                  self.getAppPack();
+                },
+              });
+        xhr.upload.addEventListener('progress', function (event) {
+          self.trigger('upload:progress', event.loaded / event.total);
+        })
+        self.trigger('publish:start')
       });
+    },
+    save: function () {
+      var data = _.clone(this.attributes);
+      data.pages = this.get('pages').toJSON();
+      localStorage.setItem('book', JSON.stringify(data));
+      isModified = false;
     },
     setSize: function (w, h) {
       w = parseInt(w), h = parseInt(h);
@@ -133,9 +171,12 @@ jQuery.namespace('Meatazine.model');
       }, {silent: true});
       this.trigger('change:size', w, h);
     },
+    pages_changeHandler: function () {
+      isModified = true;
+    },
     saveCompleteHandler: function (url) {
       file.off('complete:save', null, this);
-      window.open('preview.html#width=' + this.get('width') + '&height=' + this.get('height'), 'preview');
+      this.trigger('preview:ready');
     },
   });
 })(Meatazine.model);

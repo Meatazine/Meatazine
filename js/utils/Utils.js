@@ -6,6 +6,13 @@ Meatazine.utils = {
       template = '{{#section}}' + template + '{{/section}}';
       data = {section: data};
     }
-    return Mustache.render(template, data).replace(/\s{2,}/gm, '');
-  }
+    return Mustache.render(template, data);
+  },
+  clearSelection: function () {
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    } else if (document.getSelection) {
+      document.getSelection().empty();
+    }
+  },
 }
