@@ -145,10 +145,9 @@ function BookReader(el, w, h) {
     page
       .removeClass('visible')
       .addClass('no-image')
+      .off()
       .find('img')
         .attr('src', 'spacer.gif');
-    page.find('.slide-navi').children().off();
-    page.find('[data-toggle]').off();
     page.find('.map-container').each(function (i) {
       $(this).empty();
     });
@@ -170,15 +169,19 @@ function BookReader(el, w, h) {
     if (page.hasClass('visible')) {
       return;
     }
-    page.removeClass('no-image').addClass('visible');
+    page
+      .removeClass('no-image')
+      .addClass('visible')
+      // 切换效果
+      .on('click', '[data-toggle]', dataToggle_clickHandler)
+      // 幻灯片
+      .on('click', '.slide-navi li', slideNavi_clickHandler)
+      // 防止地图在缩放的时候引发翻页
+      .on('mousedown', '.map-container', stopEvent);
     // 图片
     page.find('img').attr('src', function (i) {
       return $(this).attr('ori') || this.src;
     })
-    // 幻灯片
-    page.find('.slide-navi').on('click', 'li', slideNavi_clickHandler);
-    // 切换效果
-    page.find('[data-toggle]').on('click', dataToggle_clickHandler);
     // 地图
     page.find('.map-container').each(function (i) {
       var data = JSON.parse($(this).attr('data-map'));
@@ -206,8 +209,8 @@ function BookReader(el, w, h) {
     });
     list = $('.page', body);
     if (list.length > 0) {
-      min = $('.page', body).first().data('index'),
-      max = $('.page', body).last().data('index');
+      min = list.first().data('index'),
+      max = list.last().data('index');
     } 
     for (var i = min - 1, end = pageNumber - config.size > 0 ? pageNumber - config.size : 0; i >= end; i--) {
       createItem(i, pageNumber).insertAfter(dummy);
