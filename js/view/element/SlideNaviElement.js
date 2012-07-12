@@ -5,10 +5,10 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
     return this.body.getImageSize();
   },
   handleChildrenState: function () {
-    this.$el.children().on('click', {self: this}, this.item_clickHandler)
+    this.$el.on('click', this.tagName, {self: this}, this.item_clickHandler)
     this.$el.children().each(function(index) {
       $(this).data('model').set('count', index + 1);
-    })
+    });
     this.$el.children().eq(0).click();
   },
   collection_removeHandler: function (model, collection, options) {
