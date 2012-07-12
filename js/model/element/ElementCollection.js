@@ -34,8 +34,10 @@ jQuery.namespace('Meatazine.model.element');
     },
     isModelChanged: function (model) {
       var obj = _.clone(model.attributes);
+      var def = _.clone(model.defaults);
       delete obj.count;
-      return !_.isEqual(obj, model.defaults);
+      delete def.count;
+      return !_.isEqual(obj, def);
     },
     offAll: function () {
       this.off();

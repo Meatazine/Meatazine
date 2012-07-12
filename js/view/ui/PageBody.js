@@ -5,6 +5,7 @@ jQuery.namespace('Meatazine.view.ui');
     items: [],
     events: {
       "click .editable": "editable_clickHandler",
+      "paste .editable": "editable_pasteHandler",
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
       "dragstop .ui-draggable": "draggable_dragStopHandler",
     },
@@ -111,6 +112,23 @@ jQuery.namespace('Meatazine.view.ui');
     },
     editable_clickHandler: function (event) {
       textEditor.setTarget(event.target);
+    },
+    editable_pasteHandler: function (event) {
+      var data = event.originalEvent.clipboardData,
+          string = '';
+      if (/files/i.test(data.types)) {
+        // TODO 可能是图片类的，先不处理
+      } else if (/text\/plain/i.test(data.types)) {
+        string = data.getData('text/plain');
+        string.replace('[\r\n]', '<br />');
+      } else {
+        string = data.getData('text/html');
+      }
+      $(event.target).append(string);
+      event.originalEvent.clipboardData.getData('text/plain');
+      
+      event.preventDefault();
+      return false;
     },
     element_changeHandler: function () {
       this.refreshThumbnail();

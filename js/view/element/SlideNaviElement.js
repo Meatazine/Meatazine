@@ -5,11 +5,19 @@ Meatazine.view.element.SlideNaviElement = Meatazine.view.element.BaseElement.ext
     return this.body.getImageSize();
   },
   handleChildrenState: function () {
-    this.$el.children()
-      .on('click', {self: this}, this.item_clickHandler);
-    if (this.collection.isModelChanged(this.collection.at(0))) {
-      this.$el.children().eq(0).click();
-    }
+    this.$el.children().on('click', {self: this}, this.item_clickHandler)
+    this.$el.children().each(function(index) {
+      $(this).data('model').set('count', index + 1);
+    })
+    this.$el.children().eq(0).click();
+  },
+  collection_removeHandler: function (model, collection, options) {
+    this.$el.children().eq(options.index).remove();
+    this.$el.children(':gt(' + (options.index - 1) + ')').each(function (i) {
+      $(this).data('model').set('count', i + options.index + 1);
+    });
+    this.handleChildrenState();
+    this.trigger('change');
   },
   item_clickHandler: function (event) {
     var target = $(event.currentTarget),

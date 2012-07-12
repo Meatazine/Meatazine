@@ -1,5 +1,6 @@
 jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.extend({
+  item: null,
   navi: null,
   initialize: function () {
     this.$el = $(this.el);
@@ -11,12 +12,19 @@ Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.ext
   setNavi: function (navi) {
     this.navi = navi;
     this.collection = navi.collection;
-    this.setModel(this.collection.length > 0 ? this.collection.at(0) : new this.collection.model());
+    this.setModel(this.collection.at(0));
   },
   setModel: function (model) {
-    if (model == null) return;
+    if (this.model == model) {
+      return;
+    }
+    if (this.model != null) {
+      this.model.off(null, null, this);
+      this.item.off('click');
+    }
     this.model = model;
-    this.$el.html(this.createItem(this.model));
+    this.$el.empty();
+    this.item = this.createItem(model, !this.collection.isModelChanged(model));
   },
   img_dropHandler: function (event) {
     this.navi.img_dropHandler(event);
