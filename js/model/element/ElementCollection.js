@@ -34,8 +34,10 @@ jQuery.namespace('Meatazine.model.element');
     },
     isModelChanged: function (model) {
       var obj = _.clone(model.attributes);
+      var def = _.clone(model.defaults);
       delete obj.count;
-      return !_.isEqual(obj, model.defaults);
+      delete def.count;
+      return !_.isEqual(obj, def);
     },
     offAll: function () {
       this.off();
@@ -50,7 +52,6 @@ jQuery.namespace('Meatazine.model.element');
       isSilent = isSilent == null ? false : isSilent;
       var model = this.at(index);
       this.remove(model, {silent: isSilent});
-      model.off();
       return model;
     },
     replaceAt: function (model, index, silent) {
