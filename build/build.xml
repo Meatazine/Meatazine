@@ -47,6 +47,7 @@
         <file name="popup/ScreenSizeSelector.js" />
         <file name="popup/PublishStatus.js" />
         <file name="popup/BookConfig.js" />
+        <file name="popup/UserConfig.js" />
         <file name="popup/Export.js" />
         <file name="popup/Preview.js" />
         <file name="popup/PopupManager.js" />
