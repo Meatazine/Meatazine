@@ -1,52 +1,53 @@
 jQuery.namespace('Meatazine.view.guide');
-//title , content , seq can be changed .The others are remained.
+//title , content can be changed .The others are remained.
 //seq=0 means it's a non-main guide.otherwise it's a main guide.
-Meatazine.view.guide.GuideTagDataCollection = [
+Meatazine.view.guide.GuideTagDataCollectionMain = [
   {
     title: 'Add Page',
     content: 'Click here to add a new page.',
-    seq: 1,
     targetStr: '.add-button',
   },
   {
     title: 'Select Model',
     content: 'Select a suitable model from here.',
-    seq: 2,
     targetStr: '#template-list li',
   },
   {
     title: 'Upload Picture',
     content: 'Upload your picture here.',
-    seq: 3,
     targetStr: '#page-body img',
   },
   {
     title: 'Motify words',
     content: 'Motify the words here.',
-    seq: 3,
     targetStr: '#page-body .editable',
   },
   {
     title: 'Save It',
     content: 'You have done a lot.Save it:)',
-    seq: 4,
     targetStr: '[data-toggle="dropdown"]:first',
   },
 ]
+Meatazine.view.guide.GuideTagDataCollectionSecondary = [
+  /*{
+   *  title:  
+   *  content:
+   *  targetStr:
+   *} 
+   */
+]
 
-Meatazine.view.guide.GuideTag = function (tagData) {
+Meatazine.view.guide.GuideTag = function (tagData , seq) {
   var targetObj = $(tagData.targetStr),
       targetStrList = tagData.targetStr.split(' '),
       targetObjHostStr = targetStrList[0],
       targetSubObjStr = targetStrList.slice(1).join(),
       self = this,
-      show = false,
       DIVHEIGHT = 100,
       DIVWIDTH = 289,
       htmlBody = $('body'),
       topBar = $('.container-fluid:first');
-  this.seq = tagData.seq;
-  this.state = 1;
+  this.toShow = false;
   
   function choosePosition(divElement , triggerElement) {
     var triggerTarget;
@@ -140,39 +141,32 @@ Meatazine.view.guide.GuideTag = function (tagData) {
     }
   }
   function chooseTitle() {
-    if(tagData.seq == self.state){
-      return 'Step ' + tagData.seq;
+    if(self.toShow){
+      return 'Step ' + (seq + 1);
     } else {
       return tagData.title;
     }
   }
   function clickRegist() {
     $(targetObjHostStr).on('click',targetSubObjStr,function () {
-      self.trigger('click:next');
+      self.trigger('next');
     });
   }
   function clickUnregist() {
     $(targetObjHostStr).off('click',targetSubObjStr);
   }
 
-  this.hide = function () {
-    if (show) {
-      show = false; 
-      clickUnregist();
-      clickRegisted = false;
-      targetObj.popover('hide');
+  this.hide = function (hideTarget) {
+    if (hideTarget == null || hideTarget == targetObjHostStr){
+      if (this.toShow) {
+        this.toShow = false;
+        clickUnregist();
+        targetObj.popover('hide');
+      }
     }
-  }
-  this.hidePageBody = function () {
-    if (targetObjHostStr == '#page-body'){
-      this.hide();
-    }
-  }
-  this.offGuide = function () {
-    targetObj.off();
   }
   this.pop = function () {
-    if (self.seq != 0) {
+    if (seq != -1) {
       targetObj.popover({title: chooseTitle , content: tagData.content , placement: choosePosition});
     } else {
       targetObj.popover({title: tagData.title , content: tagData.content , placement: choosePosition});
@@ -182,15 +176,24 @@ Meatazine.view.guide.GuideTag = function (tagData) {
     targetObj = $(tagData.targetStr),
     this.pop();
   }
-  this.setState = function (state) {
-    this.state = state;
-  }
   this.show = function () {
-    if (!show) {
+    if (!this.toShow) {
       clickRegist();
-      show = true;
+      this.toShow = true;
     }
-    $(tagData.targetStr+':first').popover('show');
+    var thereIsSomeToShow = false;
+    for(var i = 0 , j=targetObj.length; i<j; i++){
+      var tempTarget = $(tagData.targetStr+':eq('+i+')');
+      if (tempTarget.offset().top > htmlBody.scrollTop() - 1 && tempTarget.offset().top < htmlBody.scrollTop() + window.innerHeight + 1
+          && tempTarget.offset().left > htmlBody.scrollLeft() - 1 && tempTarget.offset().left < htmlBody.scrollLeft() + window.innerWidth + 1){
+        tempTarget.popover('show');
+        thereIsSomeToShow = true;
+        break;      
+      }
+    };
+    if (!thereIsSomeToShow) {
+      $(tagData.targetStr+':eq(0)').popover('show');
+    }
   }
   
   _.extend(this, Backbone.Events);

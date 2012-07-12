@@ -1,17 +1,28 @@
 jQuery.namespace('Meatazine.view.guide');
 Meatazine.view.guide.GuideManager = {
   stateShow : true,
-  state : 1,
-  guideTags : [],
+  guideTagsMain : [],
+  guideTagsSecondary : [],
+  iterator : 0,
   
   init : function (page) {
     var self = this;
     page.on('render:start',this.hideGuidePageBody,this);
     page.on('render:over',this.refreshAll,this);
-    for(var i = 0,j = Meatazine.view.guide.GuideTagDataCollection.length ; i < j; i++){
-      this.guideTags[i] = new Meatazine.view.guide.GuideTag(Meatazine.view.guide.GuideTagDataCollection[i]);
-      this.guideTags[i].on('click:next',this.clickToNext,this);
+    for(var i = 0,j = Meatazine.view.guide.GuideTagDataCollectionMain.length ; i < j; i++){
+      this.guideTagsMain[i] = new Meatazine.view.guide.GuideTag(Meatazine.view.guide.GuideTagDataCollectionMain[i] , i);
     };
+    for(var i=0,j=Meatazine.view.guide.GuideTagDataCollectionSecondary.length; i<j; i++){
+      this.guideTagsSecondary[i] = new Meatazine.view.guide.GuideTag(Meatazine.view.guide.GuideTagDataCollectionSecondary[i] , -1);
+    };
+    
+    /*$('[href="#template-list"]').click(function () {
+      self.hideGuide("#source-list");
+    });
+    $('[href="#source-list"]').click(function () {
+      self.hideGuide("#template-list");
+    });*/
+    
     //acitve the guide or freeze it.
     $('[data-toggle="button"]').click(function () {
       if (self.stateShow) {
@@ -22,7 +33,7 @@ Meatazine.view.guide.GuideManager = {
         self.showGuide();
       }
     });
-    
+
     if ($('[data-toggle="button"]').hasClass('active')) {
       self.stateShow = true;
       self.showGuide();
@@ -33,38 +44,34 @@ Meatazine.view.guide.GuideManager = {
   },
   
   clickToNext : function () {
-    _.each(this.guideTags, function (guideTag) {
-      guideTag.hide();
-    });
-    this.state++;
+    this.hideGuide();
+    this.iterator++;
     this.showGuide();
+  },
+
+  hideGuide : function (hideTarget) {
+    if (this.iterator < this.guideTagsMain.length) {
+      this.guideTagsMain[this.iterator].off('next');
+      this.guideTagsMain[this.iterator].hide(hideTarget);
+    }
   },
   
   hideGuidePageBody : function () {
-    _.each(this.guideTags, function (guideTag) {
-      guideTag.hidePageBody();
-    })
-  },
-  
-  hideGuide : function () {
-    _.each(this.guideTags, function (guideTag) {
-      guideTag.hide();
-      guideTag.setState(0);
-    })
+    this.hideGuide("#page-body");
   },
   
   showGuide : function () {
-    var self = this;
-    _.each(self.guideTags, function (guideTag) {
-      guideTag.setState(self.state);
-      if (guideTag.seq == self.state) {
-        guideTag.show();
-      }
-    })
+    if (this.iterator < this.guideTagsMain.length) {
+      this.guideTagsMain[this.iterator].on('next',this.clickToNext,this);
+      this.guideTagsMain[this.iterator].show();
+    }
   },
   
   refreshAll : function () {//page-body been refreshed
-    _.each(this.guideTags, function (guideTag) {
+    _.each(this.guideTagsMain, function (guideTag) {
+      guideTag.refreshTarget();
+    });
+    _.each(this.guideTagsSecondary, function (guideTag) {
       guideTag.refreshTarget();
     });
     if(this.stateShow)
