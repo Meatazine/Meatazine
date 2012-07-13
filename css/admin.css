@@ -224,6 +224,11 @@ body {
   float: left;
   position: relative;
 }
+#page-body ul,
+#page-body ol {
+  margin:0;
+  padding:0;
+}
 #page-body.page {
   visibility: visible;
 }

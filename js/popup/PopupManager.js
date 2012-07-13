@@ -19,6 +19,11 @@ jQuery.namespace('Meatazine.popup');
             el: '#welcome',
             model: config
           });
+          userSettings = new Meatazine.popup.userConfig({
+            el: '#user-config',
+            model: configModel,
+            book: book
+          }),
           screenSelector = new Meatazine.popup.ScreenSizeSelector({
             el: '#screen-size',
             model: book,

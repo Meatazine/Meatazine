@@ -95,7 +95,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   item_mouseOverHandler: function (event) {
     var position = $(event.currentTarget).position();
     this.removeButton
-      .css('top', position.top + 4)
+      .css('top', position.top + this.list.scrollTop() + 4)
       .data('target', $(event.currentTarget))
       .appendTo(this.list);
   },
