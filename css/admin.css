@@ -99,6 +99,10 @@ body {
   padding:1px;
 }
 
+#user-config .switch-button {
+  min-width: 100px;
+}
+
 /** ======================
  * context menu
  * 功能菜单项  
@@ -223,6 +227,11 @@ body {
   margin-left: 12px;
   float: left;
   position: relative;
+}
+#page-body ul,
+#page-body ol {
+  margin:0;
+  padding:0;
 }
 #page-body.page {
   visibility: visible;

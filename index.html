@@ -65,7 +65,7 @@
               <li><a href="#tutorial">向导</a></li>
             </ul>
           </li>
-          <li><a href="#">设置</a></li>
+          <li><a href="#user-config" data-toggle="modal">设置</a></li>
           <li><a href="#help" data-toggle="modal">帮助</a></li>
         </ul>
         <p class="navbar-text pull-right">欢迎你， <a href="#">肉山</a></p>
@@ -468,6 +468,42 @@
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>
     </div>
   </div>
+  <div id="user-config" class="modal fade hide">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>设置</h3>
+    </div>
+    <div class="modal-body tabbable">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#">全局</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active">
+          <form class="form-horizontal" onsubmit="return false;">
+            <fieldset>
+              <div class="control-group">
+                <label class="control-label" for="auto-save-button">自动保存</label>
+                <div class="controls">
+                  <input id="auto-save-button" type="button" class="btn switch-button" value="启用">
+                  <p class="help-block">启用后，每五分钟会自动保存一次</p>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="before-unload-button">退出前提醒</label>
+                <div class="controls">
+                  <input id="before-unload-button" type="button" class="btn switch-button" value="启用" />
+                  <p class="help-block">启用后，退出时如果没保存，会收到系统提示</p>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-dismiss="modal">关闭</button>
+    </div>
+  </div>
   <div id="preview" class="modal fade hide">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">&times;</a>
@@ -477,6 +513,7 @@
       
     </div>
   </div>
+
 </div>
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -510,6 +547,7 @@
 <script src="js/model/SourceModel.js"></script>
 <script src="js/popup/Welcome.js"></script>
 <script src="js/popup/ScreenSizeSelector.js"></script>
+<script src="js/popup/UserConfig.js"></script>
 <script src="js/popup/PublishStatus.js"></script>
 <script src="js/popup/BookConfig.js"></script>
 <script src="js/popup/Export.js"></script>
