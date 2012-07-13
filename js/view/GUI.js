@@ -24,13 +24,6 @@ Meatazine.view.GUI = Backbone.View.extend({
         return false;
       },
     });
-    window.onbeforeunload = function (event) {
-      if (book.isModified()) {
-        var msg = '离开的话，您所有未保存的内容将会丢失，您确认要离开么？';
-        event.returnValue = msg;
-        return msg;
-      }
-    }
     delete this.options;
   },
   removeLoading: function () {
