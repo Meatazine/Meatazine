@@ -1,28 +1,22 @@
 jQuery.namespace('Meatazine.view.guide');
 Meatazine.view.guide.GuideManager = {
-  stateShow : true,
-  guideTagsMain : [],
-  guideTagsSecondary : [],
-  iterator : 0,
+  stateShow: true,
+  guideTagsMain: [],
+  guideTagsSecondary: [],
+  iterator: 0,
   
-  init : function (page) {
-    var self = this;
-    page.on('render:start',this.hideGuidePageBody,this);
-    page.on('render:over',this.refreshAll,this);
-    for(var i = 0,j = Meatazine.view.guide.GuideTagDataCollectionMain.length ; i < j; i++){
-      this.guideTagsMain[i] = new Meatazine.view.guide.GuideTag(Meatazine.view.guide.GuideTagDataCollectionMain[i] , i);
+  init: function (pageBody) {
+    var self = this,
+        mvggm = Meatazine.view.guide.GuideTagDataCollectionMain,
+        mvggs = Meatazine.view.guide.GuideTagDataCollectionSecondary,
+        mvggtf = Meatazine.view.guide.GuideTagFactory;
+    for(var i = 0, j = mvggm.length ; i < j; i++){
+      this.guideTagsMain[i] = mvggtf.createGuideTag(mvggm[i], i, pageBody);
     };
-    for(var i=0,j=Meatazine.view.guide.GuideTagDataCollectionSecondary.length; i<j; i++){
-      this.guideTagsSecondary[i] = new Meatazine.view.guide.GuideTag(Meatazine.view.guide.GuideTagDataCollectionSecondary[i] , -1);
+    for(var i = 0, j = mvggs.length; i < j; i++){
+      this.guideTagsSecondary[i] = mvggtf.createGuideTag(mvggs[i], -1, pageBody);
     };
-    
-    /*$('[href="#template-list"]').click(function () {
-      self.hideGuide("#source-list");
-    });
-    $('[href="#source-list"]').click(function () {
-      self.hideGuide("#template-list");
-    });*/
-    
+
     //acitve the guide or freeze it.
     $('[data-toggle="button"]').click(function () {
       if (self.stateShow) {
@@ -42,39 +36,24 @@ Meatazine.view.guide.GuideManager = {
       self.hideGuide();
     }
   },
-  
-  clickToNext : function () {
+    
+  guideTag_nextHandler: function() {
     this.hideGuide();
     this.iterator++;
     this.showGuide();
   },
-
-  hideGuide : function (hideTarget) {
+  
+  hideGuide: function (hideTarget) {
     if (this.iterator < this.guideTagsMain.length) {
       this.guideTagsMain[this.iterator].off('next');
       this.guideTagsMain[this.iterator].hide(hideTarget);
     }
   },
-  
-  hideGuidePageBody : function () {
-    this.hideGuide("#page-body");
-  },
-  
-  showGuide : function () {
+
+  showGuide: function () {
     if (this.iterator < this.guideTagsMain.length) {
-      this.guideTagsMain[this.iterator].on('next',this.clickToNext,this);
+      this.guideTagsMain[this.iterator].on('next', this.guideTag_nextHandler, this);
       this.guideTagsMain[this.iterator].show();
     }
-  },
-  
-  refreshAll : function () {//page-body been refreshed
-    _.each(this.guideTagsMain, function (guideTag) {
-      guideTag.refreshTarget();
-    });
-    _.each(this.guideTagsSecondary, function (guideTag) {
-      guideTag.refreshTarget();
-    });
-    if(this.stateShow)
-      this.showGuide();
   },
 }

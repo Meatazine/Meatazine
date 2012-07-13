@@ -37,9 +37,8 @@ Meatazine.view.guide.GuideTagDataCollectionSecondary = [
    */
 ]
 
-Meatazine.view.guide.GuideTag = function (tagData , seq) {
-  var targetObj = $(tagData.targetStr),
-      targetStrList = tagData.targetStr.split(' '),
+Meatazine.view.guide.GuideTag = function (tagData, seq) {
+  var targetStrList = tagData.targetStr.split(' '),
       targetObjHostStr = targetStrList[0],
       targetSubObjStr = targetStrList.slice(1).join(),
       self = this,
@@ -47,12 +46,13 @@ Meatazine.view.guide.GuideTag = function (tagData , seq) {
       DIVWIDTH = 289,
       htmlBody = $('body'),
       topBar = $('.container-fluid:first');
-  this.toShow = false;
+  this.targetObj = $(tagData.targetStr);
+  this.visible = false;
   
   function choosePosition(divElement , triggerElement) {
     var triggerTarget;
-    for(var i=0,j=targetObj.length; i<j; i++){
-      if (triggerElement === targetObj[i]){
+    for(var i = 0 , j = self.targetObj.length; i < j; i++){
+      if (triggerElement === self.targetObj[i]) {
         triggerTarget = $(tagData.targetStr+':eq('+i+')');
         break;
       }
@@ -70,63 +70,46 @@ Meatazine.view.guide.GuideTag = function (tagData , seq) {
         temp1,
         temp2,
         temp3,
+        temp4,
         maxNum = 0,
         maxInd = 0;
     
-    visualPart[0] = function () {
-      temp1 = x - DIVWIDTH - htmlBody.scrollLeft();
-      temp2 = y - DIVHEIGHT/2 + height/2 - htmlBody.scrollTop() - topBar.height();
-      temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height/2 + DIVHEIGHT/2);
-      if (temp1>0) temp1 = 0;
-      if (temp2>0) temp2 = 0;
-      if (temp3>0) temp3 = 0;
-      temp1 = temp1 + DIVWIDTH;
-      temp2 = temp2 + temp3 + DIVHEIGHT;
-      if (temp1<0) return 0;
-      if (temp2<0) return 0;
-      return temp1 * temp2;
-    }();
-    visualPart[1] = function () {
-      temp1 = htmlBody.scrollLeft() + window.innerWidth - x - width - DIVWIDTH;
-      temp2 = y - DIVHEIGHT/2 + height/2 - htmlBody.scrollTop() - topBar.height();
-      temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height/2 + DIVHEIGHT/2);
-      if (temp1>0) temp1 = 0;
-      if (temp2>0) temp2 = 0;
-      if (temp3>0) temp3 = 0;
-      temp1 = temp1 + DIVWIDTH;
-      temp2 = temp2 + temp3 + DIVHEIGHT;
-      if (temp1<0) return 0;
-      if (temp2<0) return 0;
-      return temp1 * temp2;
-    }();
-    visualPart[2] = function () {
-      temp1 = x - DIVWIDTH/2 + width/2 - htmlBody.scrollLeft();
-      temp2 = htmlBody.scrollLeft() + window.innerWidth - (x + width/2 + DIVWIDTH/2);
-      temp3 = y - DIVHEIGHT - htmlBody.scrollTop() - topBar.height();
-      if (temp1>0) temp1 = 0;
-      if (temp2>0) temp2 = 0;
-      if (temp3>0) temp3 = 0;
-      temp1 = temp1 + temp2 + DIVWIDTH;
-      temp2 = temp3 + DIVHEIGHT;
-      if (temp1<0) return 0;
-      if (temp2<0) return 0;
-      return temp1 * temp2;
-    }();
-    visualPart[3] = function () {
-      temp1 = x - DIVWIDTH/2 + width/2 - htmlBody.scrollLeft();
-      temp2 = htmlBody.scrollLeft() + window.innerWidth - (x + width/2 + DIVWIDTH/2);
-      temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height + DIVHEIGHT);
-      if (temp1>0) temp1 = 0;
-      if (temp2>0) temp2 = 0;
-      if (temp3>0) temp3 = 0;
-      temp1 = temp1 + temp2 + DIVWIDTH;
-      temp2 = temp3 + DIVHEIGHT;
-      if (temp1<0) return 0;
-      if (temp2<0) return 0;
-      return temp1 * temp2;
-    }();
+    //calculate start:
+    //left part:
+    temp1 = x - DIVWIDTH - htmlBody.scrollLeft();
+    temp2 = y - DIVHEIGHT/2 + height/2 - htmlBody.scrollTop() - topBar.height();
+    temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height/2 + DIVHEIGHT/2);
+    temp1 *= (temp1 < 0);
+    temp2 *= (temp2 < 0);
+    temp3 *= (temp3 < 0);
+    temp1 = temp1 + DIVWIDTH;
+    temp4 = temp2 + temp3 + DIVHEIGHT;
+    temp4 *= (temp4 > 0);
+    visualPart[0] = temp1 * (temp1 > 0) * temp4;
+    //right part:
+    temp1 = htmlBody.scrollLeft() + window.innerWidth - x - width - DIVWIDTH;
+    temp1 *= (temp1 < 0);
+    temp1 = temp1 + DIVWIDTH;
+    visualPart[1] = temp1 * (temp1 > 0) * temp4;
+    //top part:
+    temp1 = x - DIVWIDTH/2 + width/2 - htmlBody.scrollLeft();
+    temp2 = htmlBody.scrollLeft() + window.innerWidth - (x + width/2 + DIVWIDTH/2);
+    temp3 = y - DIVHEIGHT - htmlBody.scrollTop() - topBar.height();
+    temp1 *= (temp1 < 0);
+    temp2 *= (temp2 < 0);
+    temp3 *= (temp3 < 0);
+    temp4 = temp1 + temp2 + DIVWIDTH;
+    temp3 = temp3 + DIVHEIGHT;
+    temp4 *= (temp4 > 0);
+    visualPart[2] = temp4 * temp3 * (temp3 > 0);
+    //bottom part:
+    temp3 = htmlBody.scrollTop() + window.innerHeight - (y + height + DIVHEIGHT);
+    temp3 *= (temp3 < 0);
+    temp3 = temp3 + DIVHEIGHT;
+    visualPart[3] = temp4 * temp3 * (temp3 > 0);
+    
     maxNum = visualPart[0];
-    for(var i=1,j=visualPart.length; i<j; i++){
+    for(var i = 1,j = visualPart.length; i<j; i++){
       if(maxNum < visualPart[i]){
         maxNum = visualPart[i];
         maxInd = i;
@@ -141,61 +124,97 @@ Meatazine.view.guide.GuideTag = function (tagData , seq) {
     }
   }
   function chooseTitle() {
-    if(self.toShow){
+    if (self.visible) {
       return 'Step ' + (seq + 1);
     } else {
       return tagData.title;
     }
   }
-  function clickRegist() {
+  this.clickRegist = function () {
     $(targetObjHostStr).on('click',targetSubObjStr,function () {
       self.trigger('next');
     });
   }
-  function clickUnregist() {
+  this.clickUnregist = function () {
     $(targetObjHostStr).off('click',targetSubObjStr);
   }
 
   this.hide = function (hideTarget) {
     if (hideTarget == null || hideTarget == targetObjHostStr){
-      if (this.toShow) {
-        this.toShow = false;
-        clickUnregist();
-        targetObj.popover('hide');
+      if (this.visible) {
+        this.visible = false;
+        this.clickUnregist();
+        self.targetObj.popover('hide');
       }
     }
   }
   this.pop = function () {
     if (seq != -1) {
-      targetObj.popover({title: chooseTitle , content: tagData.content , placement: choosePosition});
+      self.targetObj.popover({title: chooseTitle , content: tagData.content , placement: choosePosition});
     } else {
-      targetObj.popover({title: tagData.title , content: tagData.content , placement: choosePosition});
+      self.targetObj.popover({title: tagData.title , content: tagData.content , placement: choosePosition});
     }
-  }
-  this.refreshTarget = function () {
-    targetObj = $(tagData.targetStr),
-    this.pop();
   }
   this.show = function () {
-    if (!this.toShow) {
-      clickRegist();
-      this.toShow = true;
+    if (!this.visible) {
+      this.clickRegist();
+      this.visible = true;
     }
-    var thereIsSomeToShow = false;
-    for(var i = 0 , j=targetObj.length; i<j; i++){
+    var haveSomeToShow = false;
+    for(var i = 0 , j = self.targetObj.length; i<j; i++){
       var tempTarget = $(tagData.targetStr+':eq('+i+')');
       if (tempTarget.offset().top > htmlBody.scrollTop() - 1 && tempTarget.offset().top < htmlBody.scrollTop() + window.innerHeight + 1
           && tempTarget.offset().left > htmlBody.scrollLeft() - 1 && tempTarget.offset().left < htmlBody.scrollLeft() + window.innerWidth + 1){
         tempTarget.popover('show');
-        thereIsSomeToShow = true;
+        haveSomeToShow = true;
         break;      
       }
     };
-    if (!thereIsSomeToShow) {
+    if (!haveSomeToShow) {
       $(tagData.targetStr+':eq(0)').popover('show');
     }
   }
   
   _.extend(this, Backbone.Events);
+  
   this.pop();
+}
+
+Meatazine.view.guide.GuideTagInPageBody = function (tagData, seq, pageBody, mvggt) {
+  mvggt.call(this, tagData, seq);
+  var self = this;
+  
+  function pageBody_renderBeginHandler() {
+    if (self.visible) {
+      self.clickUnregist();
+      self.targetObj.popover('hide');
+    }
+  }
+  
+  function pageBody_renderCompleteHandler() {
+    self.targetObj = $(tagData.targetStr);
+    self.pop();
+    if (self.visible) {
+      self.clickRegist();
+      self.show();
+    }
+  }
+
+  pageBody.on('begin:render', pageBody_renderBeginHandler, this);
+  pageBody.on('complete:render', pageBody_renderCompleteHandler, this);
+}
+
+Meatazine.view.guide.GuideTagFactory = {
+  mvggt: Meatazine.view.guide.GuideTag,
+  mvggtpb: Meatazine.view.guide.GuideTagInPageBody,
+  
+  createGuideTag: function (tagData, seq, pageBody) {
+    var guideTag;
+    if (tagData.targetStr.split(' ')[0] == '#page-body'){
+      guideTag = new this.mvggtpb(tagData, seq, pageBody, this.mvggt);
+    } else {
+      guideTag = new this.mvggt(tagData, seq);
+    }
+    return guideTag;
+  }
 }
