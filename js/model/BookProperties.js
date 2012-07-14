@@ -57,21 +57,13 @@ jQuery.namespace('Meatazine.model');
             // TODO 跨域问题暂时不考虑，以后可能会用服务器中介
             var url = arguments[2],
                 src = url.split('/').pop();
-            if (src == '#') {
-              return arguments[0];
-            }
-            if (!self.isSameDomain(url)) {
+            if (src == '#' || !self.isSameDomain(url)) {
               return arguments[0];
             }
             zip.addFile(src, null, url);
             return arguments[1] + '="' + src + '"';
           });
-          // 把img真正的src藏起来，换上空白的
-          template = template.replace(/<img(\s\w+="\w+")* src="([\/\.\w]+)"/gmi, function (str, attrs, src) {
-            return str.replace(src, 'spacer.gif') + ' ori="' + src + '"';
-          });
-          // 删掉assets节点
-          template = template.replace(/<assets[\S\s]*\/assets>/, '');
+          template = Meatazine.utils.filterHTML(template);
           zip.addFile('index.html', template);
         }
       });
@@ -123,12 +115,12 @@ jQuery.namespace('Meatazine.model');
       }
     },
     preview: function () {
-      var html = [];
+      var pages = [];
       _.each(this.attributes.pages.models, function (model, i) {
-        html.push(model.get('renderedHTML'));
+        pages.push(model.get('renderedHTML'));
       }, this);
       file.on('complete:save', this.saveCompleteHandler, this);
-      file.save('export.html', '', html.join('###'));
+      file.save('export.html', '', Meatazine.utils.filterHTML(pages.join('###'), 'img/'));
     },
     publish: function () {
       var self = this,
