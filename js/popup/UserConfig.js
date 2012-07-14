@@ -2,9 +2,10 @@ jQuery.namespace('Meatazine.popup');
 Meatazine.popup.userConfig = Backbone.View.extend({
   timeout: 0,  
   events: {
-    "click #autoSaveButton": "autoSaveButton_clickHandler", 
-    "mouseover #autoSaveButton": "autoSaveButton_mouseoverHandler", 
-    "mouseout #autoSaveButton": "autoSaveButton_mouseoutHandler", 
+    "click #auto-save-button": "autoSaveButton_clickHandler",
+    "click #before-unload-button": "beforeUnloadButton_clickHandler",
+    "mouseover .switch-button": "switchButton_mouseoverHandler",
+    "mouseout .switch-button": "switchButton_mouseoutHandler",
   },
   initialize: function () {
     this.$el = $(this.el);
@@ -12,25 +13,27 @@ Meatazine.popup.userConfig = Backbone.View.extend({
   },
   checkConfig: function () {
     this.checkAutoSave();
+    this.checkBeforeUnload();
   },
   checkAutoSave: function () {
     var isAutoSave = this.model.get("isAutoSave");
-    if (isAutoSave || isAutoSave == undefined) {
+    if (isAutoSave) {
       this.saveOnTime();
     } else {
       this.preventAutoSave();
     }
   },
-  autoSaveButton_clickHandler: function () {
-  	if (this.$('#autoSaveButton').hasClass('active')) {
-  	  this.preventAutoSave();
-  	} else {
-  	  this.saveOnTime();
-  	}
+  checkBeforeUnload: function () {
+    var isAlert = this.model.get('isAlertBeforeUnload');
+    isAlert = isAlert == undefined ? true : isAlert;
+    this.$('#before-unload-button')
+      .toggleClass('active', isAlert)
+      .val(isAlert ? '已启用' : '启用');
+    this.initBeforeUnload(isAlert);
   },
   saveOnTime: function () {
     var bookModel = this.options.book;
-    this.$('#autoSaveButton')
+    this.$('#auto-save-button')
       .addClass('active')
       .val("已启用");
     this.model.set('isAutoSave', true);
@@ -39,20 +42,42 @@ Meatazine.popup.userConfig = Backbone.View.extend({
     }, 1000 * 300);
   },
   preventAutoSave: function () {
-    this.$('#autoSaveButton')
+    this.$('#auto-save-button')
       .removeClass('active')
       .val("启用");
     this.model.set('isAutoSave', false);
     clearInterval(this.timeout);
   },
-  autoSaveButton_mouseoverHandler: function () {
-    if (this.$('#autoSaveButton').hasClass('active')) {
-      this.$("#autoSaveButton").val("停用");
+  initBeforeUnload: function (isAlert) {
+    window.onbeforeunload = isAlert ? function (event) {
+      var msg = '离开的话，您所有未保存的内容将会丢失，您确认要离开么？';
+      event.returnValue = msg;
+      return msg;
+    } : null;
+  },
+  autoSaveButton_clickHandler: function () {
+    if ($(event.target).hasClass('active')) {
+      this.preventAutoSave();
+    } else {
+      this.saveOnTime();
     }
   },
-  autoSaveButton_mouseoutHandler: function () {
-    if (this.$('#autoSaveButton').hasClass('active')) {
-      this.$("#autoSaveButton").val("已启用");
+  beforeUnloadButton_clickHandler: function () {
+    var button = $(event.target);
+    button
+      .toggleClass('active')
+      .val(button.hasClass('active') ? '停用' : '启用');
+    this.model.set('isAlertBeforeUnload', button.hasClass('active'));
+    this.initBeforeUnload(button.hasClass('active'));
+  },
+  switchButton_mouseoverHandler: function (event) {
+    if ($(event.target).hasClass('active')) {
+      $(event.target).val("停用");
+    }
+  },
+  switchButton_mouseoutHandler: function (event) {
+    if ($(event.target).hasClass('active')) {
+      $(event.target).val("已启用");
     }
   }, 
 });
