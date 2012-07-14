@@ -1,6 +1,9 @@
 jQuery.namespace('Meatazine.popup');
 Meatazine.popup.Preview = Backbone.View.extend({
   view: null,
+  events: {
+    "hidden": "hidden_handler",
+  },
   initialize: function () {
     this.$el = $(this.el);
     this.model.on('preview:ready', this.model_previewReadyHandler, this);
@@ -23,4 +26,7 @@ Meatazine.popup.Preview = Backbone.View.extend({
       })
       .appendTo(this.$('.modal-body'));
   },
+  hidden_handler: function () {
+    this.view.attr('src', 'about:blank');
+  }
 });
