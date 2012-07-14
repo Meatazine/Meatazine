@@ -33,7 +33,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       event.stopPropagation();
       return false;
     }
-    var target = $(event.target).attr('href').match(/(\w+)(\.html)?/)[1];
+    var target = $(event.target).attr('href').match(/([\w\s-]+)(\.html)?/)[1];
     // 有一些功能不能这样直接触发
     if (/publish|export\-zip/i.test(target)) {
       return;
