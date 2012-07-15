@@ -73,7 +73,7 @@ jQuery.namespace('Meatazine.model');
       var zip = this.createZip();
       zip.on('ready', function () {
         zip.downloadZip();
-        $('#export').modal('hide');
+        $('#export-zip').modal('hide');
       });
     },
     fill: function (data) {
@@ -150,12 +150,13 @@ jQuery.namespace('Meatazine.model');
       });
     },
     save: function () {
-      if (!isModified) {
+      if (!isModified || this.get('pages').length == 0) {
         return;
       }
       var data = _.clone(this.attributes);
       data.pages = this.get('pages').toJSON();
       localStorage.setItem('book', JSON.stringify(data));
+      this.trigger('saved');
       isModified = false;
     },
     setSize: function (w, h) {

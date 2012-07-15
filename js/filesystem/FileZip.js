@@ -45,19 +45,6 @@ Meatazine.filesystem.FileZip = function () {
     this.trigger('complete');
     return zippedData;
   }
-  function file_readCompleteHandler(content) {
-    var item = queue.shift();
-    zip.file(item.name, content, {binary: true});
-    next();
-  }
-  function ajax_successHandler(data) {
-    var item = queue.shift();
-    zip.file(item.name, data);
-    next();
-  }
-  function file_saveCompleteHandler(url) {
-    location.href = url;
-  }
   function next() {
     if (queue.length > 0) {
       self.trigger('progress', total - queue.length, total);
@@ -67,7 +54,6 @@ Meatazine.filesystem.FileZip = function () {
       } else {
         $.ajax({
           url: data.url,
-          dataType: 'text',
           context: this,
           success: ajax_successHandler
         });
@@ -80,6 +66,30 @@ Meatazine.filesystem.FileZip = function () {
       if (isAutoDownload) {
         setTimeout(self.downloadZip, 20);
       }
+    }
+  }
+  function ajax_successHandler(data) {
+    var item = queue.shift();
+    zip.file(item.name, data);
+    next();
+  }
+  function file_readCompleteHandler(content) {
+    var item = queue.shift();
+    zip.file(item.name, content, {binary: true});
+    next();
+  }
+  function file_saveCompleteHandler(url) {
+    var func = null;
+    if (window.onbeforeunload) {
+      func = window.onbeforeunload;
+      window.onbeforeunload = null;
+    }
+    location.href = url;
+    // 1s后恢复提示
+    if (func != null) {
+      setTimeout(function () {
+        window.onbeforeunload = func;
+      }, 1000);
     }
   }
   
