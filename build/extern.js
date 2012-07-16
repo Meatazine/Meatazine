@@ -45,6 +45,7 @@ $.on = function (events, selector, func) {};
 $.one = function (func) {};
 $.prepend = function (obj) {};
 $.removeClass = function (className) {};
+$.replaceWith = function (selector) {};
 $.resize = function (event) {};
 $.siblings = function () {};
 $.val = function () {};

@@ -38,10 +38,7 @@ jQuery.namespace('Meatazine.model');
       var self = this,
           data = _.pick(this.attributes, 'width', 'height'),
           zip = new Meatazine.filesystem.FileZip();
-          htmls = [];
-      for (var i = 0, len = this.get('pages').length; i < len; i++) {
-        htmls.push(this.get('pages').at(i).get('renderedHTML'));
-      }
+          htmls = Meatazine.utils.getRenderedHTML(this.attributes.pages);
       data.content = htmls.join('###');
       data.pages = htmls.slice(0, 5).join('\n');
       zip.on('progress', function (progress, total) {
@@ -116,10 +113,7 @@ jQuery.namespace('Meatazine.model');
       }
     },
     preview: function () {
-      var pages = [];
-      _.each(this.attributes.pages.models, function (model, i) {
-        pages.push(model.get('renderedHTML'));
-      }, this);
+      var pages = Meatazine.utils.getRenderedHTML(this.attributes.pages);
       file.on('complete:save', this.saveCompleteHandler, this);
       file.save('export.html', '', Meatazine.utils.filterHTML(pages.join('###'), 'img/'));
     },
