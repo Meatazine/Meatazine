@@ -48,7 +48,7 @@
             <ul class="dropdown-menu">
               <li><a href="#save" class="system-button disabled">保存</a></li>
               <li><a href="#load" class="system-button">读取</a></li>
-              <li><a href="#export-zip" class="system-button disabled">导出</a></li>
+              <li><a href="#export-zip" class="system-button disabled" data-toggle="modal">导出</a></li>
               <li class="divider"></li>
               <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
               <li class="divider"></li>
@@ -473,18 +473,32 @@
       <a class="close" data-dismiss="modal">&times;</a>
       <h3>设置</h3>
     </div>
-    <div class="modal-body">
-      <form class="form-horizontal">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label" for="autoSaveButton">自动保存</label>
-            <div class="controls">
-              <input id="autoSaveButton" type="button" class="btn" value="启用">
-              <p class="help-block">若启用自动保存，则每五分钟自动保存一次</p>
-            </div>
-          </div>
-        </fieldset>
-      </form>
+    <div class="modal-body tabbable">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#">全局</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active">
+          <form class="form-horizontal" onsubmit="return false;">
+            <fieldset>
+              <div class="control-group">
+                <label class="control-label" for="auto-save-button">自动保存</label>
+                <div class="controls">
+                  <input id="auto-save-button" type="button" class="btn switch-button" value="启用">
+                  <p class="help-block">启用后，每五分钟会自动保存一次</p>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="before-unload-button">退出前提醒</label>
+                <div class="controls">
+                  <input id="before-unload-button" type="button" class="btn switch-button" value="启用" />
+                  <p class="help-block">启用后，退出时如果没保存，会收到系统提示</p>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>

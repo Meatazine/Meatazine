@@ -57,21 +57,13 @@ jQuery.namespace('Meatazine.model');
             // TODO 跨域问题暂时不考虑，以后可能会用服务器中介
             var url = arguments[2],
                 src = url.split('/').pop();
-            if (src == '#') {
-              return arguments[0];
-            }
-            if (!self.isSameDomain(url)) {
+            if (src == '#' || !self.isSameDomain(url)) {
               return arguments[0];
             }
             zip.addFile(src, null, url);
             return arguments[1] + '="' + src + '"';
           });
-          // 把img真正的src藏起来，换上空白的
-          template = template.replace(/<img(\s\w+="\w+")* src="([\/\.\w]+)"/gmi, function (str, attrs, src) {
-            return str.replace(src, 'spacer.gif') + ' ori="' + src + '"';
-          });
-          // 删掉assets节点
-          template = template.replace(/<assets[\S\s]*\/assets>/, '');
+          template = Meatazine.utils.filterHTML(template);
           zip.addFile('index.html', template);
         }
       });
@@ -79,9 +71,9 @@ jQuery.namespace('Meatazine.model');
     },
     exportZip: function () {
       var zip = this.createZip();
-      zip.on('ready', function () {
+      zip.on('complete', function () {
         zip.downloadZip();
-        $('#export').modal('hide');
+        $('#export-zip').modal('hide');
       });
     },
     fill: function (data) {
@@ -123,44 +115,52 @@ jQuery.namespace('Meatazine.model');
       }
     },
     preview: function () {
-      var html = [];
+      var pages = [];
       _.each(this.attributes.pages.models, function (model, i) {
-        html.push(model.get('renderedHTML'));
+        pages.push(model.get('renderedHTML'));
       }, this);
       file.on('complete:save', this.saveCompleteHandler, this);
-      file.save('export.html', '', html.join('###'));
+      file.save('export.html', '', Meatazine.utils.filterHTML(pages.join('###'), 'img/'));
     },
     publish: function () {
       var self = this,
           zip = this.createZip();
-      zip.on('ready', function () {
-        var zipData = zip.generate(false, 'DEFLATE'),
+      zip.on('complete', function () {
+        var zipData = zip.getZipData(),
             byteArray = new Uint8Array(zipData.length),
             xhr = null;
         for (var i = 0, len = zipData.length; i < len; i++) {
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
-        xhr = $.ajax({
-                url: './api/save.php?id=' + self.get('id'),
-                type: 'POST',
-                contentType: 'application/octet-stream',
-                processData: false,
-                data: byteArray.buffer,
-                success: function (data) {
-                  self.trigger('publish:uploaded');
-                  self.getAppPack();
-                },
-              });
-        xhr.upload.addEventListener('progress', function (event) {
-          self.trigger('upload:progress', event.loaded / event.total);
-        })
+        $.ajax({
+          url: './api/save.php?id=' + self.get('id'),
+          type: 'POST',
+          contentType: 'application/octet-stream',
+          processData: false,
+          data: byteArray.buffer,
+          xhr: function () {
+            var xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener('progress', function (event) {
+              self.trigger('upload:progress', event.loaded / event.total);
+            });
+            return xhr;
+          },
+          success: function (data) {
+            self.trigger('publish:uploaded');
+            self.getAppPack();
+          },
+        });
         self.trigger('publish:start')
       });
     },
     save: function () {
+      if (!isModified || this.get('pages').length == 0) {
+        return;
+      }
       var data = _.clone(this.attributes);
       data.pages = this.get('pages').toJSON();
       localStorage.setItem('book', JSON.stringify(data));
+      this.trigger('saved');
       isModified = false;
     },
     setSize: function (w, h) {
