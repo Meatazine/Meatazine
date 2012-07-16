@@ -207,7 +207,7 @@ Meatazine.view.guide.GuideTagFactory = {
 
   createGuideTag: function (tagData, seq, pageBody) {
     var guideTag;
-    if (/#page\-body/.test(tagData.targetStr)){
+    if ((/#page\-body/).test(tagData.targetStr)){
       guideTag = new this.guideTagInPageBody(tagData, seq, pageBody, this.guideTag);
     } else {
       guideTag = new this.guideTag(tagData, seq);
