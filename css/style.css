@@ -211,6 +211,66 @@ body {
   height:100%;
   overflow:hidden;
 }
+.row-fluid {
+  width: 100%;
+}
+.row-fluid:before, .row-fluid:after {
+  display: table;
+  content: ""
+}
+.row-fluid:after {
+  clear: both
+}
+.row-fluid [class*="span"] {
+  display: block;
+  float: left;
+  width: 100%;
+  min-height: 28px;
+  margin-left: 2.762430939%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box
+}
+.row-fluid [class*="span"]:first-child {
+  margin-left: 0
+}
+.row-fluid .span12 {
+  width: 99.999999993%;
+}
+.row-fluid .span11 {
+  width: 91.436464082%;
+}
+.row-fluid .span10 {
+  width: 82.87292817100001%;
+}
+.row-fluid .span9 {
+  width: 74.30939226%;
+}
+.row-fluid .span8 {
+  width: 65.74585634900001%;
+}
+.row-fluid .span7 {
+  width: 57.182320438000005%;
+}
+.row-fluid .span6 {
+  width: 48.618784527%;
+}
+.row-fluid .span5 {
+  width: 40.055248616%;
+}
+.row-fluid .span4 {
+  width: 31.491712705%;
+}
+.row-fluid .span3 {
+  width: 22.928176794%;
+}
+.row-fluid .span2 {
+  width: 14.364640883%;
+}
+.row-fluid .span1 {
+  width: 5.801104972%;
+}
 
 /**
  *   元素
@@ -265,6 +325,18 @@ body {
   list-style: none;
   float:left;
   position: relative;
+}
+.page .navbar {
+  background:#333;
+  background:linear-gradient(to bottom, #333, #666);
+  background:-webkit-linear-gradient(bottom, #333, #444);
+  border-bottom:2px solid #444;
+}
+.page .navbar h2 {
+  color:#FFF;
+  font:bold 20px/20px Arial, Microsoft Yahei;
+  text-shadow:0 -1px 0 #000;
+  padding: 10px 40px;
 }
 .page .slide-navi-type1 {
   background:rgba(0, 0, 0, 0.25);
