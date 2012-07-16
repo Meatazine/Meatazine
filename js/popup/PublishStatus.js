@@ -1,14 +1,12 @@
 jQuery.namespace('Meatazine.popup');
 Meatazine.popup.PublishStatus = Backbone.View.extend({
   events: {
-    "click .download": "downloadHandler"
+    "shown": "shownHandler",
+    "hidden": "hiddenHandler",
+    "click .download": "downloadHandler",
   },
   initialize: function () {
     this.$el = $(this.el);
-    this.$el.on({
-     'shown': this.shownHandler,
-     'hidden': this.hiddenHandler, 
-    }, {self: this});
     this.initDownloadButtons();
     this.model.on('change:platform', this.model_platformChangeHandler, this);
   },
@@ -52,6 +50,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     this.showStep(2);
   },
   model_publishUploadedHandler: function () {
+    this.$('.upload-progress').text('（100%）');
     this.showStep(3);
   },
   model_publishCompleteHandler: function () {
@@ -61,18 +60,17 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     this.$('.zip-progress').text('（' + progress + '/' + total + '）');
   },
   hiddenHandler: function (event) {
-    event.data.self.model.off(null, null, event.data.self);
+    this.model.off(null, null, this);
   },
   shownHandler: function (event) {
-    var self = event.data.self;
-    self.reset();
-    self.showStep(1);
-    self.model.on('publish:start', self.model_publishStartHandler, self);
-    self.model.on('publish:uploaded', self.model_publishUploadedHandler, self);
-    self.model.on('publish:complete', self.model_publishCompleteHandler, self);
-    self.model.on('zip:progress', self.model_zipProgressHandler, self);
-    self.model.on('upload:progress', self.model_uploadProgressHandler, self);
+    this.reset();
+    this.showStep(1);
+    this.model.on('publish:start', this.model_publishStartHandler, this);
+    this.model.on('publish:uploaded', this.model_publishUploadedHandler, this);
+    this.model.on('publish:complete', this.model_publishCompleteHandler, this);
+    this.model.on('zip:progress', this.model_zipProgressHandler, this);
+    this.model.on('upload:progress', this.model_uploadProgressHandler, this);
     
-    self.model.publish();
+    this.model.publish();
   }
 });

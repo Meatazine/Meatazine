@@ -71,7 +71,7 @@ jQuery.namespace('Meatazine.model');
     },
     exportZip: function () {
       var zip = this.createZip();
-      zip.on('ready', function () {
+      zip.on('complete', function () {
         zip.downloadZip();
         $('#export-zip').modal('hide');
       });
@@ -125,27 +125,31 @@ jQuery.namespace('Meatazine.model');
     publish: function () {
       var self = this,
           zip = this.createZip();
-      zip.on('ready', function () {
-        var zipData = zip.generate(false, 'DEFLATE'),
+      zip.on('complete', function () {
+        var zipData = zip.getZipData(),
             byteArray = new Uint8Array(zipData.length),
             xhr = null;
         for (var i = 0, len = zipData.length; i < len; i++) {
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
-        xhr = $.ajax({
-                url: './api/save.php?id=' + self.get('id'),
-                type: 'POST',
-                contentType: 'application/octet-stream',
-                processData: false,
-                data: byteArray.buffer,
-                success: function (data) {
-                  self.trigger('publish:uploaded');
-                  self.getAppPack();
-                },
-              });
-        xhr.upload.addEventListener('progress', function (event) {
-          self.trigger('upload:progress', event.loaded / event.total);
-        })
+        $.ajax({
+          url: './api/save.php?id=' + self.get('id'),
+          type: 'POST',
+          contentType: 'application/octet-stream',
+          processData: false,
+          data: byteArray.buffer,
+          xhr: function () {
+            var xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener('progress', function (event) {
+              self.trigger('upload:progress', event.loaded / event.total);
+            });
+            return xhr;
+          },
+          success: function (data) {
+            self.trigger('publish:uploaded');
+            self.getAppPack();
+          },
+        });
         self.trigger('publish:start')
       });
     },

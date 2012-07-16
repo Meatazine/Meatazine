@@ -6,7 +6,8 @@ Meatazine.filesystem.FileZip = function () {
       isAutoDownload = false,
       total = 0,
       zip = new JSZip(),
-      queue = [];
+      queue = []
+      zipData = null;
   this.addFile = function (name, content, url) {
     if (!name) {
       return;
@@ -31,19 +32,20 @@ Meatazine.filesystem.FileZip = function () {
       isAutoDownload = true;
       return;
     }
-    var content = zip.generate({
-      base64: false,
-      compression: "DEFLATE"
-    });
-    file.save('肉大师导出.zip', '', content, 'application/zip');
+    if (zipData == null) {
+      return;
+    }
+    file.save('肉大师导出.zip', '', zipData, 'application/zip');
   }
   this.generate = function (base64, compression) {
     var zippedData = zip.generate({
       base64: base64,
       compression: compression
     });
-    this.trigger('complete');
     return zippedData;
+  }
+  this.getZipData = function () {
+    return zipData;
   }
   function next() {
     if (queue.length > 0) {
@@ -60,12 +62,17 @@ Meatazine.filesystem.FileZip = function () {
       }
     } else {
       isLoading = false;
-      total = 0;
       self.trigger('progress', total, total);
+      total = 0;
       self.trigger('ready');
-      if (isAutoDownload) {
-        setTimeout(self.downloadZip, 20);
-      }
+      // 暂停100ms，然后开始压缩，这样外面应该可以正常显示
+      setTimeout(function () {
+        zipData = self.generate(false, "DEFLATE");
+        self.trigger('complete');
+        if (isAutoDownload) {
+          self.downloadZip();
+        }
+      }, 100);
     }
   }
   function ajax_successHandler(data) {
