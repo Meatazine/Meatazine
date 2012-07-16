@@ -6,7 +6,8 @@ Meatazine.filesystem.FileZip = function () {
       isAutoDownload = false,
       total = 0,
       zip = new JSZip(),
-      queue = [];
+      queue = []
+      zipData = null;
   this.addFile = function (name, content, url) {
     if (!name) {
       return;
@@ -31,32 +32,20 @@ Meatazine.filesystem.FileZip = function () {
       isAutoDownload = true;
       return;
     }
-    var content = zip.generate({
-      base64: false,
-      compression: "DEFLATE"
-    });
-    file.save('肉大师导出.zip', '', content, 'application/zip');
+    if (zipData == null) {
+      return;
+    }
+    file.save('肉大师导出.zip', '', zipData, 'application/zip');
   }
   this.generate = function (base64, compression) {
     var zippedData = zip.generate({
       base64: base64,
       compression: compression
     });
-    this.trigger('complete');
     return zippedData;
   }
-  function file_readCompleteHandler(content) {
-    var item = queue.shift();
-    zip.file(item.name, content, {binary: true});
-    next();
-  }
-  function ajax_successHandler(data) {
-    var item = queue.shift();
-    zip.file(item.name, data);
-    next();
-  }
-  function file_saveCompleteHandler(url) {
-    location.href = url;
+  this.getZipData = function () {
+    return zipData;
   }
   function next() {
     if (queue.length > 0) {
@@ -67,19 +56,47 @@ Meatazine.filesystem.FileZip = function () {
       } else {
         $.ajax({
           url: data.url,
-          dataType: 'text',
           context: this,
           success: ajax_successHandler
         });
       }
     } else {
       isLoading = false;
-      total = 0;
       self.trigger('progress', total, total);
+      total = 0;
       self.trigger('ready');
-      if (isAutoDownload) {
-        setTimeout(self.downloadZip, 20);
-      }
+      // 暂停100ms，然后开始压缩，这样外面应该可以正常显示
+      setTimeout(function () {
+        zipData = self.generate(false, "DEFLATE");
+        self.trigger('complete');
+        if (isAutoDownload) {
+          self.downloadZip();
+        }
+      }, 100);
+    }
+  }
+  function ajax_successHandler(data) {
+    var item = queue.shift();
+    zip.file(item.name, data);
+    next();
+  }
+  function file_readCompleteHandler(content) {
+    var item = queue.shift();
+    zip.file(item.name, content, {binary: true});
+    next();
+  }
+  function file_saveCompleteHandler(url) {
+    var func = null;
+    if (window.onbeforeunload) {
+      func = window.onbeforeunload;
+      window.onbeforeunload = null;
+    }
+    location.href = url;
+    // 1s后恢复提示
+    if (func != null) {
+      setTimeout(function () {
+        window.onbeforeunload = func;
+      }, 1000);
     }
   }
   

@@ -45,7 +45,7 @@ jQuery.namespace('Meatazine.popup');
             case 'export-zip':
               if (exportPopup == null) {
                 exportPopup = new Meatazine.popup.Export({
-                  el: '#export',
+                  el: '#export-zip',
                   model: bookModel,
                 })
               }

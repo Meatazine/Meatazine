@@ -25,7 +25,11 @@ Meatazine.popup.userConfig = Backbone.View.extend({
   },
   checkBeforeUnload: function () {
     var isAlert = this.model.get('isAlertBeforeUnload');
-    isAlert = isAlert == undefined ? true : isAlert;
+    // 可能需要初始化
+    if (isAlert == undefined) {
+      isAlert = true;
+      this.model.set('isAlertBeforeUnload', true);
+    }
     this.$('#before-unload-button')
       .toggleClass('active', isAlert)
       .val(isAlert ? '已启用' : '启用');
@@ -63,12 +67,13 @@ Meatazine.popup.userConfig = Backbone.View.extend({
     }
   },
   beforeUnloadButton_clickHandler: function () {
-    var button = $(event.target);
+    var button = $(event.target),
+        isAlert = !button.hasClass('active');
     button
       .toggleClass('active')
-      .val(button.hasClass('active') ? '停用' : '启用');
-    this.model.set('isAlertBeforeUnload', button.hasClass('active'));
-    this.initBeforeUnload(button.hasClass('active'));
+      .val(isAlert ? '停用' : '启用');
+    this.model.set('isAlertBeforeUnload', isAlert);
+    this.initBeforeUnload(isAlert);
   },
   switchButton_mouseoverHandler: function (event) {
     if ($(event.target).hasClass('active')) {
