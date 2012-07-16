@@ -15,12 +15,13 @@ Meatazine.utils = {
       document.getSelection().empty();
     }
   },
-  filterHTML: function (string, folder) {
-    // °ÑimgÕæÕıµÄsrc²ØÆğÀ´£¬»»ÉÏ¿Õ°×µÄ
+  getRenderedHTML: function (collection) {    var htmls = [];    collection.each(function (model, i) {      var html = model.get('renderedHTML');      html = html.substr(0, 4) + ' id="' + i + '"' + html.substr(4);      htmls.push(html);    });    return htmls;  },  filterHTML: function (string, folder) {
+    folder = folder || '';
+    // æŠŠimgçœŸæ­£çš„srcè—èµ·æ¥ï¼Œæ¢ä¸Šç©ºç™½çš„
     string = string.replace(/<img(\s\w+="[\w%]+")* src="([\/:\.\w]+)"/gmi, function (str, attrs, src) {
       return str.replace(src, folder + 'spacer.gif') + ' ori="' + src + '"';
     });
-    // É¾µôassets½Úµã
+    // åˆ æ‰assetsèŠ‚ç‚¹
     string = string.replace(/<assets[\S\s]*\/assets>/, '');
     return string;
   },

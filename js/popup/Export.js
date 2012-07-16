@@ -14,7 +14,7 @@ Meatazine.popup.Export = Backbone.View.extend({
     this.model.off(null, null, this);
   },
   shownHandler: function (event) {
-    this.model.on('zip:progress', self.model_zipProgressHandler, self);
+    this.model.on('zip:progress', this.model_zipProgressHandler, this);
     
     this.model.exportZip();
   },

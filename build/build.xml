@@ -86,6 +86,14 @@
   </target>
   
   <target name="-compile.css.files">
+    <copy todir="${dist}/css/">
+      <filelist dir="css/">
+        <file name="bootstrap.min.css" />
+        <file name="bootstrap-responsive.min.css" />
+        <file name="animate.css" />
+        <file name="jquery-ui-1.8.21.custom.css" />
+      </filelist>
+    </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
       <arg line="--output-file ${dist}/css/admin.css" />
       <arg line="css/admin.css" />
@@ -95,24 +103,27 @@
   <target name="reader" depends="init">
     <copy todir="${dist}/css/">
       <filelist dir="css/">
-        <file name="bootstrap.min.css" />
-        <file name="bootstrap-responsive.min.css" />
-        <file name="animate.css" />
+        <file name="style.css" />
       </filelist>
     </copy>
-    <java jar="${build}/closure-stylesheets.jar" fork="true">
-      <arg line="--output-file ${dist}/css/style.css" />
-      <arg line="css/style.css" />
-    </java>
     <copy todir="${dist}/js/libs/">
       <filelist dir="js/libs/">
-        <file name="iscroll.js" />
         <file name="zepto.min.js" />
       </filelist>
     </copy>
-    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/BookReader.js" encoding="UTF-8">
+    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/libs/iscroll.js" encoding="UTF-8">
       <warning group="internetExplorerChecks" level="OFF" />
       <warning group="globalThis" level="OFF" />
+      <sources dir="js/libs/">
+        <file name="iscroll.js" />
+      </sources>
+    </jscomp>
+    <jscomp compilationLevel="advanced" warning="default" debug="false" output="${dist}/js/BookReader.js" encoding="UTF-8">
+      <warning group="internetExplorerChecks" level="OFF" />
+      <warning group="globalThis" level="OFF" />
+      <externs dir="${build}">
+        <file name="extern.js" />
+      </externs>
       <sources dir="js/">
         <file name="BookReader.js" />
       </sources>
@@ -137,6 +148,11 @@
         <file name="PreviewMain.js" />
       </sources>
     </jscomp>
+    <copy todir="${dist}/js/libs">
+      <filelist dir="js/libs/">
+        <file name="jquery-1.7.2.min.js" />
+      </filelist>
+    </copy>
     <replaceregexp flags="gs" encoding="UTF-8">
       <regexp pattern="\&lt;!-- replace start --\&gt;(.*?)\&lt;!-- replace over --\&gt;" />
       <substitution expression="\&lt;script src='js/libs.js'\&gt;\&lt;/script\&gt;&#xD;&#xA;\&lt;script src='js/apps.js'\&gt;\&lt;/script\&gt;" />
@@ -154,7 +170,7 @@
     <delete dir="${temp}" />
   </target>
   
-  <target name="all" depends="reader, maker">
+  <target name="all" depends="maker, reader">
   </target>
   
 </project>
