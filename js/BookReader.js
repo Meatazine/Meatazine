@@ -19,8 +19,8 @@ function BookReader(el, w, h) {
       scroll = null,
       otherScrolls = [],
       style = null,
-      frameInterval = 0,
-      timeout = 0,
+      resizeTimeout = 0,
+      turnTimeout = 0,
       dummy = $('<div class="dummy"></div>'),
       pages = [],
       currentPage = -1,
@@ -46,18 +46,20 @@ function BookReader(el, w, h) {
       momentum: false,
       hScrollbar: false,
       vScroll: false,
-      onScrollStart: scroll_startHandler,
-      onScrollEnd: scroll_endHandler,
+      onScrollStart: function (event) {
+        scroll.disable();
+        turnTimeout = setTimeout(function () {
+          scroll.enable();
+        }, 500);
+      },
+      onScrollEnd: function (event) {
+        clearTimeout(turnTimeout);
+        resetPages();
+        scroll.enable();
+      },
     });
+  
     resetPages();
-  }
-  /**
-   * 从外部添加内容，主要用于preview
-   * @param {String} html 内容
-   * @public
-   */
-  this.addContent = function (html) {
-    this.start(html);
   }
   /**
    * 检查页所处的位置
@@ -221,9 +223,9 @@ function BookReader(el, w, h) {
       .removeClass('no-image')
       .addClass('visible')
       // 切换效果
-      .on('click', '[data-toggle]', dataToggle_clickHandler)
+      .on('tap mousedown', '[data-toggle]', dataToggle_clickHandler)
       // 幻灯片
-      .on('click', '.slide-navi li', slideNavi_clickHandler)
+      .on('tap mousedown', '.slide-navi li', slideNavi_clickHandler)
       // 防止地图在缩放的时候引发翻页
       .on('mousedown', '.map-container', stopEvent);
     // 图片
@@ -307,27 +309,19 @@ function BookReader(el, w, h) {
         config = JSON.parse(target.attr('data-animate')),
         offset = target.offset(),
         parentOffset = target.parent().offset(),
-        origin = {};
+        origin = {},
+        prop = '';
     target.css('top', offset.top - parentOffset.top).css('left', offset.left - parentOffset.left);
-    for (var prop in config) {
+    for (prop in config) {
       origin[prop] = target.css(prop);
     }
     target
       .animate(config, '200')
       .one('click', function (event) {
         $(this)
-          .animate(origin, '200')
-          .off('mouseup', stopEvent);
+          .animate(origin, '200');
       });
-  }
-  function scroll_startHandler(event) {
-    clearInterval(frameInterval);
-    frameInterval = setInterval(function () {
-      resetPages();
-    }, 100);
-  }
-  function scroll_endHandler(event) {
-    clearInterval(frameInterval);
+    event.stopPropagation();
   }
   /**
    * slide导航点击事件
@@ -338,10 +332,17 @@ function BookReader(el, w, h) {
     var target = $(event.currentTarget),
         parent = target.closest('.page'),
         body = parent.find('.slide-main'),
-        src = target.attr('ori') || $(event.target).attr('src') || target.find('img').attr('src');
-    body.find('img').attr('src', src);
+        src = target.attr('ori') || $(event.target).attr('src') || target.find('img').attr('src'),
+        currImage = body.find('img'),
+        nextImage = $('<img width="' + currImage.width() + '" height="' + currImage.height() + '" src="' + src + '" />');
+    currImage.addClass('animated fadeOut');
+    setTimeout(function () {
+      currImage.replaceWith(nextImage);
+      nextImage.addClass('animated fadeIn');
+    }, 200);
     target.siblings().removeClass('active');
     target.addClass('active');
+    event.stopPropagation();
   }
   /**
    * 窗口尺寸变化事件
@@ -349,8 +350,8 @@ function BookReader(el, w, h) {
    * @private
    */
   function window_resizeHandler(event) {
-    clearTimeout(timeout);
-    setTimeout(function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
       fitScreen();
     }, 50);
   }

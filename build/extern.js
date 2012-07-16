@@ -1,6 +1,7 @@
 var google = {},
     $ = {},
     iScroll = {};
+    
 google.maps = {};
 google.maps.mapOptions = {
   center: null,
@@ -20,6 +21,12 @@ google.maps.Point = function (x, y) {};
 google.maps.Size = function (w, h) {};
 google.maps.MarkerImage = function (src, size, point) {};
 google.maps.Marker = function (obj) {};
+var mapData = {
+  lat: 0,
+  lng: 0,
+  markers: [],
+  zoom: 4,
+}
 
 $.addClass = function (className) {};
 $.animate = function (config, time) {};
@@ -30,6 +37,7 @@ $.css = function (css, value) {};
 $.each = function (func) {};
 $.first = function () {};
 $.hasClass = function (className) {};
+$.insertAfter = function (selector) {};
 $.last = function () {};
 $.off = function () {};
 $.offset = function () {};
@@ -40,6 +48,12 @@ $.removeClass = function (className) {};
 $.resize = function (event) {};
 $.siblings = function () {};
 $.val = function () {};
+var offset = {
+  left: 0,
+  top: 0,
+  width: 0,
+  height: 0,
+}
 
 iScroll.options = {
   snap: true,
@@ -50,3 +64,8 @@ iScroll.options = {
   onScrollEnd: null,
   scrollbarClass: '',
 }
+iScroll.destroy = function () {};
+iScroll.disable = function () {};
+iScroll.enable = function () {};
+iScroll.currPageX = 0;
+iScroll.x = 0;

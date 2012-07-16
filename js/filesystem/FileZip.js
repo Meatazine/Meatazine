@@ -6,7 +6,7 @@ Meatazine.filesystem.FileZip = function () {
       isAutoDownload = false,
       total = 0,
       zip = new JSZip(),
-      queue = []
+      queue = [],
       zipData = null;
   this.addFile = function (name, content, url) {
     if (!name) {

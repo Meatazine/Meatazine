@@ -142,7 +142,7 @@ jQuery.namespace('Meatazine.model');
           xhr: function () {
             var xhr = new window.XMLHttpRequest();
             xhr.upload.addEventListener('progress', function (event) {
-              self.trigger('upload:progress', event.loaded / event.total);
+              self.trigger('upload:progress', Math.floor(event.loaded / event.total) * 100);
             });
             return xhr;
           },

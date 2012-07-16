@@ -1,12 +1,12 @@
 jQuery.namespace('Meatazine.popup');
 Meatazine.popup.Welcome = Backbone.View.extend({
   version: 0.1,
+  events: {
+    'shown': 'shownHandler',
+  },
   initialize: function () {
     var view = this;
     this.$el = $(this.el);
-    this.$el.on('shown', function () {
-      view.shownHandler();
-    });
     this.render();
     this.checkModified();
   },
