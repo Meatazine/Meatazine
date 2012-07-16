@@ -1,20 +1,19 @@
 jQuery.namespace('Meatazine.view.guide');
 Meatazine.view.guide.GuideManager = {
-  stateShow: true,
   guideTagsMain: [],
   guideTagsSecondary: [],
   iterator: 0,
   
-  init: function (pageBody) {
+  init: function (pageBody, config) {
     var self = this,
-        mvggm = Meatazine.view.guide.GuideTagDataCollectionMain,
-        mvggs = Meatazine.view.guide.GuideTagDataCollectionSecondary,
-        mvggtf = Meatazine.view.guide.GuideTagFactory;
-    for(var i = 0, j = mvggm.length ; i < j; i++){
-      this.guideTagsMain[i] = mvggtf.createGuideTag(mvggm[i], i, pageBody);
+        mainData = Meatazine.view.guide.GuideTagDataCollectionMain,
+        secondaryData = Meatazine.view.guide.GuideTagDataCollectionSecondary,
+        factory = Meatazine.view.guide.GuideTagFactory;
+    for(var i = 0, j = mainData.length ; i < j; i++){
+      this.guideTagsMain[i] = factory.createGuideTag(mainData[i], i, pageBody);
     };
-    for(var i = 0, j = mvggs.length; i < j; i++){
-      this.guideTagsSecondary[i] = mvggtf.createGuideTag(mvggs[i], -1, pageBody);
+    for(var i = 0, j = secondaryData.length; i < j; i++){
+      this.guideTagsSecondary[i] = factory.createGuideTag(secondaryData[i], -1, pageBody);
     };
 
     //acitve the guide or freeze it.
@@ -43,10 +42,10 @@ Meatazine.view.guide.GuideManager = {
     this.showGuide();
   },
   
-  hideGuide: function (hideTarget) {
+  hideGuide: function () {
     if (this.iterator < this.guideTagsMain.length) {
       this.guideTagsMain[this.iterator].off('next');
-      this.guideTagsMain[this.iterator].hide(hideTarget);
+      this.guideTagsMain[this.iterator].hide();
     }
   },
 

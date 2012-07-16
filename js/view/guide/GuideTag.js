@@ -1,6 +1,5 @@
 jQuery.namespace('Meatazine.view.guide');
 //title , content can be changed .The others are remained.
-//seq=0 means it's a non-main guide.otherwise it's a main guide.
 Meatazine.view.guide.GuideTagDataCollectionMain = [
   {
     title: 'Add Page',
@@ -139,13 +138,11 @@ Meatazine.view.guide.GuideTag = function (tagData, seq) {
     $(targetObjHostStr).off('click',targetSubObjStr);
   }
 
-  this.hide = function (hideTarget) {
-    if (hideTarget == null || hideTarget == targetObjHostStr){
-      if (this.visible) {
-        this.visible = false;
-        this.clickUnregist();
-        self.targetObj.popover('hide');
-      }
+  this.hide = function () {
+    if (this.visible) {
+      this.visible = false;
+      this.clickUnregist();
+      self.targetObj.popover('hide');
     }
   }
   this.pop = function () {
@@ -160,17 +157,17 @@ Meatazine.view.guide.GuideTag = function (tagData, seq) {
       this.clickRegist();
       this.visible = true;
     }
-    var haveSomeToShow = false;
+    var hasSomeToShow = false;
     for(var i = 0 , j = self.targetObj.length; i<j; i++){
       var tempTarget = $(tagData.targetStr+':eq('+i+')');
       if (tempTarget.offset().top > htmlBody.scrollTop() - 1 && tempTarget.offset().top < htmlBody.scrollTop() + window.innerHeight + 1
           && tempTarget.offset().left > htmlBody.scrollLeft() - 1 && tempTarget.offset().left < htmlBody.scrollLeft() + window.innerWidth + 1){
         tempTarget.popover('show');
-        haveSomeToShow = true;
+        hasSomeToShow = true;
         break;      
       }
     };
-    if (!haveSomeToShow) {
+    if (!hasSomeToShow) {
       $(tagData.targetStr+':eq(0)').popover('show');
     }
   }
@@ -180,8 +177,8 @@ Meatazine.view.guide.GuideTag = function (tagData, seq) {
   this.pop();
 }
 
-Meatazine.view.guide.GuideTagInPageBody = function (tagData, seq, pageBody, mvggt) {
-  mvggt.call(this, tagData, seq);
+Meatazine.view.guide.GuideTagInPageBody = function (tagData, seq, pageBody, guideTag) {
+  guideTag.call(this, tagData, seq);
   var self = this;
   
   function pageBody_renderBeginHandler() {
@@ -205,16 +202,16 @@ Meatazine.view.guide.GuideTagInPageBody = function (tagData, seq, pageBody, mvgg
 }
 
 Meatazine.view.guide.GuideTagFactory = {
-  mvggt: Meatazine.view.guide.GuideTag,
-  mvggtpb: Meatazine.view.guide.GuideTagInPageBody,
-  
+  guideTag: Meatazine.view.guide.GuideTag,
+  guideTagInPageBody: Meatazine.view.guide.GuideTagInPageBody,
+
   createGuideTag: function (tagData, seq, pageBody) {
     var guideTag;
-    if (tagData.targetStr.split(' ')[0] == '#page-body'){
-      guideTag = new this.mvggtpb(tagData, seq, pageBody, this.mvggt);
+    if (/#page\-body/.test(tagData.targetStr)){
+      guideTag = new this.guideTagInPageBody(tagData, seq, pageBody, this.guideTag);
     } else {
-      guideTag = new this.mvggt(tagData, seq);
+      guideTag = new this.guideTag(tagData, seq);
     }
     return guideTag;
-  }
+  },
 }
