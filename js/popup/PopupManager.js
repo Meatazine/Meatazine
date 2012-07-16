@@ -30,6 +30,12 @@ jQuery.namespace('Meatazine.popup');
             infoText: '#screen-size-info'
           });
         },
+        popup: function (popupName, backdrop, keyboard) {
+          $('#' + popupName).modal({
+            backdrop: backdrop,
+            keyboard: keyboard,
+          })
+        },
         modal_showHandler: function (event) {
           var id = $(event.target).attr('id');
           switch (id) {
