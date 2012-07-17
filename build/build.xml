@@ -43,6 +43,7 @@
         <file name="model/SinglePageModel.js" />
         <file name="model/PageCollection.js" />
         <file name="model/SourceModel.js" />
+        <file name="config/UserGuideConfig.js" />
         <file name="popup/Welcome.js" />
         <file name="popup/ScreenSizeSelector.js" />
         <file name="popup/PublishStatus.js" />
@@ -65,6 +66,8 @@
         <file name="view/ui/SourcePanel.js" />
         <file name="view/ui/NavBar.js" />
         <file name="view/ui/ContextButtons.js" />
+        <file name="view/guide/GuideTag.js" />
+        <file name="view/guide/GuideManager.js" />
         <file name="view/GUI.js" />
         <file name="AppMain.js" />
       </filelist>
