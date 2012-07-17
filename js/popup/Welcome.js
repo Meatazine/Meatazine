@@ -17,12 +17,6 @@ Meatazine.popup.Welcome = Backbone.View.extend({
   	  interval: 8000
   	});
   },
-  checkModified: function () {
-    var lastVersion = Number(this.model.get('lastWelcomeVision'));
-    if (_.isNaN(lastVersion) || lastVersion == 0 || lastVersion < this.version ) {
-      this.show();
-    }
-  },
   checkGuideConfig: function () {
     var isUseGuide = this.model.get('isUseGuide');
     if (isUseGuide || isUseGuide == undefined) {
@@ -31,21 +25,22 @@ Meatazine.popup.Welcome = Backbone.View.extend({
       this.$('[data-toggle="button"]').removeClass('active');
     }
   },
+  checkModified: function () {
+    var lastVersion = Number(this.model.get('lastWelcomeVision'));
+    if (_.isNaN(lastVersion) || lastVersion == 0 || lastVersion < this.version ) {
+      this.show();
+    }
+  },
   hide: function () {
     this.$el.modal('hide');
   },
   show: function () {
     this.$el.modal('show');
   },
+  useGuideButton_clickHandler: function (event) {
+    this.model.set('isUseGuide', !$(event.target).hasClass('active'));
+  },
   shownHandler: function () {
     this.model.set('lastWelcomeVision', this.version);
-  },
-  useGuideButton_clickHandler: function () {
-     var isUseGuide = this.model.get('isUseGuide');
-    if (isUseGuide || isUseGuide == undefined) {
-      this.model.set('isUseGuide', false);
-    } else {
-      this.model.set('isUseGuide', true);
-    }
   },
 });

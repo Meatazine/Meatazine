@@ -17,7 +17,7 @@ jQuery.namespace('Meatazine.view.ui');
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
-      this.trigger('begin:render');
+      this.trigger('render:start');
       this.empty();
       this.$el.html(this.model.get('template'));
       var count = 0;
@@ -40,7 +40,7 @@ jQuery.namespace('Meatazine.view.ui');
       this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
       this.refreshThumbnail(true);
-      this.trigger('complete:render');
+      this.trigger('render:over');
     },
     addEditableText: function (x, y) {
       var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');

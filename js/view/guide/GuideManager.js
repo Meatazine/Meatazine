@@ -1,31 +1,22 @@
 jQuery.namespace('Meatazine.view.guide');
 Meatazine.view.guide.GuideManager = {
-  guideTagsMain: [],
-  guideTagsSecondary: [],
+  trunk: [],
+  branch: [],
   iterator: 0,
   config: null,
-  
-  init: function (pageBody, config) {
-    var mainData = Meatazine.view.guide.GuideTagDataCollectionMain,
-        secondaryData = Meatazine.view.guide.GuideTagDataCollectionSecondary,
+  init: function (config) {
+    var trunk = Meatazine.view.guide.TrunkCollection,
+        branch = Meatazine.view.guide.BranchCollection,
         factory = Meatazine.view.guide.GuideTagFactory;
-    for(var i = 0, j = mainData.length ; i < j; i++){
-      this.guideTagsMain[i] = factory.createGuideTag(mainData[i], i, pageBody);
-    };
-    for(var i = 0, j = secondaryData.length; i < j; i++){
-      this.guideTagsSecondary[i] = factory.createGuideTag(secondaryData[i], -1, pageBody);
-    };
+    _.each(trunk, function (item, i){
+      this.trunk.push(factory.createGuideTag(item, i));
+    }, this); 
+    _.each(branch, function(index) {
+      this.branch.push(factory.createGuideTag(item, -1));
+    }, this);
     this.config = config;
     this.checkGuideConfig();
     this.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
-  },
-  
-  config_isUseGuideChagneHandler: function () {
-    if (this.config.get('isUseGuide')) {
-       this.showGuide();
-    } else {
-      this.hideGuide();
-    }
   },
   
   checkGuideConfig: function () {
@@ -37,23 +28,31 @@ Meatazine.view.guide.GuideManager = {
     }
   },
   
-  guideTag_nextHandler: function() {
-    this.hideGuide();
-    this.iterator++;
-    this.showGuide();
-  },
-  
   hideGuide: function () {
-    if (this.iterator < this.guideTagsMain.length) {
-      this.guideTagsMain[this.iterator].off('next');
-      this.guideTagsMain[this.iterator].hide();
+    if (this.iterator < this.trunk.length) {
+      this.trunk[this.iterator].off('next');
+      this.trunk[this.iterator].hide();
     }
   },
 
   showGuide: function () {
-    if (this.iterator < this.guideTagsMain.length) {
-      this.guideTagsMain[this.iterator].on('next', this.guideTag_nextHandler, this);
-      this.guideTagsMain[this.iterator].show();
+    if (this.iterator < this.trunk.length) {
+      this.trunk[this.iterator].on('next', this.guideTag_nextHandler, this);
+      this.trunk[this.iterator].show();
     }
+  },
+  
+  config_isUseGuideChagneHandler: function () {
+    if (this.config.get('isUseGuide')) {
+       this.showGuide();
+    } else {
+      this.hideGuide();
+    }
+  },
+  
+  guideTag_nextHandler: function() {
+    this.hideGuide();
+    this.iterator++;
+    this.showGuide();
   },
 }
