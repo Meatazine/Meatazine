@@ -335,11 +335,11 @@ function BookReader(el, w, h) {
         src = target.attr('ori') || $(event.target).attr('src') || target.find('img').attr('src'),
         currImage = body.find('img'),
         nextImage = $('<img width="' + currImage.width() + '" height="' + currImage.height() + '" src="' + src + '" />');
-    currImage.addClass('animated fadeOut');
+    currImage.addClass('animated short fadeOut');
     setTimeout(function () {
       currImage.replaceWith(nextImage);
-      nextImage.addClass('animated fadeIn');
-    }, 200);
+      nextImage.addClass('animated short fadeIn');
+    }, 250);
     target.siblings().removeClass('active');
     target.addClass('active');
     event.stopPropagation();
