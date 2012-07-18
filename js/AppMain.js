@@ -28,7 +28,7 @@ $(function () {
   });
   GUI.contextButtons = contextButtons;
   GUI.page = page;
-  Meatazine.view.guide.GuideManager.init(config);
+  Meatazine.view.guide.GuideManager.init(config, book);
   Meatazine.popup.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);

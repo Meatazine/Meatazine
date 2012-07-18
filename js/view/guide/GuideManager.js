@@ -4,7 +4,8 @@ Meatazine.view.guide.GuideManager = {
   branch: [],
   iterator: 0,
   config: null,
-  init: function (config) {
+  book: null,
+  init: function (config, book) {
     var trunk = Meatazine.view.guide.TrunkCollection,
         branch = Meatazine.view.guide.BranchCollection,
         factory = Meatazine.view.guide.GuideTagFactory;
@@ -15,7 +16,8 @@ Meatazine.view.guide.GuideManager = {
       this.branch.push(factory.createGuideTag(item, -1));
     }, this);
     this.config = config;
-    this.checkGuideConfig();
+    this.book = book;
+    this.book.on('change:size', this.book_sizeChangeHandler, this);
     this.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
   },
   
@@ -42,12 +44,16 @@ Meatazine.view.guide.GuideManager = {
     }
   },
   
+  resetGuidePosition: function () {
+    this.checkGuideConfig();
+  },
+  
+  book_sizeChangeHandler: function() {
+    this.resetGuidePosition();
+  },
+  
   config_isUseGuideChagneHandler: function () {
-    if (this.config.get('isUseGuide')) {
-       this.showGuide();
-    } else {
-      this.hideGuide();
-    }
+    this.checkGuideConfig();
   },
   
   guideTag_nextHandler: function() {
