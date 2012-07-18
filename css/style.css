@@ -30,10 +30,12 @@ body {
   font-size: 40px;
   line-height:60px;
 }
-.black {
+.black,
+.black p {
   color:#000 !important;
 }
-.white {
+.white,
+.white p {
   color:#FFF;
 }
 .blue {

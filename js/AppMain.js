@@ -6,7 +6,7 @@ $(function () {
       }),
       list = new Meatazine.view.ui.PageList({
         el: '#page-list',
-        book: book,
+        model: book,
         collection: pages
       }),
       source = new Meatazine.view.ui.SourcePanel({

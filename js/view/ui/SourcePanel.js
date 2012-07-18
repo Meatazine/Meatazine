@@ -107,7 +107,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
         collection = target.closest('ul').data('collection'),
         value = target.val(),
         key = target.attr('name');
-    target.replaceWith('<span class="key">' + value + '</span>');
+    target.replaceWith('<span class="' + key + '">' + value + '</span>');
     collection.at(index).set(key, value);
     _gaq.push(['_trackEvent', 'source', 'edit']);
   },

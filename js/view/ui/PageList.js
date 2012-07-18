@@ -19,35 +19,34 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     this.$el = $(this.el);
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
     this.list = this.$('#page-list-inner');
-    this.options.book.on('change:size', this.book_resizeHandler, this);
-    this.options.book.on('refresh', this.book_refreshHandler, this);
-    this.render();
-  },
-  render: function () {
+    this.model.on('change:size', this.book_resizeHandler, this);
+    this.model.on('refresh', this.book_refreshHandler, this);
     this.addButton = this.$('.add-button');
   },
-  createItem: function (options) {
-    options = _.extend({"class": "item"}, options);
-    var li = $('<li>', options);
+  createItem: function () {
+    var width = 108,
+        height = this.model.get('height') / this.model.get('width') * 108,
+        li = $('<li class="item"><canvas width="' + width + '" height="' + height + '" /></li>');
     this.length++;
     li.insertBefore(this.addButton.parent());
+    this.list.scrollTop(this.list[0].scrollHeight - this.list.height());
     return li;
   },
   getItem: function (index) {
     return this.$('li').eq(index);
   },
   refreshPageNumber: function () {
-    var index = this.currentItem.index() + 1;
-    var total = this.length;
+    var index = this.currentItem.index() + 1,
+        total = this.length;
     this.$('#page-number').text(index + '/' + total);
   },
   addButton_clickHandler: function (event) {
-    var item = this.createItem();
+    var item = this.createItem(),
+        model = this.collection.create();
     this.list.sortable({
       items: 'li.item'
     });
     this.$('li').disableSelection();
-    var model = this.collection.create();
     item.click();
     this.refreshPageNumber();
     _gaq.push(['_trackEvent', 'page', 'add']);
@@ -55,11 +54,9 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   book_refreshHandler: function () {
     this.length = 0;
     this.list.find('li.item').remove();
-    for (var i = 0, len = this.collection.length; i < len; i++) {
-      var model = this.collection.at(i),
-          item = this.createItem();
-      this.emptyItems.push(item);
-    }
+    this.collection.each(function (model, i) {
+      this.emptyItems.push(this.createItem());
+    }, this);
     this.list.sortable({
       items: 'li.item'
     });
@@ -70,6 +67,9 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
   },
   book_resizeHandler: function (w, h) {
     this.list.height(h - 54); // 把按钮和数字空出来
+    this.$('canvas').each(function (i) {
+      this.height = 108 * h / w;
+    })
   },
   item_clickHandler: function (event) {
     if (this.currentItem != null) {
@@ -118,11 +118,8 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     _gaq.push(['_trackEvent', 'page', 'delete']);
   },
   page_changeHandler: function (thumb) {
-    var canvas = $('<canvas>')[0];
-    canvas.width = this.addButton.outerWidth();
-    canvas.height = canvas.width * thumb.height / thumb.width;
+    var canvas = this.currentItem.find('canvas')[0];
     canvas.getContext('2d').drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
-    this.currentItem.html(canvas);
     if (this.emptyItems.length > 0) {
       this.emptyItems.shift().click();
     }
