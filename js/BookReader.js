@@ -223,9 +223,9 @@ function BookReader(el, w, h) {
       .removeClass('no-image')
       .addClass('visible')
       // 切换效果
-      .on('tap mousedown', '[data-toggle]', dataToggle_clickHandler)
+      .on('click', '[data-toggle]', dataToggle_clickHandler)
       // 幻灯片
-      .on('tap mousedown', '.slide-navi li', slideNavi_clickHandler)
+      .on('click', '.slide-navi li', slideNavi_clickHandler)
       // 防止地图在缩放的时候引发翻页
       .on('mousedown', '.map-container', stopEvent);
     // 图片
@@ -257,7 +257,7 @@ function BookReader(el, w, h) {
    * @private
    */
   function resetPages() {
-    if (currentPage == scroll.currPageX || Math.abs(scroll.x % width) > width >> 2) {
+    if (currentPage == scroll.currPageX) {
       return;
     }
     var list,
