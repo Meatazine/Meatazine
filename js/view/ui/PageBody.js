@@ -42,7 +42,7 @@ jQuery.namespace('Meatazine.view.ui');
       this.trigger('render:over');
     },
     addEditableText: function (x, y) {
-      var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');
+      var text = $('<div class="fixed"><div class="editable"><p>文本在此～</p></div></div>');
       text
         .css('left', x)
         .css('top', y)

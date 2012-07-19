@@ -29,7 +29,6 @@ jQuery.namespace('Meatazine.view.element');
         $(this).off().remove();
       });
       _.each(this.collection.models, function (model, i) {
-        // 判断是否是地图
         this.createItem(model, !this.collection.isModelChanged(model));
       }, this);
       for (var i = this.collection.config.number - this.collection.length; i > 0; i--) {
@@ -49,6 +48,7 @@ jQuery.namespace('Meatazine.view.element');
     },
     createItem: function (model, isToken) {
       var item = $(Meatazine.utils.render(this.template, model));
+      // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
         this.createMap(item, model);
         return;

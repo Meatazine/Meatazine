@@ -33,8 +33,11 @@ jQuery.namespace('Meatazine.model.element');
       });
     },
     isModelChanged: function (model) {
-      var obj = _.clone(model.attributes);
-      var def = _.clone(model.defaults);
+      var obj = _.clone(model.attributes),
+          def = _.clone(model.defaults);
+      if (!def) {
+        return false;
+      }
       delete obj.count;
       delete def.count;
       return !_.isEqual(obj, def);
