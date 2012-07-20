@@ -2,7 +2,7 @@ jQuery.namespace('Meatazine.view.ui');
 Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   events: {
     "click button[data-type=add-text]": "addTextButton_clickHandler",
-    "click input, button": "button_clickHandler",
+    "click input": "button_clickHandler",
   },
   initialize: function () {
     this.$el = $(this.el);
