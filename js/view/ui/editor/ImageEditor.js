@@ -108,6 +108,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
     startEdit: function () {
       this.isEditing = true;
       image.closest('.ui-draggable').draggable('disable');
+      image.closest('.ui-resizable').resizable('disable');
       canvas = $('<canvas>');
       var self = this,
           sourceUrl = this.getSourceImageUrl(image.attr('src')),
@@ -169,7 +170,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
       image
         .attr('src', url)
         .data('model', model)
-        .closest('.ui-draggable').draggable('enable');
+        .closest('.ui-draggable').draggable('enable')
+        .end()
+        .closest('.ui-resizable').resizable('enable');
       if (callback != null) {
         callback.call(this, args);
         callback = null;
