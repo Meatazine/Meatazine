@@ -105,7 +105,7 @@ jQuery.namespace('Meatazine.guide');
       var selectors = this.tagData.selector.split(' '),
           outter = selectors[0],
           target = selectors.slice(1).join(' ');
-      $(outter).off('click', target);
+      $(outter).off('click', target, clickHandler);
     },
     show: function () {
       if (!this.visible) {
@@ -121,6 +121,9 @@ jQuery.namespace('Meatazine.guide');
         return vvisible && hvisible;
       }, this) || this.target.eq(0);
       $(item).addClass('animated flash').popover('show');
+      setTimeout(function () {
+        $(item).removeClass('animated flash');
+      }, 1000);
     },
   }, Backbone.Events);
   
