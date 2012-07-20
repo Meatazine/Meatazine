@@ -170,7 +170,7 @@ function BookReader(el, w, h) {
    */
   function initConfig() {
     config = {
-      size: 2,
+      size: 4,
     }
   }
   /**
