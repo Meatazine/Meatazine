@@ -1,51 +1,59 @@
-jQuery.namespace('Meatazine.view.guide');
-Meatazine.view.guide.GuideManager = {
+jQuery.namespace('Meatazine.guide');
+Meatazine.guide.GuideManager = {
   trunk: [],
   branch: [],
   iterator: 0,
   config: null,
   book: null,
   init: function (config, book) {
-    var trunk = Meatazine.view.guide.TrunkCollection,
-        branch = Meatazine.view.guide.BranchCollection,
-        factory = Meatazine.view.guide.GuideTagFactory;
+    var trunk = Meatazine.guide.TrunkCollection,
+        branch = Meatazine.guide.BranchCollection,
+        factory = Meatazine.guide.GuideTagFactory;
     _.each(trunk, function (item, i){
-      this.trunk.push(factory.createGuideTag(item, i));
+      this.trunk.push(factory.createGuideTag(item));
     }, this); 
     _.each(branch, function(index) {
-      this.branch.push(factory.createGuideTag(item, -1));
+      this.branch.push(factory.createGuideTag(item));
     }, this);
     this.config = config;
     this.book = book;
-    this.book.on('change:size', this.book_sizeChangeHandler, this);
     this.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
+    this.checkGuideConfig();
   },
   
   checkGuideConfig: function () {
     var isUseGuide = this.config.get('isUseGuide');
     if (isUseGuide || isUseGuide == undefined) {
-      this.showGuide();
+      this.showGuide(true);
+      this.book.on('change:size', this.book_sizeChangeHandler, this);
     } else {
       this.hideGuide();
+      this.book.off('change:size', null, this);
     }
   },
   
   hideGuide: function () {
-    if (this.iterator < this.trunk.length) {
-      this.trunk[this.iterator].off('next');
-      this.trunk[this.iterator].hide();
-    }
+    this.trunk[this.iterator].hide();
+    this.trunk[this.iterator].off('next');
   },
 
-  showGuide: function () {
-    if (this.iterator < this.trunk.length) {
+  showGuide: function (isRegister) {
+    this.trunk[this.iterator].show();
+    if (isRegister) {
       this.trunk[this.iterator].on('next', this.guideTag_nextHandler, this);
-      this.trunk[this.iterator].show();
+    }
+  },
+  
+  showNextGuide: function () {
+    this.hideGuide();
+    this.iterator++;
+    if (this.iterator < this.trunk.length) {
+      this.showGuide(true);
     }
   },
   
   resetGuidePosition: function () {
-    this.checkGuideConfig();
+    this.showGuide();
   },
   
   book_sizeChangeHandler: function() {
@@ -57,8 +65,6 @@ Meatazine.view.guide.GuideManager = {
   },
   
   guideTag_nextHandler: function() {
-    this.hideGuide();
-    this.iterator++;
-    this.showGuide();
+    this.showNextGuide();
   },
 }

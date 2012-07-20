@@ -186,7 +186,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
     uploadButton_clickHandker: function (event) {
       uploader.click();
       _gaq.push(['_trackEvent', 'image', 'upload']);
-      event.stopPropagation();
     },
     uploader_selectHandler: function (event) {
       var self = event.data.self;

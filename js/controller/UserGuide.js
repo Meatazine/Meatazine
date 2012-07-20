@@ -1,1 +1,0 @@
-jQuery.namespace('Meatazine.controller');

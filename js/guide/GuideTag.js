@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.view.guide');
+jQuery.namespace('Meatazine.guide');
 (function (ns) {
   var DIVHEIGHT = 100,
       DIVWIDTH = 289,
@@ -68,37 +68,46 @@ jQuery.namespace('Meatazine.view.guide');
     }
     return direction;
   }
+  function clickHandler(event) {
+    event.data.self.trigger('next');
+  }
     
-  ns.GuideTag = function (tagData, seq) {
-    var self = this;
+  ns.GuideTag = function (tagData) {
+    this.tagData = tagData;
     this.target = $(tagData.selector);
     this.visible = false;
-    
-    this.hide = function () {
+    this.pop();
+  }
+  ns.GuideTag.prototype = _.extend({
+    hide: function () {
       if (this.visible) {
         this.visible = false;
         this.removeListener();
-        self.target.popover('hide');
+        this.target.popover('hide');
       }
-    }
-    this.pop = function () {
+    },
+    pop: function () {
       var options = {
-        title: seq != -1 ? chooseTitle : tagData.title,
-        content: tagData.content,
+        title: this.tagData.title,
+        content: this.tagData.content,
         placement: choosePosition,
+        trigger: 'manual',
       }
-      self.target.popover(options);
-    }
-    this.registerListener = function () {
-      var selectors = tagData.selector.split(' '),
+      this.target.popover(options);
+    },
+    registerListener: function () {
+      var selectors = this.tagData.selector.split(' '),
           outter = selectors[0],
-          target = selectors.slice(1).join();
-      $(outter).on('click', target, clickHandler);
-    }
-    this.removeListener = function () {
-      $(tagData.selector.split(' ')[0]).off('click', clickHandler);
-    }
-    this.show = function () {
+          target = selectors.slice(1).join(' ');
+      $(outter).on('click', target, {self: this}, clickHandler);
+    },
+    removeListener: function () {
+      var selectors = this.tagData.selector.split(' '),
+          outter = selectors[0],
+          target = selectors.slice(1).join(' ');
+      $(outter).off('click', target);
+    },
+    show: function () {
       if (!this.visible) {
         this.registerListener();
         this.visible = true;
@@ -111,54 +120,42 @@ jQuery.namespace('Meatazine.view.guide');
             hvisible = offset.left > scrollLeft - 1 && offset.left < scrollLeft + window.innerWidth + 1;
         return vvisible && hvisible;
       }, this) || this.target.eq(0);
-      $(item).popover('show');
-    }
-    
-    function chooseTitle() {
-      return self.visible ? 'Step ' + (seq + 1) : tagData.title;
-    }
-    
-    function clickHandler(event) {
-      self.trigger('next');
-    }
-    
-    _.extend(this, Backbone.Events);
-    
-    this.pop();
-  }
+      $(item).addClass('animated flash').popover('show');
+    },
+  }, Backbone.Events);
   
-  ns.InPageBodyGuideTag = function (tagData, seq) {
-    ns.GuideTag.call(this, tagData, seq);
-    var self = this;
-    
-    function page_renderStartHandler() {
-      if (self.visible) {
-        self.removeListener();
-        self.target.popover('hide');
-      }
-    }
-    function page_renderOverHandler() {
-      self.target = $(tagData.selector);
-      self.pop();
-      if (self.visible) {
-        self.registerListener();
-        self.show();
-      }
-    }
+  ns.InPageBodyGuideTag = function (tagData) {
+    ns.GuideTag.call(this, tagData);
   
-    GUI.page.on('render:start', page_renderStartHandler, this);
-    GUI.page.on('render:over', page_renderOverHandler, this);
+    GUI.page.on('render:start', this.page_renderStartHandler, this);
+    GUI.page.on('render:over', this.page_renderOverHandler, this);
   }
+  ns.InPageBodyGuideTag.prototype = _.extend({
+    page_renderStartHandler: function () {
+      if (this.visible) {
+        this.removeListener();
+        this.target.popover('hide');
+      }
+    },
+    page_renderOverHandler: function () {
+      this.target = $(this.tagData.selector);
+      this.pop();
+      if (this.visible) {
+        this.registerListener();
+        this.show();
+      }
+    },
+  }, ns.GuideTag.prototype);
   
   ns.GuideTagFactory = {
-    createGuideTag: function (tagData, seq) {
+    createGuideTag: function (tagData) {
       var guideTag;
       if ((/#page\-body/).test(tagData.selector)){
-        guideTag = new ns.InPageBodyGuideTag(tagData, seq);
+        guideTag = new ns.InPageBodyGuideTag(tagData);
       } else {
-        guideTag = new ns.GuideTag(tagData, seq);
+        guideTag = new ns.GuideTag(tagData);
       }
       return guideTag;
     },
   }
-})(Meatazine.view.guide);
+})(Meatazine.guide);

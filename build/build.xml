@@ -66,8 +66,8 @@
         <file name="view/ui/SourcePanel.js" />
         <file name="view/ui/NavBar.js" />
         <file name="view/ui/ContextButtons.js" />
-        <file name="view/guide/GuideTag.js" />
-        <file name="view/guide/GuideManager.js" />
+        <file name="guide/GuideTag.js" />
+        <file name="guide/GuideManager.js" />
         <file name="view/GUI.js" />
         <file name="AppMain.js" />
       </filelist>

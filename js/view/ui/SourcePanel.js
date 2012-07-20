@@ -87,10 +87,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   setTemplateType: function (type, silent) {
     silent = silent == null ? true : silent;
-    this.model.set({type: type}, {silent: true});
-    var target = this.model.get('type');
-        img = _.find(this.templateList.find('img'), function (element, i) {
-          return this.getTemplateType(element.src) == target;
+    this.model.set({type: type}, {silent: silent});
+    var img = _.find(this.templateList.find('img'), function (element, i) {
+          return this.getTemplateType(element.src) == type;
         }, this);
     if (img != null) {
       $(img).parent()
