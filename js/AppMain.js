@@ -33,4 +33,7 @@ $(function () {
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);
+  
+  // 登录状态
+  config.checkLoginStatus();
 });

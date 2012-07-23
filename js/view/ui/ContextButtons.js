@@ -5,7 +5,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     "click input": "button_clickHandler",
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.hide();
   },
   disableButtons: function () {

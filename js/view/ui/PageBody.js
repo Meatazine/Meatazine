@@ -9,8 +9,7 @@ jQuery.namespace('Meatazine.view.ui');
       "dragstop .ui-draggable": "draggable_dragStopHandler",
     },
     initialize: function () {
-      var self = this;
-      this.$el = $(this.el);
+      this.setElement(this.el);
       this.options.book.on('change:size', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_selectHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);

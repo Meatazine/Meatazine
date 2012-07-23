@@ -121,6 +121,14 @@ body {
 }
 
 /** ======================
+ * Navbar
+ * 导航菜单项  
+ *======================*/
+#navbar .logout {
+  display:none;
+}
+
+/** ======================
  * context menu
  * 功能菜单项  
  *======================*/
@@ -417,4 +425,14 @@ body {
 }
 .map-container img {
   max-width:none;
+}
+#navbar .login{
+  color:#08c;
+  padding: 9px 10px 11px 4px;
+}
+#navbar .welcome {
+  padding:9px 0 11px 9px;
+  color:#999;
+  line-height:19px;
+  text-shadow:0 -1px 0 rgba(0, 0, 0, 0.2);
 }

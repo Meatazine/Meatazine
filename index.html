@@ -46,13 +46,14 @@
               文件 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
+              <li><a href="#new" class="system-button">新建</a></li>
               <li><a href="#save" class="system-button disabled">保存</a></li>
               <li><a href="#load" class="system-button">读取</a></li>
-              <li><a href="#export-zip" class="system-button disabled" data-toggle="modal">导出</a></li>
-              <li class="divider"></li>
-              <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
               <li class="divider"></li>
               <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
+              <li class="divider"></li>
+              <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
+              <li><a href="#export-zip" class="system-button disabled" data-toggle="modal">导出</a></li>
               <li><a href="#publish" class="system-button disabled" data-toggle="modal">发布</a></li>
             </ul>
           </li>
@@ -67,7 +68,17 @@
           <li><a href="#user-config" data-toggle="modal">设置</a></li>
           <li><a href="#help" data-toggle="modal">帮助</a></li>
         </ul>
-        <p class="navbar-text pull-right">欢迎你， <a href="#">肉山</a></p>
+        <ul class="nav pull-right">
+          <li class="divider-vertical"></li>
+          <li class="welcome">欢迎您，</li>
+          <li class="dropdown pull-right">
+            <a href="#" class="dropdown-toggle login" data-toggle="dropdown">请登录 <b class="caret"></b></a>
+            <ul class="dropdown-menu login-menu">
+              <li class="login-type"><span id="qqLoginBtn"></span></li>
+              <li class="logout"><a href="#">注销</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -547,6 +558,20 @@
       <button class="btn" data-dismiss="modal">取消</button>
     </div>
   </div>
+  <div id="docs" class="modal hide">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>保存</h3>
+    </div>
+    <div class="modal-body">
+      
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary save">保存</button>
+      <button class="btn btn-primary load">读取</button>
+      <button class="btn">关闭</button>
+    </div>
+  </div>
 </div>
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -556,6 +581,7 @@
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/admin.css" />
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>
+<script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://meathill.mac/Meatazine/api/qqlogin.html" charset="UTF-8"></script>
 <!-- replace start -->
 <script src="js/libs/jquery-1.7.2.min.js"></script>
 <script src="js/libs/jquery-ui-1.8.21.custom.min.js"></script>

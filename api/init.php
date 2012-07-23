@@ -8,7 +8,7 @@
  */
  
   $count = 'count.log';
-  $id = (int)$_REQUEST['id'];
+  $id = $_REQUEST ? (int)$_REQUEST['id'] : 0;
   if ($id == 0) {
     $id = (int)file_get_contents($count);
     

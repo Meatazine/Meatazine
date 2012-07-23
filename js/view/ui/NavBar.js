@@ -8,12 +8,18 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   events: {
     "click .system-button": "systemButton_clickHandler",
     "click .disabled": "disabledButton_clickHandler",
+    "click .logout": "logout_clickHandler",
   },
   initialize: function () {
     this.setElement(this.el);
   },
   disabledPublishButtons: function () {
     this.setButtonsStatus(true, ['publish', 'book-config']);
+  },
+  resetLogin: function () {
+    this.$('.login').text('请登录');
+    this.$('.login-type').show();
+    this.$('.logout').hide();
   },
   setBookButtonsStatus: function (isDisabled) {
     this.setButtonsStatus(isDisabled, ['save', 'preview', 'export-zip', 'publish']);
@@ -24,9 +30,18 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       this.$('[href=#' + target + ']').toggleClass('disabled', isDisabled);
     });
   },
+  showQQloginResult: function (data, options) {
+    this.$('.login').text(data.nickname);
+    this.$('.login-type').hide();
+    this.$('.logout').show();
+  },
   disabledButton_clickHandler: function (event) {
     event.stopPropagation();
     return false;
+  },
+  logout_clickHandler: function (evnt) {
+    QC.Login.signOut();
+    this.resetLogin();
   },
   systemButton_clickHandler: function (event) {
     if ($(event.target).hasClass('disabled')) {

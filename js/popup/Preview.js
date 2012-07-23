@@ -5,7 +5,7 @@ Meatazine.popup.Preview = Backbone.View.extend({
     "hidden": "hidden_handler",
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.model.on('preview:ready', this.model_previewReadyHandler, this);
   },
   model_previewReadyHandler: function () {

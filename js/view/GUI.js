@@ -28,6 +28,9 @@ Meatazine.view.GUI = Backbone.View.extend({
     });
     delete this.options;
   },
+  loginCallback: function (search) {
+    alert(search);
+  },
   removeLoading: function () {
     $('#loading').fadeOut();
     $('.hidden').removeClass('hidden');

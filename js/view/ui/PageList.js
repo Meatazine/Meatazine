@@ -16,7 +16,7 @@ Meatazine.view.ui.PageList = Backbone.View.extend({
     "sortdeactivate #page-list-inner": "sortdeactivateHandler",
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
     this.list = this.$('#page-list-inner');
     this.model.on('change:size', this.book_resizeHandler, this);

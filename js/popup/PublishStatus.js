@@ -6,7 +6,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     "click .download": "downloadHandler",
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.initDownloadButtons();
     this.model.on('change:platform', this.model_platformChangeHandler, this);
   },

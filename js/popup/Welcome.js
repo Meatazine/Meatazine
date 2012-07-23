@@ -6,8 +6,7 @@ Meatazine.popup.Welcome = Backbone.View.extend({
     "click [data-toggle='button']": "useGuideButton_clickHandler",
   },
   initialize: function () {
-    var view = this;
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.render();
     this.checkModified();
     this.checkGuideConfig();

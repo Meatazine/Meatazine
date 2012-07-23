@@ -16,7 +16,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     "click .remove-button": "removeButton_clickHandler"
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.templateList = this.$('#template-list');
     this.sourceList = this.$('#source-list');
     this.removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');

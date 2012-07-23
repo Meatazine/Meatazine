@@ -5,7 +5,7 @@ Meatazine.popup.Export = Backbone.View.extend({
     'hidden': 'hiddenHandler',
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
   },
   model_zipProgressHandler: function (progress, total) {
     this.$('.progress').text(progress + ' / ' + total);

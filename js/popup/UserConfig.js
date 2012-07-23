@@ -8,7 +8,7 @@ Meatazine.popup.userConfig = Backbone.View.extend({
     "mouseout .switch-button": "switchButton_mouseoutHandler",
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
     this.checkConfig();
   },
   checkConfig: function () {

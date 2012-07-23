@@ -8,7 +8,7 @@ Meatazine.popup.MapInfoEditor = Backbone.View.extend({
     "input input,textarea": "text_inputHandler",
   },
   initialize: function () {
-    this.$el = $(this.el);
+    this.setElement(this.el);
   },
   render: function (latLng) {
     this.map = new google.maps.Map(this.$('.map-container')[0], {
