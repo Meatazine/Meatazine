@@ -120,7 +120,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       return new google.maps.MarkerImage('img/mapmarkers.png', size, point);
     },
     createMarkerShadow: function (index) {
-      var size = new google.maps.Size(32, 52),
+      var size = new google.maps.Size(25, 38),
           point = new google.maps.Point(0, 0);
       return new google.maps.MarkerImage('img/shadow.png', size, point);
     },
@@ -201,6 +201,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
     addMarkerButton_clickHandler: function (event) {
       event.data.self.addMapMarker(event.pageX, event.pageY);
       event.stopPropagation();
+    },
+    convertButton_clickHandler: function (event) {
+      google.maps.event.clearInstanceListeners(map);
+      ns.AbstractEditor.prototype.convertButton_clickHandler(event);
     },
     geoSearchButton_clickHandler: function (event) {
       event.data.self.search();

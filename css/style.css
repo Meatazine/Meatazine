@@ -16,15 +16,20 @@
 }
 body {
   background:#000;
+  -webkit-user-select: none;
 }
 .page {
   background: #F0F0F0;
   text-shadow: 0 1px 0 #FFF;
+  -webkit-user-select: none;
 }
 .page,
 .page p {
   color:#FFF;
   font:16px/150% Arial, Microsoft Yahei;
+}
+.map-container {
+  color:initial;
 }
 .map-container p {
   color:initial;
@@ -448,6 +453,17 @@ body {
   -webkit-column-count: 3;
   -moz-column-gap: 15px;
   -webkit-column-gap:15px;
+}
+.map-button {
+  background:#FFF;
+  border:1px solid #717B87;
+  text-align:center;
+  padding:5px;
+  font:bold 13px/16px Simsun;
+  margin:5px 0;
+  color:#333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  cursor:pointer;
 }
 
 /**

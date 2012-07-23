@@ -110,19 +110,61 @@ function BookReader(el, w, h) {
         },
         map = new google.maps.Map(container, options),
         size = null;
+    $(container).data('map', map);
     if (data.markers instanceof Array) {
+      map.markers = [];
       size = new google.maps.Size(22, 32);
-      for (var i = 0, len = data.markers.length; i < len; i++) {
+      $.each(data.markers, function (i, item) {
         var point = new google.maps.Point(Math.floor(i / 9) * 22, i % 9 * 32),
             image = new google.maps.MarkerImage('mapmarkers.png', size, point),
-            latlng = new google.maps.LatLng(data.markers[i].x, data.markers[i].y),
+            latlng = new google.maps.LatLng(item.x, item.y),
             mapmarker = new google.maps.Marker({
               icon: image,
               map: map,
               position: latlng,
             });
-      }
+        google.maps.event.addListener(mapmarker, 'click', function (event) {
+          map.setOptions({
+            center: event.latLng,
+            zoom: 17,
+          });
+          if (item.content) {
+            mapmarker.info = mapmarker.info || new google.maps.InfoWindow({
+              content: item.content,
+            });
+            mapmarker.info.open(map, mapmarker);
+          }
+        });
+        map.markers.push(mapmarker);
+      });
+      map.backButton = $('<div class="map-button">回到默认位置</div>');
+      map.backButton[0].index = 1;
+      map.controls[google.maps.ControlPosition.TOP_RIGHT].push(map.backButton[0]);
+      map.backButton.on('click', function (event) {
+        map.setOptions({
+          center: position,
+          zoom: data.zoom,
+        })
+      });
     }
+  }
+  /**
+   * 干掉地图，释放资源
+   * @param {Dom} Container 地图容器
+   * @private
+   */
+  function destroyMap(container) {
+    var map = $(container).data('map');
+    if (map.markers instanceof Array) {
+      $.each(map.markers, function (i, marker) {
+        google.maps.event.clearInstanceListeners(marker);
+        marker.info = null;
+      });
+      map.markers = null;
+      map.backButton.off();
+      map.backButton = null;
+    }
+    container.innerHTML = '';
   }
   /**
    * 按照当前窗口缩放
@@ -170,7 +212,7 @@ function BookReader(el, w, h) {
    */
   function initConfig() {
     config = {
-      size: 4,
+      size: 2,
     }
   }
   /**
@@ -198,7 +240,7 @@ function BookReader(el, w, h) {
       .find('img')
         .attr('src', 'spacer.gif');
     page.find('.map-container').each(function (i) {
-      $(this).empty();
+      destroyMap(this);
     });
     var arr = otherScrolls[parseInt(page.attr('id'), 0)];
     if (arr) {

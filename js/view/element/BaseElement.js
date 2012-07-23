@@ -115,9 +115,11 @@ jQuery.namespace('Meatazine.view.element');
       currentEditor = mapEditor;
     },
     renderImageItem: function (url, scale) {
-      var item;
+      var item,
+          index,
+          model;
       if (this.token != null && this.token.length > 0) {
-        var index = this.token.eq(0).index();
+        index = this.token.eq(0).index();
         this.collection.at(index).set({
           img: url,
           scale: scale,
@@ -125,7 +127,7 @@ jQuery.namespace('Meatazine.view.element');
         this.token = this.token.slice(1);
         item = this.$el.children().eq(index);
       } else {
-        var model = this.collection.create({
+        model = this.collection.create({
           img: url,
           scale: scale,
         });
@@ -149,17 +151,18 @@ jQuery.namespace('Meatazine.view.element');
     },
     editor_convertImageHandler: function (editor) {
       var map = editor.getTarget(),
-          div = map.getDiv(),
-          model = new this.collection.model();
-      var item = this.createItem(model, true);
-      if (div == this.$el[0]) {
+          div = editor.$el,
+          model = new this.collection.model(),
+          item = this.createItem(model, true),
+          image = null,
+          index = div.index();
+      if (div.is(this.$el)) {
         this.$el
           .empty()
           .append(item);
         this.collection.replaceAt(model, 0);
         this.token = this.token != null ? this.token.add(item) : item;
       } else {
-        var index = $(div).index();
         this.$el.children().eq(index).remove();
         if (index > 0) {
           item.insertAfter(this.$el.children().eq(index - 1));
@@ -169,9 +172,10 @@ jQuery.namespace('Meatazine.view.element');
         this.collection.replaceAt(model, index);
         this.token = this.token != null ? this.token.eq(index).prevAll().add(item).add(this.token.eq(index - 1).nextAll()) : item;
       }
-      $(div).removeClass('map-container');
-      google.maps.event.clearInstanceListeners(map);
-      this.registerImageEditor(item.find('.placeholder'));
+      div.removeClass('map-container');
+      image = item.filter('.placeholder').add(item.find('.placeholder'));
+      image.data('model', model);
+      this.registerImageEditor(image);
       _gaq.push(['_trackEvent', 'map', 'image']);
     },
     editor_convertMapHandler: function (editor) {
