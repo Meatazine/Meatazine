@@ -50,7 +50,9 @@ jQuery.namespace('Meatazine.view.element');
       var item = $(Meatazine.utils.render(this.template, model));
       // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
-        this.createMap(item, model);
+        var parent = item.parent().length > 0 ? item.parent() : this.$el,
+            item = item.is('img, video, audio') ? parent : item;
+        mapEditor.createMap(item, model);
         return;
       }
       if (isToken) {
@@ -77,41 +79,6 @@ jQuery.namespace('Meatazine.view.element');
         this.trigger('change');
       }, this);
       return item;
-    },
-    createMap: function (container, model) {
-      var self = this,
-          position = new google.maps.LatLng(model.get('lat'), model.get('lng')),
-          parent = container.parent().length > 0 ? container.parent() : this.$el,
-          container = container.is('img, video, audio') ? parent : container,
-          options = {
-            center: position,
-            draggable: false,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            zoom: model.get('zoom'),
-          },
-          map = null;
-      container
-        .width(container.width())
-        .height(container.height())
-        .addClass('map-container');
-      map = new google.maps.Map(container[0], options);
-      google.maps.event.addListener(map, 'tilesloaded', function () {
-        self.trigger('change');
-      });
-      if (model.get('markers') instanceof Array) {
-        for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
-          var image = mapEditor.createMarkerImage(i),
-              latlng = new google.maps.LatLng(arr[i].x, arr[i].y),
-              mapmarker = new google.maps.Marker({
-                clickable: false,
-                icon: image,
-                map: map,
-                position: latlng,
-              });
-        }
-      }
-      $(map.getDiv()).data('model', model).data('map', map);
-      return map;
     },
     getImageSize: function () {
       var sample = this.$el.children().eq(0),
@@ -212,7 +179,8 @@ jQuery.namespace('Meatazine.view.element');
       // 改变类型的时候需要替换model
       var index = -1,
           image = editor.getTarget(),
-          model = this.collection.createMapModel()
+          model = this.collection.createMapModel(),
+          container = null,
           map = null;
       this.$el.children().each(function (i) {
         if ($.contains(this, image[0]) || this == image[0]) {
@@ -223,8 +191,9 @@ jQuery.namespace('Meatazine.view.element');
       if (this.token != null) {
         this.token = this.token.not(this.$el.children().eq(index));
       }
-      this.collection.replaceAt(model, index); 
-      map = this.createMap(image.closest(this.tagName), model);
+      this.collection.replaceAt(model, index);
+      container = image.closest(this.tagName).is('img, video, audio') ? this.$el : image.closest(this.tagName); 
+      map = mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'image', 'map']);
     },
@@ -244,6 +213,9 @@ jQuery.namespace('Meatazine.view.element');
       this.renderImageItem(url, scale);
     },
     img_clickHandler: function (event) {
+      if (!$.contains(this.$el[0], event.target) || $(event.target).closest('.map-container').length > 0) {
+        return;
+      }
       this.registerImageEditor(event.target);
     },
     img_dropHandler: function (event) {

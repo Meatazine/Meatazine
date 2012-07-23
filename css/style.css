@@ -26,6 +26,9 @@ body {
   color:#FFF;
   font:16px/150% Arial, Microsoft Yahei;
 }
+.map-container p {
+  color:initial;
+}
 .large, p.large {
   font-size: 40px;
   line-height:60px;

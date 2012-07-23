@@ -61,6 +61,7 @@ jQuery.namespace('Meatazine.model.element');
       silent = silent == null ? true : silent;
       this.removeAt(index, true);
       this.add(model, {at: index, silent: silent});
+      this.trigger('replace', model, this, {index: index});
     },
     setModelIndex: function (start, end) {
       var model = this.removeAt(start, true);

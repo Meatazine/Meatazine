@@ -51,6 +51,7 @@
         <file name="popup/UserConfig.js" />
         <file name="popup/Export.js" />
         <file name="popup/Preview.js" />
+        <file name="popup/MapInfoEditor.js" />
         <file name="popup/PopupManager.js" />
         <file name="view/ui/editor/AbstractEditor.js" />
         <file name="view/ui/editor/ImageEditor.js" />

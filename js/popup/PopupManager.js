@@ -6,10 +6,22 @@ jQuery.namespace('Meatazine.popup');
       config,
       exportPopup,
       screenSize,
+      mapInfoEditor,
+      
       configModel,
       bookModel,
+      
       manager = {
         $el: null,
+        createMapInfoEditorPopup: function (init) {
+          if (mapInfoEditor == null) {
+            mapInfoEditor = new ns.MapInfoEditor({
+              el: '#map-info-editor',
+            });
+          }
+          mapInfoEditor.reset(init);
+          return mapInfoEditor;
+        },
         init: function (className, config, book) {
           configModel = config;
           bookModel = book;

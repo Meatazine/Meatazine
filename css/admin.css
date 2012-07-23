@@ -103,6 +103,23 @@ body {
   min-width: 100px;
 }
 
+#map-info-editor {
+  width:640px;
+  margin: -250px 0 0 -320px;
+}
+#map-info-editor .map-container {
+  height: 300px;
+}
+#map-info-editor .row-fluid {
+  width: 610px;
+}
+#map-info-editor .control-label {
+  width: 30px;
+}
+#map-info-editor .controls {
+  margin-left: 40px;
+}
+
 /** ======================
  * context menu
  * 功能菜单项  
@@ -397,4 +414,7 @@ body {
 .dropdown-menu .disabled:hover {
   color:#CCC;
   background-color: #FFF;
+}
+.map-container img {
+  max-width:none;
 }
