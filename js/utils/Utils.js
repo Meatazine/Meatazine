@@ -30,9 +30,10 @@ Meatazine.utils = {
     prototype.constructor = subType;
     subType.prototype = prototype;
   },
-  object: function (o) {
-    function F () {};
-    F.prototype = o;
-    return new F();
-  },
+  getDatetime: function () {
+    var now = new Date(),
+        date = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-'),
+        time = [now.getHours(), now.getMinutes(), now.getSeconds()].join(':');
+    return date + ' ' + time;
+  }
 }

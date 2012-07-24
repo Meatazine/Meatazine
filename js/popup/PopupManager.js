@@ -4,12 +4,14 @@ jQuery.namespace('Meatazine.popup');
       preview,
       welcome,
       config,
+      saveLoad,
       exportPopup,
       screenSize,
       mapInfoEditor,
       
       configModel,
       bookModel,
+      booksCollection,
       
       manager = {
         $el: null,
@@ -22,9 +24,10 @@ jQuery.namespace('Meatazine.popup');
           mapInfoEditor.reset(init);
           return mapInfoEditor;
         },
-        init: function (className, config, book) {
+        init: function (className, config, book, books) {
           configModel = config;
           bookModel = book;
+          booksCollection = books;
           this.$el = $(className);
           this.$el.on('show', this.modal_showHandler);
           welcome = new Meatazine.popup.Welcome({
@@ -43,10 +46,23 @@ jQuery.namespace('Meatazine.popup');
           });
         },
         popup: function (popupName, backdrop, keyboard) {
+          backdrop = backdrop != null ? backdrop : true;
+          keyboard = keyboard != null ? keyboard : true;
           $('#' + popupName).modal({
             backdrop: backdrop,
             keyboard: keyboard,
           })
+        },
+        popupSaveLoadPopup: function (type) {
+          if (saveLoad == null) {
+            saveLoad = new ns.SavedBooks({
+              el: '#docs',
+              model: bookModel,
+              collection: booksCollection,
+            })
+          }
+          saveLoad.setType(type);
+          this.popup('docs');
         },
         modal_showHandler: function (event) {
           var id = $(event.target).attr('id');

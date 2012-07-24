@@ -42,7 +42,7 @@ Meatazine.popup.userConfig = Backbone.View.extend({
       .val("已启用");
     this.model.set('isAutoSave', true);
     this.timeout = setInterval(function() {
-      bookModel.save();
+      bookModel.autosave();
     }, 1000 * 300);
   },
   preventAutoSave: function () {

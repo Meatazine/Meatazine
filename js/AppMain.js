@@ -4,6 +4,7 @@ $(function () {
       book = new Meatazine.model.BookProperties({
         pages: pages
       }),
+      books = new Meatazine.model.SavedBookCollection(),
       list = new Meatazine.view.ui.PageList({
         el: '#page-list',
         model: book,
@@ -29,7 +30,7 @@ $(function () {
   GUI.contextButtons = contextButtons;
   GUI.page = page;
   Meatazine.guide.GuideManager.init(config, book);
-  Meatazine.popup.PopupManager.init('.modal', config, book);
+  Meatazine.popup.PopupManager.init('.modal', config, book, books);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);

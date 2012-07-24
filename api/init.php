@@ -8,14 +8,23 @@
  */
  
   $count = 'count.log';
+  $action = $_REQUEST['act'];
   $id = $_REQUEST ? (int)$_REQUEST['id'] : 0;
-  if ($id == 0) {
-    $id = (int)file_get_contents($count);
+  switch ($action) {
+    case 'new':
+      $id = (int)file_get_contents($count);
+      
+      $fp = fopen($count, 'w');
+      fwrite($fp, $id + 1);
+      fclose($fp);
+      
+      break;
     
-    $fp = fopen($count, 'w');
-    fwrite($fp, $id + 1);
-    fclose($fp);
+    default:
+      
+      break;
   }
+  
   
   echo $id;
 ?>

@@ -39,7 +39,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     event.stopPropagation();
     return false;
   },
-  logout_clickHandler: function (evnt) {
+  logout_clickHandler: function (event) {
     QC.Login.signOut();
     this.resetLogin();
   },
@@ -52,6 +52,16 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     // 有一些功能不能这样直接触发
     if (/publish|export\-zip/i.test(target)) {
       Meatazine.popup.PopupManager.popup(target, 'static', false);
+      return false;
+    }
+    // 保存/读取
+    if (/save|load/i.test(target)) {
+      Meatazine.popup.PopupManager.popupSaveLoadPopup(target);
+      return false;
+    }
+    if (/new/i.test(target)) {
+      this.model.createNewBook();
+      _gaq.push(['_trackEvent', 'book', 'create']);
       return false;
     }
     

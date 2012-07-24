@@ -8,9 +8,9 @@ jQuery.namespace('Meatazine.model');
       height: 768,
       id: -1,
       platform: 3, // 1-ios, 2-android, 4-wp
-      icon: '',
+      icon: 'img/icon.png',
       cover: '',
-      name: '',
+      name: '我的杂志',
       gallery: -1,
       pages: null
     },
@@ -33,6 +33,15 @@ jQuery.namespace('Meatazine.model');
           GUI.navbar.disabledPublishButtons();
         }
       });
+    },
+    autosave: function () {
+      if (!isModified || this.get('pages').length == 0) {
+        return;
+      }
+      this.save('bookauto');
+    },
+    createNewBook: function () {
+      
     },
     createZip: function () {
       var self = this,
@@ -104,8 +113,8 @@ jQuery.namespace('Meatazine.model');
           domain = location.hostname;
       return link == domain;
     },
-    load: function () {
-      var store = localStorage.getItem('book'),
+    load: function (key) {
+      var store = localStorage.getItem(key),
           data = (store && JSON.parse(store)) || {};
       if (!_.isEmpty(data)) {
         this.fill(data);
@@ -148,13 +157,11 @@ jQuery.namespace('Meatazine.model');
         self.trigger('publish:start')
       });
     },
-    save: function () {
-      if (!isModified || this.get('pages').length == 0) {
-        return;
-      }
+    save: function (key) {
       var data = _.clone(this.attributes);
+      data.datetime = Meatazine.utils.getDatetime();
       data.pages = this.get('pages').toJSON();
-      localStorage.setItem('book', JSON.stringify(data));
+      localStorage.setItem(key, JSON.stringify(data));
       this.trigger('saved');
       isModified = false;
     },

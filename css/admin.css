@@ -120,6 +120,51 @@ body {
   margin-left: 40px;
 }
 
+#docs {
+  margin-top:-290px;
+}
+#docs .modal-body {
+  max-height:500px;
+}
+#docs .save,
+#docs .load {
+  display:none;
+}
+#docs ul.well {
+  margin:0;
+  overflow: hidden;
+  padding: 19px 9px 9px 19px;
+}
+#docs .well li {
+  background:#FFF;
+  border-radius:4px;
+  box-shadow:1px 1px 1px rgba(0, 0, 0, 0.1);
+  cursor:pointer;
+  float:left;
+  line-height:25px;
+  list-style: none;
+  margin:0 10px 10px 0;
+  padding: 10px;
+  position:relative;
+  width:220px;
+}
+#docs .well li:hover {
+  box-shadow:0 0 2px #08C;
+}
+#docs .well li.active {
+  box-shadow:inset 0 0 4px #08C;
+}
+#docs .well .empty {
+  color:#999;
+}
+#docs .well img {
+  max-width: 50px;
+}
+#docs .well figcaption {
+  float:right;
+  width:160px;
+}
+
 /** ======================
  * Navbar
  * 导航菜单项  
