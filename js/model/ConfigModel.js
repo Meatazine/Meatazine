@@ -31,7 +31,8 @@ Meatazine.model.ConfigModel = Backbone.Model.extend({
       GUI.navbar.showQQloginResult(reqData, options);
     });
   },
-  changeHandler: function () {
+  changeHandler: function (model, changedAttributes) {
     this.save();
+    _gaq.push(['_trackEvent', 'config', 'change', _.keys(changedAttributes).join(',')]);
   }
 })

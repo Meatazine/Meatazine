@@ -15,6 +15,7 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
     if (index > 1) {
       this.$('li').eq(index - 2).toggleClass('active pass');
     }
+    _gaq.push(['_trackEvent', 'book', 'publish', 'step', index]);
   },
   finish: function () {
     this.showStep(4);

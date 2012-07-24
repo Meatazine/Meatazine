@@ -19,6 +19,7 @@ Meatazine.guide.GuideManager = {
     this.book = book;
     this.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
     this.checkGuideConfig();
+    _gaq.push(['_trackEvent', 'guide', 'check', this.config.get('isUseGuide')]);
   },
   
   checkGuideConfig: function () {
@@ -35,6 +36,7 @@ Meatazine.guide.GuideManager = {
   hideGuide: function () {
     this.trunk[this.iterator].hide();
     this.trunk[this.iterator].off('next');
+    _gaq.push(['_trackEvent', 'guide', 'hide', 'step', this.iterator]);
   },
 
   showGuide: function (isRegister) {
@@ -42,6 +44,7 @@ Meatazine.guide.GuideManager = {
     if (isRegister) {
       this.trunk[this.iterator].on('next', this.guideTag_nextHandler, this);
     }
+    _gaq.push(['_trackEvent', 'guide', 'show', 'step', this.iterator]);
   },
   
   showNextGuide: function () {
@@ -50,6 +53,7 @@ Meatazine.guide.GuideManager = {
     if (this.iterator < this.trunk.length) {
       this.showGuide(true);
     }
+    _gaq.push(['_trackEvent', 'guide', 'play', 'step', this.iterator]);
   },
   
   resetGuidePosition: function () {
