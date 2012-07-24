@@ -53,7 +53,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     var obj = model.attributes,
         template = '';
     for (var prop in obj) {
-      if (/scale|x|y|count/i.test(prop)) {
+      if (/scale|x|y|count|markers/i.test(prop)) {
         continue;
       }
       if (prop == 'img') {

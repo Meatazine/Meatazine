@@ -70,6 +70,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
             map: map,
             position: latLng,
             shadow: self.createMarkerShadow(),
+            title: '双击编辑此标记信息',
           }),
           info = null;
       google.maps.event.addListener(mapmarker, 'dragend', function (event) {
