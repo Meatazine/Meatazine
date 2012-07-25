@@ -120,22 +120,28 @@ body {
   margin-left: 40px;
 }
 
-#docs {
-  margin-top:-290px;
+#books {
+  width:660px;
+  margin:-290px 0 0 -330px;
 }
-#docs .modal-body {
+#books .modal-body {
   max-height:500px;
 }
-#docs .save,
-#docs .load {
-  display:none;
+#books .disabled {
+  color:#999;
 }
-#docs ul.well {
+#books .disabled:hover {
+  background:#FFF;
+  border-color:#FFF;
+  border-right-color: #DDD;
+  cursor: default;
+}
+#books ul.well {
   margin:0;
   overflow: hidden;
   padding: 19px 9px 9px 19px;
 }
-#docs .well li {
+#books .well li {
   background:#FFF;
   border-radius:4px;
   box-shadow:1px 1px 1px rgba(0, 0, 0, 0.1);
@@ -148,19 +154,19 @@ body {
   position:relative;
   width:220px;
 }
-#docs .well li:hover {
+#books .well li:hover {
   box-shadow:0 0 2px #08C;
 }
-#docs .well li.active {
+#books .well li.active {
   box-shadow:inset 0 0 4px #08C;
 }
-#docs .well .empty {
+#books .well .empty {
   color:#999;
 }
-#docs .well img {
+#books .well img {
   max-width: 50px;
 }
-#docs .well figcaption {
+#books .well figcaption {
   float:right;
   width:160px;
 }

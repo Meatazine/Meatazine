@@ -157,11 +157,11 @@ jQuery.namespace('Meatazine.model');
         self.trigger('publish:start')
       });
     },
-    save: function (key) {
+    save: function () {
       var data = _.clone(this.attributes);
       data.datetime = Meatazine.utils.getDatetime();
       data.pages = this.get('pages').toJSON();
-      localStorage.setItem(key, JSON.stringify(data));
+      localStorage.setItem('book' + this.get('id'), JSON.stringify(data));
       this.trigger('saved');
       isModified = false;
     },

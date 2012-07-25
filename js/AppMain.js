@@ -1,10 +1,16 @@
 $(function () {
   var config = new Meatazine.model.ConfigModel(),
       pages = new Meatazine.model.PageCollection(),
+      localBooks = new Meatazine.model.LocalBookCollection(),
+      removeBooks = new Meatazine.model.RemoteBookCollection(),
+      user = new Meatazine.model.UserModel({
+        local: localBooks,
+        remote: removeBooks,
+      });
       book = new Meatazine.model.BookProperties({
-        pages: pages
+        id: localBooks.index,
+        pages: pages,
       }),
-      books = new Meatazine.model.SavedBookCollection(),
       list = new Meatazine.view.ui.PageList({
         el: '#page-list',
         model: book,
@@ -30,11 +36,11 @@ $(function () {
   GUI.contextButtons = contextButtons;
   GUI.page = page;
   Meatazine.guide.GuideManager.init(config, book);
-  Meatazine.popup.PopupManager.init('.modal', config, book, books);
+  Meatazine.popup.PopupManager.init('.modal', config, book, user);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);
   
   // 登录状态
-  config.checkLoginStatus();
+  user.checkLoginStatus();
 });

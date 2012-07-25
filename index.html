@@ -558,27 +558,36 @@
       <button class="btn" data-dismiss="modal">取消</button>
     </div>
   </div>
-  <div id="docs" class="modal hide">
+  <div id="books" class="modal hide">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">&times;</a>
-      <h3>保存</h3>
+      <h3>请选择要读取的应用</h3>
     </div>
     <div class="modal-body">
-      <p>保存的杂志会自动同步到服务器端哦</p>
-      <ul class="well">
-        <li class="{{cls}}">
-          <figure>
-            <img src="{{icon}}" />
-            <figcaption>
-              {{name}}<br />
-              {{datetime}}
-            </figcaption>
-          </figure>
-        </li>
-      </ul>
+      <div class="tabbable tabs-left">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#books-local" data-toggle="tab">本地</a></li>
+          <li><a href="#books-cloud" class="disabled" data-toggle="tab">云端</a></li>
+        </ul>
+        <div class="tab-content">
+          <ul class="well tab-pane active" id="books-local">
+            <li>
+              <figure>
+                <img src="{{icon}}" />
+                <figcaption>
+                  {{name}}<br />
+                  {{datetime}}
+                </figcaption>
+              </figure>
+            </li>
+          </ul>
+          <ul class="well tab-pane" id="books-cloud">
+            
+          </ul>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary save" disabled="true">保存</button>
       <button class="btn btn-primary load" disabled="true">读取</button>
       <button class="btn btn-primary autosave">读取自动保存</button>
       <button class="btn" data-dismiss="modal">关闭</button>
@@ -616,7 +625,8 @@
 <script src="js/model/SinglePageModel.js"></script>
 <script src="js/model/PageCollection.js"></script>
 <script src="js/model/SourceModel.js"></script>
-<script src="js/model/SavedBookCollection.js"></script>
+<script src="js/model/SavedBooksCollection.js"></script>
+<script src="js/model/UserModel.js"></script>
 <script src="js/config/UserGuideConfig.js"></script>
 <script src="js/popup/Welcome.js"></script>
 <script src="js/popup/ScreenSizeSelector.js"></script>

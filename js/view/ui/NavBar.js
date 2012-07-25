@@ -54,9 +54,9 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       Meatazine.popup.PopupManager.popup(target, 'static', false);
       return false;
     }
-    // 保存/读取
-    if (/save|load/i.test(target)) {
-      Meatazine.popup.PopupManager.popupSaveLoadPopup(target);
+    // 读取
+    if (/load/i.test(target)) {
+      Meatazine.popup.PopupManager.popup('books');
       return false;
     }
     if (/new/i.test(target)) {

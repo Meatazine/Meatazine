@@ -4,14 +4,14 @@ jQuery.namespace('Meatazine.popup');
       preview,
       welcome,
       config,
-      saveLoad,
+      load,
       exportPopup,
       screenSize,
       mapInfoEditor,
       
       configModel,
       bookModel,
-      booksCollection,
+      userModel,
       
       manager = {
         $el: null,
@@ -24,10 +24,10 @@ jQuery.namespace('Meatazine.popup');
           mapInfoEditor.reset(init);
           return mapInfoEditor;
         },
-        init: function (className, config, book, books) {
+        init: function (className, config, book, user) {
           configModel = config;
           bookModel = book;
-          booksCollection = books;
+          userModel = user;
           this.$el = $(className);
           this.$el.on('show', this.modal_showHandler);
           welcome = new Meatazine.popup.Welcome({
@@ -51,18 +51,8 @@ jQuery.namespace('Meatazine.popup');
           $('#' + popupName).modal({
             backdrop: backdrop,
             keyboard: keyboard,
-          })
-        },
-        popupSaveLoadPopup: function (type) {
-          if (saveLoad == null) {
-            saveLoad = new ns.SavedBooks({
-              el: '#docs',
-              model: bookModel,
-              collection: booksCollection,
-            })
-          }
-          saveLoad.setType(type);
-          this.popup('docs');
+          });
+          $('#' + popupName).modal('show');
         },
         modal_showHandler: function (event) {
           var id = $(event.target).attr('id');
@@ -98,7 +88,17 @@ jQuery.namespace('Meatazine.popup');
               if (config == null) {
                 config = new Meatazine.popup.BookConfig({
                   el: '#book-config',
-                  model: bookModel,
+                  model: configModel,
+                })
+              }
+              break;
+              
+            case 'books':
+              if (load == null) {
+                load = new ns.SavedBooks({
+                  el: '#books',
+                  model: userModel,
+                  book: bookModel,
                 })
               }
               break;
