@@ -4,7 +4,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
   ns.TextEditor = ns.AbstractEditor.extend({
     events: {
       "dblclick": "dblclickHandler",
-      "focusin": "focusInHandler",
       "paste": "pasteHandler",
       "keydown": "keydownHandler",
     },
@@ -31,7 +30,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
       if (this.$el != null) {
         this.$el.removeClass('editing');
       }
-      stashClass = '';  
       this.setElement(value);
       this.$el.addClass('editing');
       var self = this;
@@ -65,6 +63,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         stashClass = 'bighead';
         this.$el.removeClass('bighead');
       }
+      this.$el.closest('.ui-draggable').draggable('disable');
       GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'text', 'edit-start']);
     },
@@ -77,17 +76,12 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .removeClass('editing')
         .addClass(stashClass)
         .prop('contenteditable', false)
-        .off({
-          'mousedown': this.stopEventPropagation,
-          'mousemove': this.stopEventPropagation,
-        });
       Meatazine.utils.clearSelection();
       this.trigger('change');
+      this.$el.closest('.ui-draggable').draggable('enable');
       GUI.page.$el.removeClass('editing');
+      stashClass = '';
       _gaq.push(['_traceEvent', 'text', 'edit-stop'])
-    },
-    stopEventPropagation: function (event) {
-      event.stopPropagation();
     },
     body_clickHandler: function (event) {
       var self = event.data.self;
@@ -127,12 +121,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
     dblclickHandler: function (event) {
       this.buttons.find('[data-type=edit]').addClass('active');
       this.startEdit();
-    },
-    focusInHandler: function (event) {
-      this.$el.on({
-        'mousedown': this.stopEventPropagation,
-        'mousemove': this.stopEventPropagation,
-      });
     },
     keydownHandler: function (event) {
       if (event.keyCode == 13) {
