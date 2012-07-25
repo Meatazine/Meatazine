@@ -16,12 +16,10 @@
 }
 body {
   background:#000;
-  -webkit-user-select: none;
 }
 .page {
   background: #F0F0F0;
   text-shadow: 0 1px 0 #FFF;
-  -webkit-user-select: none;
 }
 .page,
 .page p {
@@ -473,6 +471,8 @@ body {
   position:relative;
   z-index:1;
   overflow:hidden;
+  -webkit-user-select: none;
+  user-select:none;
 }
 #container {
   height:100%;
