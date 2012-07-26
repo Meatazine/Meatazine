@@ -26,8 +26,7 @@ Meatazine.popup.ScreenSizeSelector = Backbone.View.extend({
   showInfo: function () {
     this.info
       .text(this.model.get('width') + ' × ' + this.model.get('height'))
-      .attr('title', '适用机型：' + this.$('.active').attr('data-device'))
-      .tooltip({placement: 'right'});
+      .attr('title', '适用机型：' + this.$('.active').attr('data-device'));
   },
   confirmHandler: function (event) {
     this.model.setSize($('#device-width').val(), $('#device-height').val());

@@ -6,7 +6,6 @@ jQuery.namespace('Meatazine.view.ui');
     items: [],
     events: {
       "click .editable": "editable_clickHandler",
-      "paste .editable": "editable_pasteHandler",
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
       "dragstop .ui-draggable": "draggable_dragStopHandler",
       "mouseover #page-body img": "img_mouseoverHandler",
@@ -20,6 +19,7 @@ jQuery.namespace('Meatazine.view.ui');
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
+      this.trigger('render:start');
       this.empty();
       this.$el.html(this.model.get('template'));
       var count = 0;
@@ -42,9 +42,10 @@ jQuery.namespace('Meatazine.view.ui');
       this.$('.ui-draggable').draggable();
       this.$('.ui-resizable').resizable();
       this.refreshThumbnail(true);
+      this.trigger('render:over');
     },
     addEditableText: function (x, y) {
-      var text = $('<div class="fixed"><p class="editable">文本在此～</p></div>');
+      var text = $('<div class="fixed"><div class="editable"><p>文本在此～</p></div></div>');
       text
         .css('left', x)
         .css('top', y)
@@ -114,35 +115,7 @@ jQuery.namespace('Meatazine.view.ui');
       _gaq.push(['_trackEvent', 'text', 'drag']);
     },
     editable_clickHandler: function (event) {
-      textEditor.setTarget(event.target);
-    },
-    editable_pasteHandler: function (event) {
-      var data = event.originalEvent.clipboardData,
-          target = $(event.target),
-          string = '',
-          selection = null,
-          range = null;
-      if (!target.prop('contenteditable')) {
-        return;
-      }
-      if (/files/i.test(data.types)) {
-        // TODO 可能是图片类的，先不处理
-      } else {
-        string = data.getData('text/plain');
-        string.replace('[\r\n]', '<br />');
-      }
-      if (window.getSelection) {
-        selection = window.getSelection();
-        if (selection.getRangeAt && selection.rangeCount) {
-            range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(string));
-        }
-      } else if (document.selection && document.selection.createRange) {
-        document.selection.createRange().text = string;
-      }
-      event.preventDefault();
-      return false;
+      textEditor.setTarget(event.currentTarget);
     },
     element_changeHandler: function () {
       this.refreshThumbnail();

@@ -6,7 +6,7 @@ $(function () {
     url: 'filesystem:' + host + 'temporary/export.html',
     dataType: 'html',
     success: function (data) {
-      reader.addContent(data);
+      reader.start(data);
     }
   });
 });

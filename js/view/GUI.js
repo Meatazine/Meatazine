@@ -17,10 +17,12 @@ Meatazine.view.GUI = Backbone.View.extend({
     $('body').on({
       'keydown': function (event) {
         if (event.keyCode == 8 && !(/input|textarea/i).test(event.target.tagName)) { // backspace
+          event.preventDefault();
           return false;
         }
       },
       'drop': function (event) {
+        event.preventDefault();
         return false;
       },
     });

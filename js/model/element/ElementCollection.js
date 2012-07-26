@@ -33,8 +33,11 @@ jQuery.namespace('Meatazine.model.element');
       });
     },
     isModelChanged: function (model) {
-      var obj = _.clone(model.attributes);
-      var def = _.clone(model.defaults);
+      var obj = _.clone(model.attributes),
+          def = _.clone(model.defaults);
+      if (!def) {
+        return false;
+      }
       delete obj.count;
       delete def.count;
       return !_.isEqual(obj, def);
@@ -58,6 +61,7 @@ jQuery.namespace('Meatazine.model.element');
       silent = silent == null ? true : silent;
       this.removeAt(index, true);
       this.add(model, {at: index, silent: silent});
+      this.trigger('replace', model, this, {index: index});
     },
     setModelIndex: function (start, end) {
       var model = this.removeAt(start, true);

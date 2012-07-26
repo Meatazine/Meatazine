@@ -3,10 +3,6 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   templates: {},
   isLoading: false,
   loadQueue: [],
-  events: {
-    "focusin #source-list span": "span_focusInHandler",
-    "focusout #source-list span": "span_focusOutHandler"
-  },
   defaults: {
     type: '',
     template: ''
@@ -57,11 +53,14 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     var obj = model.attributes,
         template = '';
     for (var prop in obj) {
+      if (/scale|x|y|count|markers/i.test(prop)) {
+        continue;
+      }
       if (prop == 'img') {
         template += '<img src="{{img}}" width="160" /><br />';
-      } else {
-        template += '<span class="' + prop + '">{{' + prop + '}}</span><br />';
+        continue;
       }
+      template += '<span class="' + prop + '">{{' + prop + '}}</span><br />';
     }
     return '<li>' + template + '</li>';
   },
@@ -73,10 +72,4 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     str = str.replace(/[\r\n]/gm, '').replace(/\s{2,}/gm, '');
     this.set('template', str);
   },
-  span_focusInHandler: function (event) {
-    $(event.target).addClass('editing');
-  },
-  span_focusOutHandler: function (event) {
-    $(event.target).removeClass('editing');
-  }
 });

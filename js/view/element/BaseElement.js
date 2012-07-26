@@ -32,7 +32,6 @@ jQuery.namespace('Meatazine.view.element');
         $(this).off().remove();
       });
       _.each(this.collection.models, function (model, i) {
-        // 判断是否是地图
         this.createItem(model, !this.collection.isModelChanged(model));
       }, this);
       for (var i = this.collection.config.number - this.collection.length; i > 0; i--) {
@@ -52,8 +51,11 @@ jQuery.namespace('Meatazine.view.element');
     },
     createItem: function (model, isToken) {
       var item = $(Meatazine.utils.render(this.template, model));
+      // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
-        this.createMap(item, model);
+        var parent = item.parent().length > 0 ? item.parent() : this.$el,
+            item = item.is('img, video, audio') ? parent : item;
+        mapEditor.createMap(item, model);
         return;
       }
       if (isToken) {
@@ -94,41 +96,6 @@ jQuery.namespace('Meatazine.view.element');
       }, this);
       return item;
     },
-    createMap: function (container, model) {
-      var self = this,
-          position = new google.maps.LatLng(model.get('lat'), model.get('lng')),
-          parent = container.parent().length > 0 ? container.parent() : this.$el,
-          container = container.is('img, video, audio') ? parent : container,
-          options = {
-            center: position,
-            draggable: false,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            zoom: model.get('zoom'),
-          },
-          map = null;
-      container
-        .width(container.width())
-        .height(container.height())
-        .addClass('map-container');
-      map = new google.maps.Map(container[0], options);
-      google.maps.event.addListener(map, 'tilesloaded', function () {
-        self.trigger('change');
-      });
-      if (model.get('markers') instanceof Array) {
-        for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
-          var image = mapEditor.createMarkerImage(i),
-              latlng = new google.maps.LatLng(arr[i].x, arr[i].y),
-              mapmarker = new google.maps.Marker({
-                clickable: false,
-                icon: image,
-                map: map,
-                position: latlng,
-              });
-        }
-      }
-      $(map.getDiv()).data('model', model).data('map', map);
-      return map;
-    },
     getImageSize: function () {
       var sample = this.$el.children().eq(0),
           sample = sample.find('img').add(sample.filter('img')),
@@ -164,9 +131,11 @@ jQuery.namespace('Meatazine.view.element');
       currentEditor = mapEditor;
     },
     renderImageItem: function (url, scale) {
-      var item;
+      var item,
+          index,
+          model;
       if (this.token != null && this.token.length > 0) {
-        var index = this.token.eq(0).index();
+        index = this.token.eq(0).index();
         this.collection.at(index).set({
           img: url,
           scale: scale,
@@ -174,7 +143,7 @@ jQuery.namespace('Meatazine.view.element');
         this.token = this.token.slice(1);
         item = this.$el.children().eq(index);
       } else {
-        var model = this.collection.create({
+        model = this.collection.create({
           img: url,
           scale: scale,
         });
@@ -198,17 +167,18 @@ jQuery.namespace('Meatazine.view.element');
     },
     editor_convertImageHandler: function (editor) {
       var map = editor.getTarget(),
-          div = map.getDiv(),
-          model = new this.collection.model();
-      var item = this.createItem(model, true);
-      if (div == this.$el[0]) {
+          div = editor.$el,
+          model = new this.collection.model(),
+          item = this.createItem(model, true),
+          image = null,
+          index = div.index();
+      if (div.is(this.$el)) {
         this.$el
           .empty()
           .append(item);
         this.collection.replaceAt(model, 0);
         this.token = this.token != null ? this.token.add(item) : item;
       } else {
-        var index = $(div).index();
         this.$el.children().eq(index).remove();
         if (index > 0) {
           item.insertAfter(this.$el.children().eq(index - 1));
@@ -218,9 +188,10 @@ jQuery.namespace('Meatazine.view.element');
         this.collection.replaceAt(model, index);
         this.token = this.token != null ? this.token.eq(index).prevAll().add(item).add(this.token.eq(index - 1).nextAll()) : item;
       }
-      $(div).removeClass('map-container');
-      google.maps.event.clearInstanceListeners(map);
-      this.registerImageEditor(item.find('.placeholder'));
+      div.removeClass('map-container');
+      image = item.filter('.placeholder').add(item.find('.placeholder'));
+      image.data('model', model);
+      this.registerImageEditor(image);
       _gaq.push(['_trackEvent', 'map', 'image']);
     },
     editor_convertMapHandler: function (editor) {
@@ -228,7 +199,8 @@ jQuery.namespace('Meatazine.view.element');
       // 改变类型的时候需要替换model
       var index = -1,
           image = editor.getTarget(),
-          model = this.collection.createMapModel()
+          model = this.collection.createMapModel(),
+          container = null,
           map = null;
       this.$el.children().each(function (i) {
         if ($.contains(this, image[0]) || this == image[0]) {
@@ -239,8 +211,9 @@ jQuery.namespace('Meatazine.view.element');
       if (this.token != null) {
         this.token = this.token.not(this.$el.children().eq(index));
       }
-      this.collection.replaceAt(model, index); 
-      map = this.createMap(image.closest(this.tagName), model);
+      this.collection.replaceAt(model, index);
+      container = image.closest(this.tagName).is('img, video, audio') ? this.$el : image.closest(this.tagName); 
+      map = mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'image', 'map']);
     },
@@ -260,6 +233,9 @@ jQuery.namespace('Meatazine.view.element');
       this.renderImageItem(url, scale);
     },
     img_clickHandler: function (event) {
+      if (!$.contains(this.$el[0], event.target) || $(event.target).closest('.map-container').length > 0) {
+        return;
+      }
       this.registerImageEditor(event.target);
     },
     img_dropHandler: function (event) {

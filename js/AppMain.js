@@ -6,7 +6,7 @@ $(function () {
       }),
       list = new Meatazine.view.ui.PageList({
         el: '#page-list',
-        book: book,
+        model: book,
         collection: pages
       }),
       source = new Meatazine.view.ui.SourcePanel({
@@ -28,6 +28,7 @@ $(function () {
   });
   GUI.contextButtons = contextButtons;
   GUI.page = page;
+  Meatazine.guide.GuideManager.init(config, book);
   Meatazine.popup.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
