@@ -3,6 +3,7 @@ jQuery.namespace('Meatazine.model');
   var isModified = false,
       file = new Meatazine.filesystem.FileReferrence();
   ns.BookProperties = Backbone.Model.extend({
+    url: './api/cloudbooks.php',
     defaults: {
       width: 1024,
       height: 768,
@@ -157,11 +158,12 @@ jQuery.namespace('Meatazine.model');
         self.trigger('publish:start')
       });
     },
-    save: function () {
+    save: function (key) {
+      key = key || 'book' + this.get('id');
       var data = _.clone(this.attributes);
       data.datetime = Meatazine.utils.getDatetime();
       data.pages = this.get('pages').toJSON();
-      localStorage.setItem('book' + this.get('id'), JSON.stringify(data));
+      localStorage.setItem(key, JSON.stringify(data));
       this.trigger('saved');
       isModified = false;
     },
