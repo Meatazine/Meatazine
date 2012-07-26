@@ -7,6 +7,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
       image = null,
       model = null,
       uploader = null;
+      MARKER_WIDTH = 22,
+      MARKER_HEIGHT = 32;
   ns.ImageEditor = ns.AbstractEditor.extend({
     drawImage : function () {
       var scale = model.get('scale'),
@@ -52,6 +54,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       ns.AbstractEditor.prototype.initButtons.call(this);
       this.buttons.find('.scale input').on('change', {self: this}, this.scale_changeHandler);
       this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
+      this.buttons.find("[data-type='add-marker']").on('click',{self: this}, this.addImgMarkerButton_clickHandler);
     },
     initScaleRange: function () {
       var scale = model.get('scale'),
@@ -175,6 +178,39 @@ jQuery.namespace('Meatazine.view.ui.editor');
         callback = null;
         args = null;
       }
+    },
+    addImgMarker: function (x, y) {
+      var self = this,
+          markers = model.get('markers') ? model.get('markers').concat() : [],
+          tmpImgMarker = $('<div>', {"class": "img-marker"});
+      tmpImgMarker
+        .css('left', x - 11)
+        .css('top', y - 32);
+      $('body')
+        .append(tmpImgMarker)
+        .mousemove(function (event) {
+          tmpImgMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
+        })
+        .one('click', function (event) {
+          $(this).off('mousemove');
+          tmpImgMarker.remove();
+          image.off('click');
+        });
+      image.on('click', function (event) {
+        var imgMarker = $('<div>', {'class': "tmp-marker"}),
+            img = event.target;
+        imgMarker
+          .css('left', event.offsetX - MARKER_WIDTH / 2)
+          .css('top', event.offsetY - MARKER_HEIGHT)
+          .css('background-position', -Math.floor(markers.length / 9) * MARKER_WIDTH + 'px ' + -markers.length % 9 * MARKER_HEIGHT + 'px');
+        imgMarker.appendTo($(img).parent());
+        markers.push({x: event.offsetX, y: event.offsetY});
+      });
+      model.set({markers: markers}, {silent: true});
+    },
+    addImgMarkerButton_clickHandler: function (event) {
+      event.data.self.addImgMarker(event.pageX, event.pageY);
+      event.stopPropagation();
     },
     scale_changeHandler: function (event) {
       var self = event.data.self,

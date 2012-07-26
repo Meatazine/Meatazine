@@ -53,6 +53,16 @@ body {
   z-index:10;
   opacity: 0.6;
 }
+.resolution {
+  position: absolute;
+  top:5px;
+  left:8px;
+  border:1px solid #CCC;
+  font-size:12px;
+  background:#049CDB;
+  color:#FFF;
+  opacity:0.4;
+}
 .remove-button:hover {
   opacity:1;
 }
@@ -145,6 +155,13 @@ body {
   height:32px;
   position: absolute;
   width:22px;
+  z-index: 100;
+}
+.img-marker {
+  background: url(../img/imgmarker.png);
+  height: 32px;
+  position: absolute;
+  width: 22px;
   z-index: 100;
 }
 .uploader {

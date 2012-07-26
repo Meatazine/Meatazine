@@ -1,5 +1,8 @@
 jQuery.namespace('Meatazine.view.element');
 (function (ns) {
+  var MARKER_WIDTH = 22,
+      MARKER_HEIGHT = 32;
+      
   var currentEditor = null,
       imageResizer = new Meatazine.filesystem.ImageResizer(),
       localFile = new Meatazine.filesystem.FileReferrence(),
@@ -57,6 +60,19 @@ jQuery.namespace('Meatazine.view.element');
         this.token = this.token == null ? item : this.token.add(item);
       } else {
         item.find('.placeholder').add(item.filter('.placeholder')).removeClass('placeholder');
+      }
+      if (model instanceof Backbone.Model && model.has('markers')) {
+        for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
+          //var self = this,
+          var imageMarker = $('<div>', {"class": "tmp-marker"}),
+              tmpItem = item.filter('img').add(item.find('img')),
+              container = tmpItem.closest(this.tagName).is('img') ? this.$el : tmpItem.closest(this.tagName); 
+          imageMarker
+            .css('left', arr[i].x - MARKER_WIDTH / 2)
+            .css('top', arr[i].y - MARKER_HEIGHT)
+            .css('background-position', -Math.floor(i / 9) * MARKER_WIDTH + 'px ' + -i % 9 * MARKER_HEIGHT + 'px');
+          imageMarker.appendTo(container);
+        }
       }
       item
         .on('click', function (event) {

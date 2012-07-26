@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.view.ui');
 (function (ns) {
   var textEditor = new ns.editor.TextEditor('.group1');
+  //var img;
   ns.PageBody = Backbone.View.extend({
     items: [],
     events: {
@@ -8,6 +9,8 @@ jQuery.namespace('Meatazine.view.ui');
       "paste .editable": "editable_pasteHandler",
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
       "dragstop .ui-draggable": "draggable_dragStopHandler",
+      "mouseover #page-body img": "img_mouseoverHandler",
+      "mouseout #page-body img": "img_mouseoutHandler",
     },
     initialize: function () {
       var self = this;
@@ -171,6 +174,16 @@ jQuery.namespace('Meatazine.view.ui');
     },
     textEditor_changeHandler: function () {
       this.refreshThumbnail();
+    },
+    img_mouseoverHandler: function (event) {
+      var img = event.target,
+          size = $('<span class="label label-info resolution">分辨率：' + img.width + ' &times; ' + img.height + '</span>');
+      size.appendTo($(img).parent());
+      $(img).data('size', size);
+    },
+    img_mouseoutHandler: function (event) {
+      var img = event.target;
+      $(img).data('size').remove();
     },
   });
 })(Meatazine.view.ui);
