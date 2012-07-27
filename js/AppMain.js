@@ -42,5 +42,11 @@ $(function () {
   page.on('change', list.page_changeHandler, list);
   
   // 登录状态
+  user.on('change:bookid', function (model) {
+    book.set({
+     isRemote: true,
+     id: user.get('bookid'), 
+    });
+  }, this);
   user.checkLoginStatus();
 });

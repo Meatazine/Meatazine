@@ -8,6 +8,7 @@ jQuery.namespace('Meatazine.model');
       width: 1024,
       height: 768,
       id: -1,
+      isRemote: false,
       platform: 3, // 1-ios, 2-android, 4-wp
       icon: 'img/icon.png',
       cover: '',
@@ -160,10 +161,30 @@ jQuery.namespace('Meatazine.model');
     },
     save: function (key) {
       key = key || 'book' + this.get('id');
-      var data = _.clone(this.attributes);
+      var data = _.clone(this.attributes),
+          content = '';
       data.datetime = Meatazine.utils.getDatetime();
       data.pages = this.get('pages').toJSON();
-      localStorage.setItem(key, JSON.stringify(data));
+      content = JSON.stringify(data);
+      localStorage.setItem(key, content);
+      if (this.get('isRemote')) {
+        $.ajax({
+          url: this.url,
+          context: this,
+          data: {
+            bookid: this.get('id'),
+            openid: localStorage.getItem('openid'),
+            book: content,
+          },
+          method: 'POST',
+          success: function (response) {
+            
+          },
+          error: function (response) {
+            
+          }
+        })
+      }
       this.trigger('saved');
       isModified = false;
     },

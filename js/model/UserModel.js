@@ -78,7 +78,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         var id = collection.find(function (model) {
           return model.get('content') == '';
         }, self).get('bookid');
-        self.set('remoteid', id);
+        self.set('bookid', id);
       },
     });
   },
