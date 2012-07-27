@@ -64,17 +64,11 @@ jQuery.namespace('Meatazine.view.element');
         item.find('.placeholder').add(item.filter('.placeholder')).removeClass('placeholder');
       }
       if (model instanceof Backbone.Model && model.has('markers')) {
-        for (var i = 0, arr = model.get('markers'), len = arr.length; i < len; i++) {
-          //var self = this,
-          var imageMarker = $('<div>', {"class": "tmp-marker"}),
-              tmpItem = item.filter('img').add(item.find('img')),
-              container = tmpItem.closest(this.tagName).is('img') ? this.$el : tmpItem.closest(this.tagName); 
-          imageMarker
-            .css('left', arr[i].x - MARKER_WIDTH / 2)
-            .css('top', arr[i].y - MARKER_HEIGHT)
-            .css('background-position', -Math.floor(i / 9) * MARKER_WIDTH + 'px ' + -i % 9 * MARKER_HEIGHT + 'px');
-          imageMarker.appendTo(container);
-        }
+        _.each (arr = model.get('markers'), function (val, key) {
+          var imgItem = item.filter('img').add(item.find('img')),
+              container = /IMG/i.test(this.tagName) ? this.$el : imgItem.parent(this.tagName);
+          imageEditor.createImgMarkerImage(container, arr, key);
+        }, this);
       }
       item
         .on('click', function (event) {
@@ -212,7 +206,7 @@ jQuery.namespace('Meatazine.view.element');
         this.token = this.token.not(this.$el.children().eq(index));
       }
       this.collection.replaceAt(model, index);
-      container = image.closest(this.tagName).is('img, video, audio') ? this.$el : image.closest(this.tagName); 
+      container = /img|video|audio/i.test(this.tagName) ? this.$el : image.parent(this.tagName); 
       map = mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'image', 'map']);

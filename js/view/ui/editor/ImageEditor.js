@@ -11,13 +11,13 @@ jQuery.namespace('Meatazine.view.ui.editor');
       MARKER_HEIGHT = 32;
   ns.ImageEditor = ns.AbstractEditor.extend({
     drawImage : function () {
-      var scale = model.get('scale'),
+      var scale = this.model.get('scale'),
           source = canvas.data('image'),
           context = canvas[0].getContext('2d'),
           sourceWidth = canvas[0].width / scale,
           sourceHeight = canvas[0].height / scale,
-          sourceX = (source.width - sourceWidth >> 1) - model.get('x') / scale,
-          sourceY = (source.height - sourceHeight >> 1) - model.get('y') / scale,
+          sourceX = (source.width - sourceWidth >> 1) - this.model.get('x') / scale,
+          sourceY = (source.height - sourceHeight >> 1) - this.model.get('y') / scale,
           destWidth = 0,
           destHeight = 0,
           destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas[0].width : 0,
@@ -48,7 +48,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       return url.substr(0, url.lastIndexOf('/')) + '/source' + url.substr(url.lastIndexOf('/'));
     },
     getTarget: function () {
-      return image;
+      return this.$el;
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
@@ -57,7 +57,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.buttons.find("[data-type='add-marker']").on('click',{self: this}, this.addImgMarkerButton_clickHandler);
     },
     initScaleRange: function () {
-      var scale = model.get('scale'),
+      var scale = this.model.get('scale'),
           scaleMin = scale < 0.5 ? scale : 0.5,
           scaleMax = scale > 1.5 ? scale : 1.5,
           scaleRanger = this.buttons.find('[data-type="scale"]');
@@ -81,19 +81,19 @@ jQuery.namespace('Meatazine.view.ui.editor');
       if (canvas == null) {
         return;
       }
-      var url = model.get('img'),
+      var url = this.model.get('img'),
           name = url.substr(url.lastIndexOf('/') + 1),
           content = atob(canvas[0].toDataURL('image/jpeg').split(',')[1]);
       localFile.on('complete:save', this.canvas_savedHandler, this);
       localFile.save(name, '', content, 'image/jpeg');
     },
     setCanvasScale: function (value) {
-      model.set({scale: value}, {silent: true});
+      this.model.set({scale: value}, {silent: true});
       this.drawImage();
     },
     setTarget: function (value) {
       GUI.contextButtons.showButtons(this.buttons);
-      if (image != null && image.is(value)) {
+      if (this.$el != null && this.$el.is(value)) {
         return;
       }
       if (this.isEditing) {
@@ -102,22 +102,22 @@ jQuery.namespace('Meatazine.view.ui.editor');
         args = value;
         return;
       }
-      image = $(value);
-      model = image.data('model');
-      this.buttons.find('[data-type="edit"]').prop('disabled', image.hasClass('placeholder'));
+      this.$el = $(value);
+      this.model = this.$el.data('model');
+      this.buttons.find('[data-type="edit"]').prop('disabled', this.$el.hasClass('placeholder'));
       this.initScaleRange();
       this.initUploader();
     },
     startEdit: function () {
       this.isEditing = true;
-      image.closest('.ui-draggable').draggable('disable');
-      image.closest('.ui-resizable').resizable('disable');
+      this.$el.closest('.ui-draggable').draggable('disable');
+      this.$el.closest('.ui-resizable').resizable('disable');
       canvas = $('<canvas>');
       var self = this,
-          sourceUrl = this.getSourceImageUrl(image.attr('src')),
+          sourceUrl = this.getSourceImageUrl(this.$el.attr('src')),
           loader = new Image();
-      canvas[0].width = image.width();
-      canvas[0].height = image.height();
+      canvas[0].width = this.$el.width();
+      canvas[0].height = this.$el.height();
       loader.onload = function () {
         self.drawImage();
       }
@@ -125,14 +125,14 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .addClass('active')
         .data('image', loader)
         .on('mousedown', function (event) {
-          var currentX = model.get('x'),
-              currentY = model.get('y'),
+          var currentX = this.model.get('x'),
+              currentY = this.model.get('y'),
               startX = event.pageX,
               startY = event.pageY;
           $(this).on('mousemove', function (event) {
             offsetX = event.pageX - startX;
             offsetY = event.pageY - startY;
-            model.set({
+            this.model.set({
               x: currentX + offsetX,
               y: currentY + offsetY,
             }, {silent: true});
@@ -146,7 +146,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         })
         .on('mouseup', this.canvas_mouseupHandler);
       loader.src = sourceUrl;
-      image.replaceWith(canvas);
+      this.$el.replaceWith(canvas);
       GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
@@ -165,14 +165,14 @@ jQuery.namespace('Meatazine.view.ui.editor');
       canvas.off('mouseup', arguments.callee);
     },
     canvas_savedHandler: function (url) {
-      canvas.replaceWith(image);
+      canvas.replaceWith(this.$el);
       canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
       canvas = null;
       localFile.off('complete:save', null, this);
-      image
+      this.$el
         .attr('src', url)
-        .data('model', model)
+        .data('model', this.model)
         .closest('.ui-draggable').draggable('enable')
         .end()
         .closest('.ui-resizable').resizable('enable');
@@ -184,11 +184,11 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     addImgMarker: function (x, y) {
       var self = this,
-          markers = model.get('markers') ? model.get('markers').concat() : [],
+          markers = this.model.get('markers') ? this.model.get('markers').concat() : [],
           tmpImgMarker = $('<div>', {"class": "img-marker"});
       tmpImgMarker
-        .css('left', x - 11)
-        .css('top', y - 32);
+        .css('left', x - MARKER_WIDTH / 2)
+        .css('top', y - MARKER_HEIGHT);
       $('body')
         .append(tmpImgMarker)
         .mousemove(function (event) {
@@ -197,19 +197,23 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .one('click', function (event) {
           $(this).off('mousemove');
           tmpImgMarker.remove();
-          image.off('click');
         });
-      image.on('click', function (event) {
-        var imgMarker = $('<div>', {'class': "tmp-marker"}),
-            img = event.target;
-        imgMarker
-          .css('left', event.offsetX - MARKER_WIDTH / 2)
-          .css('top', event.offsetY - MARKER_HEIGHT)
-          .css('background-position', -Math.floor(markers.length / 9) * MARKER_WIDTH + 'px ' + -markers.length % 9 * MARKER_HEIGHT + 'px');
-        imgMarker.appendTo($(img).parent());
+      function imgClick_handler() {
+        var img = event.target;
         markers.push({x: event.offsetX, y: event.offsetY});
-      });
-      model.set({markers: markers}, {silent: true});
+        self.createImgMarkerImage($(img).parent(), markers, markers.length - 1);
+        $(this).off('click', imgClick_handler);
+      };
+      this.$el.one('click', imgClick_handler);
+      this.model.set({markers: markers}, {silent: true});
+    },
+    createImgMarkerImage: function(container, markers, index) {
+      var imgMarker = $('<div>', {'class': "tmp-marker"});
+      imgMarker
+        .css('left', markers[index].x - MARKER_WIDTH / 2)
+        .css('top', markers[index].y - MARKER_HEIGHT)
+        .css('background-position', -Math.floor(index / 9) * MARKER_WIDTH + 'px ' + -index % 9 * MARKER_HEIGHT + 'px');
+      imgMarker.appendTo(container);
     },
     addImgMarkerButton_clickHandler: function (event) {
       event.data.self.addImgMarker(event.pageX, event.pageY);
