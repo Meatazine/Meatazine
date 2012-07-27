@@ -35,9 +35,9 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       scope: "all",
       size: "A_M",
     }, function (reqData, options) {
-      GUI.navbar.showQQloginResult(reqData, options);
+      GUI.navbar.showQQLoginResult(reqData, options);
       self.getMe();
-      localStorage.set('info', JSON.stringify(reqData));
+      localStorage.setItem('info', JSON.stringify(reqData));
     }), function (options) {
       localStorage.removeItem('openid');
       localStorage.removeItem('token');
@@ -62,7 +62,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   getUserInfo: function () {
     QC.api('get_user_info', {})
       .success(function (response) {
-        GUI.navbar.showQQloginResult(response.data);
+        GUI.navbar.showQQLoginResult(response.data);
       })
       .error(function (response) {
         console.log('get user info failed..', response);

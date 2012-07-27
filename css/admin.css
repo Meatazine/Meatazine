@@ -178,6 +178,12 @@ body {
 #navbar .logout {
   display:none;
 }
+#system-info {
+  position: absolute;
+  top:36px;
+  left:50%;
+  margin:0;
+}
 
 /** ======================
  * context menu

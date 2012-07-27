@@ -159,8 +159,8 @@ jQuery.namespace('Meatazine.model');
         self.trigger('publish:start')
       });
     },
-    save: function (key) {
-      key = key || 'book' + this.get('id');
+    save: function () {
+      key = this.get('isRemote')  ? 'remote' + this.get('id') : 'book' + this.get('id');
       var data = _.clone(this.attributes),
           content = '';
       data.datetime = Meatazine.utils.getDatetime();
@@ -178,10 +178,15 @@ jQuery.namespace('Meatazine.model');
           },
           method: 'POST',
           success: function (response) {
-            
+            var data = JSON.parse(response);
+            if (data.hasOwnProperty('type')) {
+              GUI.showError(data.msg);
+            } else {
+              GUI.showSuccess('同步保存成功');
+            }
           },
-          error: function (response) {
-            
+          error: function () {
+            GUI.showError('网络连接错误，请稍后重试');
           }
         })
       }

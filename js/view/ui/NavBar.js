@@ -30,7 +30,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       this.$('[href=#' + target + ']').toggleClass('disabled', isDisabled);
     });
   },
-  showQQloginResult: function (data, options) {
+  showQQLoginResult: function (data) {
     this.$('.login').text(data.nickname);
     this.$('.login-type').hide();
     this.$('.logout').show();

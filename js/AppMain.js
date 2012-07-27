@@ -43,6 +43,7 @@ $(function () {
   
   // 登录状态
   user.on('change:bookid', function (model) {
+    user.off('change:bookid');
     book.set({
      isRemote: true,
      id: user.get('bookid'), 
