@@ -39,6 +39,7 @@ jQuery.namespace('Meatazine.model.element');
         return false;
       }
       delete obj.count;
+      delete obj.markers;
       delete def.count;
       return !_.isEqual(obj, def);
     },

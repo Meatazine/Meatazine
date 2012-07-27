@@ -1,8 +1,5 @@
 jQuery.namespace('Meatazine.view.element');
 (function (ns) {
-  var MARKER_WIDTH = 22,
-      MARKER_HEIGHT = 32;
-      
   var currentEditor = null,
       imageResizer = new Meatazine.filesystem.ImageResizer(),
       localFile = new Meatazine.filesystem.FileReferrence(),
@@ -16,6 +13,8 @@ jQuery.namespace('Meatazine.view.element');
       "dragenter img": "img_dragEnterHandler",
       "dragleave img": "img_dragLeaveHandler",
       "click img": "img_clickHandler",
+      "mouseover img": "img_mouseoverHandler",
+      "mouseout img": "img_mouseoutHandler",
       "click .map-container": "map_clickHandler",
       "click [data-toggle]": "toggle_clickHandler",
     },
@@ -28,15 +27,18 @@ jQuery.namespace('Meatazine.view.element');
       this.render();
     },
     render: function () {
-      this.$el.children().each(function (i) {
-        $(this).off().remove();
-      });
+      var self = this,
+          i = 0;
+      this.$el.empty();
       _.each(this.collection.models, function (model, i) {
         this.createItem(model, !this.collection.isModelChanged(model));
       }, this);
-      for (var i = this.collection.config.number - this.collection.length; i > 0; i--) {
+      for (i = this.collection.config.number - this.collection.length; i > 0; i--) {
         this.createItem(this.collection.create(), true);
       }
+      this.$el.on('click', this.tagName, function (event) {
+        self.item_clickHandler(event);
+      });
       this.handleChildrenState();
     },
     remove: function () {
@@ -47,14 +49,16 @@ jQuery.namespace('Meatazine.view.element');
       mapEditor.off(null, null, this);
       this.collection.off(null, null, this);
       this.off();
+      this.undelegateEvents();
       this.$el.remove();
     },
     createItem: function (model, isToken) {
-      var item = $(Meatazine.utils.render(this.template, model));
+      var item = $(Meatazine.utils.render(this.template, model)),
+          isImage = /img|audio|video/i.test(this.tagName);
       // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
-        var parent = item.parent().length > 0 ? item.parent() : this.$el,
-            item = item.is('img, video, audio') ? parent : item;
+        item.appendTo(this.$el);
+        item = isImage ? this.$el : item;
         mapEditor.createMap(item, model);
         return;
       }
@@ -66,24 +70,16 @@ jQuery.namespace('Meatazine.view.element');
       if (model instanceof Backbone.Model && model.has('markers')) {
         _.each (model.get('markers'), function (val, key) {
           var imgItem = item.filter('img').add(item.find('img')),
-              container = /img/i.test(this.tagName) ? this.$el : imgItem.parent();
-          imageEditor.createImgMarkerImage(container, val, key);
+              container = isImage ? this.$el : imgItem.parent();
+          imageEditor.createImgMarker(container, val, key);
         }, this);
       }
-      item
-        .on('click', function (event) {
-          if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
-            model.trigger('select');
-          }
-        })
-        .appendTo(this.$el);
+      item.appendTo(this.$el);
       item.filter('img').add('img', item).add(item).data('model', model);
       model.on('change', function (model) {
         var data = item.filter('img').add('img', item).add(item).data();
             newItem = this.createItem(model);
-        item
-          .off('click')
-          .replaceWith(newItem);
+        item.replaceWith(newItem);
         newItem.filter('img').add('img', newItem).add(newItem).data(data);
         model.off('change', arguments.callee);
         this.trigger('change');
@@ -91,12 +87,13 @@ jQuery.namespace('Meatazine.view.element');
       return item;
     },
     getImageSize: function () {
-      var sample = this.$el.children().eq(0),
-          sample = sample.find('img').add(sample.filter('img')),
-          size = {
-            width: sample.width(),
-            height: sample.height()
-          }
+      var sample = this.$el.children(this.tagName).eq(0),
+          size = null;
+      sample = sample.find('img').add(sample.filter('img')),
+      size = {
+        width: sample.width(),
+        height: sample.height()
+      }
       return size;
     },
     handleChildrenState: function () {
@@ -112,6 +109,9 @@ jQuery.namespace('Meatazine.view.element');
       imageResizer.addFiles(files, this.getImageSize());
     },
     registerImageEditor: function (image) {
+      if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor) {
+        currentEditor.setElement(null);
+      }
       imageEditor.off();
       imageEditor.on('select:image', this.editor_selectImagesHandler, this);
       imageEditor.on('convert:map', this.editor_convertMapHandler, this);
@@ -119,6 +119,9 @@ jQuery.namespace('Meatazine.view.element');
       currentEditor = imageEditor;
     },
     registerMapEditor: function (map) {
+      if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor) {
+        currentEditor.setElement(null);
+      }
       mapEditor.off();
       mapEditor.on('convert:image', this.editor_convertImageHandler, this);
       mapEditor.setTarget(map);
@@ -135,7 +138,7 @@ jQuery.namespace('Meatazine.view.element');
           scale: scale,
         });
         this.token = this.token.slice(1);
-        item = this.$el.children().eq(index);
+        item = this.$el.children(this.tagName).eq(index);
       } else {
         model = this.collection.create({
           img: url,
@@ -146,7 +149,7 @@ jQuery.namespace('Meatazine.view.element');
       item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).removeClass('placeholder');
     },
     collection_removeHandler: function (model, collection, options) {
-      this.$el.children().eq(options.index).remove();
+      this.$el.children(this.tagName).eq(options.index).remove();
       this.handleChildrenState();
       this.trigger('change');
     },
@@ -155,7 +158,7 @@ jQuery.namespace('Meatazine.view.element');
       if (end == 0) {
         this.$el.prepend(item);
       } else {
-        item.insertAfter(this.$el.children().eq(end - 1));
+        item.insertAfter(this.$el.children(this.tagName).eq(end - 1));
       }
       this.handleChildrenState();
     },
@@ -173,9 +176,9 @@ jQuery.namespace('Meatazine.view.element');
         this.collection.replaceAt(model, 0);
         this.token = this.token != null ? this.token.add(item) : item;
       } else {
-        this.$el.children().eq(index).remove();
+        this.$el.children(this.tagName).eq(index).remove();
         if (index > 0) {
-          item.insertAfter(this.$el.children().eq(index - 1));
+          item.insertAfter(this.$el.children(this.tagName).eq(index - 1));
         } else {
           this.$el.prepend(item);
         }
@@ -189,24 +192,18 @@ jQuery.namespace('Meatazine.view.element');
       _gaq.push(['_trackEvent', 'map', 'image']);
     },
     editor_convertMapHandler: function (editor) {
-      currentEditor.stopEdit();
       // 改变类型的时候需要替换model
-      var index = -1,
-          image = editor.getTarget(),
+      var isImage = /img|video|audio/i.test(this.tagName),
+          item = editor.isEditing ? editor.getTarget() : editor.$el,
+          index = isImage ? item.index() : item.closest(this.tagName).index(),
           model = this.collection.createMapModel(),
           container = null,
           map = null;
-      this.$el.children().each(function (i) {
-        if ($.contains(this, image[0]) || this == image[0]) {
-          index = i;
-          return false;
-        }
-      });
       if (this.token != null) {
-        this.token = this.token.not(this.$el.children().eq(index));
+        this.token = this.token.not(this.$el.children(this.tagName).eq(index));
       }
       this.collection.replaceAt(model, index);
-      container = /img|video|audio/i.test(this.tagName) ? this.$el : image.parent(); 
+      container = isImage ? this.$el : item.parent(); 
       map = mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'image', 'map']);
@@ -215,7 +212,7 @@ jQuery.namespace('Meatazine.view.element');
       this.handleFiles(files);
     },
     file_completeHandler: function () {
-      var firstImg = this.$el.children().eq(0);
+      var firstImg = this.$el.children(this.tagName).eq(0);
       firstImg = firstImg.is('img') ? firstImg : firstImg.find('img');
       firstImg.click();
       imageResizer.off(null, null, this);
@@ -248,6 +245,28 @@ jQuery.namespace('Meatazine.view.element');
     img_dragLeaveHandler: function (event) {
       $(event.currentTarget).removeClass('active-img');
     },
+    img_mouseoverHandler: function (event) {
+      var img = $(event.target),
+          size;
+      if (img.closest('.map-container').length) {
+        return;
+      }
+      size = $('<span class="label label-info resolution">图片尺寸：' + img[0].width + ' &times; ' + img[0].height + '</span>');
+      size.appendTo(img.parent());
+      img.data('size', size);
+    },
+    img_mouseoutHandler: function (event) {
+      var img = $(event.target);
+      if (img.closest('.map-container').length) {
+        return;
+      }
+      img.data('size').remove();
+    },
+    item_clickHandler: function (event) {
+      if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
+        $(event.currentTarget).data('model').trigger('select');
+      }
+    },
     map_clickHandler: function (event) {
       this.registerMapEditor($(event.currentTarget).data('map'));
     },
@@ -256,9 +275,10 @@ jQuery.namespace('Meatazine.view.element');
           target = handle.siblings('.' + handle.attr('data-toggle')),
           config = JSON.parse(target.attr('data-animate')),
           position = target.position(),
-          origin = {};
+          origin = {}
+          prop = '';
       target.css('top', position.top).css('left', position.left);
-      for (var prop in config) {
+      for (prop in config) {
         origin[prop] = target.css(prop);
       }
       target

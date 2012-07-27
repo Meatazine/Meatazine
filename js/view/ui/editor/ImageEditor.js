@@ -8,6 +8,40 @@ jQuery.namespace('Meatazine.view.ui.editor');
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
   ns.ImageEditor = ns.AbstractEditor.extend({
+    addImgMarker: function (x, y) {
+      var self = this,
+          markers = this.model.get('markers') ? this.model.get('markers').concat() : [],
+          tmpImgMarker = $('<div class="tmp-img-marker"></div>');
+      tmpImgMarker
+        .css('left', x - MARKER_WIDTH / 2)
+        .css('top', y - MARKER_HEIGHT);
+      $('body')
+        .append(tmpImgMarker)
+        .mousemove(function (event) {
+          tmpImgMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
+        })
+        .one('click', function (event) {
+          $(this).off('mousemove');
+          tmpImgMarker.remove();
+          self.$el.off('click', imgClick_handler);
+        });
+      function imgClick_handler(event) {
+        var img = $(event.target),
+            position = {x: event.offsetX, y: event.offsetY};
+        self.createImgMarker(img.parent(), position, markers.length);
+        markers.push(position);
+        self.model.set({markers: markers}, {silent: true});
+      };
+      this.$el.on('click', imgClick_handler);
+    },
+    createImgMarker: function(container, position, index) {
+      var imgMarker = $('<div class="img-marker"></div>');
+      imgMarker
+        .css('left', position.x - MARKER_WIDTH / 2)
+        .css('top', position.y - MARKER_HEIGHT)
+        .css('background-position', -Math.floor(index / 9) * MARKER_WIDTH + 'px ' + -index % 9 * MARKER_HEIGHT + 'px');
+      imgMarker.appendTo(container);
+    },
     drawImage : function () {
       var scale = this.model.get('scale'),
           source = canvas.data('image'),
@@ -46,7 +80,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       return url.substr(0, url.lastIndexOf('/')) + '/source' + url.substr(url.lastIndexOf('/'));
     },
     getTarget: function () {
-      return this.$el;
+      return canvas;
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
@@ -123,14 +157,14 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .addClass('active')
         .data('image', loader)
         .on('mousedown', function (event) {
-          var currentX = this.model.get('x'),
-              currentY = this.model.get('y'),
+          var currentX = self.model.get('x'),
+              currentY = self.model.get('y'),
               startX = event.pageX,
               startY = event.pageY;
           $(this).on('mousemove', function (event) {
             offsetX = event.pageX - startX;
             offsetY = event.pageY - startY;
-            this.model.set({
+            self.model.set({
               x: currentX + offsetX,
               y: currentY + offsetY,
             }, {silent: true});
@@ -153,6 +187,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.saveCanvas();
       GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
+    },
+    addImgMarkerButton_clickHandler: function (event) {
+      event.data.self.addImgMarker(event.pageX, event.pageY);
+      event.stopPropagation();
     },
     canvas_clickHandler: function (event) {
       GUI.contextButtons.showButtons(this.buttons);
@@ -179,44 +217,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
         callback = null;
         args = null;
       }
-    },
-    addImgMarker: function (x, y) {
-      var self = this,
-          markers = this.model.get('markers') ? this.model.get('markers').concat() : [],
-          tmpImgMarker = $('<div>', {"class": "img-marker"});
-      tmpImgMarker
-        .css('left', x - MARKER_WIDTH / 2)
-        .css('top', y - MARKER_HEIGHT);
-      $('body')
-        .append(tmpImgMarker)
-        .mousemove(function (event) {
-          tmpImgMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
-        })
-        .one('click', function (event) {
-          $(this).off('mousemove');
-          tmpImgMarker.remove();
-          $(this).off('click', imgClick_handler);
-        });
-      function imgClick_handler(event) {
-        var img = event.target,
-            position = {x: event.offsetX, y: event.offsetY};
-        markers.push(position);
-        self.model.set({markers: markers}, {silent: true});
-        self.createImgMarkerImage($(img).parent(), position, markers.length - 1);
-      };
-      this.$el.one('click', imgClick_handler);
-    },
-    createImgMarkerImage: function(container, position, index) {
-      var imgMarker = $('<div>', {'class': "tmp-marker"});
-      imgMarker
-        .css('left', position.x - MARKER_WIDTH / 2)
-        .css('top', position.y - MARKER_HEIGHT)
-        .css('background-position', -Math.floor(index / 9) * MARKER_WIDTH + 'px ' + -index % 9 * MARKER_HEIGHT + 'px');
-      imgMarker.appendTo(container);
-    },
-    addImgMarkerButton_clickHandler: function (event) {
-      event.data.self.addImgMarker(event.pageX, event.pageY);
-      event.stopPropagation();
     },
     scale_changeHandler: function (event) {
       var self = event.data.self,

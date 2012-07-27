@@ -464,6 +464,19 @@ body {
   cursor:pointer;
 }
 
+.img-marker,
+.tmp-marker,
+.tmp-img-marker {
+  background: url(../img/mapmarkers.png);
+  height:32px;
+  position: absolute;
+  width:22px;
+  z-index: 100;
+}
+.tmp-img-marker {
+  background: url(../img/imgmarker.png);
+}
+
 /**
  *   窗体
  */
