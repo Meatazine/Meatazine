@@ -57,9 +57,6 @@ body {
   position: absolute;
   top:5px;
   left:8px;
-  background:#049CDB;
-  color:#FFF;
-  opacity:0.4;
 }
 .remove-button:hover {
   opacity:1;

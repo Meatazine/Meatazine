@@ -4,8 +4,6 @@ jQuery.namespace('Meatazine.view.ui.editor');
       args = null,
       callback = null,
       canvas = null,
-      image = null,
-      model = null,
       uploader = null;
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
@@ -197,21 +195,22 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .one('click', function (event) {
           $(this).off('mousemove');
           tmpImgMarker.remove();
+          $(this).off('click', imgClick_handler);
         });
-      function imgClick_handler() {
-        var img = event.target;
-        markers.push({x: event.offsetX, y: event.offsetY});
-        self.createImgMarkerImage($(img).parent(), markers, markers.length - 1);
-        $(this).off('click', imgClick_handler);
+      function imgClick_handler(event) {
+        var img = event.target,
+            position = {x: event.offsetX, y: event.offsetY};
+        markers.push(position);
+        self.model.set({markers: markers}, {silent: true});
+        self.createImgMarkerImage($(img).parent(), position, markers.length - 1);
       };
       this.$el.one('click', imgClick_handler);
-      this.model.set({markers: markers}, {silent: true});
     },
-    createImgMarkerImage: function(container, markers, index) {
+    createImgMarkerImage: function(container, position, index) {
       var imgMarker = $('<div>', {'class': "tmp-marker"});
       imgMarker
-        .css('left', markers[index].x - MARKER_WIDTH / 2)
-        .css('top', markers[index].y - MARKER_HEIGHT)
+        .css('left', position.x - MARKER_WIDTH / 2)
+        .css('top', position.y - MARKER_HEIGHT)
         .css('background-position', -Math.floor(index / 9) * MARKER_WIDTH + 'px ' + -index % 9 * MARKER_HEIGHT + 'px');
       imgMarker.appendTo(container);
     },

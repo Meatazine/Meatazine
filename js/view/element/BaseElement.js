@@ -64,10 +64,10 @@ jQuery.namespace('Meatazine.view.element');
         item.find('.placeholder').add(item.filter('.placeholder')).removeClass('placeholder');
       }
       if (model instanceof Backbone.Model && model.has('markers')) {
-        _.each (arr = model.get('markers'), function (val, key) {
+        _.each (model.get('markers'), function (val, key) {
           var imgItem = item.filter('img').add(item.find('img')),
-              container = /IMG/i.test(this.tagName) ? this.$el : imgItem.parent(this.tagName);
-          imageEditor.createImgMarkerImage(container, arr, key);
+              container = /img/i.test(this.tagName) ? this.$el : imgItem.parent();
+          imageEditor.createImgMarkerImage(container, val, key);
         }, this);
       }
       item
@@ -206,7 +206,7 @@ jQuery.namespace('Meatazine.view.element');
         this.token = this.token.not(this.$el.children().eq(index));
       }
       this.collection.replaceAt(model, index);
-      container = /img|video|audio/i.test(this.tagName) ? this.$el : image.parent(this.tagName); 
+      container = /img|video|audio/i.test(this.tagName) ? this.$el : image.parent(); 
       map = mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'image', 'map']);
