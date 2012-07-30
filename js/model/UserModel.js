@@ -7,7 +7,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     isLogin: null,
   },
   initialize: function () {
-    this.on('change:openid', this.openid_changeHandler, this);
+    
   },
   checkLoginStatus: function () {
     var isQQLogin = this.checkQQLoginStatus(),
@@ -41,7 +41,8 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     }), function (options) {
       localStorage.removeItem('openid');
       localStorage.removeItem('token');
-      self.attributes.remote.rest();
+      localStorage.removeItem('info');
+      self.attributes.remote.reset();
     };
     return isQQLogin;
   },
@@ -49,11 +50,17 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     return false;
   },
   createNewBook: function () {
+    var local,
+        remote;
     if (this.get('isLogin')) {
-      
+      remote = this.get('remote');
+      remote.getNextIndex();
     } else {
-      if (localStorage.getItem(local.KEY + local.index)) {
-        
+      local = this.get('local');
+      if (local.some(function (model, i) {
+        return model.get('index') == local.index;
+      })) {
+        this.set('bookid', local.getNextIndex());
       }
     }
   },
@@ -66,6 +73,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         openid: openid,
         token: token,
       });
+      self.remoteFetchData();
     });
   },
   getUserInfo: function () {
@@ -81,17 +89,31 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     var self = this;
     this.get('remote').fetch({
       data: {
+        act: 'fetch',
         openid: this.get('openid'),
       },
       success: function (collection, response) {
-        var id = collection.find(function (model) {
-          return model.get('content') == '';
-        }, self).get('bookid');
-        self.set('bookid', id);
+        var id,
+            emptyBook = collection.find(function (model) {
+              return model.get('name') == '';
+            }, self);
+        if (emptyBook != null) {
+          self.set('bookid', emptyBook.get('bookid'));
+        }
       },
     });
   },
-  openid_changeHandler: function () {
-    this.remoteFetchData();
+  save: function (name, icon) {
+    var local = this.get('local');
+    if (!this.get('isLogin') && !local.some(function (model, i) {
+      return model.get('index') == local.index;
+    })) {
+      local.create({
+        index: local.index,
+        datetime:Meatazine.utils.getDatetime(),
+        name: name,
+        icon: icon,
+      });
+    }
   },
 });

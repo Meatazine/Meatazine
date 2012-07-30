@@ -13,7 +13,7 @@ jQuery.namespace('Meatazine.model');
     hasAutoSave: false,
     index: 0,
     model: model,
-    url: 'api/init.php',
+    url: 'api/cloudbooks.php',
     initialize: function () {
       var book = null,
           books = JSON.parse(localStorage.getItem('books')),
@@ -32,16 +32,21 @@ jQuery.namespace('Meatazine.model');
       this.hasAutoSave = localStorage.getItem(this.KEY + 'auto') != null;
     },
     getNextIndex: function () {
+      this.index = 0;
       this.each(function (model, i) {
-        
+        this.index = this.index = i ? this.index + 1 : this.index;
       }, this);
+      return this.index;
     },
   });
   ns.RemoteBookCollection = Backbone.Collection.extend({
     id: 0,
     model: model,
-    url: 'api/init.php',
+    url: 'api/cloudbooks.php',
     initialize: function () {
+      
+    },
+    getNextIndex: function () {
       
     },
   });

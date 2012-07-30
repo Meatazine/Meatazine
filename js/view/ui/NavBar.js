@@ -54,11 +54,19 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       Meatazine.popup.PopupManager.popup(target, 'static', false);
       return false;
     }
+    // 保存
+    if (/save/i.test(target)) {
+      this.model.save();
+      Meatazine.user.save(this.model.get('name'), this.model.get('icon'));
+      _gaq.push(['_trackEvent', 'book', 'save']);
+      return false;
+    }
     // 读取
     if (/load/i.test(target)) {
       Meatazine.popup.PopupManager.popup('books');
       return false;
     }
+    // 新建
     if (/new/i.test(target)) {
       Meatazine.user.createNewBook();
       this.model.reset();

@@ -1,17 +1,15 @@
 jQuery.namespace('Meatazine.service');
 Meatazine.service.ServerCall = _.extend({
   queue: [],
-  url: 'api/api.php',
+  url: 'api/',
   call: function (api, data, success, error, context) {
     var self = this;
     context = context || this;
     $.ajax({
       context: context,
-      data: _.extend({
-        api: api,
-      }, data),
+      data: data,
       method: 'post',
-      url: this.url,
+      url: this.url + 'api' + '.php',
       xhr: function () {
         var xhr = new window.XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (event) {

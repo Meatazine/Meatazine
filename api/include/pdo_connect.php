@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * db connect
  */
@@ -18,7 +18,7 @@ class DB {
       
 
       $dsn = "mysql:host=localhost;port=3306;dbname=meatazine";
-      $pdo = new PDO($dsn,"root","123456");
+      $pdo = new PDO($dsn,"root","pw263113");
       $pdo->defaut_table = "m_user";
       self::$conn_arr[$name] = $pdo;
       return $pdo;

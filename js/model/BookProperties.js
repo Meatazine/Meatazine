@@ -164,32 +164,12 @@ jQuery.namespace('Meatazine.model');
       data.pages = this.get('pages').toJSON();
       content = JSON.stringify(data);
       localStorage.setItem(key, content);
-      if (!this.get('isRemote')) {
-        var arr = JSON.parse(localStorage.getItem('books')) || [];
-        localStorage.setItem('books', _.uniq(arr.push(this.get('id')), true));
-      }
       if (this.get('isRemote')) {
-        $.ajax({
-          url: this.url,
-          context: this,
-          data: {
-            bookid: this.get('id'),
-            openid: localStorage.getItem('openid'),
-            book: content,
-          },
-          method: 'POST',
-          success: function (response) {
-            var data = JSON.parse(response);
-            if (data.hasOwnProperty('type')) {
-              Meatazine.GUI.showError(data.msg);
-            } else {
-              Meatazine.GUI.showSuccess('同步保存成功');
-            }
-          },
-          error: function () {
-            Meatazine.GUI.showError('网络连接错误，请稍后重试');
-          }
-        })
+        Meatazine.service.ServerCall.call('save', {
+          bookid: this.get('id'),
+          openid: localStorage.getItem('openid'),
+          book: content,
+        });
       }
       this.trigger('saved');
       isModified = false;

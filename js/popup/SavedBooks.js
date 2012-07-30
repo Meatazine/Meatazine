@@ -14,10 +14,12 @@ jQuery.namespace('Meatazine.popup');
       this.render();
     },
     render: function () {
+      this.$('ul.well').empty();
       this.$('#books-local').html(Meatazine.utils.render(this.template, this.model.get('local').toJSON()));
     },
     disabled_clickHandler: function (event) {
       event.stopPropagation();
+      return false;
     },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget);
@@ -40,6 +42,12 @@ jQuery.namespace('Meatazine.popup');
     shownHandler: function (event) {
       this.$('.load').prop('disabled', true);
       this.$('.autosave').prop('disabled', !this.model.get('local').hasAutoSave);
+      
+      var isLogin = this.model.get('isLogin');
+      this.$('[href=#books-local]').toggleClass('disabled', !isLogin).parent().toggleClass('active', !isLogin);
+      this.$('[href=#books-cloud]').toggleClass('disabled', isLogin).parent().toggleClass('active', isLogin);
+      this.$('#books-local').toggleClass('active', !isLogin);
+      this.$('#books-cloud').toggleClass('active', isLogin);
     },
   });
 })(Meatazine.popup);
