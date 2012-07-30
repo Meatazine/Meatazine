@@ -60,7 +60,8 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       return false;
     }
     if (/new/i.test(target)) {
-      this.model.createNewBook();
+      Meatazine.user.createNewBook();
+      this.model.reset();
       _gaq.push(['_trackEvent', 'book', 'create']);
       return false;
     }

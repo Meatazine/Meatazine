@@ -1,20 +1,19 @@
-jQuery.namespace('Meatazine.view');
+jQuery.namespace('Meatazine');
 (function (ns) {
   var infoTimeout = 0,
       info = '';
-  Meatazine.view.GUI = Backbone.View.extend({
+  ns.GUI = {
     contextButtons: null,
     navbar: null,
     page: null,
     VERSION: '0.1.5.@version@',
-    initialize: function (options) {
-      var book = options.book;
-      book.on('change:size', this.book_sizeChangeHandler, this);
-      book.get('pages').on('add', this.pages_addHandler, this);
-      book.get('pages').on('remove', this.pages_removeHandler, this);
+    init: function (options) {
+      options.book.on('change:size', this.book_sizeChangeHandler, this);
+      options.book.get('pages').on('add', this.pages_addHandler, this);
+      options.book.get('pages').on('remove', this.pages_removeHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
         el: '#navbar',
-        model: this.options.book,
+        model: options.book,
       });
       info = $('#system-info');
       this.removeLoading();
@@ -30,10 +29,6 @@ jQuery.namespace('Meatazine.view');
           return false;
         },
       });
-      delete this.options;
-    },
-    loginCallback: function (search) {
-      alert(search);
     },
     removeLoading: function () {
       $('#loading').fadeOut();
@@ -77,5 +72,5 @@ jQuery.namespace('Meatazine.view');
         this.navbar.setBookButtonsStatus(true);
       }
     }
-  });
-})(Meatazine.view);
+  };
+})(Meatazine);

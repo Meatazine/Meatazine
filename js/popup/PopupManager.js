@@ -9,10 +9,6 @@ jQuery.namespace('Meatazine.popup');
       screenSize,
       mapInfoEditor,
       
-      configModel,
-      bookModel,
-      userModel,
-      
       manager = {
         $el: null,
         createMapInfoEditorPopup: function (init) {
@@ -24,19 +20,16 @@ jQuery.namespace('Meatazine.popup');
           mapInfoEditor.reset(init);
           return mapInfoEditor;
         },
-        init: function (className, config, book, user) {
-          configModel = config;
-          bookModel = book;
-          userModel = user;
+        init: function (className) {
           this.$el = $(className);
           this.$el.on('show', this.modal_showHandler);
           welcome = new Meatazine.popup.Welcome({
             el: '#welcome',
-            model: config
+            model: Meatazine.config,
           });
           userSettings = new Meatazine.popup.userConfig({
             el: '#user-config',
-            model: configModel,
+            model: Meatazine.config,
             book: book
           }),
           screenSelector = new Meatazine.popup.ScreenSizeSelector({
@@ -61,7 +54,7 @@ jQuery.namespace('Meatazine.popup');
               if (publish == null) {
                 publish = new Meatazine.popup.PublishStatus({
                   el: '#publish',
-                  model: bookModel,
+                  model: Meatazine.book,
                 });
               }
               break;
@@ -70,7 +63,7 @@ jQuery.namespace('Meatazine.popup');
               if (exportPopup == null) {
                 exportPopup = new Meatazine.popup.Export({
                   el: '#export-zip',
-                  model: bookModel,
+                  model: Meatazine.book,
                 })
               }
               break;
@@ -79,7 +72,7 @@ jQuery.namespace('Meatazine.popup');
               if (preview == null) {
                 preview = new Meatazine.popup.Preview({
                   el: '#preview',
-                  model: bookModel,
+                  model: Meatazine.book,
                 });
               }
               break;
@@ -88,7 +81,7 @@ jQuery.namespace('Meatazine.popup');
               if (config == null) {
                 config = new Meatazine.popup.BookConfig({
                   el: '#book-config',
-                  model: configModel,
+                  model: Meatazine.config,
                 })
               }
               break;
@@ -97,8 +90,7 @@ jQuery.namespace('Meatazine.popup');
               if (load == null) {
                 load = new ns.SavedBooks({
                   el: '#books',
-                  model: userModel,
-                  book: bookModel,
+                  model: Meatazine.user,
                 })
               }
               break;

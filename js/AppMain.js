@@ -29,17 +29,24 @@ $(function () {
         book: book,
         source: source.model,
       });
-  window.GUI = new Meatazine.view.GUI({
+  Meatazine.GUI.init({
     config: config,
     book: book,
   });
-  GUI.contextButtons = contextButtons;
-  GUI.page = page;
-  Meatazine.guide.GuideManager.init(config, book);
-  Meatazine.popup.PopupManager.init('.modal', config, book, user);
+  Meatazine.GUI.contextButtons = contextButtons;
+  Meatazine.GUI.page = page;
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);
+  
+  // 放到命名空间里
+  Meatazine.config = config;
+  Meatazine.user = user;
+  Meatazine.book = book;
+  
+  // 处理各种Manager
+  Meatazine.guide.GuideManager.init();
+  Meatazine.popup.PopupManager.init('.modal');
   
   // 登录状态
   user.on('change:bookid', function (model) {

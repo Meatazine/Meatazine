@@ -3,7 +3,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   defaults: {
     local: null,
     remote: null,
-    remoteid: 0,
+    bookid: 0,
     isLogin: null,
   },
   initialize: function () {
@@ -19,7 +19,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         info: localStorage.getItem('info'),
         isLogin: isQQLogin,
       });
-      GUI.navbar.showQQLoginResult(this.get('info'));
+      Meatazine.GUI.navbar.showQQLoginResult(this.get('info'));
       this.remoteFetchData();
       this.set('isLogin', true);
       return;
@@ -35,7 +35,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       scope: "all",
       size: "A_M",
     }, function (reqData, options) {
-      GUI.navbar.showQQLoginResult(reqData, options);
+      Meatazine.GUI.navbar.showQQLoginResult(reqData, options);
       self.getMe();
       localStorage.setItem('info', JSON.stringify(reqData));
     }), function (options) {
@@ -47,6 +47,15 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   },
   checkWeiboLoginStatus: function () {
     return false;
+  },
+  createNewBook: function () {
+    if (this.get('isLogin')) {
+      
+    } else {
+      if (localStorage.getItem(local.KEY + local.index)) {
+        
+      }
+    }
   },
   getMe: function () {
     var self = this;
@@ -62,7 +71,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   getUserInfo: function () {
     QC.api('get_user_info', {})
       .success(function (response) {
-        GUI.navbar.showQQLoginResult(response.data);
+        Meatazine.GUI.navbar.showQQLoginResult(response.data);
       })
       .error(function (response) {
         console.log('get user info failed..', response);

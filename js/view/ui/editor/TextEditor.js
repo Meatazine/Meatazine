@@ -23,7 +23,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       selection.addRange(range);
     },
     setTarget: function (value) {
-      GUI.contextButtons.showButtons(this.buttons);
+      Meatazine.GUI.contextButtons.showButtons(this.buttons);
       if (this.isEditing && !this.$el.is(value)) {
         this.buttons.find('[data-type=edit]').click();
       }

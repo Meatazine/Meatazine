@@ -3,9 +3,7 @@ Meatazine.guide.GuideManager = {
   trunk: [],
   branch: [],
   iterator: 0,
-  config: null,
-  book: null,
-  init: function (config, book) {
+  init: function () {
     var trunk = Meatazine.guide.TrunkCollection,
         branch = Meatazine.guide.BranchCollection,
         factory = Meatazine.guide.GuideTagFactory;
@@ -15,21 +13,19 @@ Meatazine.guide.GuideManager = {
     _.each(branch, function(index) {
       this.branch.push(factory.createGuideTag(item));
     }, this);
-    this.config = config;
-    this.book = book;
-    this.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
+    Meatazine.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
     this.checkGuideConfig();
-    _gaq.push(['_trackEvent', 'guide', 'check', this.config.get('isUseGuide')]);
+    _gaq.push(['_trackEvent', 'guide', 'check', Meatazine.config.get('isUseGuide')]);
   },
   
   checkGuideConfig: function () {
-    var isUseGuide = this.config.get('isUseGuide');
+    var isUseGuide = Meatazine.config.get('isUseGuide');
     if (isUseGuide || isUseGuide == undefined) {
       this.showGuide(true);
-      this.book.on('change:size', this.book_sizeChangeHandler, this);
+      Meatazine.book.on('change:size', this.book_sizeChangeHandler, this);
     } else {
       this.hideGuide();
-      this.book.off('change:size', null, this);
+      Meatazine.book.off('change:size', null, this);
     }
   },
   

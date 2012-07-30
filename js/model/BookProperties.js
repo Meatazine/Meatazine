@@ -32,7 +32,7 @@ jQuery.namespace('Meatazine.model');
           localStorage.setItem('bookid', id);
         },
         error: function () {
-          GUI.navbar.disabledPublishButtons();
+          Meatazine.GUI.navbar.disabledPublishButtons();
         }
       });
     },
@@ -41,9 +41,6 @@ jQuery.namespace('Meatazine.model');
         return;
       }
       this.save('bookauto');
-    },
-    createNewBook: function () {
-      
     },
     createZip: function () {
       var self = this,
@@ -167,6 +164,10 @@ jQuery.namespace('Meatazine.model');
       data.pages = this.get('pages').toJSON();
       content = JSON.stringify(data);
       localStorage.setItem(key, content);
+      if (!this.get('isRemote')) {
+        var arr = JSON.parse(localStorage.getItem('books')) || [];
+        localStorage.setItem('books', _.uniq(arr.push(this.get('id')), true));
+      }
       if (this.get('isRemote')) {
         $.ajax({
           url: this.url,
@@ -180,13 +181,13 @@ jQuery.namespace('Meatazine.model');
           success: function (response) {
             var data = JSON.parse(response);
             if (data.hasOwnProperty('type')) {
-              GUI.showError(data.msg);
+              Meatazine.GUI.showError(data.msg);
             } else {
-              GUI.showSuccess('同步保存成功');
+              Meatazine.GUI.showSuccess('同步保存成功');
             }
           },
           error: function () {
-            GUI.showError('网络连接错误，请稍后重试');
+            Meatazine.GUI.showError('网络连接错误，请稍后重试');
           }
         })
       }
