@@ -21,7 +21,7 @@ function BookReader(el, w, h) {
       style = null,
       resizeTimeout = 0,
       turnTimeout = 0,
-      dummy = $('<div class="dummy"></div>'),
+      dummy = $('#dummy'),
       pages = [],
       currentPage = -1,
       totalPage = 0,

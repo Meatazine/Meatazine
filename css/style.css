@@ -498,7 +498,7 @@ body {
   position:relative;
   visibility: hidden;
 }
-.dummy {
+#dummy {
   float:left;
   width:0;
   height:0;
