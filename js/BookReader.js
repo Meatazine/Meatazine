@@ -40,7 +40,14 @@ function BookReader(el, w, h) {
     $('#book-content').remove();
     pages = content.split('###');
     totalPage = pages.length;
-    body.width(width * totalPage).prepend(dummy);
+    body
+      .width(width * totalPage)
+      // 切换效果
+      .on('click', '[data-toggle]', dataToggle_clickHandler)
+      // 幻灯片
+      .on('click', '.slide-navi li', slideNavi_clickHandler)
+      // 防止地图在缩放的时候引发翻页
+      .on('mousedown mousemove', '.map-container', stopEvent);
     scroll = new iScroll(id, {
       snap: true,
       momentum: false,
@@ -197,7 +204,7 @@ function BookReader(el, w, h) {
     style = $('<style>');
     style
       .append('#' + id + ', .page{width:'+ fitWidth + 'px;height:' + fitHeight + 'px}\n')
-      .append('.dummy {height:' + fitHeight + 'px;}')
+      .append('#dummy {height:' + fitHeight + 'px;}')
       .append('#' + id + ' {margin:' + margin + '}\n')
       .append('#container {width:' + fitWidth * totalPage + 'px}')
       .appendTo($('head'));
@@ -236,7 +243,6 @@ function BookReader(el, w, h) {
     page
       .removeClass('visible')
       .addClass('no-image')
-      .off()
       .find('img')
         .attr('src', 'spacer.gif');
     page.find('.map-container').each(function (i) {
@@ -263,13 +269,7 @@ function BookReader(el, w, h) {
     }
     page
       .removeClass('no-image')
-      .addClass('visible')
-      // 切换效果
-      .on('click', '[data-toggle]', dataToggle_clickHandler)
-      // 幻灯片
-      .on('click', '.slide-navi li', slideNavi_clickHandler)
-      // 防止地图在缩放的时候引发翻页
-      .on('mousedown', '.map-container', stopEvent);
+      .addClass('visible');
     // 图片
     page.find('img').attr('src', function (i) {
       return $(this).attr('ori') || this.src;
