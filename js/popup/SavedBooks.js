@@ -11,6 +11,8 @@ jQuery.namespace('Meatazine.popup');
     initialize: function () {
       this.setElement(this.el);
       this.template = this.$('ul.well').html();
+      this.model.get('local').on('add', this.local_addHandler, this);
+      this.model.get('remote').on('add', this.remote_addHandler, this);
       this.render();
     },
     render: function () {

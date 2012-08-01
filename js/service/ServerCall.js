@@ -1,13 +1,13 @@
 jQuery.namespace('Meatazine.service');
 Meatazine.service.ServerCall = _.extend({
   queue: [],
-  url: 'api/cloudbooks.php',
+  url: 'api/api.php',
   call: function (api, data, success, error, context) {
     var self = this;
     context = context || this;
     $.ajax({
       context: context,
-      data: _.extend({act: api}, data),
+      data: _.extend({api: api}, data),
       method: 'post',
       url: this.url,
       xhr: function () {

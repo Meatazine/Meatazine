@@ -3,7 +3,6 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   defaults: {
     local: null,
     remote: null,
-    bookid: 0,
     isLogin: null,
   },
   checkLoginStatus: function () {
@@ -36,13 +35,8 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     return false;
   },
   createNewBook: function () {
-    var local,
-        remote;
-    if (this.get('isLogin')) {
-      remote = this.get('remote');
-      remote.getNextIndex();
-    } else {
-      local = this.get('local');
+    if (!this.get('isLogin')) {
+      var local = this.get('local');
       if (local.some(function (model, i) {
         return model.get('index') == local.index;
       })) {
@@ -98,32 +92,25 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     var self = this;
     this.get('remote').fetch({
       data: {
-        act: 'fetch',
+        api: 'fetch',
         openid: this.get('openid'),
-      },
-      success: function (collection, response) {
-        var id,
-            emptyBook = collection.find(function (model) {
-              return model.get('name') == '';
-            }, self);
-        if (emptyBook != null) {
-          self.set('bookid', emptyBook.get('id'));
-        }
       },
     });
   },
-  save: function (name, icon) {
-    var local = this.get('local');
-    if (!this.get('isLogin') && !local.some(function (model, i) {
-      return model.get('id') == local.index;
+  save: function (data) {
+    var collection = this.get('isLogin') ? this.get('remote') : this.get('local');
+    if (!collection.some(function (model, i) {
+      return model.get('id') == id;
     })) {
-      local.create({
-        id: local.index,
-        datetime:Meatazine.utils.getDatetime(),
-        name: name,
-        icon: icon,
+      collection.create({
+        id: data.id,
+        datetime: Meatazine.utils.getDatetime(),
+        name: data.name,
+        icon: data.icon,
       });
-      local.recordSavedBooks();
     }
+  },
+  autosaveHandler: function () {
+    this.get('local').hasAutoSave = true;
   },
 });

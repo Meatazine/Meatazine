@@ -23,6 +23,7 @@ jQuery.namespace('Meatazine.model');
         return;
       }
       this.save('bookauto');
+      this.trigger('autosave');
     },
     createZip: function () {
       var self = this,
@@ -138,21 +139,38 @@ jQuery.namespace('Meatazine.model');
         self.trigger('publish:start')
       });
     },
-    save: function () {
-      key = Meatazine.user.get('isLogin') ? 'remote' + this.get('id') : 'book' + this.get('id');
+    save: function (key) {
       var data = _.clone(this.attributes),
           content = '';
-      data.datetime = Meatazine.utils.getDatetime();
       data.pages = this.get('pages').toJSON();
       content = JSON.stringify(data);
-      localStorage.setItem(key, content);
-      if (this.get('isRemote')) {
+      // 自动保存等特殊key
+      if (key != null) {
+        localStorage.setItem(key, content);
+        return;
+      }
+      // 同步或者不同步的保存
+      if (Meatazine.user.get('isLogin')) {
         Meatazine.service.ServerCall.call('save', {
           bookid: this.get('id'),
           openid: localStorage.getItem('openid'),
           name: this.get('name'),
           content: content,
-        });
+        }, function (data) {
+          if (this.get('id') == 0) {
+            this.set('id', data);
+            key = 'remote' + this.get('id');
+            localStorage.setItem(key, content);
+          }
+        }, null, this);
+        // 如果id不为0，直接保存，这样即使网络有问题，也可以在本地完成保存
+        if (this.get('id') != 0) {
+          key = 'remote' + this.get('id');
+          localStorage.setItem(key, content);
+        }
+      } else {
+        key = 'book' + this.get('id');
+        localStorage.setItem(key, content);
       }
       this.trigger('saved');
       isModified = false;

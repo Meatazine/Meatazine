@@ -48,13 +48,17 @@ $(function () {
   Meatazine.guide.GuideManager.init();
   Meatazine.popup.PopupManager.init('.modal');
   
+  book.on('saved', function () {
+    user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
+  });
+  book.on('autosave', user.autosaveHandler, user);
   // 登录状态
-  user.on('change:bookid', function (model) {
-    user.off('change:bookid');
-    book.set({
-     isRemote: true,
-     id: user.get('bookid'), 
-    });
+  user.on('change:isLogin', function () {
+    if (user.get('isLogin')) {
+      book.set('id', 0);
+    } else {
+      book.set('id', localBooks.index);
+    }
   }, this);
   user.checkLoginStatus();
 });

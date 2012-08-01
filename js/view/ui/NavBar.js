@@ -62,7 +62,6 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     // 保存
     if (/save/i.test(target)) {
       this.model.save();
-      Meatazine.user.save(this.model.get('name'), this.model.get('icon'));
       _gaq.push(['_trackEvent', 'book', 'save']);
       return true;
     }
