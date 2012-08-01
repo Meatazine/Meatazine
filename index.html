@@ -50,7 +50,7 @@
               <li><a href="#save" class="system-button disabled">保存</a></li>
               <li><a href="#load" class="system-button">读取</a></li>
               <li class="divider"></li>
-              <li><a href="#book-config" data-toggle="modal">应用属性</a></li>
+              <li><a href="#book-config" class="disabled" data-toggle="modal">应用属性</a></li>
               <li class="divider"></li>
               <li><a href="#preview" class="system-button disabled" data-toggle="modal">预览</a></li>
               <li><a href="#export-zip" class="system-button disabled" data-toggle="modal">导出</a></li>
@@ -574,7 +574,7 @@
         </ul>
         <div class="tab-content">
           <ul class="well tab-pane active" id="books-local">
-            <li>
+            <li data-item="{{id}}">
               <figure>
                 <img src="{{icon}}" />
                 <figcaption>

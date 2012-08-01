@@ -13,8 +13,11 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   initialize: function () {
     this.setElement(this.el);
   },
-  disabledPublishButtons: function () {
+  disablePublishButtons: function () {
     this.setButtonsStatus(true, ['publish', 'book-config']);
+  },
+  enablePublishButtons: function () {
+    this.setButtonsStatus(false, ['publish', 'book-config']);
   },
   resetLogin: function () {
     this.$('.login').text('请登录');
@@ -22,7 +25,8 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     this.$('.logout').hide();
   },
   setBookButtonsStatus: function (isDisabled) {
-    this.setButtonsStatus(isDisabled, ['save', 'preview', 'export-zip', 'publish']);
+    var arr = ['save', 'preview', 'export-zip', ];
+    this.setButtonsStatus(isDisabled, arr);
   },
   setButtonsStatus: function (isDisabled, buttons) {
     buttons = buttons instanceof String ? [buttons] : buttons;
@@ -42,6 +46,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   logout_clickHandler: function (event) {
     QC.Login.signOut();
     this.resetLogin();
+    Meatazine.user.initLogin();
   },
   systemButton_clickHandler: function (event) {
     if ($(event.target).hasClass('disabled')) {
@@ -59,12 +64,12 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
       this.model.save();
       Meatazine.user.save(this.model.get('name'), this.model.get('icon'));
       _gaq.push(['_trackEvent', 'book', 'save']);
-      return false;
+      return true;
     }
     // 读取
     if (/load/i.test(target)) {
       Meatazine.popup.PopupManager.popup('books');
-      return false;
+      return true;
     }
     // 新建
     if (/new/i.test(target)) {

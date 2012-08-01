@@ -91,6 +91,7 @@ jQuery.namespace('Meatazine.popup');
                 load = new ns.SavedBooks({
                   el: '#books',
                   model: Meatazine.user,
+                  collection: Meatazine.user.get('local'),
                 })
               }
               break;

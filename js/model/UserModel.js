@@ -6,9 +6,6 @@ Meatazine.model.UserModel = Backbone.Model.extend({
     bookid: 0,
     isLogin: null,
   },
-  initialize: function () {
-    
-  },
   checkLoginStatus: function () {
     var isQQLogin = this.checkQQLoginStatus(),
         isWeiboLogin = false;
@@ -16,7 +13,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       this.set({
         openid: localStorage.getItem('openid'),
         token: localStorage.getItem('token'),
-        info: localStorage.getItem('info'),
+        info: JSON.parse(localStorage.getItem('info')),
         isLogin: isQQLogin,
       });
       Meatazine.GUI.navbar.showQQLoginResult(this.get('info'));
@@ -30,20 +27,9 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   checkQQLoginStatus: function () {
     var self = this,
         isQQLogin = QC.Login.check();
-    QC.Login({
-      btnId: "qqLoginBtn",
-      scope: "all",
-      size: "A_M",
-    }, function (reqData, options) {
-      Meatazine.GUI.navbar.showQQLoginResult(reqData, options);
-      self.getMe();
-      localStorage.setItem('info', JSON.stringify(reqData));
-    }), function (options) {
-      localStorage.removeItem('openid');
-      localStorage.removeItem('token');
-      localStorage.removeItem('info');
-      self.attributes.remote.reset();
-    };
+    if (!isQQLogin) {
+      this.initQQLogin();
+    }
     return isQQLogin;
   },
   checkWeiboLoginStatus: function () {
@@ -85,6 +71,29 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         console.log('get user info failed..', response);
       });
   },
+  initLogin: function () {
+    this.initQQLogin();
+  },
+  initQQLogin: function () {
+    var self = this;
+    QC.Login({
+      btnId: "qqLoginBtn",
+      scope: "all",
+      size: "A_M",
+    }, function (reqData, options) {
+      self.set('isLogin', true);
+      Meatazine.GUI.navbar.enablePublishButtons();
+      Meatazine.GUI.navbar.showQQLoginResult(reqData, options);
+      self.getMe();
+      localStorage.setItem('info', JSON.stringify(reqData));
+    }, function (options) {
+      Meatazine.GUI.navbar.disablePublishButtons();
+      localStorage.removeItem('openid');
+      localStorage.removeItem('token');
+      localStorage.removeItem('info');
+      self.attributes.remote.reset();
+    });
+  },
   remoteFetchData: function () {
     var self = this;
     this.get('remote').fetch({
@@ -98,7 +107,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
               return model.get('name') == '';
             }, self);
         if (emptyBook != null) {
-          self.set('bookid', emptyBook.get('bookid'));
+          self.set('bookid', emptyBook.get('id'));
         }
       },
     });
@@ -106,14 +115,15 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   save: function (name, icon) {
     var local = this.get('local');
     if (!this.get('isLogin') && !local.some(function (model, i) {
-      return model.get('index') == local.index;
+      return model.get('id') == local.index;
     })) {
       local.create({
-        index: local.index,
+        id: local.index,
         datetime:Meatazine.utils.getDatetime(),
         name: name,
         icon: icon,
       });
+      local.recordSavedBooks();
     }
   },
 });

@@ -7,8 +7,7 @@ jQuery.namespace('Meatazine.model');
     defaults: {
       width: 1024,
       height: 768,
-      id: -1,
-      isRemote: false,
+      id: 0,
       platform: 3, // 1-ios, 2-android, 4-wp
       icon: 'img/icon.png',
       cover: '',
@@ -18,23 +17,6 @@ jQuery.namespace('Meatazine.model');
     },
     initialize: function () {
       this.get('pages').on('change', this.pages_changeHandler, this);
-      var id = localStorage.getItem('bookid');
-      if (id != null) {
-        this.set('id', id);
-        return;
-      }
-      $.ajax({
-        url: './api/init.php',
-        dataType: 'text',
-        context: this,
-        success: function (id) {
-          this.set('id', id);
-          localStorage.setItem('bookid', id);
-        },
-        error: function () {
-          Meatazine.GUI.navbar.disabledPublishButtons();
-        }
-      });
     },
     autosave: function () {
       if (!isModified || this.get('pages').length == 0) {
@@ -157,7 +139,7 @@ jQuery.namespace('Meatazine.model');
       });
     },
     save: function () {
-      key = this.get('isRemote')  ? 'remote' + this.get('id') : 'book' + this.get('id');
+      key = Meatazine.user.get('isLogin') ? 'remote' + this.get('id') : 'book' + this.get('id');
       var data = _.clone(this.attributes),
           content = '';
       data.datetime = Meatazine.utils.getDatetime();
@@ -168,7 +150,8 @@ jQuery.namespace('Meatazine.model');
         Meatazine.service.ServerCall.call('save', {
           bookid: this.get('id'),
           openid: localStorage.getItem('openid'),
-          book: content,
+          name: this.get('name'),
+          content: content,
         });
       }
       this.trigger('saved');

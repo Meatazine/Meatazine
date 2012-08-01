@@ -64,7 +64,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         this.$el.removeClass('bighead');
       }
       this.$el.closest('.ui-draggable').draggable('disable');
-      GUI.page.$el.addClass('editing');
+      Meatazine.GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'text', 'edit-start']);
     },
     stopEdit: function (event) {
@@ -79,7 +79,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       Meatazine.utils.clearSelection();
       this.trigger('change');
       this.$el.closest('.ui-draggable').draggable('enable');
-      GUI.page.$el.removeClass('editing');
+      Meatazine.GUI.page.$el.removeClass('editing');
       stashClass = '';
       _gaq.push(['_traceEvent', 'text', 'edit-stop'])
     },
