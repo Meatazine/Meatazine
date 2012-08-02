@@ -40,6 +40,7 @@ jQuery.namespace('Meatazine.model');(function (ns) {
     recordSavedBooks: function () {
       var arr = this.pluck('id');
       localStorage.setItem('books', JSON.stringify(arr));
+      this.getNextIndex();
     },
     addHandler: function () {
       this.recordSavedBooks();

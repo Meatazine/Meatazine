@@ -1,14 +1,11 @@
 $(function () {
   var config = new Meatazine.model.ConfigModel(),
       pages = new Meatazine.model.PageCollection(),
-      localBooks = new Meatazine.model.LocalBookCollection(),
-      removeBooks = new Meatazine.model.RemoteBookCollection(),
       user = new Meatazine.model.UserModel({
-        local: localBooks,
-        remote: removeBooks,
+        local: new Meatazine.model.LocalBookCollection(),
+        remote: new Meatazine.model.RemoteBookCollection(),
       });
       book = new Meatazine.model.BookProperties({
-        id: localBooks.index,
         pages: pages,
       }),
       list = new Meatazine.view.ui.PageList({
@@ -35,9 +32,18 @@ $(function () {
   });
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
+  // 处理UI事件
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);
   page.on('change', list.page_changeHandler, list);
+  // 处理Model事件
+  book.on('saved', function () {
+    user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
+  });
+  book.on('autosave', user.autosaveHandler, user);
+  user.on('change:isLogin', function () {
+    book.set('id', user.getIndex());
+  });
   
   // 放到命名空间里
   Meatazine.config = config;
@@ -48,17 +54,6 @@ $(function () {
   Meatazine.guide.GuideManager.init();
   Meatazine.popup.PopupManager.init('.modal');
   
-  book.on('saved', function () {
-    user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
-  });
-  book.on('autosave', user.autosaveHandler, user);
-  // 登录状态
-  user.on('change:isLogin', function () {
-    if (user.get('isLogin')) {
-      book.set('id', 0);
-    } else {
-      book.set('id', localBooks.index);
-    }
-  }, this);
+  // 检查登录状态
   user.checkLoginStatus();
 });

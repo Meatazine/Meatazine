@@ -11,8 +11,7 @@ jQuery.namespace('Meatazine.popup');
     initialize: function () {
       this.setElement(this.el);
       this.template = this.$('ul.well').html();
-      this.model.get('local').on('add', this.local_addHandler, this);
-      this.model.get('remote').on('add', this.remote_addHandler, this);
+      this.registerModelListener();
       this.render();
     },
     render: function () {
@@ -23,6 +22,13 @@ jQuery.namespace('Meatazine.popup');
     disabled_clickHandler: function (event) {
       event.stopPropagation();
       return false;
+    },
+    registerModelListener: function () {
+      var local = this.model.get('local'),
+          remote = this.model.get('remote');
+      local.on('add', this.local_addHandler, this);
+      local.on('change', this.local_changeHandler, this);
+      this.model.get('remote').on('add', this.remote_addHandler, this);
     },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget);
@@ -46,7 +52,7 @@ jQuery.namespace('Meatazine.popup');
           data = null;
       if (localStorage.getItem(key)) {
         Meatazine.book.load(key);
-      this.$el.modal('hide');
+        this.$el.modal('hide');
       } else {
         data = {
           bookid: id, 
@@ -58,6 +64,12 @@ jQuery.namespace('Meatazine.popup');
           this.$el.modal('hide');
         }, null, this);
       }
+    },
+    local_addHandler: function (model, collection) {
+      
+    },
+    remote_addHandler: function (model, collection) {
+      
     },
     shownHandler: function (event) {
       this.$('.load').prop('disabled', true);

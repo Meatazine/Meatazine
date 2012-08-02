@@ -114,8 +114,10 @@ jQuery.namespace('Meatazine.model');
       zip.on('complete', function () {
         var zipData = zip.getZipData(),
             byteArray = new Uint8Array(zipData.length),
-            xhr = null;
-        for (var i = 0, len = zipData.length; i < len; i++) {
+            xhr = null,
+            i = 0,
+            len = zipData.length;
+        for (; i < len; i++) {
           byteArray[i] = zipData.charCodeAt(i) & 0xFF;
         }
         $.ajax({
@@ -125,7 +127,7 @@ jQuery.namespace('Meatazine.model');
           processData: false,
           data: byteArray.buffer,
           xhr: function () {
-            var xhr = new window.XMLHttpRequest();
+            xhr = new window.XMLHttpRequest();
             xhr.upload.addEventListener('progress', function (event) {
               self.trigger('upload:progress', Math.floor(event.loaded / event.total) * 100);
             });
@@ -145,7 +147,7 @@ jQuery.namespace('Meatazine.model');
       data.pages = this.get('pages').toJSON();
       content = JSON.stringify(data);
       // 自动保存等特殊key
-      if (key != null) {
+      if (key instanceof String) {
         localStorage.setItem(key, content);
         return;
       }
@@ -169,6 +171,9 @@ jQuery.namespace('Meatazine.model');
           localStorage.setItem(key, content);
         }
       } else {
+        if (this.get('id') == 0) {
+          this.set('id', Meatazine.user.getIndex('lcoal'));
+        }
         key = 'book' + this.get('id');
         localStorage.setItem(key, content);
       }
