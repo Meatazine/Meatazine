@@ -27,6 +27,7 @@ jQuery.namespace('Meatazine.popup');
           bookModel = book;
           this.$el = $(className);
           this.$el.on('show', this.modal_showHandler);
+          this.$el.on('hidden', this.modal_hiddenHandler);
           welcome = new Meatazine.popup.Welcome({
             el: '#welcome',
             model: config
@@ -47,6 +48,9 @@ jQuery.namespace('Meatazine.popup');
             backdrop: backdrop,
             keyboard: keyboard,
           })
+        },
+        modal_hiddenHandler: function (event) {
+          Meatazine.guide.GuideManager.checkGuideConfig();
         },
         modal_showHandler: function (event) {
           var id = $(event.target).attr('id');
@@ -87,6 +91,7 @@ jQuery.namespace('Meatazine.popup');
               }
               break;
           }
+          Meatazine.guide.GuideManager.hideGuide();
           _gaq.push(['_trackEvent', 'popup', id]);
         }
       };

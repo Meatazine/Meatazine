@@ -136,7 +136,7 @@
   
   <target name="maker" depends="init, -copy.html.files, -copy.image.files,
     -compile.css.files, -concat.js.libs.files, -concat.js.apps.files">
-    <echo message="Compile: apps.s" />
+    <echo message="Compile: apps.js" />
     <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/apps.js" encoding="UTF-8">
       <warning group="internetExplorerChecks" level="OFF" />
       <warning group="globalThis" level="OFF" />
@@ -157,6 +157,7 @@
         <file name="jquery-1.7.2.min.js" />
       </filelist>
     </copy>
+    <echo message="Replace tokens" />
     <replaceregexp flags="gs" encoding="UTF-8">
       <regexp pattern="\&lt;!-- replace start --\&gt;(.*?)\&lt;!-- replace over --\&gt;" />
       <substitution expression="\&lt;script src='js/libs.js'\&gt;\&lt;/script\&gt;&#xD;&#xA;\&lt;script src='js/apps.js'\&gt;\&lt;/script\&gt;" />
@@ -165,8 +166,11 @@
     <tstamp>
       <format property="build.time" pattern="MMddHHmm" />
     </tstamp>
+    <!-- 当前版本的一些新特色和修正的bug -->
+    <property file="${build}/temp.properties" />
     <replace file="${dist}/index.html" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
+      <replacefilter token="@releasenote@" value="${releasenote}" />
     </replace>
     <replace file="${dist}/js/apps.js" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
