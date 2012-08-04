@@ -37,7 +37,7 @@ Meatazine.popup.BookConfig = Backbone.View.extend({
         console.log(data);
         var response = JSON.parse(data);
         if (response.code == 1) {
-          this.$el.find('.' + type).attr('src', 'api/' + response.fileurl);
+          this.$el.find('.' + type).attr('src', 'api/' + response.fileurl + '?t=' + (new Date()).getTime());
         } else {
           alert(response.msg);
         }

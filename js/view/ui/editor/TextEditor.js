@@ -9,8 +9,8 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('.dropdown-menu a').click({self: this}, this.menu_selectHandler);
-      this.buttons.find('[data-type=delete]').click(this.deleteButton_clickHandler);
+      this.buttons.find('.dropdown-menu a').click(_.bind(this.menu_selectHandler, this));
+      this.buttons.find('[data-type=delete]').click(_.bind(this.deleteButton_clickHandler, this));
     },
     insertContentAtCaret: function (content, nodeType) {
       var selection = window.getSelection(),
@@ -40,8 +40,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     setTargetClass: function (className) {
       if (/h1|h2|h3|p/.test(className)) {
-        var extraClass = className == 'p' ? ' p20' : '';
-        this.$el.replaceWith($('<' + className + ' class="editable' + extraClass + '">' + this.$el.text() + '</' + className + '>'));
+        var extraClass = className == 'p' ? ' p20' : '',
+            text = className == 'p' ? '<p>' + this.$el.text() + '</p>' : this.$el.text();
+        className = className == 'p' ? 'div' : className;
+        this.$el.replaceWith($('<' + className + ' class="editable' + extraClass + '">' + text + '</' + className + '>'));
         return;
       }
       this.$el
@@ -96,22 +98,21 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.$el.parent().remove();
     },
     menu_selectHandler: function (event) {
-      var self = event.data.self,
-          target = $(event.target),
+      var target = $(event.target),
           type = target.closest('[data-type]').attr('data-type');
       switch (type) {
         case 'font-size':
-          self.$el.css('font-size', target.text() + 'px');
+          this.$el.css('font-size', target.text() + 'px');
           _gaq.push(['_traceEvent', 'text', 'size', target.text()]);
           break;
           
         case 'color':
-          self.$el.css('color', target.css('color'));
+          this.$el.css('color', target.css('color'));
           _gaq.push(['_trackEvent', 'text', 'color', target.css('color')]);
           break;
           
         case 'class':
-          self.setTargetClass(target.attr('class'));
+          this.setTargetClass(target.attr('class'));
           break;
           
         default:
