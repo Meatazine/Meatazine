@@ -5,6 +5,7 @@ Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.ext
   initialize: function () {
     this.$el = $(this.el);
     this.template = this.el.innerHTML;
+    this.tagName = $(this.template)[0];
   },
   handleFiles: function (files) {
     this.navi.handleFiles(files);

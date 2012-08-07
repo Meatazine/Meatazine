@@ -4,12 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   #loading {
-    width: 200px;
+    width: 300px;
     position:absolute;
     left:50%;
     top:100px;
-    margin-left:-100px;
-    padding: 30px 0;
+    margin-left:-160px;
+    padding: 30px 10px;
     border:4px dashed #F33;
     border-radius: 8px;
   }
@@ -19,13 +19,42 @@
   .hidden, .hide {
     display:none;
   }
+  .noscript {
+    width: 350px;
+    position: absolute;
+    left:50%;
+    top:100px;
+    margin-left:-200px;
+    font:16px/24px Microsoft Yahei;
+  }
+  .noscript h4 {
+    font:bold 20px/30px Microsoft Yahei;
+    padding: 0 0 10px;
+  }
 </style>
+<noscript>
+  <div class="alert alert-error noscript">
+    <h4>您的浏览器不支持JavaScript!</h4>
+    如此这般，肉大师无法发挥神力，万望海涵。<br />
+    还请速速修改设置，允许JavaScript运行，方便肉大师施展身手。
+  </div>
+  <style>
+    #loading {
+      display:none;
+    }
+  </style>
+</noscript>
 <div id="loading">
   <p align="center">
     <img src="img/loading.gif" alt="Loading" />
   </p>
   <p align="center">
     肉大师运功中，马上就来
+  </p>
+  <hr />
+  <h4>最近闭关所得</h4>
+  <p>
+    @releasenote@
   </p>
 </div>
 <div class="navbar navbar-fixed-top hidden" id="navbar">
@@ -150,11 +179,9 @@
       </div>
       <div class="btn-group group2">
         <button class="btn btn-mini" data-type="upload"><i class="icon-upload"></i> 上传</button>
-        <button class="btn btn-mini" data-type="convert" data-class="map"><i class="icon-map-marker"></i> 转换为地图</button>
+        <button class="btn btn-mini" data-type="convert" data-class="map"><i class="icon-globe"></i> 转换为地图</button>
+        <button class="btn btn-mini" data-type="add-marker"><i class="icon-flag"></i> 添加标记</button>
         <button class="btn btn-mini" data-type="edit" disabled="true"><i class="icon-edit"></i> 编辑图片</button>
-      </div>
-      <div class="btn-group group2">
-        <button class="btn btn-mini" data-group="edit" data-type="add-marker" disabled="true">添加标记</button>
       </div>
       <div class="btn-group group2">
         <button class="btn btn-mini dropdown-toggle" data-group="edit" data-toggle="dropdown" disabled="true">
@@ -181,7 +208,7 @@
       </div>
       <div class="btn-group group5">
         <button class="btn btn-mini" data-type="convert" data-class="image"><i class="icon-picture"></i> 转换为图片</button>
-        <button class="btn btn-mini" data-type="add-marker">添加标记</button>
+        <button class="btn btn-mini" data-type="add-marker"><i class="icon-flag"></i> 添加标记</button>
         <button class="btn btn-mini" data-type="edit"><i class="icon-edit"></i> 编辑地图</button>
       </div>
       <div class="btn-group group5">

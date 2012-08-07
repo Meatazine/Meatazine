@@ -17,6 +17,7 @@ jQuery.namespace('Meatazine');
       });
       info = $('#system-info');
       this.removeLoading();
+      this.checkBrowserVersion();
       $('body').on({
         'keydown': function (event) {
           if (event.keyCode == 8 && !(/input|textarea/i).test(event.target.tagName)) { // backspace
@@ -30,21 +31,29 @@ jQuery.namespace('Meatazine');
         },
       });
     },
-    removeLoading: function () {
-      $('#loading').fadeOut();
+    checkBrowserVersion: function () {
+      var array = window.navigator.userAgent.match(/chrome\/(\d+(.\d+)?)/i),
+          isChrome = array != null,
+          title,
+          content;
+      // 不是Chrome浏览器，或者版本号低于12，这些浏览器都不支持File API操作本地文件
+      if (!isChrome) {
+        title = '肉大师只支持Chrome浏览器';
+        content = '非Chrome环境下，肉大师无法发挥真正实力，请换用Chrome再试一次。<br />下载Chrome浏览器请至：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a>';
+        this.displayBrowerError(title, content);
+        return;
+      }
+      if (Number(array[1]) < 12) {
+        title = '肉大师需要Chrome 12+';
+        content = '只有Chrome 12+才能让肉大师发挥出真正实力，建议更新到最新版本再试一次。<br />下载最新版Chrome浏览器请至：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a>';
+        this.displayBrowerError(title, content);
+        return;
+      }
       $('.hidden').removeClass('hidden');
     },
-    showError: function (msg) {
-      this.displayMessage(msg, 'alert-error');
-    },
-    showInfo: function (msg) {
-      this.displayMessage(msg, 'alert-info');
-    },
-    showSuccess: function (msg) {
-      this.displayMessage(msg, 'alert-success');
-    },
-    showWarning: function (msg) {
-      this.displayMessage(msg);
+    displayBrowerError: function (title, content) {
+      $('<div class="alert alert-error noscript"><h4>' + title + '</h4>' + content + '</div>')
+        .prependTo('body');
     },
     displayMessage: function (msg, className) {
       clearTimeout(infoTimeout);
@@ -57,6 +66,21 @@ jQuery.namespace('Meatazine');
       infoTimeout = setTimeout(function () {
         info.slideUp();
       }, 4000);
+    },
+    removeLoading: function () {
+      $('#loading').fadeOut();
+    },
+    showError: function (msg) {
+      this.displayMessage(msg, 'alert-error');
+    },
+    showInfo: function (msg) {
+      this.displayMessage(msg, 'alert-info');
+    },
+    showSuccess: function (msg) {
+      this.displayMessage(msg, 'alert-success');
+    },
+    showWarning: function (msg) {
+      this.displayMessage(msg);
     },
     book_sizeChangeHandler: function (w) {
       $('#page-area').width(474 + w);
@@ -77,6 +101,6 @@ jQuery.namespace('Meatazine');
           this.navbar.disablePublishButtons();
         }
       }
-    }
-  };
+    },
+  }
 })(Meatazine);

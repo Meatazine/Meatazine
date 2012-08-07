@@ -41,9 +41,6 @@ $(function () {
     user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
   });
   book.on('autosave', user.autosaveHandler, user);
-  user.on('change:isLogin', function () {
-    book.set('id', user.getIndex());
-  });
   
   // 放到命名空间里
   Meatazine.config = config;
@@ -56,4 +53,7 @@ $(function () {
   
   // 检查登录状态
   user.checkLoginStatus();
+  user.on('change:isLogin', function () {
+    book.set('id', user.getId());
+  });
 });

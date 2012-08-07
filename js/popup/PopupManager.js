@@ -23,6 +23,7 @@ jQuery.namespace('Meatazine.popup');
         init: function (className) {
           this.$el = $(className);
           this.$el.on('show', this.modal_showHandler);
+          this.$el.on('hidden', this.modal_hiddenHandler);
           welcome = new Meatazine.popup.Welcome({
             el: '#welcome',
             model: Meatazine.config,
@@ -46,6 +47,9 @@ jQuery.namespace('Meatazine.popup');
             keyboard: keyboard,
           });
           $('#' + popupName).modal('show');
+        },
+        modal_hiddenHandler: function (event) {
+          Meatazine.guide.GuideManager.checkGuideConfig();
         },
         modal_showHandler: function (event) {
           var id = $(event.target).attr('id');
@@ -96,6 +100,7 @@ jQuery.namespace('Meatazine.popup');
               }
               break;
           }
+          Meatazine.guide.GuideManager.hideGuide();
           _gaq.push(['_trackEvent', 'popup', id]);
         }
       };

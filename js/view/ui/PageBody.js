@@ -1,6 +1,7 @@
 jQuery.namespace('Meatazine.view.ui');
 (function (ns) {
   var textEditor = new ns.editor.TextEditor('.group1');
+  //var img;
   ns.PageBody = Backbone.View.extend({
     items: [],
     events: {
