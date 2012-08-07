@@ -34,8 +34,8 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   checkWeiboLoginStatus: function () {
     return false;
   },
-  getId: function () {
-    return this.get(this.get('isLogin') ? 'remote' : 'local').index;
+  getNextLocalIndex: function () {
+    return this.get('local').getNextIndex();
   },
   getMe: function () {
     var self = this;

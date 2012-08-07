@@ -25,17 +25,16 @@ jQuery.namespace('Meatazine.model');(function (ns) {
           icon: book.icon ? book.icon : 'img/icon.png',
         } : {};
         this.create(init);
-        this.index = index == this.index ? index + 1 : this.index;
       }, this);
       this.hasAutoSave = localStorage.getItem('bookauto') != null;
       this.on('add', this.addHandler, this);
     },
     getNextIndex: function () {
-      this.index = 0;
+      var index = 0;
       this.each(function (model, i) {
-        this.index = this.index = i ? this.index + 1 : this.index;
+        index = index = i ? index + 1 : index;
       }, this);
-      return this.index;
+      return index;
     },
     recordSavedBooks: function () {
       var arr = this.pluck('id');
@@ -50,12 +49,6 @@ jQuery.namespace('Meatazine.model');(function (ns) {
     index: 1,
     model: model,
     url: 'api/api.php',
-    initialize: function () {
-      
-    },
-    getNextIndex: function () {
-      
-    },
   });
 })(Meatazine.model);
   

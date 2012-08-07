@@ -172,7 +172,7 @@ jQuery.namespace('Meatazine.model');
         }
       } else {
         if (this.get('id') == 0) {
-          this.set('id', Meatazine.user.getIndex('lcoal'));
+          this.set('id', Meatazine.user.getNextLocalIndex());
         }
         key = 'book' + this.get('id');
         localStorage.setItem(key, content);

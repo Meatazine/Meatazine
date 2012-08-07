@@ -54,6 +54,7 @@ $(function () {
   // 检查登录状态
   user.checkLoginStatus();
   user.on('change:isLogin', function () {
-    book.set('id', user.getId());
+    user.get(user.get('isLogin') ? 'local' : 'remote').index = book.get('id');
+    book.set('id', user.get(user.get('isLogin') ? 'remote' : 'local').index);
   });
 });
