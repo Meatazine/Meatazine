@@ -115,17 +115,20 @@ Meatazine.filesystem.FileReferrence = function () {
     };
     
     // 处理二进制数据
-    var builder = new WebKitBlobBuilder();
+    var blob,
+        byteArray,
+        i = 0,
+        len = 0;
     if (fileType.indexOf('text') == -1) {
-      var byteArray = new Uint8Array(fileContent.length);
-      for (var i = 0, len = fileContent.length; i < len; i++) {
+      byteArray = new Uint8Array(fileContent.length);
+      for (len = fileContent.length; i < len; i++) {
         byteArray[i] = fileContent.charCodeAt(i) & 0xFF;
       }
-      builder.append(byteArray.buffer);
+      blob = new Blob([byteArray], {type: fileType});
     } else {
-      builder.append(fileContent);
+      blob = new Blob(fileContent);
     }
-    fileWriter.write(builder.getBlob(fileType));
+    fileWriter.write(blob);
     fileContent = null;
   }
   function fileReadyHandler(file) {

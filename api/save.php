@@ -4,9 +4,12 @@
  * @author Meathill (meathill@foxmail.com)
  */
 
+require_once('include/functions.php');
+
 $openid = strip_tags($_REQUEST['openid']);
 $id = (int)$_REQUEST['bookid'];
 $name = strip_tags($_REQUEST['name']);
+$data = strip_tags($_REQUEST['data']);
 $content = strip_tags($_REQUEST['content']);
 $date = mktime();
 
@@ -20,12 +23,9 @@ if ($id == 0) {
     throwError();
   }
   
-  $sql = "INSERT INTO m_book
-          (owner, title, content, create_date, edit_date)
-          VALUES ($uid, '$name', '$content', $date, $date)";
-  $check = $DB->query($sql);
-  $bookid = $DB->lastInsertId();
-  if ($check) {
+  $bookid = createNewBook($uid, $name, $data, $content, $date);
+  refreshBook($bookid, $data, $content);
+  if ($bookid) {
     $result = array('code' => '0', 'data' => $bookid);
   } else {
     throwError('sql', $sql);
@@ -45,6 +45,7 @@ $sql = "UPDATE m_book
         SET title='$name', content='$content', edit_date=$date
         WHERE id=$id";
 $check = $DB->query($sql);
+refreshBook($id, $data, $content);
 if ($check) {
   $result = array('code' => '0', 'data' => 'ok');
 } else {

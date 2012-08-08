@@ -1,14 +1,13 @@
 jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.extend({
-  item: null,
   navi: null,
   initialize: function () {
     this.$el = $(this.el);
     this.template = this.el.innerHTML;
     this.tagName = $(this.template)[0];
   },
-  handleFiles: function (files) {
-    this.navi.handleFiles(files);
+  renderImageItem: function (url, scale) {
+    this.navi.renderImageItem(url, scale);
   },
   setNavi: function (navi) {
     this.navi = navi;
@@ -21,11 +20,13 @@ Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.ext
     }
     if (this.model != null) {
       this.model.off(null, null, this);
-      this.item.off('click');
     }
     this.model = model;
     this.$el.empty();
-    this.item = this.createItem(model, !this.collection.isModelChanged(model));
+    this.createItem(model, !this.collection.isModelChanged(model));
+  },
+  editor_uploadCompleteHandler: function () {
+    this.navi.editor_uploadCompleteHandler();
   },
   img_dropHandler: function (event) {
     this.navi.img_dropHandler(event);

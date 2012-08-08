@@ -1,11 +1,9 @@
 jQuery.namespace('Meatazine.view.element');
 (function (ns) {
   var currentEditor = null,
-      imageResizer = new Meatazine.filesystem.ImageResizer(),
-      localFile = new Meatazine.filesystem.FileReferrence(),
       imageEditor = new Meatazine.view.ui.editor.ImageEditor('.group2'),
-      mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5');
-  ns.BaseElement = Backbone.View.extend({
+      mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5'),
+  init = {
     token: null,
     events: {
       "drop img": "img_dropHandler",
@@ -86,34 +84,18 @@ jQuery.namespace('Meatazine.view.element');
       }, this);
       return item;
     },
-    getImageSize: function () {
-      var sample = this.$el.children(this.tagName).eq(0),
-          size = null;
-      sample = sample.find('img').add(sample.filter('img')),
-      size = {
-        width: sample.width(),
-        height: sample.height()
-      }
-      return size;
-    },
     handleChildrenState: function () {
       var children = this.$el.children(this.tagName);
       children.slice(0, this.collection.config.number).removeClass('hide');
       children.slice(this.collection.config.number).addClass('hide');
-    },
-    handleFiles: function (files) {
-      // 暂时只认图片
-      // TODO 加入对音频文件（.mp3）和视频文件（.avi）的支持
-      imageResizer.on('complete:one', this.file_readyHandler, this);
-      imageResizer.on('complete:all', this.file_completeHandler, this);
-      imageResizer.addFiles(files, this.getImageSize());
     },
     registerImageEditor: function (image) {
       if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor) {
         currentEditor.setElement(null);
       }
       imageEditor.off();
-      imageEditor.on('select:image', this.editor_selectImagesHandler, this);
+      imageEditor.on('upload:one', this.editor_uploadImagesHandler, this);
+      imageEditor.on('upload:all', this.editor_uploadCompleteHandler, this);
       imageEditor.on('convert:map', this.editor_convertMapHandler, this);
       imageEditor.setTarget(image);
       currentEditor = imageEditor;
@@ -208,19 +190,16 @@ jQuery.namespace('Meatazine.view.element');
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'image', 'map']);
     },
-    editor_selectImagesHandler: function (files) {
-      this.handleFiles(files);
-    },
-    file_completeHandler: function () {
+    editor_uploadCompleteHandler: function () {
       var firstImg = this.$el.children(this.tagName).eq(0);
       firstImg = firstImg.is('img') ? firstImg : firstImg.find('img');
       firstImg.click();
-      imageResizer.off(null, null, this);
+
       this.handleChildrenState();
       this.trigger('change', this.collection);
       this.trigger('ready');
     },
-    file_readyHandler: function (url, scale) {
+    editor_uploadImagesHandler: function (url, scale) {
       this.renderImageItem(url, scale);
     },
     img_clickHandler: function (event) {
@@ -289,5 +268,6 @@ jQuery.namespace('Meatazine.view.element');
             .off('click', arguments.callee);
         });
     },
-  });
+  }
+  ns.BaseElement = Backbone.View.extend(init);
 })(Meatazine.view.element);

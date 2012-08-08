@@ -1,13 +1,19 @@
 jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
   var localFile = new Meatazine.filesystem.FileReferrence(),
+      imageResizer = new Meatazine.filesystem.ImageResizer(),
       args = null,
       callback = null,
       canvas = null,
       uploader = null;
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
-  ns.ImageEditor = ns.AbstractEditor.extend({
+  init = {
+    initialize: function (buttons) {
+      ns.AbstractEditor.prototype.initialize.call(this, buttons);
+      imageResizer.on('complete:one', this.resizer_readyHandler, this);
+      imageResizer.on('complete:all', this.resizer_completeHandler, this);
+    },
     addImgMarker: function (x, y) {
       var self = this,
           markers = this.model.get('markers') ? this.model.get('markers').concat() : [],
@@ -84,9 +90,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('.scale input').on('change', {self: this}, this.scale_changeHandler);
+      this.buttons.find('.scale input').on('change', _.bind(this.scale_changeHandler, this));
       this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
-      this.buttons.find("[data-type='add-marker']").on('click',{self: this}, this.addImgMarkerButton_clickHandler);
+      this.buttons.find("[data-type='add-marker']").on('click', _.bind(this.addImgMarkerButton_clickHandler, this));
     },
     initScaleRange: function () {
       var scale = this.model.get('scale'),
@@ -106,7 +112,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
       uploader
-        .on("change", {self: this}, this.uploader_selectHandler)
+        .on("change", _.bind(this.uploader_selectHandler, this))
         .appendTo(this.buttons.first());
     },
     saveCanvas: function () {
@@ -189,7 +195,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
     addImgMarkerButton_clickHandler: function (event) {
-      event.data.self.addImgMarker(event.pageX, event.pageY);
+      this.addImgMarker(event.pageX, event.pageY);
       event.stopPropagation();
     },
     canvas_clickHandler: function (event) {
@@ -218,11 +224,16 @@ jQuery.namespace('Meatazine.view.ui.editor');
         args = null;
       }
     },
+    resizer_completeHandler: function () {
+      this.trigger('upload:all');
+    },
+    resizer_readyHandler: function (url, scale) {
+      this.trigger('upload:one', url, scale);
+    },
     scale_changeHandler: function (event) {
-      var self = event.data.self,
-          value = $(event.target).val();
-      self.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
-      self.setCanvasScale(value);
+      var value = $(event.target).val();
+      this.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
+      this.setCanvasScale(value);
       _gaq.push(['_trackEvent', 'image', 'resize']);
     },
     uploadButton_clickHandker: function (event) {
@@ -230,8 +241,11 @@ jQuery.namespace('Meatazine.view.ui.editor');
       _gaq.push(['_trackEvent', 'image', 'upload']);
     },
     uploader_selectHandler: function (event) {
-      var self = event.data.self;
-      self.trigger('select:image', uploader[0].files);
+      imageResizer.addFiles(event.target.files, {
+        width: this.$el.width(),
+        height: this.$el.height(),
+      });
     },
-  });
+  };
+  ns.ImageEditor = ns.AbstractEditor.extend(init);
 })(Meatazine.view.ui.editor);

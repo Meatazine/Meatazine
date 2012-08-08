@@ -15,7 +15,16 @@ Meatazine.utils = {
       document.getSelection().empty();
     }
   },
-  getRenderedHTML: function (collection) {    var htmls = [];    collection.each(function (model, i) {      var html = model.get('renderedHTML');      html = html.substr(0, 4) + ' id="' + i + '"' + html.substr(4);      htmls.push(html);    });    return htmls;  },  filterHTML: function (string, folder) {
+  getRenderedHTML: function (collection, isJSON) {
+    var htmls = [];
+    collection.each(function (model, i) {      
+      var html = model.get('renderedHTML');      
+      html = html.substr(0, 4) + ' id="' + i + '"' + html.substr(4);
+      htmls.push(html);
+    });
+    return isJSON ? JSON.stringify(htmls) : htmls;
+  },
+  filterHTML: function (string, folder) {
     folder = folder || '';
     // 把img真正的src藏起来，换上空白的
     string = string.replace(/<img(\s\w+="[\w%]+")* src="([\/:\.\w]+)"/gmi, function (str, attrs, src) {
