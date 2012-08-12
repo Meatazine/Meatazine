@@ -75,6 +75,9 @@ body {
 .fixed {
   position:absolute !important;
 }
+.ofh {
+  overflow: hidden;
+}
 .left {
   left:0;
 }
@@ -279,6 +282,45 @@ body {
 .row-fluid .span1 {
   width: 5.801104972%;
 }
+.col2 > li {
+  width:49.5%;
+  margin-right:1%;
+}
+.col3 > li {
+  width:33%;
+  margin-right:0.5%;
+}
+.col4 > li {
+  width:24.7%;
+  margin-right:0.4%;
+}
+.col5 > li {
+  width:19.8%;
+  margin-right:0.25%;
+}
+.col2 > li:nth-child(2n),
+.col3 > li:nth-child(3n),
+.col4 > li:nth-child(4n),
+.col5 > li:nth-child(5n) {
+  margin-right:0;
+}
+.row2 > li {
+  height:49.5%;
+  margin-bottom:1%;
+}
+.row3 > li {
+  height:33%;
+  margin-bottom:0.5%;
+}
+.row4 > li {
+  height:24.7%;
+  margin-bottom:0.4%;
+}
+.row5 > li {
+  height:19.8%;
+  margin-bottom:0.25%;
+}
+
 
 /**
  *   元素
@@ -327,9 +369,9 @@ body {
  *   组件
  */
 .page .grid {
-  position: relative;
+  overflow:hidden;
 }
-.page .grid, .page .grid li {
+.page .grid > * {
   list-style: none;
   float:left;
   position: relative;

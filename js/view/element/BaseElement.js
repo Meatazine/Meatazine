@@ -7,16 +7,20 @@ jQuery.namespace('Meatazine.view.element');
       mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5');
   ns.BaseElement = Backbone.View.extend({
     token: null,
-    events: {
-      "drop img": "img_dropHandler",
-      "dragover img": "img_dragOverHandler",
-      "dragenter img": "img_dragEnterHandler",
-      "dragleave img": "img_dragLeaveHandler",
-      "click img": "img_clickHandler",
-      "mouseover img": "img_mouseoverHandler",
-      "mouseout img": "img_mouseoutHandler",
-      "click .map-container": "map_clickHandler",
-      "click [data-toggle]": "toggle_clickHandler",
+    events: function () {
+      var obj = {
+        "drop img": "img_dropHandler",
+        "dragover img": "img_dragOverHandler",
+        "dragenter img": "img_dragEnterHandler",
+        "dragleave img": "img_dragLeaveHandler",
+        "click img": "img_clickHandler",
+        "mouseover img": "img_mouseoverHandler",
+        "mouseout img": "img_mouseoutHandler",
+        "click .map-container": "map_clickHandler",
+        "click [data-toggle]": "toggle_clickHandler",
+      };
+      obj['click ' + this.tagName] = "item_clickHandler";
+      return obj;
     },
     initialize: function () {
       this.$el = $(this.el);
@@ -36,9 +40,6 @@ jQuery.namespace('Meatazine.view.element');
       for (i = this.collection.config.number - this.collection.length; i > 0; i--) {
         this.createItem(this.collection.create(), true);
       }
-      this.$el.on('click', this.tagName, function (event) {
-        self.item_clickHandler(event);
-      });
       this.handleChildrenState();
     },
     remove: function () {

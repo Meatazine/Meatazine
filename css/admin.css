@@ -183,7 +183,27 @@ body {
   background:#FFF;
   position:absolute;
 }
-
+#context-menu .grid {
+  overflow:hidden;
+  padding:5px 5px 0 10px;
+  width:175px;
+}
+#context-menu .grid div {
+  width:28px;
+  border:1px solid #CCC;
+  float:left;
+  font:12px/18px Arial;
+  text-align:center;
+  margin:0 5px 5px 0;
+  cursor:pointer;
+}
+#context-menu .grid div.active {
+  background:#3A87AD;
+  color:#FFF;
+  border:none;
+  width:30px;
+  line-height:20px;
+}
 
 /*========================
  * page
