@@ -56,6 +56,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       collection.on('add', function (model, collection, options) {
         ul.append(this.createSourceItem(model));
       }, this);
+      collection.on('remove', function (model, collection, options) {
+        ul.children().eq(options.index).remove();
+        model.off(null, null, this);
+      }, this);
       collection.on('replace', function (model, collection, options) {
         ul.children().eq(options.index).replaceWith(this.createSourceItem(model));
       }, this);

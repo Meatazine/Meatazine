@@ -8,12 +8,13 @@ jQuery.namespace('Meatazine.view.element');
       buttons
         .off('click')
         .on('click', 'div', _.bind(this.grid_clickHandler, this));
+      this.model.on('change', this.model_changeHandler, this);
     },
     initButtons: function () {
       var buttons = $('.btn-group6'),
           i = 0,
-          maxCols = this.collection.config.maxCols || 5,
-          maxRows = this.collection.config.maxRows || 5,
+          maxCols = this.model.get('maxCols') || 5,
+          maxRows = this.model.get('maxRows') || 5,
           total = maxCols * maxRows,
           grid = '';
       for (; i < total; i++) {
@@ -36,6 +37,38 @@ jQuery.namespace('Meatazine.view.element');
         .html(grid);
       return buttons;
     },
+    resetChildrenNumber: function () {
+      var collection = this.collection,
+          number = this.model.get('number'),
+          i = this.$el.children(this.tagName).length;
+      // 删掉多余的token
+      if (this.token) {
+        this.token = this.token.not(function (i) {
+          var index = $(this).index(),
+              model;
+          if (index >= number) {
+            collection.remove($(this).data('model'));
+            return index >= number;
+          }
+        });
+      }
+      //补上不够的token
+      for (; i < number; i++) {
+        this.createItem(this.collection.create(), true);
+      }
+    },
+    switchClass: function (type, model) {
+      if (this.$el.hasClass(type + model.get(type))) {
+        return;
+      }
+      var classes = '',
+          i = 1,
+          max = 5;
+      for (; i <= max; i++) {
+        classes += type + i + ' ';
+      }
+      this.$el.removeClass(classes).addClass(type + model.get(type));
+    },
     item_clickHandler: function (event) {
       ns.BaseElement.prototype.item_clickHandler.call(this, event);
       GUI.contextButtons.showButtons(buttons, true);
@@ -43,10 +76,20 @@ jQuery.namespace('Meatazine.view.element');
     grid_clickHandler: function (event) {
       var label = $(event.currentTarget).text(),
           arr = label.match(/(\d+)\D(\d+)/);
-      this.collection.config.row = Number(arr[1]);
-      this.collection.config.col = Number(arr[2]);
-      this.collection.config.number = Number(arr[1]) * Number(arr[2]);
-      this.handleChildrenState();
-    }
+      this.model.set({
+        row: Number(arr[1]),
+        col: Number(arr[2]),
+        number: Number(arr[1]) * Number(arr[2]),
+      });
+    },
+    model_changeHandler: function (model, options) {
+      if (options.changes.hasOwnProperty('col')) {
+        this.switchClass('col', model);
+      }
+      if (options.changes.hasOwnProperty('row')) {
+        this.switchClass('row', model);
+      }
+      this.resetChildrenNumber();
+    },
   });
 })(Meatazine.view.element);

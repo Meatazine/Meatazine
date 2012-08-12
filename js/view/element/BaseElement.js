@@ -37,7 +37,7 @@ jQuery.namespace('Meatazine.view.element');
       _.each(this.collection.models, function (model, i) {
         this.createItem(model, !this.collection.isModelChanged(model));
       }, this);
-      for (i = this.collection.config.number - this.collection.length; i > 0; i--) {
+      for (i = this.model.get('number') - this.collection.length; i > 0; i--) {
         this.createItem(this.collection.create(), true);
       }
       this.handleChildrenState();
@@ -75,7 +75,11 @@ jQuery.namespace('Meatazine.view.element');
           imageEditor.createImgMarker(container, val, key);
         }, this);
       }
-      item.appendTo(this.$el);
+      if (this.$('.ui-resizable-handle').length) {
+        item.insertBefore(this.$('.ui-resizable-handle').eq(0));
+      } else {
+        item.appendTo(this.$el);
+      }
       item.filter('img').add('img', item).add(item).data('model', model);
       model.on('change', function (model) {
         var data = item.filter('img').add('img', item).add(item).data();
@@ -99,8 +103,8 @@ jQuery.namespace('Meatazine.view.element');
     },
     handleChildrenState: function () {
       var children = this.$el.children(this.tagName);
-      children.slice(0, this.collection.config.number).removeClass('hide');
-      children.slice(this.collection.config.number).addClass('hide');
+      children.slice(0, this.model.get('number')).removeClass('hide');
+      children.slice(this.model.get('number')).addClass('hide');
     },
     handleFiles: function (files) {
       // 暂时只认图片
