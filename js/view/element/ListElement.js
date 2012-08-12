@@ -1,18 +1,36 @@
 jQuery.namespace('Meatazine.view.element');
 (function (ns) {
+  function initButtons() {
+    var buttons = $('.btn-group6');
+    buttons.find('.grid')
+      .on({
+        'mouseover': function (event) {
+          var target = $(event.currentTarget),
+              index = target.index(),
+              maxCols = buttons.data('maxCols');
+          target.addClass('active')
+            .prevAll().each(function (i) {
+            $(this).toggleClass('active', index % maxCols >= $(this).index() % maxCols);
+          });
+        },
+        'mouseout': function (event) {
+          $(this).siblings().andSelf().removeClass('active');
+        },
+      }, 'div');
+    return buttons;
+  }
   var buttons = null;
   ns.ListElement = ns.BaseElement.extend({
     initialize: function () {
       ns.BaseElement.prototype.initialize.call(this);
-      buttons = buttons || this.initButtons();
+      buttons = buttons || initButtons();
       buttons
         .off('click')
         .on('click', 'div', _.bind(this.grid_clickHandler, this));
       this.model.on('change', this.model_changeHandler, this);
     },
     initButtons: function () {
-      var buttons = $('.btn-group6'),
-          i = 0,
+      var i = 0,
           maxCols = this.model.get('maxCols') || 5,
           maxRows = this.model.get('maxRows') || 5,
           total = maxCols * maxRows,
@@ -20,22 +38,8 @@ jQuery.namespace('Meatazine.view.element');
       for (; i < total; i++) {
         grid += '<div>' + ((i / maxCols >> 0) + 1) + '&times;' + (i % maxCols + 1) + '</div>';
       }
-      buttons.find('.grid')
-        .on({
-          'mouseover': function (event) {
-            var target = $(event.currentTarget),
-                index = target.index();
-            target.addClass('active')
-              .prevAll().each(function (i) {
-              $(this).toggleClass('active', index % maxCols >= $(this).index() % maxCols);
-            });
-          },
-          'mouseout': function (event) {
-            $(this).siblings().andSelf().removeClass('active');
-          },
-        }, 'div')
-        .html(grid);
-      return buttons;
+      buttons.data('maxCols', maxCols)
+        .find('.grid').html(grid);
     },
     resetChildrenNumber: function () {
       var collection = this.collection,
@@ -72,6 +76,7 @@ jQuery.namespace('Meatazine.view.element');
     item_clickHandler: function (event) {
       ns.BaseElement.prototype.item_clickHandler.call(this, event);
       GUI.contextButtons.showButtons(buttons, true);
+      this.initButtons();
     },
     grid_clickHandler: function (event) {
       var label = $(event.currentTarget).text(),
