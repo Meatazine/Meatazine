@@ -326,6 +326,10 @@ body {
   height:19.8%;
   margin-bottom:0.25%;
 }
+.row3-space > li {
+  height:32%;
+  margin-bottom:1.3%;
+}
 
 
 /**
@@ -453,6 +457,21 @@ body {
 .page .slide-navi-type3 li.active {
   background:#F83;
   color:#FFF;
+}
+.page .grid-type1 {
+  
+}
+.page .grid-type1 img,
+.page .grid-type1 div {
+  border-radius: 6px;
+}
+.page .grid-type1 li:nth-child(even) [class*="span"] {
+  float:right;
+  margin-right:2.5%;
+  margin-left:0;
+}
+.page .grid-type1 li:nth-child(even) [class*="span"]:first-child {
+  margin-right:0.26%;
 }
 .page .tag {
   font-size:24px;
