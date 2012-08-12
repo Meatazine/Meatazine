@@ -78,6 +78,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     }, 1000);
   },
   refreshSourceList: function () {
+    if (this.contents.get('contents').length == 0) {
+      return;
+    }
     // 更新全部内容
     _.each(this.contents.get('contents'), function (collection, index) {
       this.createSourceList(collection, this.sourceList.find('ul').eq(index));
