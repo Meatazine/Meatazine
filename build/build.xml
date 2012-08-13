@@ -15,8 +15,8 @@
     <mkdir dir="${dist}/js" />
     <concat destfile="${dist}/js/libs.js" encoding="UTF-8" fixlastline="yes">
       <filelist dir="js/libs/">
-        <file name="jquery-1.7.2.min.js" />
-        <file name="jquery-ui-1.8.21.custom.min.js" />
+        <file name="jquery-1.8.0.min.js" />
+        <file name="jquery-ui-1.8.22.custom.min.js" />
         <file name="jquery.namespace.js" />
         <file name="mustache.js" />
         <file name="bootstrap.min.js" />
@@ -97,7 +97,7 @@
         <file name="bootstrap.min.css" />
         <file name="bootstrap-responsive.min.css" />
         <file name="animate.css" />
-        <file name="jquery-ui-1.8.21.custom.css" />
+        <file name="jquery-ui-1.8.22.custom.css" />
       </filelist>
     </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
@@ -156,7 +156,7 @@
     </jscomp>
     <copy todir="${dist}/js/libs">
       <filelist dir="js/libs/">
-        <file name="jquery-1.7.2.min.js" />
+        <file name="jquery-1.8.0.min.js" />
       </filelist>
     </copy>
     <echo message="Replace tokens" />

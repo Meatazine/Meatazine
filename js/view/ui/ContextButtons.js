@@ -17,7 +17,12 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
   hide: function () {
     this.$('.btn-group:not(.always-show)').hide();
   },
-  showButtons: function (buttons) {
+  showButtons: function (buttons, isShared) {
+    // 是否可以和其它按钮共存
+    if (isShared) {
+      buttons.show();
+      return;
+    }
     // 不同元素的编辑按钮切换时，可能需要先终止上一个元素的编辑状态
     if (buttons.is(':hidden') && this.$('[data-type=edit]').filter(':visible').hasClass('active')) {
       this.$('[data-type=edit]').filter(':visible').click();

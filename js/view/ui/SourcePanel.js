@@ -9,8 +9,8 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
     "mouseout #source-list li": "sourceItem_mouseOutHandler",
-    "focusout #source-list input": "input_focusOutHandler",
-    "keydown #source-list input": "input_keydownHandler",
+    "focusout #source-list textarea": "textarea_focusOutHandler",
+    "keydown #source-list textarea": "textarea_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
     "sortdeactivate #source-list ul": "source_sortdeactivateHandler",
     "click .remove-button": "removeButton_clickHandler"
@@ -56,6 +56,10 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       collection.on('add', function (model, collection, options) {
         ul.append(this.createSourceItem(model));
       }, this);
+      collection.on('remove', function (model, collection, options) {
+        ul.children().eq(options.index).remove();
+        model.off(null, null, this);
+      }, this);
       collection.on('replace', function (model, collection, options) {
         ul.children().eq(options.index).replaceWith(this.createSourceItem(model));
       }, this);
@@ -78,6 +82,9 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     }, 1000);
   },
   refreshSourceList: function () {
+    if (this.contents.get('contents').length == 0) {
+      return;
+    }
     // 更新全部内容
     _.each(this.contents.get('contents'), function (collection, index) {
       this.createSourceList(collection, this.sourceList.find('ul').eq(index));
@@ -103,7 +110,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   book_resizeHandler: function (w, h) {
     this.templateList.add(this.sourceList).height(h - 110); // 空出按钮的位置
   },
-  input_focusOutHandler: function (event) {
+  textarea_focusOutHandler: function (event) {
     var target = $(event.target),
         index = target.parent().index(),
         collection = target.closest('ul').data('collection'),
@@ -113,7 +120,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     collection.at(index).set(key, value);
     _gaq.push(['_trackEvent', 'source', 'edit']);
   },
-  input_keydownHandler: function (event) {
+  textarea_keydownHandler: function (event) {
     if (event.keyCode == 13) {
       $(event.target).focusout();
     }
@@ -175,13 +182,15 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   span_clickHandler: function (event) {
     var target = $(event.target),
-        input = $('<input />', {
+        textarea = $('<textarea>', {
           val: target.text(),
           "name": target.attr('class'),
+          "placeholder": "点击修改内容",
+          "row": "3",
           "class": "input-medium focused form-inline"
         });
-    target.replaceWith(input);
-    input.focus();
+    target.replaceWith(textarea);
+    textarea.focus();
   },
   template_clickHandler: function (event) {
     if (this.templateList.hasClass('disabled')) {

@@ -26,11 +26,11 @@ jQuery.namespace('Meatazine.view.ui');
         if (!config.noData) {
           var keys = elementDom.outerHTML.match(/{{(\w+)}}/gim);
         	collection = this.model.getContentAt(count++, keys);
-        	collection.config = config;
         }
         element = Meatazine.view.element.ElementFactory.getElement(config.type, {
           collection: collection,
           el: elementDom,
+          model: new Backbone.Model(config),
         });
         element.on('change', this.element_changeHandler, this);
         this.items[index] = element;

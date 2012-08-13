@@ -52,7 +52,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
   getModelDefaults: function (array) {
     var obj = {};
     _.each(array, function(value, index) {
-      key = value.match(/\{?(\w+)\}?/)[1];
+      var key = value.match(/\{?(\w+)\}?/)[1];
       if (key == 'img') {
         obj.img = 'img/spacer.gif';
         obj.scale = 1;
@@ -66,6 +66,10 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
       }
       if (/count|x|y/.test(key)) {
         key[key] = 0;
+        return;
+      }
+      if (key == 'description') {
+        obj.description = '请在右边“素材”列表内修改描述';
         return;
       }
       obj[key] = 'placeholder';
