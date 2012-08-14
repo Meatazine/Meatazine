@@ -1,3 +1,4 @@
+.settings/
 api/assets/
 api/static/
 api/temp/
@@ -12,5 +13,6 @@ js/libs/backbone.js
 export/
 img/source/
 build/*.jar
+build/temp.*
 web.config
 ~
