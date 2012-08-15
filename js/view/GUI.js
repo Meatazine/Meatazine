@@ -57,7 +57,7 @@ jQuery.namespace('Meatazine');
     },
     registerCancelHandler: function (handler, context, argus) {
       if (_.any(cancelQueue, function (cancel, i) { return cancel.handler == handler})) {
-        return;
+        this.unregisterCancelHandler(handler);
       }
       setTimeout(function () {
         cancelQueue.push({
@@ -77,7 +77,7 @@ jQuery.namespace('Meatazine');
     },
     body_clickHandler: function (event) {
       _.each(cancelQueue, function (cancel, i) {
-        cancel.handler.call(cancel.context, cancel.argus);
+        cancel.handler.call(cancel.context, cancel.argus || event);
       });
     },
     book_sizeChangeHandler: function (w) {
