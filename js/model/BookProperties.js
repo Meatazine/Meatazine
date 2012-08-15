@@ -30,7 +30,7 @@ jQuery.namespace('Meatazine.model');
           localStorage.setItem('bookid', id);
         },
         error: function () {
-          GUI.navbar.disabledPublishButtons();
+          Meatazine.GUI.navbar.disabledPublishButtons();
         }
       });
     },

@@ -22,12 +22,12 @@ $(function () {
         book: book,
         source: source.model,
       });
-  window.GUI = new Meatazine.view.GUI({
+  Meatazine.GUI.initialize({
     config: config,
     book: book,
   });
-  GUI.contextButtons = contextButtons;
-  GUI.page = page;
+  Meatazine.GUI.contextButtons = contextButtons;
+  Meatazine.GUI.page = page;
   Meatazine.guide.GuideManager.init(config, book);
   Meatazine.popup.PopupManager.init('.modal', config, book);
   list.on('select', source.pageList_selectHandler, source);

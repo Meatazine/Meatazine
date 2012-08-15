@@ -130,8 +130,8 @@ jQuery.namespace('Meatazine.guide');
   ns.InPageBodyGuideTag = function (tagData) {
     ns.GuideTag.call(this, tagData);
   
-    GUI.page.on('render:start', this.page_renderStartHandler, this);
-    GUI.page.on('render:over', this.page_renderOverHandler, this);
+    Meatazine.GUI.page.on('render:start', this.page_renderStartHandler, this);
+    Meatazine.GUI.page.on('render:over', this.page_renderOverHandler, this);
   }
   ns.InPageBodyGuideTag.prototype = _.extend({
     page_renderStartHandler: function () {

@@ -51,7 +51,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
       helper.remove();
       if ($('#page-body').is(event.currentTarget)) {
         var pos = $(this).offset();
-        GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
+        Meatazine.GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
       }
       Meatazine.utils.Mouse.status = Meatazine.utils.Mouse.NORMAL;
     }

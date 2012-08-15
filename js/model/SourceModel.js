@@ -60,7 +60,7 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
         template += '<img src="{{img}}" width="160" /><br />';
         continue;
       }
-      template += '<span class="' + prop + '">{{' + prop + '}}</span><br />';
+      template += '<span class="' + prop + '">{{{' + prop + '}}}</span><br />';
     }
     return '<li>' + template + '</li>';
   },
