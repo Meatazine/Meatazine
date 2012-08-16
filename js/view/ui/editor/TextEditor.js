@@ -32,11 +32,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       this.setElement(value);
       this.$el.addClass('editing');
-      var self = this;
-      $('body').off('click', this.body_clickHandler);
-      setTimeout(function () {
-        $('body').one('click', {self: self}, self.body_clickHandler);
-      }, 50);
+      Meatazine.GUI.registerCancelHandler(this.body_clickHandler, this);
     },
     setTargetClass: function (className) {
       if (/h1|h2|h3|p/.test(className)) {
@@ -86,11 +82,10 @@ jQuery.namespace('Meatazine.view.ui.editor');
       _gaq.push(['_traceEvent', 'text', 'edit-stop'])
     },
     body_clickHandler: function (event) {
-      var self = event.data.self;
-      if (self.isEditing) {
-        self.buttons.find('[data-type=edit]').click();
+      if (this.isEditing) {
+        this.buttons.find('[data-type=edit]').click();
       } else {
-        self.$el.removeClass('editing');
+        this.$el.removeClass('editing');
       }
     },
     deleteButton_clickHandler: function (event) {

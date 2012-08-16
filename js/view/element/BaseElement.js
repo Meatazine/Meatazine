@@ -235,6 +235,10 @@ jQuery.namespace('Meatazine.view.element');
       if (img.closest('.map-container').length) {
         return;
       }
+      if (img.data('size')) {
+        img.data('size').appendTo(img.parent());
+        return;
+      }
       size = $('<span class="label label-info resolution">图片尺寸：' + img[0].width + ' &times; ' + img[0].height + '</span>');
       size.appendTo(img.parent());
       img.data('size', size);
@@ -242,6 +246,9 @@ jQuery.namespace('Meatazine.view.element');
     img_mouseoutHandler: function (event) {
       var img = $(event.target);
       if (img.closest('.map-container').length) {
+        return;
+      }
+      if (Meatazine.displayUtils.hitTestPoint({x: event.pageX, y: event.pageY}, img.data('size'))) {
         return;
       }
       img.data('size').remove();

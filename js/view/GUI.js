@@ -1,13 +1,14 @@
 jQuery.namespace('Meatazine');
-(function (ns) {
+(function (ns, $) {
   var infoTimeout = 0,
       info = '';
+      cancelQueue = [];
   ns.GUI = {
     contextButtons: null,
     navbar: null,
     page: null,
     VERSION: '0.1.5.@version@',
-    init: function (options) {
+    initialize: function (options) {
       options.book.on('change:size', this.book_sizeChangeHandler, this);
       options.book.get('pages').on('add', this.pages_addHandler, this);
       options.book.get('pages').on('remove', this.pages_removeHandler, this);
@@ -29,6 +30,7 @@ jQuery.namespace('Meatazine');
           event.preventDefault();
           return false;
         },
+        'click': _.bind(this.body_clickHandler),
       });
     },
     checkBrowserVersion: function () {
@@ -82,6 +84,28 @@ jQuery.namespace('Meatazine');
     showWarning: function (msg) {
       this.displayMessage(msg);
     },
+    registerCancelHandler: function (handler, context, argus) {
+      if (_.any(cancelQueue, function (cancel, i) { return cancel.handler == handler})) {
+        this.unregisterCancelHandler(handler);
+      }
+      setTimeout(function () {
+        cancelQueue.push({
+          handler: handler,
+          context: context,
+          argus: argus,
+        });
+      }, 50);
+    },
+    unregisterCancelHandler: function (handler) {
+      cancelQueue = _.reject(cancelQueue, function (cancel, i) {
+        return cancel.handler == handler;
+      });
+    },
+    body_clickHandler: function (event) {
+      _.each(cancelQueue, function (cancel, i) {
+        cancel.handler.call(cancel.context, cancel.argus || event);
+      });
+    },
     book_sizeChangeHandler: function (w) {
       $('#page-area').width(474 + w);
     },
@@ -103,4 +127,4 @@ jQuery.namespace('Meatazine');
       }
     },
   }
-})(Meatazine);
+})(Meatazine, jQuery);
