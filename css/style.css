@@ -554,11 +554,18 @@ body {
   -webkit-user-select: none;
   user-select:none;
 }
+#viewport * {
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+}
 #container {
   height:100%;
 }
 #container .visible {
   visibility: visible;
+}
+#container img {
+  pointer-events:none;
 }
 .page {
   float:left;
