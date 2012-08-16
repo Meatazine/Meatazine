@@ -23,7 +23,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       selection.addRange(range);
     },
     setTarget: function (value) {
-      GUI.contextButtons.showButtons(this.buttons);
+      Meatazine.GUI.contextButtons.showButtons(this.buttons);
       if (this.isEditing && !this.$el.is(value)) {
         this.buttons.find('[data-type=edit]').click();
       }
@@ -32,11 +32,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       }
       this.setElement(value);
       this.$el.addClass('editing');
-      var self = this;
-      $('body').off('click', this.body_clickHandler);
-      setTimeout(function () {
-        $('body').one('click', {self: self}, self.body_clickHandler);
-      }, 50);
+      Meatazine.GUI.registerCancelHandler(this.body_clickHandler, this);
     },
     setTargetClass: function (className) {
       if (/h1|h2|h3|p/.test(className)) {
@@ -66,7 +62,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         this.$el.removeClass('bighead');
       }
       this.$el.closest('.ui-draggable').draggable('disable');
-      GUI.page.$el.addClass('editing');
+      Meatazine.GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'text', 'edit-start']);
     },
     stopEdit: function (event) {
@@ -81,16 +77,15 @@ jQuery.namespace('Meatazine.view.ui.editor');
       Meatazine.utils.clearSelection();
       this.trigger('change');
       this.$el.closest('.ui-draggable').draggable('enable');
-      GUI.page.$el.removeClass('editing');
+      Meatazine.GUI.page.$el.removeClass('editing');
       stashClass = '';
       _gaq.push(['_traceEvent', 'text', 'edit-stop'])
     },
     body_clickHandler: function (event) {
-      var self = event.data.self;
-      if (self.isEditing) {
-        self.buttons.find('[data-type=edit]').click();
+      if (this.isEditing) {
+        this.buttons.find('[data-type=edit]').click();
       } else {
-        self.$el.removeClass('editing');
+        this.$el.removeClass('editing');
       }
     },
     deleteButton_clickHandler: function (event) {

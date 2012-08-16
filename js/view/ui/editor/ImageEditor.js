@@ -124,7 +124,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       this.drawImage();
     },
     setTarget: function (value) {
-      GUI.contextButtons.showButtons(this.buttons);
+      Meatazine.GUI.contextButtons.showButtons(this.buttons);
       if (this.$el != null && this.$el.is(value)) {
         return;
       }
@@ -174,18 +174,18 @@ jQuery.namespace('Meatazine.view.ui.editor');
           $('body').one('mouseup', self.canvas_mouseupHandler);
         })
         .on('click', function (event) {
-          GUI.contextButtons.showButtons(self.buttons);
+          Meatazine.GUI.contextButtons.showButtons(self.buttons);
         })
         .on('mouseup', this.canvas_mouseupHandler);
       loader.src = sourceUrl;
       this.$el.replaceWith(canvas);
-      GUI.page.$el.addClass('editing');
+      Meatazine.GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
       this.isEditing = false;
       this.saveCanvas();
-      GUI.page.$el.removeClass('editing');
+      Meatazine.GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
     addImgMarkerButton_clickHandler: function (event) {
@@ -193,7 +193,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       event.stopPropagation();
     },
     canvas_clickHandler: function (event) {
-      GUI.contextButtons.showButtons(this.buttons);
+      Meatazine.GUI.contextButtons.showButtons(this.buttons);
     },
     canvas_mouseupHandler: function () {
       canvas.off('mousemove');

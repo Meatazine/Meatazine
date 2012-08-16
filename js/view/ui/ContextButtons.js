@@ -29,12 +29,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     }
     this.hide();
     buttons.show();
-    var self = this;
-    // 为避免冒泡中触发事件，暂停一下才绑定
-    setTimeout(function () {
-      $('body').one('click', {self: self}, self.body_clickHandler);
-    }, 50);
-    $('body').off('click', this.body_clickHandler);
+    Meatazine.GUI.registerCancelHandler(this.body_clickHandler, this);
   },
   addTextButton_clickHandler: function (event) {
     var helper = $('<div class="text-helper">请添加到您喜欢的位置</div>');
@@ -51,7 +46,7 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
       helper.remove();
       if ($('#page-body').is(event.currentTarget)) {
         var pos = $(this).offset();
-        GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
+        Meatazine.GUI.page.addEditableText(event.pageX - pos.left, event.pageY - pos.top);
       }
       Meatazine.utils.Mouse.status = Meatazine.utils.Mouse.NORMAL;
     }
@@ -64,10 +59,11 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     event.stopPropagation();
   },
   body_clickHandler: function (event) {
-    if ($.contains(event.data.self.$el[0], event.target)) {
+    if ($.contains(this.$el[0], event.target)) {
       return;
     }
-    event.data.self.hide();
+    this.hide();
+    Meatazine.GUI.unregisterCancelHandler(this.body_clickHandler);
   },
   button_clickHandler: function (event) {
     event.stopPropagation();

@@ -166,7 +166,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
       map = value;
       this.setElement(map.getDiv());
       this.model = this.$el.data('model');
-      GUI.contextButtons.showButtons(this.buttons);
+      Meatazine.GUI.contextButtons.showButtons(this.buttons);
     },
     startEdit: function () {
       map.setOptions({
@@ -177,7 +177,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         .closest('.ui-draggable').draggable('disable')
         .end()
         .closest('.ui-resizable').resizable('disable');
-      GUI.page.$el.addClass('editing');
+      Meatazine.GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'map', 'edit-start']);
     },
     stopEdit: function (s) {
@@ -196,7 +196,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
         lng: latlng.lng(),
         zoom: zoom,
       });
-      GUI.page.$el.removeClass('editing');
+      Meatazine.GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'map', 'edit-stop']);
     },
     addMarkerButton_clickHandler: function (event) {
@@ -229,7 +229,7 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
     clickHandler: function (event) {
       this.model.trigger('select');
-      GUI.contextButtons.showButtons(this.buttons);
+      Meatazine.GUI.contextButtons.showButtons(this.buttons);
     },
   });
 })(Meatazine.view.ui.editor);

@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.utils');
+jQuery.namespace('Meatazine');
 Meatazine.utils = {
   render: function (template, data) {
     data = data.toJSON != null ? data.toJSON() : data;
@@ -36,3 +36,18 @@ Meatazine.utils = {
     return new F();
   },
 }
+Meatazine.displayUtils = {
+  /**
+   * 碰撞检测，判断一个Dom节点是否和一个点重合
+   * @param {Object} pos 位置对象，包含x，y
+   * @param {Dom Object} target Dom节点
+   */
+  hitTestPoint: function (pos, target) {
+    var offset = $(target).offset(),
+        isLeft = pos.x < offset.left,
+        isRight = pos.x > offset.left + $(target).width(),
+        isTop = pos.y < offset.top,
+        isBottom = pos.y > offset.top + $(target).height();
+    return !(isLeft || isRight || isTop || isBottom);
+  },
+};

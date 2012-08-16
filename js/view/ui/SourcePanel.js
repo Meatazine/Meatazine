@@ -9,7 +9,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     "click #source-list span": "span_clickHandler",
     "mouseover #source-list li": "sourceItem_mouseOverHandler",
     "mouseout #source-list li": "sourceItem_mouseOutHandler",
-    "focusout #source-list textarea": "textarea_focusOutHandler",
+    "click #source-list textarea": "textarea_clickHandler",
     "keydown #source-list textarea": "textarea_keydownHandler",
     "sortactivate #source-list ul": "source_sortactivateHandler",
     "sortdeactivate #source-list ul": "source_sortdeactivateHandler",
@@ -95,6 +95,28 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       .sortable()
       .disableSelection();
   },
+  replaceSpanWithTextarea: function (span) {
+    var textarea = $('<textarea>', {
+          val: span.html().replace(/<br(\s\/)?>/g, '\n'),
+          "name": span.attr('class'),
+          "placeholder": "点击修改内容",
+          "row": "3",
+          "class": "input-medium focused form-inline"
+        });
+    span.replaceWith(textarea);
+    textarea.focus();
+    Meatazine.GUI.registerCancelHandler(this.replaceTextareaWithSpan, this, textarea);
+  },
+  replaceTextareaWithSpan: function (textarea) {
+    var index = textarea.parent().index(),
+        collection = textarea.closest('ul').data('collection'),
+        value = textarea.val().replace(/[\n\r]/g, '<br />'),
+        key = textarea.attr('name');
+    textarea.replaceWith('<span class="' + key + '">' + value + '</span>');
+    collection.at(index).set(key, value);
+    Meatazine.GUI.unregisterCancelHandler(this.replaceTextareaWithSpan);
+    _gaq.push(['_trackEvent', 'source', 'edit']);
+  },
   setTemplateType: function (type, silent) {
     silent = silent == null ? true : silent;
     this.model.set({type: type}, {silent: silent});
@@ -109,21 +131,6 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
   },
   book_resizeHandler: function (w, h) {
     this.templateList.add(this.sourceList).height(h - 110); // 空出按钮的位置
-  },
-  textarea_focusOutHandler: function (event) {
-    var target = $(event.target),
-        index = target.parent().index(),
-        collection = target.closest('ul').data('collection'),
-        value = target.val(),
-        key = target.attr('name');
-    target.replaceWith('<span class="' + key + '">' + value + '</span>');
-    collection.at(index).set(key, value);
-    _gaq.push(['_trackEvent', 'source', 'edit']);
-  },
-  textarea_keydownHandler: function (event) {
-    if (event.keyCode == 13) {
-      $(event.target).focusout();
-    }
   },
   pages_addHandler: function (model) {
     this.templateList.removeClass('disabled');
@@ -181,16 +188,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       .appendTo(this.sourceList);
   },
   span_clickHandler: function (event) {
-    var target = $(event.target),
-        textarea = $('<textarea>', {
-          val: target.text(),
-          "name": target.attr('class'),
-          "placeholder": "点击修改内容",
-          "row": "3",
-          "class": "input-medium focused form-inline"
-        });
-    target.replaceWith(textarea);
-    textarea.focus();
+    this.replaceSpanWithTextarea($(event.currentTarget));
   },
   template_clickHandler: function (event) {
     if (this.templateList.hasClass('disabled')) {
@@ -209,5 +207,13 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       .siblings('.active').removeClass('active');
     this.model.set('type', this.getTemplateType(currentTemplate.find('img').attr('src')));
     _gaq.push(['_trackEvent', 'template', 'select', this.model.get('type')]);
+  },
+  textarea_clickHandler: function (event) {
+    event.stopPropagation();
+  },
+  textarea_keydownHandler: function (event) {
+    if (event.keyCode == 13 && event.ctrlKey) {
+      this.replaceTextareaWithSpan($(event.currentTarget));
+    }
   },
 })
