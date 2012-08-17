@@ -26,12 +26,13 @@ $(function () {
         book: book,
         source: source.model,
       });
-  Meatazine.GUI.init({
+  Meatazine.GUI.initialize({
     config: config,
     book: book,
   });
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
+
   // 处理UI事件
   list.on('select', source.pageList_selectHandler, source);
   list.on('select', page.pageList_selectHandler, page);

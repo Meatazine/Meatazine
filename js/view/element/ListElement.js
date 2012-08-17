@@ -75,7 +75,7 @@ jQuery.namespace('Meatazine.view.element');
     },
     item_clickHandler: function (event) {
       ns.BaseElement.prototype.item_clickHandler.call(this, event);
-      GUI.contextButtons.showButtons(buttons, true);
+      Meatazine.GUI.contextButtons.showButtons(buttons, true);
       this.initButtons();
     },
     grid_clickHandler: function (event) {
