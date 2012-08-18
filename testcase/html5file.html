@@ -36,18 +36,19 @@
   #hidden-form {
     display:none;
   }
-</style>
+  #file-list {
+    
+  }
+ </style>
 <script>
   $(function () {
     var localFile = new Meatazine.filesystem.FileReferrence();
     localFile.on('complete:clone', function (url) {
       fileURL = url;
       $('#file-here').removeClass('active');
-      $('#pic-container')
-        .empty()
-        .append('<a href="' + url + '" class="thumbnail"><img src="' + url + '" /></a>');
+      $('#pic-container').html('<a href="' + url + '" class="thumbnail"><img src="' + url + '" /></a>');
       $('.btn').prop('disabled', false);
-    })
+    });
     $('#file-here')
       .on('drop', function (event) {
         var files = event.originalEvent.dataTransfer.files,
@@ -89,7 +90,55 @@
       });
       localFile.read(fileURL);
     });
+    $('#list-btn').click(function (event) {
+      localFile.readEntries(showFilelist);
+    });
+    $('#file-list').on('click', 'option', function (event) {
+      var index = event.currentTarget.value,
+          fileEntry = $('#file-list').data('entries')[index],
+          fileURL = fileEntry.toURL();
+      $('#pic-container').html('<a href="#' + index + '" class="thumbnail"><img src="' + fileURL + '" /></a>');
+    });
+    $('#pic-container').on('click', 'a', function (event) {
+      if (/#/.test(event.currentTarget.href)) {
+        var url = event.currentTarget.href,
+            index = Number(url.substr(url.indexOf('#') + 1)),
+            entry = $('#file-list').data('entries')[index];
+        entry.file(function (file) {
+          var formData = new FormData();
+          formData.append('id', 1);
+          formData.append('type', 'test');
+          formData.append('file', file);
+          $.ajax({
+            url: '../api/upload.php',
+            data: formData,
+            type: 'POST',
+            cache: false,
+            context: this,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+              console.log(data);
+              alert(JSON.parse(data));
+            },
+          });
+          console.log(file, formData);
+        }, null);
+        return false;
+      }
+    });
   });
+  function showFilelist(entries) {
+    var options = '';
+    entries.forEach(function (entry, i) {
+      if (entry.isFile) {
+        options += '<option value="' + i + '">' + entry.name + '</options>';
+      }
+    });
+    $('#file-list')
+      .data('entries', entries)
+      .html(options);
+  };
   var fileURL;
 </script>
 <div class="navbar navbar-fixed-top">
@@ -114,7 +163,15 @@
 <div class="container">
   <div class="hero-unit">
     <h1>HTML5 文件API测试用例</h1>
-    <p>本测试用例试基本等同于<a href="html5file.html">html5file.html</a>，只是将函数进行了分解封装。</p>
+    <p>本测试部分代码来源于<a href="http://www.html5rocks.com/en/tutorials/file/filesystem/">html5rocks</a>，和<a href="http://www.w3.org/TR/file-system-api/">W3C</a>。</p>
+    <p>计划实现以下内容</p>
+    <ol>
+      <li>从外面拖放文件</li>
+      <li>下载ZIP文件</li>
+      <li>列出文件列表</li>
+      <li>预览文件</li>
+      <li>上传文件</li>
+    </ol>
   </div>
   <div class="row">
     <div class="span4">
@@ -123,8 +180,13 @@
       </div>
       <p>
         <button id="download-btn" type="button" class="btn btn-primary" disabled="true">下载zip文件</button>
+        <button id="list-btn" type="button" class="btn btn-info">列出本地文件</button>
       </p>
-      
+      <form class="form-horizontal">
+        <select id="file-list" multiple="multiple" class="span4" size="10">
+          
+        </select>
+      </form>
     </div>
     <div class="span8">
       <div class="thumbnails" id="pic-container">

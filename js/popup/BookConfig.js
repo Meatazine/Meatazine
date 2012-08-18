@@ -42,7 +42,7 @@ Meatazine.popup.BookConfig = Backbone.View.extend({
           alert(response.msg);
         }
       },
-    })
+    });
   },
   bookCover_changeHandler: function (event) {
     this.uploadImage(event.target.files[0], 'cover');
