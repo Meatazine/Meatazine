@@ -20,6 +20,8 @@ function BookReader(el, w, h) {
       style = null,
       resizeTimeout = 0,
       turnTimeout = 0,
+      casousalInterval = 0,
+      slideInterval = 0,
       dummy = $('#dummy'),
       pages = [],
       currentPage = -1,
@@ -47,7 +49,7 @@ function BookReader(el, w, h) {
       .on('click', '.slide-navi li', slideNavi_clickHandler)
       // 防止地图在缩放的时候引发翻页
       .on('mousedown touchstart', '.map-container', disableScroll)
-      .on('mouseup touchover', '.map-container', enableScroll);
+      .on('mouseup touchover gestureend', '.map-container', enableScroll);
     scroll = new iScroll(id, {
       snap: true,
       momentum: false,
@@ -58,6 +60,7 @@ function BookReader(el, w, h) {
         turnTimeout = setTimeout(function () {
           scroll.enable();
         }, 800);
+        stopCarousel();
       },
       onScrollEnd: function (event) {
         clearTimeout(turnTimeout);
@@ -67,6 +70,16 @@ function BookReader(el, w, h) {
     });
   
     resetPages();
+    _gaq.push(['_trackEvent', 'book', 'start']);
+  }
+  function autoplaySlide() {
+    this.find('.slide-navi').each(function (i) {
+      var navi = $(this).find('.active'),
+          src = '';
+      navi = navi.next().length > 0 ? navi.next() : navi.siblings().first();
+      src = navi.attr('ori') || navi.find('img').attr('ori');
+      playSlide(navi, src);
+    });
   }
   /**
    * 检查页所处的位置
@@ -141,6 +154,7 @@ function BookReader(el, w, h) {
             });
             mapmarker.info.open(map, mapmarker);
           }
+          _gaq.push(['_trackEvent', 'component', 'map', 'marker', i]);
         });
         map.markers.push(mapmarker);
       });
@@ -151,7 +165,8 @@ function BookReader(el, w, h) {
         map.setOptions({
           center: position,
           zoom: data.zoom,
-        })
+        });
+        _gaq.push(['_trackEvent', 'component', 'map', 'back-button']);
       });
     }
   }
@@ -285,10 +300,56 @@ function BookReader(el, w, h) {
       return $(this).attr('ori') || this.src;
     });
     // 地图
+    if (!window.google) {
+      return;
+    }
     page.find('.map-container').each(function (i) {
       var data = JSON.parse($(this).attr('data-map'));
       createMap(this, data);
     });
+  }
+  /**
+   * 有隐藏元素的地方，开始切换
+   */
+  function playCarousel() {
+    this.find('.hide').each(function (i) {
+      var hidden = $(this),
+          showns = hidden.siblings().not(hidden.siblings('.hide, .fadeOut')),
+          length = showns.length,
+          target = null;
+      if (length == 0) {
+        return true;
+      }
+      target = showns.eq(Math.random() * length >> 0);
+      target.addClass('animated xshort fadeOut');
+      setTimeout(function () {
+        hidden
+          .insertAfter(target)
+          .removeClass('hide')
+          .addClass('animated xshort fadeIn');
+        target
+          .addClass('hide')
+          .removeClass('animated xshort fadeOut')
+          .appendTo(target.parent());
+      }, 100);
+    });
+  }
+  /**
+   * 播放指定的slide
+   */
+  function playSlide(target, src) {
+    var parent = target.closest('.page'),
+        body = parent.find('.slide-main'),
+        currImage = body.find('img'),
+        nextImage = $('<img width="' + currImage.width() + '" height="' + currImage.height() + '" src="' + src + '" ori="' + src + '" />');
+    currImage.addClass('animated short fadeOut');
+    setTimeout(function () {
+      currImage.replaceWith(nextImage);
+      nextImage.addClass('animated short fadeIn');
+    }, 250);
+    target.siblings().removeClass('active');
+    target.addClass('active');
+    _gaq.push(['_trackEvent', 'component', 'slide', 'change', target.index()]);
   }
   /**
    * 重要函数，用来根据滚动的位置重新设置前后各页的属性
@@ -324,6 +385,32 @@ function BookReader(el, w, h) {
       body.append(createItem(i, currentPage));
     }
     dummy.width((currentPage - end > -1 ? currentPage - end + 1 : 0) * width + 'px');
+    
+    startCarousel();
+    _gaq.push(['_trackEvent', 'page', 'change', currentPage]);
+  }
+  /**
+   * 开始自动轮播被隐藏的元素
+   */
+  function startCarousel() {
+    var page = $('#' + currentPage);
+    if (page.find('.hide').length) {
+      casousalInterval = setInterval(function () {
+        playCarousel.call(page);
+      }, 2000);
+    }
+    if (page.find('.slide-navi').length > 0) {
+      slideInterval = setInterval(function () {
+        autoplaySlide.call(page);
+      }, 5000);
+    }
+  }
+  /**
+   * 不再轮播隐藏的元素
+   */
+  function stopCarousel() {
+    clearInterval(casousalInterval);
+    clearInterval(slideInterval);
   }
   /**
    * 跳转到某页
@@ -356,6 +443,7 @@ function BookReader(el, w, h) {
           .animate(origin, '200');
       });
     event.stopPropagation();
+    _gaq.push(['_trackEvent', 'component', 'toggle', 'show']);
   }
   /**
    * slide导航点击事件
@@ -363,19 +451,10 @@ function BookReader(el, w, h) {
    * @private
    */
   function slideNavi_clickHandler(event) {
+    clearInterval(slideInterval);
     var target = $(event.currentTarget),
-        parent = target.closest('.page'),
-        body = parent.find('.slide-main'),
-        src = target.attr('ori') || $(event.target).attr('src') || target.find('img').attr('src'),
-        currImage = body.find('img'),
-        nextImage = $('<img width="' + currImage.width() + '" height="' + currImage.height() + '" src="' + src + '" ori="' + src + '" />');
-    currImage.addClass('animated short fadeOut');
-    setTimeout(function () {
-      currImage.replaceWith(nextImage);
-      nextImage.addClass('animated short fadeIn');
-    }, 250);
-    target.siblings().removeClass('active');
-    target.addClass('active');
+        src = target.attr('ori') || $(event.target).attr('src') || target.find('img').attr('src');
+    playSlide(target, src);
     event.stopPropagation();
   }
   /**
