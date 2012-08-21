@@ -14,24 +14,6 @@
   vertical-align:baseline;
   background:transparent;
 }
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  border-radius: 2px;
-  margin:4px;
-}
-::-webkit-scrollbar-track:hover {
-  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
-  background:#EEE;
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 3px;
-  background:#CCC;
-}
-::-webkit-scrollbar-thumb:hover {
-  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.5);
-}
 body {
   background:#000;
 }
@@ -45,9 +27,12 @@ body {
   font:16px/150% Arial, Microsoft Yahei;
 }
 article {
-  overflow-y:scroll;
+  overflow:auto;
   overflow-scrolling:touch;
   -webkit-overflow-scrolling:touch;
+}
+article p {
+  padding-bottom:10px;
 }
 .map-container {
   color:initial;

@@ -13,21 +13,27 @@
 function BookReader(el, w, h) {
   "use strict"
   var id = el,
-      $el = $('#' + el),
       body = $('#container'),
-      config = initConfig(),
-      scroll = null,
-      style = null,
+      dummy = $('#dummy'),
+      
       resizeTimeout = 0,
       turnTimeout = 0,
       casousalInterval = 0,
       slideInterval = 0,
-      dummy = $('#dummy'),
+      
+      scroll = null,
       pages = [],
       currentPage = -1,
       totalPage = 0,
+      
+      style = null,
       width = parseInt(w, 0),
-      height = parseInt(h, 0);
+      height = parseInt(h, 0),
+      
+      config = initConfig(),
+      isAndroid = /android/i.test(navigator.appVersion),
+      isIOS = /iphone|ipad/i.test(navigator.appVersion),
+      isDesktop = /windows|linux|macintosh/i.test(navigator.appVersion);
   /**
    * 渲染杂志
    * @param {String} Content 内容，以“#”分割每页
@@ -45,11 +51,17 @@ function BookReader(el, w, h) {
       .width(width * totalPage)
       // 切换效果
       .on('click', '[data-toggle]', dataToggle_clickHandler)
+      .on('click', '[data-animate]', dataAnimate_clickHandler)
       // 幻灯片
       .on('click', '.slide-navi li', slideNavi_clickHandler)
       // 防止地图在缩放的时候引发翻页
       .on('mousedown touchstart', '.map-container', disableScroll)
       .on('mouseup touchover gestureend', '.map-container', enableScroll);
+    if (isAndroid) {
+      body
+        .on('mousedown touchstart', 'article', article_mouseDownHandler)
+        .on('mouseup touchover', 'article', article_mouseUpHandler);
+    }
     scroll = new iScroll(id, {
       snap: true,
       momentum: false,
@@ -280,6 +292,15 @@ function BookReader(el, w, h) {
     page.find('.map-container').each(function (i) {
       destroyMap(this);
     });
+    if (isDesktop) {
+      page.find('article').each(function (i) {
+        if ($(this).data('scroll')) {
+          $(this).data('scroll').destroy();
+          $(this).data('scroll', null);
+        }
+      });
+    }
+    
   }
   /**
    * 设置当前页为可见页
@@ -300,13 +321,27 @@ function BookReader(el, w, h) {
       return $(this).attr('ori') || this.src;
     });
     // 地图
-    if (!window.google) {
-      return;
+    if (window.google) {
+      page.find('.map-container').each(function (i) {
+        var data = JSON.parse($(this).attr('data-map'));
+        createMap(this, data);
+      });
     }
-    page.find('.map-container').each(function (i) {
-      var data = JSON.parse($(this).attr('data-map'));
-      createMap(this, data);
-    });
+    // 超过额定尺寸的article们
+    if (isDesktop) {
+      // 桌面系统应该内存富裕，cpu强劲，所以直接iscroll就好
+      page.find('article').each(function (i) {
+        var parent = this.parentNode;
+        if (parent.scrollHeight > parent.clientHeight) {
+          var scroll = new iScroll(parent, {
+            momentum: false,
+            hScroll: false,
+            scrollbarClass: 'scrollBarV'
+          });
+          $(this).data('scroll', scroll);
+        }
+      });
+    }
   }
   /**
    * 有隐藏元素的地方，开始切换
@@ -414,19 +449,56 @@ function BookReader(el, w, h) {
   }
   /**
    * 跳转到某页
-   * @param {Object} index 页码
+   * @param {Number} index 页码
    * private
    */
   function turnToPage(index) {
     scroll.scrollToPage(index, 0);
   }
   /**
+   * Android设备中，可以滚动的文字按下鼠标的事件
+   * 记录当前鼠标坐标，开始侦听mousemove
+   * @param {Event} event
+   * @private
+   */
+  function article_mouseDownHandler(event) {
+    var scroll = event.pageY,
+        origin = this.scrollTop,
+        max = this.scrollHeight - this.clientHeight,
+        min = 0;
+    console.log(this.scrollHeight, this.clientHeight);
+    $(this).on('mousemove', function (event) {
+      var to = origin + scroll - event.pageY;
+      to = to > max ? max : to;
+      to = to < min ? min : to;
+      this.scrollTop = to;
+    });
+  }
+  /**
+   * Android设备中，松开鼠标的事件
+   * 停止侦听mousemove
+   * @param {Event} event
+   * @private
+   */
+  function article_mouseUpHandler(event) {
+    $(this).off('mousemove');
+  }
+  /**
+   * 有动画的原件被点击的事件处理
+   * @param {Event} event
+   * @private
+   */
+  function dataAnimate_clickHandler(event) {
+    var origin = $(this).data('origin');
+    $(this).animate(origin, '200');
+  }
+  /**
    * 控制开关点击处理事件
-   * @param {Object} event
+   * @param {Event} event
    * @private
    */
   function dataToggle_clickHandler(event) {
-    var target = $(event.target).siblings('.' + $(event.target).attr('data-toggle')),
+    var target = $(this).siblings('.' + $(event.target).attr('data-toggle')),
         config = JSON.parse(target.attr('data-animate')),
         offset = target.offset(),
         parentOffset = target.parent().offset(),
@@ -436,18 +508,12 @@ function BookReader(el, w, h) {
     for (prop in config) {
       origin[prop] = target.css(prop);
     }
-    target
-      .animate(config, '200')
-      .one('click', function (event) {
-        $(this)
-          .animate(origin, '200');
-      });
-    event.stopPropagation();
+    target.data('origin', origin).animate(config, '200')
     _gaq.push(['_trackEvent', 'component', 'toggle', 'show']);
   }
   /**
    * slide导航点击事件
-   * @param {Object} event
+   * @param {Event} event
    * @private
    */
   function slideNavi_clickHandler(event) {
@@ -459,7 +525,7 @@ function BookReader(el, w, h) {
   }
   /**
    * 窗口尺寸变化事件
-   * @param {Object} event
+   * @param {Event} event
    * @private
    */
   function window_resizeHandler(event) {
