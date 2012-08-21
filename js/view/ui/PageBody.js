@@ -89,7 +89,7 @@ jQuery.namespace('Meatazine.view.ui');
         }
         this.innerHTML = '';
       });
-      this.model.set('renderedHTML', '<div class="page">' + html.html() + '</div>');
+      this.model.set('renderedHTML', '<div class="page">' + html.html().replace(/"/g, "'") + '</div>');
     },
     saveTemplate: function (isReset) {
       if (this.$el.html().replace(/\W/gm,'') == '') {

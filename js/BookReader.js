@@ -82,7 +82,7 @@ function BookReader(el, w, h) {
     });
   
     resetPages();
-    _gaq.push(['_trackEvent', 'book', 'start']);
+    if (_gaq) _gaq.push(['_trackEvent', 'book', 'start']);
   }
   function autoplaySlide() {
     this.find('.slide-navi').each(function (i) {
@@ -166,7 +166,7 @@ function BookReader(el, w, h) {
             });
             mapmarker.info.open(map, mapmarker);
           }
-          _gaq.push(['_trackEvent', 'component', 'map', 'marker', i]);
+          if (_gaq) _gaq.push(['_trackEvent', 'component', 'map', 'marker', i]);
         });
         map.markers.push(mapmarker);
       });
@@ -178,7 +178,7 @@ function BookReader(el, w, h) {
           center: position,
           zoom: data.zoom,
         });
-        _gaq.push(['_trackEvent', 'component', 'map', 'back-button']);
+        if (_gaq) _gaq.push(['_trackEvent', 'component', 'map', 'back-button']);
       });
     }
   }
@@ -384,7 +384,7 @@ function BookReader(el, w, h) {
     }, 250);
     target.siblings().removeClass('active');
     target.addClass('active');
-    _gaq.push(['_trackEvent', 'component', 'slide', 'change', target.index()]);
+    if (_gaq) _gaq.push(['_trackEvent', 'component', 'slide', 'change', target.index()]);
   }
   /**
    * 重要函数，用来根据滚动的位置重新设置前后各页的属性
@@ -422,7 +422,7 @@ function BookReader(el, w, h) {
     dummy.width((currentPage - end > -1 ? currentPage - end + 1 : 0) * width + 'px');
     
     startCarousel();
-    _gaq.push(['_trackEvent', 'page', 'change', currentPage]);
+    if (_gaq) _gaq.push(['_trackEvent', 'page', 'change', currentPage]);
   }
   /**
    * 开始自动轮播被隐藏的元素

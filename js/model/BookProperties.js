@@ -51,7 +51,7 @@ jQuery.namespace('Meatazine.model');
         success: function (template) {
           template = Mustache.render(template, data);
           // 将用到的素材添加到zip中，依次为link、script、有src属性的
-          template = template.replace(/(href|src)="(\S+)"/gmi, function () {
+          template = template.replace(/(href|src)=["'](\S+)["']/gmi, function () {
             // TODO 跨域问题暂时不考虑，以后可能会用服务器中介
             var url = arguments[2],
                 src = url.split('/').pop();
