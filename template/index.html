@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <title>杂志最终模板</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="cache-control" content="private" />
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="yes" name="apple-touch-fullscreen"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
@@ -18,6 +17,7 @@
 </script>
 <div id="viewport">
   <div id="container">
+    <div id="dummy"></div>
     {{{pages}}}
   </div>
 </div>
@@ -28,3 +28,16 @@
   <img src="img/mapmarkers.png" />
   <img src="img/spacer.gif" />
 </assets>
+<script>
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-9971999-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
