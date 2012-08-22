@@ -84,6 +84,10 @@ function BookReader(el, w, h) {
     resetPages();
     if (_gaq) _gaq.push(['_trackEvent', 'book', 'start']);
   }
+  /**
+   * 自动播放slide
+   * @private
+   */
   function autoplaySlide() {
     this.find('.slide-navi').each(function (i) {
       var navi = $(this).find('.active'),
@@ -181,6 +185,19 @@ function BookReader(el, w, h) {
         if (_gaq) _gaq.push(['_trackEvent', 'component', 'map', 'back-button']);
       });
     }
+  }
+  /**
+   * 创建iScroll滚动
+   * @param {Dom} dom dom节点
+   * @private
+   */
+  function createScroll(dom) {
+    var scroll = new iScroll(dom, {
+      momentum: false,
+      hScroll: false,
+      scrollbarClass: 'scrollBarV'
+    });
+    $(dom).data('scroll', scroll);
   }
   /**
    * 干掉地图，释放资源
@@ -292,7 +309,7 @@ function BookReader(el, w, h) {
     page.find('.map-container').each(function (i) {
       destroyMap(this);
     });
-    if (isDesktop) {
+    if (isDesktop || isIOS) {
       page.find('article').each(function (i) {
         if ($(this).data('scroll')) {
           $(this).data('scroll').destroy();
@@ -328,17 +345,16 @@ function BookReader(el, w, h) {
       });
     }
     // 超过额定尺寸的article们
-    if (isDesktop) {
+    if (isDesktop || isIOS) {
       // 桌面系统应该内存富裕，cpu强劲，所以直接iscroll就好
       page.find('article').each(function (i) {
+        if (this.scrollHeight > this.clientHeight) {
+          createScroll(this);
+          return;
+        }
         var parent = this.parentNode;
         if (parent.scrollHeight > parent.clientHeight) {
-          var scroll = new iScroll(parent, {
-            momentum: false,
-            hScroll: false,
-            scrollbarClass: 'scrollBarV'
-          });
-          $(this).data('scroll', scroll);
+          createScroll(parent);
         }
       });
     }
@@ -426,6 +442,7 @@ function BookReader(el, w, h) {
   }
   /**
    * 开始自动轮播被隐藏的元素
+   * @private
    */
   function startCarousel() {
     var page = $('#' + currentPage);
@@ -442,6 +459,7 @@ function BookReader(el, w, h) {
   }
   /**
    * 不再轮播隐藏的元素
+   * @private
    */
   function stopCarousel() {
     clearInterval(casousalInterval);
@@ -450,7 +468,7 @@ function BookReader(el, w, h) {
   /**
    * 跳转到某页
    * @param {Number} index 页码
-   * private
+   * @private
    */
   function turnToPage(index) {
     scroll.scrollToPage(index, 0);

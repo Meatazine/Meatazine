@@ -35,10 +35,9 @@ jQuery.namespace('Meatazine.view.ui.editor');
       Meatazine.GUI.registerCancelHandler(this.body_clickHandler, this);
     },
     setTargetClass: function (className) {
-      if (/h1|h2|h3|p/.test(className)) {
-        var extraClass = className == 'p' ? ' p20' : '',
-            text = className == 'p' ? '<p>' + this.$el.text() + '</p>' : this.$el.text();
-        className = className == 'p' ? 'div' : className;
+      if (/h1|h2|h3|article/.test(className)) {
+        var extraClass = className == 'article' ? ' p20' : '',
+            text = className == 'article' ? '<p>' + this.$el.text() + '</p>' : this.$el.text();
         this.$el.replaceWith($('<' + className + ' class="editable' + extraClass + '">' + text + '</' + className + '>'));
         return;
       }
