@@ -318,7 +318,7 @@ body {
   margin:10px 0;
 }
 #panel .btn-group .btn {
-  width:128px;
+  width:120px;
 }
 #panel .nav-tabs {
   border:none;
@@ -429,15 +429,6 @@ body {
 }
 .carousel p {
   line-height:20px;
-}
-.dropdown-menu .disabled {
-  color:#CCC;
-  padding:3px 15px;
-  cursor: default;
-}
-.dropdown-menu .disabled:hover {
-  color:#CCC;
-  background-color: #FFF;
 }
 .map-container img {
   max-width:none;
