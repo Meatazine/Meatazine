@@ -31,7 +31,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   setButtonsStatus: function (isDisabled, buttons) {
     buttons = buttons instanceof String ? [buttons] : buttons;
     _.each(buttons, function (target, i) {
-      this.$('[href=#' + target + ']').toggleClass('disabled', isDisabled);
+      this.$('[href=#' + target + ']').parent().toggleClass('disabled', isDisabled);
     });
   },
   showQQLoginResult: function (data) {
@@ -49,7 +49,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     Meatazine.user.initLogin();
   },
   systemButton_clickHandler: function (event) {
-    if ($(event.target).hasClass('disabled')) {
+    if ($(event.target).closest('disabled').length > 0) {
       event.stopPropagation();
       return false;
     }
