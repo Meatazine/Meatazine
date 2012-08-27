@@ -223,12 +223,14 @@ jQuery.namespace('Meatazine.view.ui.editor');
         callback = null;
         args = null;
       }
+      Meatazine.service.AssetsSyncService.add(url);
     },
     resizer_completeHandler: function () {
       this.trigger('upload:all');
     },
     resizer_readyHandler: function (url, scale) {
       this.trigger('upload:one', url, scale);
+      Meatazine.service.AssetsSyncService.add(url);
     },
     scale_changeHandler: function (event) {
       var value = $(event.target).val();

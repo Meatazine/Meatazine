@@ -44,25 +44,11 @@ jQuery.namespace('Meatazine.filesystem');
       }, this);
       this.read(file);
     }
+    this.fetch = function (url) {
+      window.webkitResolveLocalFileSystemURL(url, fileEntry_fetchReadyHandler)
+    }
     this.read = function (url) {
       window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
-    }
-    this.save = function (name, dir, content, type, argus) {
-      fileDir = dir;
-      fileName = fileDir ? fileDir + '/' + name : name;
-      fileContent = content;
-      fileType = type || 'text/plain';
-      params = argus;
-      if (fileDir) {
-        this.on('complete:createDirs', function () {
-          this.off('complete:createDirs');
-          fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
-        }, this);
-        folders = dir.split('/');
-        createDir(fileSystem.root);
-      } else {
-        fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
-      }
     }
     /**
      * 读取目录
@@ -87,6 +73,23 @@ jQuery.namespace('Meatazine.filesystem');
       };
       readEntries();
     }
+    this.save = function (name, dir, content, type, argus) {
+      fileDir = dir;
+      fileName = fileDir ? fileDir + '/' + name : name;
+      fileContent = content;
+      fileType = type || 'text/plain';
+      params = argus;
+      if (fileDir) {
+        this.on('complete:createDirs', function () {
+          this.off('complete:createDirs');
+          fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
+        }, this);
+        folders = dir.split('/');
+        createDir(fileSystem.root);
+      } else {
+        fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
+      }
+    }
     function createDir(root) {
       if (folders[0] == '.' || folders[0] == '') {
         folders = folders.slice(1);
@@ -105,15 +108,18 @@ jQuery.namespace('Meatazine.filesystem');
       fileURL = fileEntry.toURL();
       fileEntry.createWriter(fileWriter_cloneReadyHandler, errorHandler);
     }
+    function fileEntry_fetchReadyHandler(fileEntry) {
+      fileEntry.file(fileFetchHandler, errorHandler);
+    }
     function fileEntry_readReadyHandler(fileEntry) {
       fileEntry.file(fileReadyHandler, errorHandler);
+    }
+    function fileEntry_removeReadyHandler(fileEntry) {
+      fileEntry.remove(fileRemoveHandler, errorHandler);
     }
     function fileEntry_saveReadyHandler(fileEntry) {
       fileURL = fileEntry.toURL();
       fileEntry.createWriter(fileWriter_saveReadyHandler, errorHandler);
-    }
-    function fileEntry_removeReadyHandler(fileEntry) {
-      fileEntry.remove(fileRemoveHandler, errorHandler);
     }
     function fileWriter_cloneReadyHandler(fileWriter) {
       fileWriter.onwriteend = function(e) {
@@ -151,6 +157,9 @@ jQuery.namespace('Meatazine.filesystem');
       }
       fileWriter.write(blob);
       fileContent = null;
+    }
+    function fileFetchHandler(file) {
+      self.trigger('complete:fetch', file);
     }
     function fileReadyHandler(file) {
       reader.readAsBinaryString(file);

@@ -44,6 +44,8 @@
         <file name="model/PageCollection.js" />
         <file name="model/SourceModel.js" />
         <file name="model/SavedBookCollection.js" />
+        <file name="service/ServerCall.js" />
+        <file name="service/AssetsSyncService.js" />
         <file name="config/UserGuideConfig.js" />
         <file name="popup/Welcome.js" />
         <file name="popup/ScreenSizeSelector.js" />
