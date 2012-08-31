@@ -38,7 +38,7 @@ $sql = "SELECT 'x'
         FROM m_book LEFT JOIN m_user ON m_user.id=m_book.owner
         WHERE m_book.id=$id AND m_user.qq='$openid'";
 $check = $DB->query($sql);
-if (!$sql) {
+if (!$check) {
   throwError('auth');
 }
 $sql = "UPDATE m_book

@@ -105,7 +105,8 @@
             index = Number(url.substr(url.indexOf('#') + 1)),
             entry = $('#file-list').data('entries')[index];
         entry.file(function (file) {
-          var formData = new FormData();
+          var formData = new FormData(),
+              xhr;
           formData.append('id', 1);
           formData.append('type', 'test');
           formData.append('file', file);
@@ -117,9 +118,18 @@
             context: this,
             contentType: false,
             processData: false,
+            xhr: function () {
+              xhr = new window.XMLHttpRequest();
+              xhr.upload.addEventListener('progress', function (event) {
+                console.log(event.loaded / event.total * 100 >> 1);
+              });
+              return xhr;
+            },
             success: function (data) {
               console.log(data);
               alert(JSON.parse(data));
+              xhr.upload.removeEventListener('progres');
+              xhr = null;
             },
           });
           console.log(file, formData);
