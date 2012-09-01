@@ -1,0 +1,22 @@
+CREATE  TABLE `meatazine`.`m_user` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `qq` VARCHAR(32) NULL COMMENT 'qq openid' ,
+  `weibo` VARCHAR(32) NULL COMMENT '新浪微博 openid' ,
+  `status` TINYINT UNSIGNED NULL DEFAULT 0 COMMENT '用户状态，0为正常，1为删除' ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
+  INDEX `qq` (`qq` ASC) )
+COMMENT = '用户表，存储用户的相关信息';
+
+CREATE  TABLE `meatazine`.`m_book` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `owner` INT UNSIGNED NULL COMMENT '作者id' ,
+  `title` VARCHAR(100) NULL COMMENT '杂志名称' ,
+  `content` TEXT NULL COMMENT '杂志内容' ,
+  `create_time` TIMESTAMP NULL COMMENT '创建时间' ,
+  `edit_time` TIMESTAMP NULL COMMENT '编辑时间' ,
+  `status` TINYINT UNSIGNED NULL DEFAULT 0 COMMENT '当前状态 0正常，1删除' ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
+COMMENT = '杂志记录表';
+

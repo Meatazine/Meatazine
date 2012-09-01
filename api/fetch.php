@@ -30,7 +30,7 @@ $sql = "INSERT INTO m_user
         VALUES ('$openid')";
 $check = $DB->query($sql);
 if ($check) {
-  $result = array('code' => '0', 'data' => $bookid);
+  $result = array('code' => '0', 'data' => 0);
 } else {
   throwError('sql', $sql);
 }

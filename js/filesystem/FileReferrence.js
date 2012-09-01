@@ -26,29 +26,30 @@ jQuery.namespace('Meatazine.filesystem');
       fileDir = dir;
       fileName = filename || file.name;
       fileName = fileDir ? fileDir + '/' + fileName : fileName;
-      if (fileDir) {
-        this.on('complete:createDirs', function () {
-          this.off('complete:createDirs');
-          fileSystem.root.getFile(fileName, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
-        }, this);
-        folders = dir.split('/');
-        createDir(fileSystem.root);
-      } else {
-        fileSystem.root.getFile(fileName, {create: true}, fileEntry_cloneReadyHandler, errorHandler);
-      }
+      getDirectory(dir, function (dir) {
+        dir.getFile(fileName, {create:true, exclusive: true}, fileEntry_cloneReadyHandler, errorHandler);
+      });
     }
     this.copy = function (file, dir, filename, args) {
-      this.on('complete:read', function (data) {
-        this.save(filename, dir, data, 'image/jpeg', args);
-        this.off('complete:read', null, this);
-      }, this);
-      this.read(file);
+      var self = this
+          directory = null;
+      function success(entry) {
+        self.trigger('complete:copy', entry.toURL(), args);
+      }
+      function fileEntry_copyReadyHandler(fileEntry) {
+        fileEntry.copyTo(directory, filename, success, errorHandler);
+      }
+      function start(directoryEntry) {
+        directory = directoryEntry;
+        window.resolveLocalFileSystemURL(file, fileEntry_copyReadyHandler);
+      }
+      getDirectory(dir, start);
     }
     this.fetch = function (url) {
-      window.webkitResolveLocalFileSystemURL(url, fileEntry_fetchReadyHandler)
+      window.resolveLocalFileSystemURL(url, fileEntry_fetchReadyHandler)
     }
     this.read = function (url) {
-      window.webkitResolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
+      window.resolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
     }
     /**
      * 读取目录
@@ -79,30 +80,9 @@ jQuery.namespace('Meatazine.filesystem');
       fileContent = content;
       fileType = type || 'text/plain';
       params = argus;
-      if (fileDir) {
-        this.on('complete:createDirs', function () {
-          this.off('complete:createDirs');
-          fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
-        }, this);
-        folders = dir.split('/');
-        createDir(fileSystem.root);
-      } else {
-        fileSystem.root.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
-      }
-    }
-    function createDir(root) {
-      if (folders[0] == '.' || folders[0] == '') {
-        folders = folders.slice(1);
-      }
-      root.getDirectory(folders[0], {create: true}, dirEntry_checkHandler, errorHandler);
-    }
-    function dirEntry_checkHandler(dirEntry) {
-      folders.shift();
-      if (folders.length > 0) {
-        createDir(dirEntry);
-      } else {
-        self.trigger('complete:createDirs');
-      }
+      getDirectory(dir, function (dir) {
+        dir.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
+      });
     }
     function fileEntry_cloneReadyHandler(fileEntry) {
       fileURL = fileEntry.toURL();
@@ -175,6 +155,28 @@ jQuery.namespace('Meatazine.filesystem');
         fileSystem.root.getFile(fileName, {create: false}, fileEntry_removeReadyHandler, errorHandler);
       }
     }
+    
+    function getDirectory(dir, callback) {
+      var folders = dir.split('/'),
+          finalDir = fileSystem.root;
+      function checkDir(root, folders) {
+        if (folders[0] == '.' || folders[0] == '') {
+          folders = folders.slice(1);
+        }
+        root.getDirectory(folders.shift(), {create: true}, function (dirEntry) {
+          if (folders.length > 0) {
+            checkDir(dirEntry, folders);
+          } else {
+            finalDir = dirEntry;
+          }
+        }, errorHandler);
+      }
+      if (folders.length > 0) {
+        checkDir(fileSystem.root, folders);
+      }
+      callback(finalDir);
+    }
+    
     _.extend(this, Backbone.Events);
     reader.onloadend = function (event) {
       self.trigger('complete:read', event.target.result);
@@ -197,6 +199,7 @@ jQuery.namespace('Meatazine.filesystem');
   }
   
   // 取FileSystem引用
+  window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-  window.requestFileSystem(TEMPORARY, 128 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
+  window.requestFileSystem(TEMPORARY, 1024 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
 })(Meatazine.filesystem);

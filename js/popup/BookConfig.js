@@ -21,28 +21,7 @@ Meatazine.popup.BookConfig = Backbone.View.extend({
     if (file == null) {
       return;
     }
-    var data = new FormData();
-    data.append('id', this.model.get('id'));
-    data.append('type', type);
-    data.append('file', file);
-    $.ajax({
-      url: 'api/upload.php',
-      data: data,
-      type: 'POST',
-      cache: false,
-      context: this,
-      contentType: false,
-      processData: false,
-      success: function (data) {
-        console.log(data);
-        var response = JSON.parse(data);
-        if (response.code == 1) {
-          this.$el.find('.' + type).attr('src', 'api/' + response.fileurl + '?t=' + (new Date()).getTime());
-        } else {
-          alert(response.msg);
-        }
-      },
-    });
+    Meatazine.service.ServerCall.upload(file, type, upload_completeHandler, null, this);
   },
   bookCover_changeHandler: function (event) {
     this.uploadImage(event.target.files[0], 'cover');
@@ -79,6 +58,9 @@ Meatazine.popup.BookConfig = Backbone.View.extend({
       }
     });
     this.model.set('platform', count);
+  },
+  upload_completeHandler: function (data) {
+    this.$el.find('.' + type).attr('src', 'api/' + data.fileurl + '?t=' + (new Date()).getTime());
   },
   shownHandler: function (event) {
     this.$('.btn-info').text('id: ' + this.model.get('id'));

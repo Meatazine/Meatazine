@@ -10,6 +10,7 @@ jQuery.namespace('Meatazine.filesystem');
     this.isLoading = false;
     _.extend(this, Backbone.Events);
     localFile.on('complete:clone', this.file_clonedHandler, this);
+    localFile.on('complete:copy', this.file_copyHandler, this);
     localFile.on('complete:save', this.file_savedHandler, this);
   }
   ns.ImageResizer.prototype = {
@@ -41,7 +42,7 @@ jQuery.namespace('Meatazine.filesystem');
           scale = 1;
       image.onload = function () {
         if (image.width <= size.width && image.height <= size.height && image.width / image.height == size.width / size.height) {
-          localFile.copy(url, '/', url.substr(url.lastIndexOf('/') + 1), size.width / image.width);
+          localFile.copy(url, '', url.substr(url.lastIndexOf('/') + 1), size.width / image.width);
           return;
         }
         var sourceWidth,
@@ -77,6 +78,10 @@ jQuery.namespace('Meatazine.filesystem');
     },
     file_clonedHandler: function (url) {
       this.handleImage(url);
+    },
+    file_copyHandler: function (url) {
+      this.trigger('complete:one', url, 1);
+      this.next();
     },
     file_savedHandler: function (url, scale) {
       this.trigger('complete:one', url, scale);

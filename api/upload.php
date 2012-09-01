@@ -2,13 +2,11 @@
   /**
    * 处理上传icon和cover
    */
-  $id = $_REQUEST['id'];
-  $type = $_REQUEST['type'];
   $file = $_FILES['file'];
+  $filename = isset($_REQUEST['filename']) ? $_REQUEST['filename'] : $file['name'];
   
-  $ext = array_pop(explode('.', $file['name']));
-  $dir = 'assets/' . $id;
-  $filename = $dir . '/' . $type . '.png';
+  $dir = '../export/' . $bookid;
+  $filename = $dir . '/' . $filename;
   
   $isPass = TRUE;
   $msg = '';
@@ -34,9 +32,9 @@
   
   if ($isPass) {
     move_uploaded_file($file['tmp_name'], $filename);
-    $result = array('code' => '1', 'fileurl' => $filename);
+    $result = array('code' => '0', 'fileurl' => $filename);
   } else {
-    $result = array('code' => '200', 'msg' => $msg);
+    $result = array('code' => '1', 'msg' => $msg);
   }
   echo json_encode($result)
 ?>

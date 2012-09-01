@@ -46,7 +46,7 @@ jQuery.namespace('Meatazine.model');(function (ns) {
     },
   });
   ns.RemoteBookCollection = Backbone.Collection.extend({
-    index: 1,
+    index: 0,
     model: model,
     url: 'api/api.php',
   });

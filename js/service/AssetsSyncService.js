@@ -11,9 +11,13 @@ jQuery.namespace('Meatazine.service');
       if (!_.include(news, asset)) {
         news.push(asset);
       }
+      // 没登录的话中止上传
+      if (!Meatazine.user.get('isLogin') || Meatazine.book.get('id') == 0) {
+        return;
+      }
       if (!isUploading) {
         isUploading = true;
-        next();
+        this.next();
       }
     },
     checkAssets: function () {
@@ -24,15 +28,20 @@ jQuery.namespace('Meatazine.service');
       };
       ns.ServerCall.call('assets_pre_check', data, this.checkSuccessHandler, null, this);
     },
+    empty: function () {
+      queue = [];
+      news = [];
+      isUploading = false;
+    },
     next: function () {
       // 如果queue里有未完成的则继续上传
       if (queue.length) {
-        upload(queue.shift());
+        ns.ServerCall.upload(queue.shift());
         return;
       }
       // 如果queue完了就继续news
       if (news.length) {
-        checkAssets();
+        this.checkAssets();
       }
     },
     remove: function (asset) {
@@ -46,42 +55,16 @@ jQuery.namespace('Meatazine.service');
         news.splice(index, 1);
       }
     },
-    upload: function (asset) {
-      var formData = new FormData(),
-          self = this,
-          xhr;
-      formData.append('openid', Meatazine.user.get('openid'));
-      formData.append('bookid', Meatazine.book.get('id'));
-      formData.append('file', asset);
-      $.ajax({
-        url: 'api/upload.php',
-        data: formData,
-        type: 'POST',
-        cache: false,
-        context: this,
-        contentType: false,
-        processData: false,
-        xhr: function () {
-          xhr = new window.XMLHttpRequest();
-          xhr.upload.addEventListener('progress', function (event) {
-            self.trigger('upload:progress', event.loaded / event.total * 100 >> 0);
-          });
-          return xhr;
-        },
-        success: function (data) {
-          this.trigger('complete:one');
-          xhr.upload.removeEventListener('progress');
-          xhr = null;
-          next();
-        },
-      });
-    },
     checkSuccessHandler: function (response) {
       var array = JSON.parse(response);
       if (array.length) {
         queue = array;
       }
       news = [];
+    },
+    uploadSuccessHandler: function (data) {
+      this.trigger('complete:one');
+      next();
     },
   }, Backbone.Events);
 })(Meatazine.service);

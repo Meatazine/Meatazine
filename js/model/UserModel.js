@@ -93,7 +93,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   save: function (data) {
     var collection = this.get('isLogin') ? this.get('remote') : this.get('local');
     if (!collection.some(function (model, i) {
-      return model.get('id') == id;
+      return model.get('id') == data.id;
     })) {
       collection.create({
         id: data.id,

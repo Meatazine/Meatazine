@@ -152,13 +152,14 @@ jQuery.namespace('Meatazine.model');
       }
       // 同步或者不同步的保存
       if (Meatazine.user.get('isLogin')) {
-        Meatazine.service.ServerCall.call('save', {
+        var param = {
           bookid: this.get('id'),
           openid: localStorage.getItem('openid'),
           name: this.get('name'),
           data: content,
           content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true),
-        }, function (data) {
+        };
+        Meatazine.service.ServerCall.call('save', param, function (data) {
           if (this.get('id') == 0) {
             this.set('id', data);
             key = 'remote' + this.get('id');

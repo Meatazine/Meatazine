@@ -1,15 +1,21 @@
 jQuery.namespace('Meatazine.service');
 Meatazine.service.ServerCall = _.extend({
   queue: [],
-  url: 'api/api.php',
+  proxyURL: 'api/api.php',
+  fileURL: 'api/upload.php',
   call: function (api, data, success, error, context) {
-    var self = this;
+    var self = this,
+        init = {
+          api: api,
+          openid: Meatazine.user.get('openid'),
+        },
+        xhr = null;
     context = context || this;
     $.ajax({
       context: context,
-      data: _.extend({api: api}, data),
+      data: _.extend(data, init),
       method: 'post',
-      url: this.url,
+      url: this.proxyURL,
       xhr: function () {
         var xhr = new window.XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (event) {
@@ -17,7 +23,9 @@ Meatazine.service.ServerCall = _.extend({
         });
         return xhr;
       },
-      success: function (response, status, xhr) {
+      success: function (response) {
+        xhr.upload.removeEventListener('progress');
+        xhr = null;
         var data = JSON.parse(response);
         if (data.hasOwnProperty('type')) {
           Meatazine.GUI.showError(data.msg);
@@ -33,6 +41,48 @@ Meatazine.service.ServerCall = _.extend({
       error: error || this.errorHandler,
     });
     this.trigger('start');
+  },
+  upload: function (file, name, success, error, context) {
+    var self = this,
+        data = new FormData(),
+        xhr = null;
+    data.append('openid', Meatazine.user.get('openid'));
+    data.append('bookid', Meatazine.user.get('bookid'));
+    data.append('filename', name);
+    data.append('file', file);
+    context = context || this;
+    $.ajax({
+      url: this.fileURL,
+      data: data,
+      type: 'POST',
+      cache: false,
+      context: context,
+      contentType: false,
+      processData: false,
+      xhr: function () {
+        xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function (event) {
+          self.trigger('upload:progress', event.loaded / event.total * 100 >> 0);
+        });
+        return xhr;
+      },
+      success: function (data) {
+        xhr.upload.removeEventListener('progress');
+        xhr = null;
+        var data = JSON.parse(data);
+        if (data.hasOwnProperty('code') && data.code != 0) {
+          Meatazine.GUI.showError(data.msg);
+          return;
+        }
+        if (success != null) {
+          success.call(context, data.data);
+          return;
+        }
+        self.successHandler();
+        this.trigger('complete');
+      },
+      error: error || this.errorHandler,
+    });
   },
   errorHandler: function (xhr, status, error) {
     console.log(error);
