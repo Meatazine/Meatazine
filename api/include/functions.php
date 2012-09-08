@@ -14,13 +14,13 @@ define('TEMPLATE', '../template/index.html');
  * @return {int} $bookid 杂志id
  */
 function createNewBook($uid, $name, $data, $date) {
+  global $DB;
   // 插入杂志的内容到表
   $sql = "INSERT INTO m_book
-          (owner, title, content, create_date, edit_date)
-          VALUES ($uid, '$name', '$content', $date, $date)";
+          (owner, title, content, create_time, edit_time)
+          VALUES ($uid, '$name', '$data', '$date', '$date')";
   $check = $DB->query($sql);
   $bookid = $DB->lastInsertId();
-  
   // 创建预览目录放素材
   if ($bookid) {
     $dir = '../export/' . $bookid;
@@ -28,7 +28,6 @@ function createNewBook($uid, $name, $data, $date) {
       mkdir($dir);
     }
   }
-  
   return $bookid;
 }
 /**
@@ -38,13 +37,13 @@ function createNewBook($uid, $name, $data, $date) {
  * @param {string} $content 包含各页HTML的数组
  */
 function refreshBook($bookid, $data, $content) {
-  require(dirname(__FILE__) . 'include/Mustache/Autoloader.php');
+  require(dirname(__FILE__) . '/Mustache/Autoloader.php');
   Mustache_Autoloader::register();
   $dir = '../export/' . $bookid;
   $filename = $dir . '/index.html';
   
-  $book = json_decode($data);
-  $pages = json_decode($content);
+  $book = json_decode(stripslashes($data), TRUE);
+  $pages = json_decode(stripslashes($content));
   $bookdata = array(
     'width' => $book['width'],
     'height' => $book['height'],

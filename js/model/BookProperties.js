@@ -154,7 +154,6 @@ jQuery.namespace('Meatazine.model');
       if (Meatazine.user.get('isLogin')) {
         var param = {
           bookid: this.get('id'),
-          openid: localStorage.getItem('openid'),
           name: this.get('name'),
           data: content,
           content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true),

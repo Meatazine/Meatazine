@@ -13,7 +13,7 @@ include('include/pdo_connect.php');
 
 $api = $_REQUEST['api'];
 $openid = mysql_escape_string($_REQUEST['openid']);
-$bookid = isset($_REQUEST['bookid']) ? int($_REQUEST['bookid']) : NULL;
+$bookid = isset($_REQUEST['bookid']) ? (int)$_REQUEST['bookid'] : 0;
 
 if ($api == '') {
   throwError();

@@ -2,17 +2,42 @@ jQuery.namespace('Meatazine.filesystem');
 (function (ns) {
   var fileSystem = null;
   ns.FileReferrence = function () {
-    var self = this,
-        reader = new FileReader(),
-        targetFile,
-        fileDir,
-        fileName,
-        fileType,
-        fileContent,
-        fileURL,
-        folders,
-        params;
-    this.clone = function (file, dir, filename) {
+    var self = this;
+    this.reader = new FileReader();
+    this.reader.onloadend = function (event) {
+      self.trigger('complete:read', event.target.result);
+    }
+    _.extend(this, Backbone.Events);
+  }
+  ns.FileReferrence.prototype = {
+    clone: function (file, dir, filename) {
+      function entryReady(fileEntry) {
+        fileURL = fileEntry.toURL();
+        fileEntry.createWriter(clone, errorHandler);
+      }
+      function clone(fileWriter) {
+        fileWriter.onwriteend = function(e) {
+          console.log('Clone completed.', fileURL);
+          self.trigger('complete:clone', fileURL);
+        };
+        fileWriter.onerror = function(e) {
+          console.log('Clone failed: ' + e.toString());
+        };
+        fileWriter.write(file);
+      }
+      function errorHandler(error) {
+        console.log('Error: ' + error.code, error);
+        // 当文件已存在时触发，删掉旧文件
+        if (error.code == FileError.INVALID_MODIFICATION_ERR) {
+          self.remove(filename, dir, entryReady);
+        }
+      }
+      function start(dirEntry) {
+        dir = dirEntry;
+        dirEntry.getFile(filename, {create:true, exclusive: true}, entryReady, errorHandler);
+      }
+      
+      var self = this;
       if (file == null) {
         throw new Error('文件错误');
       }
@@ -22,42 +47,58 @@ jQuery.namespace('Meatazine.filesystem');
       if (!(/image/gi).test(file.type)) {
         throw new Error('只能上传图片类素材');
       }
-      targetFile = file;
-      fileDir = dir;
-      fileName = filename || file.name;
-      fileName = fileDir ? fileDir + '/' + fileName : fileName;
-      getDirectory(dir, function (dir) {
-        dir.getFile(fileName, {create:true, exclusive: true}, fileEntry_cloneReadyHandler, errorHandler);
-      });
-    }
-    this.copy = function (file, dir, filename, args) {
-      var self = this
-          directory = null;
-      function success(entry) {
-        self.trigger('complete:copy', entry.toURL(), args);
+      if (_.isString(dir)) {
+        getDirectory(dir, start);
+      } else {
+        start(dir);
       }
-      function fileEntry_copyReadyHandler(fileEntry) {
-        fileEntry.copyTo(directory, filename, success, errorHandler);
+    },
+    copy: function (file, dir, filename, args) {
+      function success(entry) {
+        self.trigger('complete:copy', entry.toURL(), entry, args);
+      }
+      function copy(fileEntry) {
+        fileEntry.copyTo(dir, filename, success, errorHandler);
       }
       function start(directoryEntry) {
-        directory = directoryEntry;
-        window.resolveLocalFileSystemURL(file, fileEntry_copyReadyHandler);
+        dir = directoryEntry;
+        window.resolveLocalFileSystemURL(file, copy);
       }
-      getDirectory(dir, start);
-    }
-    this.fetch = function (url) {
-      window.resolveLocalFileSystemURL(url, fileEntry_fetchReadyHandler)
-    }
-    this.read = function (url) {
-      window.resolveLocalFileSystemURL(url, fileEntry_readReadyHandler);
-    }
+      
+      var self = this;
+      if (_.isString(dir)) {
+        getDirectory(dir, start);
+      } else {
+        start(dir);
+      }
+    },
+    fetch: function (url) {
+      function fetch(fileEntry) {
+        fileEntry.file(success, errorHandler);
+      }
+      function success(file) {
+        self.trigger('complete:fetch', file);
+      }
+      
+      var self = this;
+      window.resolveLocalFileSystemURL(url, fetch);
+    },
+    read: function (url) {
+      function read(fileEntry) {
+        fileEntry.file(success, errorHandler);
+      }
+      function success(file) {
+        reader.readAsBinaryString(file);
+      }
+      
+      var reader = this.reader;
+      window.resolveLocalFileSystemURL(url, read);
+    },
     /**
      * 读取目录
      * 每次返回一个内容，所以要重复调用
      */
-    this.readEntries = function (callback, context) {
-      var dirReader = fileSystem.root.createReader(),
-          entries = [];
+    readEntries: function (dir, callback, context) {
       function readEntries() {
         dirReader.readEntries(function(results) {
           if (results.length == 0) {
@@ -72,117 +113,112 @@ jQuery.namespace('Meatazine.filesystem');
           }
         }, errorHandler);
       };
-      readEntries();
-    }
-    this.save = function (name, dir, content, type, argus) {
-      fileDir = dir;
-      fileName = fileDir ? fileDir + '/' + name : name;
-      fileContent = content;
-      fileType = type || 'text/plain';
-      params = argus;
-      getDirectory(dir, function (dir) {
-        dir.getFile(fileName, {create: true, exclusive: true}, fileEntry_saveReadyHandler, errorHandler);
-      });
-    }
-    function fileEntry_cloneReadyHandler(fileEntry) {
-      fileURL = fileEntry.toURL();
-      fileEntry.createWriter(fileWriter_cloneReadyHandler, errorHandler);
-    }
-    function fileEntry_fetchReadyHandler(fileEntry) {
-      fileEntry.file(fileFetchHandler, errorHandler);
-    }
-    function fileEntry_readReadyHandler(fileEntry) {
-      fileEntry.file(fileReadyHandler, errorHandler);
-    }
-    function fileEntry_removeReadyHandler(fileEntry) {
-      fileEntry.remove(fileRemoveHandler, errorHandler);
-    }
-    function fileEntry_saveReadyHandler(fileEntry) {
-      fileURL = fileEntry.toURL();
-      fileEntry.createWriter(fileWriter_saveReadyHandler, errorHandler);
-    }
-    function fileWriter_cloneReadyHandler(fileWriter) {
-      fileWriter.onwriteend = function(e) {
-        console.log('Clone completed.', fileURL);
-        self.trigger('complete:clone', fileURL);
-      };
-      fileWriter.onerror = function(e) {
-        console.log('Clone failed: ' + e.toString());
-      };
-      fileWriter.write(targetFile);
-      targetFile = null;
-    }
-    function fileWriter_saveReadyHandler(fileWriter) {
-      fileWriter.onwriteend = function (event) {
-        console.log('Save completed.', fileURL);
-        self.trigger('complete:save', fileURL, params);
-      };
-      fileWriter.onerror = function (error) {
-        console.log('Save failed: ' + error.toString());
-      };
+      function start(dir) {
+        dirReader = dir.createReader();
+        readEntries();
+      }
       
-      // 处理二进制数据
-      var blob,
-          byteArray,
-          i = 0,
-          len = 0;
-      if (fileType.indexOf('text') == -1) {
-        byteArray = new Uint8Array(fileContent.length);
-        for (len = fileContent.length; i < len; i++) {
-          byteArray[i] = fileContent.charCodeAt(i) & 0xFF;
-        }
-        blob = new Blob([byteArray], {type: fileType});
+      var self = this,
+          dirReader = null,
+          entries = [];
+      if (_.isString(dir)) {
+        getDirectory(dir, start);
       } else {
-        blob = new Blob(fileContent);
+        start(dir);
       }
-      fileWriter.write(blob);
-      fileContent = null;
-    }
-    function fileFetchHandler(file) {
-      self.trigger('complete:fetch', file);
-    }
-    function fileReadyHandler(file) {
-      reader.readAsBinaryString(file);
-    }
-    function fileRemoveHandler() {
-      console.log('Removed: ' + fileName);
-      self.save(fileName, fileDir, fileContent, fileType, params);
-    }
-    function errorHandler(error) {
-      console.log('Error: ' + error.code, error);
-      // 当文件已存在时触发，删掉旧文件
-      if (error.code == FileError.INVALID_MODIFICATION_ERR) {
-        fileSystem.root.getFile(fileName, {create: false}, fileEntry_removeReadyHandler, errorHandler);
+    },
+    remove: function (filename, dir, callback) {
+      function start(dirEntry) {
+        dir = dirEntry;
+        dirEntry.get(filename, null, remove, errorHandler);
       }
-    }
-    
-    function getDirectory(dir, callback) {
-      var folders = dir.split('/'),
-          finalDir = fileSystem.root;
-      function checkDir(root, folders) {
-        if (folders[0] == '.' || folders[0] == '') {
-          folders = folders.slice(1);
+      function remove(entry) {
+        fileEntry.remove(success, errorHandler);
+        if (callback != null) {
+          callback(entry)
         }
-        root.getDirectory(folders.shift(), {create: true}, function (dirEntry) {
-          if (folders.length > 0) {
-            checkDir(dirEntry, folders);
-          } else {
-            finalDir = dirEntry;
+      }
+      function success() {
+        console.log('Removed: ' + fileName);
+        self.trigger('complete:remove', filename)
+      }
+      
+      var self = this;
+      if (_.isString(dir)) {
+        getDirectory(dir, start);
+      } else {
+        start(dir);
+      }
+    },
+    save: function (name, dir, content, type, argus) {
+      function save(fileEntry) {
+        fileURL = fileEntry.toURL();
+        fileEntry.createWriter(success, errorHandler);
+      }
+      function success(fileWriter) {
+        fileWriter.onwriteend = function (event) {
+          console.log('Save completed.', fileURL);
+          self.trigger('complete:save', fileURL, params);
+        };
+        fileWriter.onerror = function (error) {
+          console.log('Save failed: ' + error.toString());
+        };
+        
+        // 处理二进制数据
+        var blob,
+            byteArray,
+            i = 0,
+            len = 0;
+        if (fileType.indexOf('text') == -1) {
+          byteArray = new Uint8Array(fileContent.length);
+          for (len = fileContent.length; i < len; i++) {
+            byteArray[i] = fileContent.charCodeAt(i) & 0xFF;
           }
-        }, errorHandler);
+          blob = new Blob([byteArray], {type: fileType});
+        } else {
+          blob = new Blob(fileContent);
+        }
+        fileWriter.write(blob);
+        fileContent = null;
       }
-      if (folders.length > 0) {
-        checkDir(fileSystem.root, folders);
+      function start(dir) {
+        dir.getFile(fileName, {create: true, exclusive: true}, save, errorHandler);
       }
-      callback(finalDir);
-    }
-    
-    _.extend(this, Backbone.Events);
-    reader.onloadend = function (event) {
-      self.trigger('complete:read', event.target.result);
+      
+      var self = this;
+      type = type || 'text/plain';
+      if (_.isString(dir)) {
+        getDirectory(dir, start);
+      } else {
+        start(dir);
+      }
     }
   }
   
+  /**
+   * 寻找指定目录
+   * @param {String} dir 目录结构
+   * @param {Function} callback 取得目标 DirectoryEntry 后，调用此函数，并传入
+   */
+  function getDirectory(dir, callback) {
+    var folders = _.reject(dir.split('/'), function (level) {
+      return level == '.' || level == '';
+    });
+    function checkDir(root, folders) {
+      root.getDirectory(folders.shift(), {create: true}, function (dirEntry) {
+        if (folders.length > 0) {
+          checkDir(dirEntry, folders);
+        } else {
+          callback(dirEntry);
+        }
+      }, errorHandler);
+    }
+    if (folders.length > 0) {
+      checkDir(fileSystem.root, folders);
+    } else {
+      callback(fileSystem.root);
+    }
+  }
   /**
    * 初始化文件系统成功回调
    * @param {Object} fs

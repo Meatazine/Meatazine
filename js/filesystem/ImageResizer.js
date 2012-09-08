@@ -65,7 +65,7 @@ jQuery.namespace('Meatazine.filesystem');
     },
     getTimeString: function () {
       var now = new Date();
-      return now.getTime() + '.jpg';
+      return now.getTime().toString(36) + '.jpg';
     },
     next: function () {
       if (this.fileQueue.length > 0) {

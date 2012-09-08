@@ -14,7 +14,7 @@ Meatazine.service.ServerCall = _.extend({
     $.ajax({
       context: context,
       data: _.extend(data, init),
-      method: 'post',
+      type: 'post',
       url: this.proxyURL,
       xhr: function () {
         var xhr = new window.XMLHttpRequest();
@@ -24,8 +24,6 @@ Meatazine.service.ServerCall = _.extend({
         return xhr;
       },
       success: function (response) {
-        xhr.upload.removeEventListener('progress');
-        xhr = null;
         var data = JSON.parse(response);
         if (data.hasOwnProperty('type')) {
           Meatazine.GUI.showError(data.msg);
@@ -67,8 +65,6 @@ Meatazine.service.ServerCall = _.extend({
         return xhr;
       },
       success: function (data) {
-        xhr.upload.removeEventListener('progress');
-        xhr = null;
         var data = JSON.parse(data);
         if (data.hasOwnProperty('code') && data.code != 0) {
           Meatazine.GUI.showError(data.msg);

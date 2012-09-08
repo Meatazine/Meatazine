@@ -74,6 +74,7 @@ jQuery.namespace('Meatazine.view.ui');
           html = this.$el.clone();
       html.find('.placeholder').removeClass('placeholder');
       html.find('[data-config]').removeAttr('data-config');
+      html.find('.resolution').remove();
       html.find('.editable')
         .removeClass('editable editing')
         .removeAttr('contenteditable title');

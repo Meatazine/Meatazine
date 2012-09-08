@@ -3,7 +3,7 @@
 <meta content="text/html; charset=UTF-8" http-equiv="Content-type" />
 <link rel="stylesheet" href="../css/bootstrap.min.css" />
 <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<script src="../js/libs/jquery-1.8.0.min.js"></script>
+<script src="../js/libs/jquery-1.8.1.min.js"></script>
 <script src="../js/libs/jQuery.namespace.js"></script>
 <script src="../js/libs/jszip.js"></script>
 <script src="../js/libs/jszip-deflate.js"></script>
@@ -91,7 +91,7 @@
       localFile.read(fileURL);
     });
     $('#list-btn').click(function (event) {
-      localFile.readEntries(showFilelist);
+      localFile.readEntries('', showFilelist);
     });
     $('#file-list').on('click', 'option', function (event) {
       var index = event.currentTarget.value,

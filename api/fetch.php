@@ -18,7 +18,7 @@ $sql = "SELECT id
 $uid = $DB->getVar($sql);
 
 if ($uid) {
-  $sql = "SELECT id, title AS name, edit_date AS datetime
+  $sql = "SELECT id, title AS name, edit_time AS datetime
           FROM m_book
           WHERE owner=$uid";
   $data = $DB->getResults($sql);

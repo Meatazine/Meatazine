@@ -3,6 +3,7 @@ api/assets/
 api/static/
 api/temp/
 api/android/
+api/include/Mustache
 api/*.ipa
 api/*.apk
 api/*.log
