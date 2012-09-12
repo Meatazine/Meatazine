@@ -158,7 +158,7 @@ jQuery.namespace('Meatazine.filesystem');
       function success(fileWriter) {
         fileWriter.onwriteend = function (event) {
           console.log('Save completed.', fileURL);
-          self.trigger('complete:save', fileURL, params);
+          self.trigger('complete:save', fileURL, argus);
         };
         fileWriter.onerror = function (error) {
           console.log('Save failed: ' + error.toString());
@@ -185,7 +185,8 @@ jQuery.namespace('Meatazine.filesystem');
         dir.getFile(fileName, {create: true, exclusive: true}, save, errorHandler);
       }
       
-      var self = this;
+      var self = this,
+          file = null;
       type = type || 'text/plain';
       if (_.isString(dir)) {
         getDirectory(dir, start);

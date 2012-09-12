@@ -12,6 +12,9 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   },
   initialize: function () {
     this.setElement(this.el);
+    
+    Meatazine.service.AssetsSyncService.on('add reset remove', this.service_changeHandler, this);
+    Meatazine.service.AssetsSyncService.on('complete', this.service_completeHandler, this);
   },
   disablePublishButtons: function () {
     this.setButtonsStatus(true, ['publish', 'book-config']);
@@ -47,6 +50,20 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     QC.Login.signOut();
     this.resetLogin();
     Meatazine.user.initLogin();
+  },
+  service_changeHandler: function (number) {
+    this.$('.async').find('i')
+      .removeClass('icon-ok')
+      .addClass('icon-repeat loading')
+    .end().find('li a')
+      .text('剩余素材数量：' + number);
+  },
+  service_completeHandler: function () {
+    this.$('.async').find('i')
+      .removeClass('icon-repeat loading')
+      .addClass('icon-ok')
+    .end().find('li a')
+      .text('暂无同步内容'); 
   },
   systemButton_clickHandler: function (event) {
     if ($(event.target).closest('disabled').length > 0) {

@@ -8,6 +8,7 @@ jQuery.namespace('Meatazine.service');
       if (_.include(queue, asset)){
         return;
       }
+      console.log('Async - Added : ', asset)
       if (!_.include(news, asset)) {
         news.push(asset);
       }
@@ -19,6 +20,7 @@ jQuery.namespace('Meatazine.service');
         isUploading = true;
         this.next();
       }
+      this.trigger('add', queue.length + news.length, asset, this);
     },
     checkAssets: function () {
       var data = {
@@ -42,17 +44,21 @@ jQuery.namespace('Meatazine.service');
       // 如果queue完了就继续news
       if (news.length) {
         this.checkAssets();
+      } else {
+        this.trigger('complete', this);
       }
     },
     remove: function (asset) {
       var index = _.indexOf(queue, asset);
       if (index != -1) {
         queue.splice(index, 1);
+        this.trigger('remove', queue.length + news.length, asset, this);
         return;
       }
       index = _.indexOf(news, asset);
       if (index != -1) {
         news.splice(index, 1);
+        this.trigger('remove', queue.length + news.length, asset, this);
       }
     },
     checkSuccessHandler: function (response) {
@@ -61,9 +67,10 @@ jQuery.namespace('Meatazine.service');
         queue = array;
       }
       news = [];
+      this.trigger('reset', queue.length, this);
     },
     uploadSuccessHandler: function (data) {
-      this.trigger('complete:one');
+      this.trigger('complete:one', this);
       next();
     },
   }, Backbone.Events);

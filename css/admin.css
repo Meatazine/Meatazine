@@ -190,6 +190,9 @@ body {
   margin:0;
   z-index: 99999;
 }
+#navbar .async .progress {
+  margin:0 6px;
+}
 
 /** ======================
  * context menu

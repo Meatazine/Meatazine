@@ -8,8 +8,7 @@ Meatazine.service.ServerCall = _.extend({
         init = {
           api: api,
           openid: Meatazine.user.get('openid'),
-        },
-        xhr = null;
+        };
     context = context || this;
     $.ajax({
       context: context,
@@ -42,8 +41,7 @@ Meatazine.service.ServerCall = _.extend({
   },
   upload: function (file, name, success, error, context) {
     var self = this,
-        data = new FormData(),
-        xhr = null;
+        data = new FormData();
     data.append('openid', Meatazine.user.get('openid'));
     data.append('bookid', Meatazine.user.get('bookid'));
     data.append('filename', name);
