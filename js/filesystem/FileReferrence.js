@@ -10,18 +10,32 @@ jQuery.namespace('Meatazine.filesystem');
     _.extend(this, Backbone.Events);
   }
   ns.FileReferrence.prototype = {
-    clone: function (file, dir, filename) {
-      function entryReady(fileEntry) {
-        fileURL = fileEntry.toURL();
-        fileEntry.createWriter(clone, errorHandler);
+    /**
+     * 克隆文件到本地
+     * @param {Object} fileData 文件相关数据
+     * @param {File} fileData.file 目标文件
+     * @param {String|DirectoryEntry} fileData.toDir 目标目录
+     * @param {String} fileData.name 目标文件名
+     * @param {Object} [options] 附加参数
+     * @param {Function} [options.callback] 完成操作后的回调函数，默认传入克隆后的文件地址和options
+     * @param {Object} [options.context] 回调函数的执行环境
+     */
+    clone: function (fileData, options) {
+      function entryReady(entry) {
+        options.entry = entry;
+        url = entry.toURL();
+        entry.createWriter(clone, errorHandler);
       }
       function clone(fileWriter) {
-        fileWriter.onwriteend = function(e) {
-          console.log('Clone completed.', fileURL);
-          self.trigger('complete:clone', fileURL);
+        fileWriter.onwriteend = function(event) {
+          console.log('Clone completed: ', url);
+          self.trigger('complete:clone', url, options);
+          if (options.hasOwnProperty('callback')) {
+            options.callback.call(options.context, url, options);
+          }
         };
-        fileWriter.onerror = function(e) {
-          console.log('Clone failed: ' + e.toString());
+        fileWriter.onerror = function(event) {
+          console.log('Clone failed: ' + event.toString(), event);
         };
         fileWriter.write(file);
       }
@@ -29,15 +43,17 @@ jQuery.namespace('Meatazine.filesystem');
         console.log('Error: ' + error.code, error);
         // 当文件已存在时触发，删掉旧文件
         if (error.code == FileError.INVALID_MODIFICATION_ERR) {
-          self.remove(filename, dir, entryReady);
+          self.remove(fileData, {callback: entryReady});
         }
       }
       function start(dirEntry) {
-        dir = dirEntry;
-        dirEntry.getFile(filename, {create:true, exclusive: true}, entryReady, errorHandler);
+        fileData.toDir = dirEntry;
+        dirEntry.getFile(fileData.name, {create:true, exclusive: true}, entryReady, errorHandler);
       }
       
-      var self = this;
+      var self = this,
+          file = fileData.file,
+          url = '';
       if (file == null) {
         throw new Error('文件错误');
       }
@@ -47,43 +63,81 @@ jQuery.namespace('Meatazine.filesystem');
       if (!(/image/gi).test(file.type)) {
         throw new Error('只能上传图片类素材');
       }
-      if (_.isString(dir)) {
-        getDirectory(dir, start);
+      fileData.toDir = fileData.toDir || '';
+      options = options || {};
+      if ( _.isString(fileData.toDir)) {
+        getDirectory(fileData.toDir, start);
       } else {
-        start(dir);
+        start(fileData.toDir);
       }
     },
-    copy: function (file, dir, filename, args) {
+    /**
+     * 复制文件到指定目录
+     * @param {Object} fileData 文件相关数据
+     * @param {String|DirectoryEntry} fileData.toDir 目标目录
+     * @param {String} fileData.url 要复制的文件所在路径
+     * @param {String} fileData.name 目标文件名
+     * @param {Object} [options] 附加参数
+     * @param {Function} [options.callback] 完成操作后的回调函数，默认传入克隆后的文件地址和options
+     * @param {Object} [options.context] 回调函数的执行环境
+     */
+    copy: function (fileData, options) {
       function success(entry) {
-        self.trigger('complete:copy', entry.toURL(), entry, args);
+        options.entry = entry;
+        self.trigger('complete:copy', entry.toURL(), options);
+        if (options.hasOwnProperty('callback')) {
+          options.callback.call(options.context, entry.toURL(), options);
+        }
       }
-      function copy(fileEntry) {
-        fileEntry.copyTo(dir, filename, success, errorHandler);
+      function copy(entry) {
+        entry.copyTo(fileData.toDir, filename, success, options);
       }
-      function start(directoryEntry) {
-        dir = directoryEntry;
-        window.resolveLocalFileSystemURL(file, copy);
+      function start(entry) {
+        fileData.toDir = entry;
+        window.resolveLocalFileSystemURL(fileData.url, copy);
       }
       
       var self = this;
-      if (_.isString(dir)) {
-        getDirectory(dir, start);
+      fileData.toDir = fileData.toDir || '';
+      options = options || {};
+      if (_.isString(fileData.toDir)) {
+        getDirectory(fileData.toDir, start);
       } else {
-        start(dir);
+        start(fileData.toDir);
       }
     },
-    fetch: function (url) {
-      function fetch(fileEntry) {
-        fileEntry.file(success, errorHandler);
+    /**
+     * 取文件对象
+     * @param {FileEntry|String} file 文件入口或路径
+     * @param {Object} [options] 附加参数
+     * @param {Function} [options.callback] 完成操作后的回调函数，默认传入克隆后的文件地址和options
+     * @param {Object} [options.context] 回调函数的执行环境
+     */
+    fetch: function (file, options) {
+      function fetch(entry) {
+        entry.file(success, errorHandler);
       }
       function success(file) {
-        self.trigger('complete:fetch', file);
+        self.trigger('complete:fetch', file, options);
+        if (options.hasOwnProperty('callback')) {
+          options.callback.call(options.context, file, options);
+        }
       }
       
       var self = this;
-      window.resolveLocalFileSystemURL(url, fetch);
+      options = options || {};
+      if (_.isString(file)) {
+        window.resolveLocalFileSystemURL(url, fetch);
+      } else {
+        file.file(success, errorHandler);
+      }
     },
-    read: function (url) {
+    /**
+     * 读取文件内容
+     * @param {FileEntry|String} file 文件入口或路径
+     * @param {Object} 附加参数
+     */
+    read: function (file, options) {
       function read(fileEntry) {
         fileEntry.file(success, errorHandler);
       }
@@ -127,27 +181,38 @@ jQuery.namespace('Meatazine.filesystem');
         start(dir);
       }
     },
-    remove: function (filename, dir, callback) {
-      function start(dirEntry) {
-        dir = dirEntry;
-        dirEntry.get(filename, null, remove, errorHandler);
-      }
+    /**
+     * 删除指定目录下的指定文件
+     * 暂时一次只能删除一个
+     * @param {Object} fileData
+     * @param {String|DirectoryEntry} fileData.toDir 目标目录
+     * @param {String} fileData.name 目标文件名
+     * @param {Object} [options] 附加参数
+     * @param {Function} [options.callback] 完成操作后的回调函数，默认传入克隆后的文件地址和options
+     * @param {Object} [options.context] 回调函数的执行环境
+     */
+    remove: function (fileData, options) {
       function remove(entry) {
-        fileEntry.remove(success, errorHandler);
-        if (callback != null) {
-          callback(entry)
+        entry.remove(success, errorHandler);
+        if (options.hasOwnProperty('callback')) {
+          options.callback.call(options.context, entry);
         }
       }
       function success() {
-        console.log('Removed: ' + fileName);
-        self.trigger('complete:remove', filename)
+        console.log('Removed: ' + fileData.name);
+        self.trigger('complete:remove', fileData.name);
+      }
+      function start(dirEntry) {
+        fileData.toDir = dirEntry;
+        dirEntry.get(fileData.name, null, remove, errorHandler);
       }
       
       var self = this;
-      if (_.isString(dir)) {
-        getDirectory(dir, start);
+      fileData.toDir = fileData.toDir || '';
+      if (_.isString(fileData.toDir)) {
+        getDirectory(fileData.toDir, start);
       } else {
-        start(dir);
+        start(fileData.toDir);
       }
     },
     save: function (name, dir, content, type, argus) {
