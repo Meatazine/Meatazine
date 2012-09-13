@@ -62,7 +62,11 @@
           }
         }
         if (file != null) {
-          localFile.clone(file, '', file.name);
+          localFile.clone({
+            file: file,
+            toDir: '',
+            name: file.name
+          });
         }
         event.preventDefault();
       })
@@ -91,7 +95,10 @@
       localFile.read(fileURL);
     });
     $('#list-btn').click(function (event) {
-      localFile.readEntries('', showFilelist);
+      localFile.readEntries('', {
+        callback: showFilelist,
+        context: this,
+      });
     });
     $('#file-list').on('click', 'option', function (event) {
       var index = event.currentTarget.value,
