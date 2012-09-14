@@ -6,12 +6,6 @@ Meatazine.model.PageCollection = Backbone.Collection.extend({
     this.add(model);
     return model;
   },
-  fill: function (array) {
-    this.reset();
-    for (var i = 0, len = array.length; i < len; i++) {
-      this.create(array[i]);
-    }
-  },
   /**
    *很奇怪，Backbone在collection.length > 1的时候会不触发remove事件
    * 只好单独写一个函数保证事件 

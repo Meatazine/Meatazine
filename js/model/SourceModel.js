@@ -34,15 +34,16 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     }
   },
   set: function (attributes, options) {
+    if (attributes == 'type' && !this.hasTemplate(options)) {
+      this.fetch(options);
+      return;
+    }
     if (_.isObject(attributes)) {
       if (attributes.hasOwnProperty('type') && attributes.type != '' && !this.hasTemplate(attributes.type)) {
         this.fetch(attributes.type);
         delete attributes.type;
       }
-    } else if (attributes == 'type' && !this.hasTemplate(options)) {
-      this.fetch(options);
-      return;
-    }
+    } 
     Backbone.Model.prototype.set.call(this, attributes, options);
   },
   // 页面模板
