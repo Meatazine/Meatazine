@@ -5,12 +5,11 @@ jQuery.namespace('Meatazine');
     contextButtons: null,
     navbar: null,
     page: null,
-    VERSION: '0.1.5.@version@',
+    VERSION: '0.1.6.@version@',
     initialize: function (options) {
-      var book = options.book;
-      book.on('change:size', this.book_sizeChangeHandler, this);
-      book.get('pages').on('add', this.pages_addHandler, this);
-      book.get('pages').on('remove', this.pages_removeHandler, this);
+      options.book.on('change:width change:height', this.book_sizeChangeHandler, this);
+      options.pages.on('add', this.pages_addHandler, this);
+      options.pages.on('remove', this.pages_removeHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
         el: '#navbar',
         model: options.book,

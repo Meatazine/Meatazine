@@ -48,11 +48,9 @@ jQuery.namespace('Meatazine.view.ui');
       this.collection.create();
       _gaq.push(['_trackEvent', 'page', 'add']);
     },
-    book_resizeHandler: function (w, h) {
-      this.list.height(h - 54); // 把按钮和数字空出来
-      this.$('canvas').each(function (i) {
-        this.height = itemWidth * h / w;
-      })
+    book_resizeHandler: function (model) {
+      this.list.height(model.get('height') - 54); // 把按钮和数字空出来
+      this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
     collection_addHandler: function (model, collection, options) {
       this.createItem(model);
@@ -119,10 +117,11 @@ jQuery.namespace('Meatazine.view.ui');
       this.removeButton.remove();
     },
     page_changeHandler: function (thumb) {
-      var canvas = this.currentItem.find('canvas')[0];
+      var canvas = this.currentItem.find('canvas')[0],
+          item;
       canvas.getContext('2d').drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
       if (this.emptyItems.length > 0) {
-        var item = this.emptyItems.shift();
+        item = this.emptyItems.shift();
         this.collection.trigger('select', item.data('model'), item);
       }
     },

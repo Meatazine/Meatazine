@@ -24,6 +24,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
     this.options.book.get('pages').on('add', this.pages_addHandler, this);
     this.options.book.get('pages').on('remove', this.pages_removeHandler, this);
     this.model.setSourceTemplate(this.$('#source-list').html());
+    this.collection.on('select', this.collection_selectHandler, this);
     delete this.options;
   },
   createSourceItem: function (model) {
@@ -143,7 +144,7 @@ Meatazine.view.ui.SourcePanel = Backbone.View.extend({
       this.sourceList.empty();
     }
   },
-  pageList_selectHandler: function (model) {
+  collection_selectHandler: function (model) {
     if (this.contents instanceof Meatazine.model.SinglePageModel) {
       this.contents.off();
     }

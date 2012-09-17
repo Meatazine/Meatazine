@@ -27,6 +27,7 @@ $(function () {
   Meatazine.GUI.initialize({
     config: config,
     book: book,
+    pages: pages,
   });
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;

@@ -1,7 +1,6 @@
 jQuery.namespace('Meatazine.view.ui');
 (function (ns) {
   var textEditor = new ns.editor.TextEditor('.group1');
-  //var img;
   ns.PageBody = Backbone.View.extend({
     items: [],
     events: {
@@ -10,10 +9,10 @@ jQuery.namespace('Meatazine.view.ui');
       "dragstop .ui-draggable": "draggable_dragStopHandler",
     },
     initialize: function () {
-      var self = this;
-      this.$el = $(this.el);
-      this.options.book.on('change:size', this.book_resizeHandler, this);
+      this.$el = this.setElement(this.el);
+      this.options.book.on('change:width change:height', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_selectHandler, this);
+      this.collection.on('select', this.collection_selectHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
@@ -99,14 +98,23 @@ jQuery.namespace('Meatazine.view.ui');
           template = this.$el.clone();
       template.find('.ui-resizable-handle').remove();
       template.find('.editable').removeClass('editing').removeAttr('contenteditable title');
-      template.find('[data-config]').each(function (i) {
-        $(this).html(self.items[i].template);
+      template.find('[data-config]').html(function (i, oldHtml) {
+        return self.items[i].template;
       });
       this.model.set({template: template.html()}, {isModified: !isReset});
     },
-    book_resizeHandler: function (w, h) {
-      this.$el.width(w);
-      this.$el.height(h);
+    book_resizeHandler: function (model) {
+      this.$el.width(model.get('width'));
+      this.$el.height(model.get('height'));
+    },
+    collection_selectHandler: function (model) {
+      this.model = model;
+      this.saveTemplate();
+      if (model.get('template') == '') {
+        model.set('template', this.options.source.getTemplate(model.get('templateType')));
+        return;
+      }
+      this.render();
     },
     draggable_dragStopHandler: function (event) {
       this.refreshThumbnail();
@@ -117,16 +125,6 @@ jQuery.namespace('Meatazine.view.ui');
     },
     element_changeHandler: function () {
       this.refreshThumbnail();
-    },
-    pageList_selectHandler: function (model) {
-      this.saveTemplate();
-      if (model.get('template') == '') {
-        model.set('template', this.options.source.getTemplate(model.get('templateType')));
-      }
-      this.model = model;
-      if (model.get('template')) {
-        this.render();
-      }
     },
     resizable_resizeStopHandler:function (event, ui) {
       this.refreshThumbnail();
