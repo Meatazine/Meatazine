@@ -12,12 +12,14 @@ $(function () {
       source = new Meatazine.view.ui.SourcePanel({
         el: '#panel',
         book: book,
-        model: new Meatazine.model.SourceModel()
+        model: new Meatazine.model.SourceModel(),
+        collection: pages,
       }),
       contextButtons = new Meatazine.view.ui.ContextButtons({
         el: '#context-menu'
       })
       page = new Meatazine.view.ui.PageBody({
+        collection: pages,
         el: '#page-body',
         book: book,
         source: source.model,
@@ -30,7 +32,4 @@ $(function () {
   Meatazine.GUI.page = page;
   Meatazine.guide.GuideManager.init(config, book);
   Meatazine.popup.PopupManager.init('.modal', config, book);
-  list.on('select', source.pageList_selectHandler, source);
-  list.on('select', page.pageList_selectHandler, page);
-  page.on('change', list.page_changeHandler, list);
 });

@@ -34,6 +34,10 @@ jQuery.namespace('Meatazine.model');
             }
           });
         },
+        validate: function (attributes) {
+          this.get('pages').reset(attributes.pages);
+          delete attributes.pages;
+        },
         createZip: function () {
           var self = this,
               data = _.pick(this.attributes, 'width', 'height'),
@@ -74,11 +78,6 @@ jQuery.namespace('Meatazine.model');
             $('#export-zip').modal('hide');
           });
         },
-        fill: function (data) {
-          this.get('pages').reset(data.pages);
-          delete data.pages;
-          this.set(data);
-        },
         getAppPack: function () {
           $.ajax({
             url: './api/publish.php',
@@ -108,8 +107,7 @@ jQuery.namespace('Meatazine.model');
           var store = localStorage.getItem('book'),
               data = (store && JSON.parse(store)) || {};
           if (!_.isEmpty(data)) {
-            this.fill(data);
-            this.trigger('reset');
+            this.set(data);
           }
         },
         preview: function () {

@@ -5,7 +5,7 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     templateType: 'face',
     template: '',
     renderedHTML: '',
-    contents: []
+    contents: [],
   },
   initialize: function (initObj) {
     if (initObj.contents.length > 0) {
