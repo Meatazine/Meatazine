@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.guide');
 (function (ns) {
   var DIVHEIGHT = 100,
       DIVWIDTH = 289,
@@ -161,4 +160,4 @@ jQuery.namespace('Meatazine.guide');
       return guideTag;
     },
   }
-})(Meatazine.guide);
+}(jQuery.namespace('Meatazine.guide')));

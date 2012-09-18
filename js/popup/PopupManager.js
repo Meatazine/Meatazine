@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.popup');
 (function (ns) {
   var publish,
       preview,
@@ -96,4 +95,4 @@ jQuery.namespace('Meatazine.popup');
         }
       };
    ns.PopupManager = manager;
-})(Meatazine.popup);
+}(jQuery.namespace('Meatazine.popup')));

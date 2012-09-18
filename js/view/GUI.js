@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine');
 (function (ns, $) {
   var cancelQueue = [];
   ns.GUI = {
@@ -94,4 +93,4 @@ jQuery.namespace('Meatazine');
       }
     }
   };
-})(Meatazine, jQuery);
+}(jQuery.namespace('Meatazine'), jQuery));

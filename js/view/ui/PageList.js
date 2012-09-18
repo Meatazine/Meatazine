@@ -1,5 +1,4 @@
-jQuery.namespace('Meatazine.view.ui');
-(function ($, ns) {
+(function (ns, $) {
   var addButton = null,
       removeButton = null,
       itemWidth = 108,
@@ -139,4 +138,4 @@ jQuery.namespace('Meatazine.view.ui');
       _gaq.push(['_trackEvent', 'page', 'sort']);
     },
   });
-})(jQuery, Meatazine.view.ui);
+}(jQuery.namespace('Meatazine.view.ui'), jQuery));

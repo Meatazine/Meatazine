@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
   var stashClass = '';
   ns.TextEditor = ns.AbstractEditor.extend({
@@ -144,4 +143,4 @@ jQuery.namespace('Meatazine.view.ui.editor');
       return false;
     },
   });
-})(Meatazine.view.ui.editor);
+}(jQuery.namespace('Meatazine.view.ui.editor')));

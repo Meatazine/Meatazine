@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.model.element');
 (function (ns) {
   var mapDefaults = {
     lat: 39.904214,
@@ -74,4 +73,4 @@ jQuery.namespace('Meatazine.model.element');
       });
     }
   });
-})(Meatazine.model.element);
+}(jQuery.namespace('Meatazine.model.element')));

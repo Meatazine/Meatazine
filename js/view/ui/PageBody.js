@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.ui');
 (function (ns) {
   var textEditor = new ns.editor.TextEditor('.group1');
   ns.PageBody = Backbone.View.extend({
@@ -145,4 +144,4 @@ jQuery.namespace('Meatazine.view.ui');
       this.refreshThumbnail();
     },
   });
-})(Meatazine.view.ui);
+})(jQuery.namespace('Meatazine.view.ui'));
