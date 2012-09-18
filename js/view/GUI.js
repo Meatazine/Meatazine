@@ -79,8 +79,8 @@ jQuery.namespace('Meatazine');
         cancel.handler.call(cancel.context, cancel.argus || event);
       });
     },
-    book_sizeChangeHandler: function (w) {
-      $('#page-area').width(474 + w);
+    book_sizeChangeHandler: function (model) {
+      $('#page-area').width(474 + model.get('width'));
     },
     pages_addHandler: function (model, collection, options) {
       this.contextButtons.enableButtons();

@@ -34,9 +34,17 @@ jQuery.namespace('Meatazine.model');
             }
           });
         },
-        validate: function (attributes) {
-          this.get('pages').reset(attributes.pages);
-          delete attributes.pages;
+        set: function (key, value, options) {
+          if (_.isObject(key)) {
+            if (key.hasOwnProperty('pages') && !(key.pages instanceof Backbone.Collection)) {
+              this.get('pages').reset(key.pages);
+              delete key.pages;
+            }
+          } else if (key == 'pages'){
+            this.get('pages').reset(value);
+            return;
+          }
+          Backbone.Model.prototype.set.call(this, key, value, options);
         },
         createZip: function () {
           var self = this,
@@ -157,10 +165,9 @@ jQuery.namespace('Meatazine.model');
           isModified = false;
         },
         setSize: function (w, h) {
-          w = parseInt(w), h = parseInt(h);
           this.set({
-            width: w,
-            height: h
+            width: parseInt(w),
+            height: parseInt(h),
           });
         },
         pages_changeHandler: function () {

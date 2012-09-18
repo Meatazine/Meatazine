@@ -2,11 +2,11 @@ jQuery.namespace('Meatazine.view.ui');
 (function ($, ns) {
   var addButton = null,
       removeButton = null,
-      itemWidth = 108;
+      itemWidth = 108,
+      currentItem = null,
+      list = null,
+      emptyItems  = [];
   ns.PageList = Backbone.View.extend({
-    list : null,
-    currentItem: null,
-    emptyItems: [],
     events: {
       "click .add-button": "addButton_clickHandler",
       "click li.item": "item_clickHandler",
@@ -17,11 +17,12 @@ jQuery.namespace('Meatazine.view.ui');
       "sortdeactivate #page-list-inner": "sortdeactivateHandler",
     },
     initialize: function () {
-      this.$el = this.setElement(this.el);
-      this.list = this.$('#page-list-inner');
+      this.setElement(this.el);
+      list = this.$('#page-list-inner');
       
       this.model.on('change:width change:height', this.book_resizeHandler, this);
       this.collection.on('add', this.collection_addHandler, this);
+      this.collection.on('redraw', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
       this.collection.on('select', this.collection_selectHandler, this);
@@ -31,16 +32,16 @@ jQuery.namespace('Meatazine.view.ui');
     },
     createItem: function (model) {
       var height = this.model.get('height') / this.model.get('width') * itemWidth,
-          li = $('<li class="item"><canvas width="' + width + '" height="' + height + '" /></li>');
+          li = $('<li class="item"><canvas width="' + itemWidth + '" height="' + height + '" /></li>');
       li
         .data('model', model)
         .disableSelection()
         .insertBefore(addButton.parent());
-      this.list.scrollTop(this.list[0].scrollHeight - this.list.height());
+      list.scrollTop(list[0].scrollHeight - list.height());
       return li;
     },
     refreshPageNumber: function () {
-      var index = this.currentItem.index() + 1,
+      var index = currentItem.index() + 1,
           total = this.collection.length;
       this.$('#page-number').text(index + '/' + total);
     },
@@ -49,17 +50,27 @@ jQuery.namespace('Meatazine.view.ui');
       _gaq.push(['_trackEvent', 'page', 'add']);
     },
     book_resizeHandler: function (model) {
-      this.list.height(model.get('height') - 54); // 把按钮和数字空出来
+      list.height(model.get('height') - 57); // 把按钮和数字空出来
       this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
     collection_addHandler: function (model, collection, options) {
       this.createItem(model);
-      this.refreshPageNumber();
       collection.trigger('select', model);
+      this.refreshPageNumber();
+    },
+    collection_redrawHandler: function (model, thumb) {
+      var index = this.collection.indexOf(model),
+          canvas = list.children().eq(index).find('canvas')[0],
+          context = canvas.getContext('2d');
+      context.drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
+      if (emptyItems.length > 0) {
+        item = emptyItems.shift();
+        this.collection.trigger('select', item.data('model'), item);
+      }
     },
     collection_removeHandler: function (model, collection, options) {
-      var target = this.list.children().eq(options.index);
-      if (this.currentItem.is(target)) {
+      var target = list.children().eq(options.index);
+      if (currentItem.is(target)) {
         collection.trigger('select', collection.at(options.index > 0 ? options.index - 1 : 0));
       }
       target
@@ -71,59 +82,51 @@ jQuery.namespace('Meatazine.view.ui');
     collection_resetHandler: function (collection, options) {
       this.$('li.item').remove();
       this.collection.each(function (model, i) {
-        this.emptyItems.push(this.createItem());
+        emptyItems.push(this.createItem());
       }, this);
-      this.list.sortable({
+      list.sortable({
         items: 'li.item'
       });
       this.$('li').disableSelection();
       if (this.collection.length > 0) {
-        this.collection.trigger('select', this.collection.at(0), this.list.children().eq(0));
+        this.collection.trigger('select', this.collection.at(0), list.children().eq(0));
       }
     },
     collection_selectHandler: function (model, target) {
-      if (this.currentItem != null) {
-        this.currentItem.removeClass('active');
+      if (currentItem != null) {
+        currentItem.removeClass('active');
       }
-      this.currentItem = $(target);
-      this.currentItem.addClass('active');
+      currentItem = $(target);
+      currentItem.addClass('active');
       this.refreshPageNumber();
       _gaq.push(['_trackEvent', 'page', 'select']);
     },
     item_clickHandler: function (event) {
-      if (this.currentItem != null && this.currentItem.is(event.currentTarget)) {
+      var target = $(event.currentTarget);
+      if (target.hasClass('active')) {
         return;
       }
-      this.collection.tigger('select', this.currentItem.data('model'), event.currentTarget);
+      this.collection.tigger('select', target.data('model'), target);
     },
     item_mouseOutHandler: function (event) {
       var pos = $(event.target).offset();
       pos.width = $(event.target).width();
       pos.height = $(event.target).height();
       if (pos.left > event.pageX || pos.top > event.pageY || pos.left + pos.width < event.pageX || pos.top + pos.height < event.pageY) {
-        this.removeButton.remove();
+        removeButton.remove();
       }
     },
     item_mouseOverHandler: function (event) {
       var position = $(event.currentTarget).position();
-      this.removeButton
-        .css('top', position.top + this.list.scrollTop() + 4)
+      removeButton
+        .css('top', position.top + list.scrollTop() + 4)
         .data('target', $(event.currentTarget))
-        .appendTo(this.list);
+        .appendTo(list);
     },
     removeButton_clickHandler: function (event) {
-      var target = this.removeButton.data('target');
+      var target = removeButton.data('target');
       this.collection.remove(target.data('model'));
-      this.removeButton.remove();
-    },
-    page_changeHandler: function (thumb) {
-      var canvas = this.currentItem.find('canvas')[0],
-          item;
-      canvas.getContext('2d').drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
-      if (this.emptyItems.length > 0) {
-        item = this.emptyItems.shift();
-        this.collection.trigger('select', item.data('model'), item);
-      }
+      removeButton.remove();
     },
     sortactivateHandler: function (event, ui) {
       ui.item.data('index', ui.item.index());

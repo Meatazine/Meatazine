@@ -9,7 +9,7 @@ jQuery.namespace('Meatazine.view.ui');
       "dragstop .ui-draggable": "draggable_dragStopHandler",
     },
     initialize: function () {
-      this.$el = this.setElement(this.el);
+      this.setElement(this.el);
       this.options.book.on('change:width change:height', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_selectHandler, this);
       this.collection.on('select', this.collection_selectHandler, this);
@@ -64,7 +64,7 @@ jQuery.namespace('Meatazine.view.ui');
       isReset = isReset || false;
       var self = this;
       html2canvas(this.$el, {onrendered: function (canvas) {
-        self.trigger('change', canvas);
+        self.model.trigger('redraw', self.model, canvas);
       }});
       this.saveRenderedHTML();
       this.saveTemplate(isReset);
