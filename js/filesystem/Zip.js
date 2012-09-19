@@ -1,7 +1,7 @@
 jQuery.namespace('Meatazine.filesystem');
-Meatazine.filesystem.FileZip = function () {
+Meatazine.filesystem.Zip = function () {
   var self = this,
-      file = new Meatazine.filesystem.FileReferrence(),
+      localFile = new Meatazine.filesystem.LocalFile(),
       isLoading = false,
       isAutoDownload = false,
       total = 0,
@@ -35,7 +35,11 @@ Meatazine.filesystem.FileZip = function () {
     if (zipData == null) {
       return;
     }
-    file.save('肉大师导出.zip', '', zipData, 'application/zip');
+    localFile.save({
+      name: '肉大师导出.zip',
+      content: zipData,
+      type: 'application/zip'
+    });
   }
   this.generate = function (base64, compression) {
     var zippedData = zip.generate({
@@ -52,7 +56,7 @@ Meatazine.filesystem.FileZip = function () {
       self.trigger('progress', total - queue.length, total);
       var data = queue[0];
       if (data.url.substr(0, 10) == 'filesystem') {
-        file.read(data.url);
+        localFile.read(data.url);
       } else {
         $.ajax({
           url: data.url,
@@ -102,6 +106,6 @@ Meatazine.filesystem.FileZip = function () {
   
   _.extend(this, Backbone.Events);
   
-  file.on('complete:read', file_readCompleteHandler, this);
-  file.on('complete:save', file_saveCompleteHandler, this);
+  localFile.on('complete:read', file_readCompleteHandler, this);
+  localFile.on('complete:save', file_saveCompleteHandler, this);
 }

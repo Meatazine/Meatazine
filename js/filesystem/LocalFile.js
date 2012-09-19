@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.filesystem');
 (function (ns) {
   var fileSystem = null,
       init = {
@@ -87,7 +86,8 @@ jQuery.namespace('Meatazine.filesystem');
             self.callback(entry.toURL(), options);
           }
           function copy(entry) {
-            entry.copyTo(fileData.toDir, filename, success, errorHandler);
+            var name = fileData.name || entry.name;
+            entry.copyTo(fileData.toDir, name, success, errorHandler);
           }
           function start(entry) {
             fileData.toDir = entry;
@@ -305,15 +305,7 @@ jQuery.namespace('Meatazine.filesystem');
           }
         }
       };
-  /**
-   * 文件操作类
-   * @contructor
-   * @class 操作本地文件
-   */
-  ns.FileReferrence = function () {
-    
-  }
-  ns.FileReferrence.prototype = _.extend(init, Backbone.Events);
+  
   
   /**
    * 寻找指定目录
@@ -358,4 +350,4 @@ jQuery.namespace('Meatazine.filesystem');
   window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   window.requestFileSystem(TEMPORARY, 1024 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
-})(Meatazine.filesystem);
+}(jQuery.namespace('Meatazine.filesystem')));

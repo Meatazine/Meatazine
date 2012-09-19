@@ -1,5 +1,5 @@
 (function (ns) {
-  var localFile = new Meatazine.filesystem.FileReferrence(),
+  var localFile = new Meatazine.filesystem.LocalFile(),
       imageResizer = new Meatazine.filesystem.ImageResizer(),
       args = null,
       callback = null,
@@ -122,7 +122,11 @@
           name = url.substr(url.lastIndexOf('/') + 1),
           content = atob(canvas[0].toDataURL('image/jpeg').split(',')[1]);
       localFile.on('complete:save', this.canvas_savedHandler, this);
-      localFile.save(name, '', content, 'image/jpeg');
+      localFile.save({
+        name: name,
+        content: content,
+        type: 'image/jpeg'
+      });
     },
     setCanvasScale: function (value) {
       this.model.set({scale: value}, {silent: true});
