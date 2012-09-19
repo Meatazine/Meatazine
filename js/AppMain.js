@@ -16,12 +16,14 @@ $(function () {
       source = new Meatazine.view.ui.SourcePanel({
         el: '#panel',
         book: book,
-        model: new Meatazine.model.SourceModel()
+        model: new Meatazine.model.SourceModel(),
+        collection: pages,
       }),
       contextButtons = new Meatazine.view.ui.ContextButtons({
         el: '#context-menu'
       })
       page = new Meatazine.view.ui.PageBody({
+        collection: pages,
         el: '#page-body',
         book: book,
         source: source.model,
@@ -29,30 +31,27 @@ $(function () {
   Meatazine.GUI.initialize({
     config: config,
     book: book,
+    pages: pages,
   });
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
 
-  // å¤„ç†UIäº‹ä»¶
-  list.on('select', source.pageList_selectHandler, source);
-  list.on('select', page.pageList_selectHandler, page);
-  page.on('change', list.page_changeHandler, list);
-  // å¤„ç†Modeläº‹ä»¶
+  // ´¦ÀíModelÊÂ¼ş
   book.on('saved', function () {
     user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
   });
   book.on('autosave', user.autosaveHandler, user);
   
-  // æ”¾åˆ°å‘½åç©ºé—´é‡Œ
+  // ·Åµ½ÃüÃû¿Õ¼äÀï
   Meatazine.config = config;
   Meatazine.user = user;
   Meatazine.book = book;
   
-  // å¤„ç†å„ç§Manager
+  // ´¦Àí¸÷ÖÖManager
   Meatazine.guide.GuideManager.init();
   Meatazine.popup.PopupManager.init('.modal');
   
-  // æ£€æŸ¥ç™»å½•çŠ¶æ€
+  // ¼ì²éµÇÂ¼×´Ì¬
   user.checkLoginStatus();
   user.on('change:isLogin', function () {
     user.get(user.get('isLogin') ? 'local' : 'remote').index = book.get('id');

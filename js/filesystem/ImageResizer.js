@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.filesystem');
 (function (ns) {
   var localFile = new ns.FileReferrence();
   ns.ImageResizer = function () {
@@ -88,4 +87,4 @@ jQuery.namespace('Meatazine.filesystem');
       this.next();
     }
   }
-})(Meatazine.filesystem);
+}(jQuery.namespace('Meatazine.filesystem')));

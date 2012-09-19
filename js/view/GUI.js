@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine');
 (function (ns, $) {
   var infoTimeout = 0,
       info = '';
@@ -7,11 +6,11 @@ jQuery.namespace('Meatazine');
     contextButtons: null,
     navbar: null,
     page: null,
-    VERSION: '0.1.5.@version@',
+    VERSION: '0.1.6.@version@',
     initialize: function (options) {
-      options.book.on('change:size', this.book_sizeChangeHandler, this);
-      options.book.get('pages').on('add', this.pages_addHandler, this);
-      options.book.get('pages').on('remove', this.pages_removeHandler, this);
+      options.book.on('change:width change:height', this.book_sizeChangeHandler, this);
+      options.pages.on('add', this.pages_addHandler, this);
+      options.pages.on('remove', this.pages_removeHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
         el: '#navbar',
         model: options.book,
@@ -106,8 +105,8 @@ jQuery.namespace('Meatazine');
         cancel.handler.call(cancel.context, cancel.argus || event);
       });
     },
-    book_sizeChangeHandler: function (w) {
-      $('#page-area').width(474 + w);
+    book_sizeChangeHandler: function (model) {
+      $('#page-area').width(474 + model.get('width'));
     },
     pages_addHandler: function (model, collection, options) {
       this.contextButtons.enableButtons();
@@ -127,4 +126,4 @@ jQuery.namespace('Meatazine');
       }
     },
   }
-})(Meatazine, jQuery);
+}(jQuery.namespace('Meatazine'), jQuery));

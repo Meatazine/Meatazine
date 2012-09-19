@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
   var localFile = new Meatazine.filesystem.FileReferrence(),
       imageResizer = new Meatazine.filesystem.ImageResizer(),
@@ -250,4 +249,4 @@ jQuery.namespace('Meatazine.view.ui.editor');
     },
   };
   ns.ImageEditor = ns.AbstractEditor.extend(init);
-})(Meatazine.view.ui.editor);
+}(jQuery.namespace('Meatazine.view.ui.editor')));

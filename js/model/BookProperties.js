@@ -1,23 +1,22 @@
-jQuery.namespace('Meatazine.model');
 (function (ns) {
   var isModified = false,
-      file = new Meatazine.filesystem.FileReferrence();
-  ns.BookProperties = Backbone.Model.extend({
-    url: './api/cloudbooks.php',
-    defaults: {
-      width: 1024,
-      height: 768,
-      id: 0,
-      platform: 3, // 1-ios, 2-android, 4-wp
-      icon: 'img/icon.png',
-      cover: '',
-      name: '我的杂志',
-      gallery: -1,
-      pages: null
-    },
-    initialize: function () {
-      this.get('pages').on('change', this.pages_changeHandler, this);
-    },
+      file = new Meatazine.filesystem.FileReferrence(),
+      init = {
+        url: './api/cloudbooks.php',
+        defaults: {
+          width: 1024,
+          height: 768,
+          id: 0,
+          platform: 3, // 1-ios, 2-android, 4-wp
+          icon: 'img/icon.png',
+          cover: '',
+          name: 'My Book'
+          gallery: -1,
+          pages: null
+        },
+        initialize: function () {
+          this.get('pages').on('change', this.pages_changeHandler, this);
+        },
     autosave: function () {
       if (!isModified || this.get('pages').length == 0) {
         return;
@@ -51,35 +50,18 @@ jQuery.namespace('Meatazine.model');
             zip.addFile(src, null, url);
             return attr + '="' + src + '"';
           });
-          template = Meatazine.utils.filterHTML(template);
-          zip.addFile('index.html', template);
-        }
-      });
-      return zip;
-    },
-    exportZip: function () {
-      var zip = this.createZip();
-      zip.on('complete', function () {
-        zip.downloadZip();
-        $('#export-zip').modal('hide');
-      });
-    },
-    fill: function (data) {
-      this.get('pages').fill(data.pages);
-      delete data.pages;
-      this.set(data);
-    },
-    getAppPack: function () {
-      $.ajax({
-        url: './api/publish.php',
-        data: {
-          id: this.get('id'),
-          apk: this.get('platform') >> 1 & 0x1,
-          ipa: this.get('platform') & 0x1,
         },
-        context: this,
-        success: function () {
-          this.trigger('publish:complete');
+        set: function (key, value, options) {
+          if (_.isObject(key)) {
+            if (key.hasOwnProperty('pages') && !(key.pages instanceof Backbone.Collection)) {
+              this.get('pages').reset(key.pages);
+              delete key.pages;
+            }
+          } else if (key == 'pages'){
+            this.get('pages').reset(value);
+            return;
+          }
+          Backbone.Model.prototype.set.call(this, key, value, options);
         },
       })
     },
@@ -196,4 +178,4 @@ jQuery.namespace('Meatazine.model');
       this.trigger('preview:ready');
     },
   });
-})(Meatazine.model);
+}(jQuery.namespace('Meatazine.model')));

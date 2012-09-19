@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.element');
 (function (ns) {
   var currentEditor = null,
       imageEditor = new Meatazine.view.ui.editor.ImageEditor('.group2'),
@@ -282,4 +281,4 @@ jQuery.namespace('Meatazine.view.element');
     },
   }
   ns.BaseElement = Backbone.View.extend(init);
-})(Meatazine.view.element);
+}(jQuery.namespace('Meatazine.view.element')));
