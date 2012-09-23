@@ -3,19 +3,21 @@
 <meta content="text/html; charset=UTF-8" http-equiv="Content-type" />
 <link rel="stylesheet" href="../css/bootstrap.min.css" />
 <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<script src="../js/libs/jquery-1.8.1.min.js"></script>
+<script src="../js/libs/jquery-1.8.2.min.js"></script>
 <script src="../js/libs/jQuery.namespace.js"></script>
+<script src="../js/libs/bootstrap.min.js"></script>
 <script src="../js/libs/jszip.js"></script>
 <script src="../js/libs/jszip-deflate.js"></script>
 <script src="../js/libs/underscore-min.js"></script>
 <script src="../js/libs/backbone-min.js"></script>
-<script src="../js/filesystem/FileReferrence.js"></script>
+<script src="../js/filesystem/LocalFile.js"></script>
+<script src="js/html5file.js"></script>
 <style>
-  body {
-    padding-top: 60px;
-  }
   h1, h2, h3, .brand {
     font-family: Tahoma, Microsoft Yahei;
+  }
+  .hero-unit {
+    margin-top:20px;
   }
   #file-here {
     width: 300px;
@@ -33,132 +35,13 @@
   #file-here + p {
     margin-top:20px;
   }
-  #hidden-form {
-    display:none;
-  }
   #file-list {
-    
+    box-shadow:0 1px 4px 1px rgba(0, 0, 0, 0.25);
+    min-height:100px;
+    padding-top:30px;
   }
  </style>
-<script>
-  $(function () {
-    var localFile = new Meatazine.filesystem.FileReferrence();
-    localFile.on('complete:clone', function (url) {
-      fileURL = url;
-      $('#file-here').removeClass('active');
-      $('#pic-container').html('<a href="' + url + '" class="thumbnail"><img src="' + url + '" /></a>');
-      $('.btn').prop('disabled', false);
-    });
-    $('#file-here')
-      .on('drop', function (event) {
-        var files = event.originalEvent.dataTransfer.files,
-            usableFiles = [],
-            file;
-        // 只认图片
-        for (var i = 0, len = files.length; i < len; i++) {
-          if (files[i].type.substr(0, 5) == 'image') {
-            file = files[i];
-            break;
-          }
-        }
-        if (file != null) {
-          localFile.clone({
-            file: file,
-            toDir: '',
-            name: file.name
-          });
-        }
-        event.preventDefault();
-      })
-      .on('dragover', function (event) {
-        if (event.preventDefault) {
-          event.preventDefault();
-        }
-        event.originalEvent.dataTransfer.dropEffect = 'copy';
-        return false;
-      })
-      .on('dragenter', function (event) {
-        $(event.currentTarget).addClass('active');
-      })
-      .on('dragleave', function (event) {
-        $(event.currentTarget).removeClass('active');
-      });
-    $('#download-btn').click(function () {
-      var zip = new JSZip(),
-          fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-      zip.file('file.txt', fileName);
-      localFile.on('complete:read', function (file) {
-        zip.file(fileName, file, {binary: true});
-        var content = zip.generate();
-        location.href = "data:application/zip;base64," + content;
-      });
-      localFile.read(fileURL);
-    });
-    $('#list-btn').click(function (event) {
-      localFile.readEntries('', {
-        callback: showFilelist,
-        context: this,
-      });
-    });
-    $('#file-list').on('click', 'option', function (event) {
-      var index = event.currentTarget.value,
-          fileEntry = $('#file-list').data('entries')[index],
-          fileURL = fileEntry.toURL();
-      $('#pic-container').html('<a href="#' + index + '" class="thumbnail"><img src="' + fileURL + '" /></a>');
-    });
-    $('#pic-container').on('click', 'a', function (event) {
-      if (/#/.test(event.currentTarget.href)) {
-        var url = event.currentTarget.href,
-            index = Number(url.substr(url.indexOf('#') + 1)),
-            entry = $('#file-list').data('entries')[index];
-        entry.file(function (file) {
-          var formData = new FormData(),
-              xhr;
-          formData.append('id', 1);
-          formData.append('type', 'test');
-          formData.append('file', file);
-          $.ajax({
-            url: '../api/upload.php',
-            data: formData,
-            type: 'POST',
-            cache: false,
-            context: this,
-            contentType: false,
-            processData: false,
-            xhr: function () {
-              xhr = new window.XMLHttpRequest();
-              xhr.upload.addEventListener('progress', function (event) {
-                console.log(event.loaded / event.total * 100 >> 1);
-              });
-              return xhr;
-            },
-            success: function (data) {
-              console.log(data);
-              alert(JSON.parse(data));
-              xhr.upload.removeEventListener('progres');
-              xhr = null;
-            },
-          });
-          console.log(file, formData);
-        }, null);
-        return false;
-      }
-    });
-  });
-  function showFilelist(entries) {
-    var options = '';
-    entries.forEach(function (entry, i) {
-      if (entry.isFile) {
-        options += '<option value="' + i + '">' + entry.name + '</options>';
-      }
-    });
-    $('#file-list')
-      .data('entries', entries)
-      .html(options);
-  };
-  var fileURL;
-</script>
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-static-top">
   <div class="navbar-inner">
     <div class="container">
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -181,34 +64,55 @@
   <div class="hero-unit">
     <h1>HTML5 文件API测试用例</h1>
     <p>本测试部分代码来源于<a href="http://www.html5rocks.com/en/tutorials/file/filesystem/">html5rocks</a>，和<a href="http://www.w3.org/TR/file-system-api/">W3C</a>。</p>
-    <p>计划实现以下内容</p>
-    <ol>
-      <li>从外面拖放文件</li>
-      <li>下载ZIP文件</li>
-      <li>列出文件列表</li>
-      <li>预览文件</li>
-      <li>上传文件</li>
-    </ol>
+    <div class="accordion" id="purpose">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#purpose" href="#purpose-list">
+            计划实现以下内容
+          </a>
+        </div>
+        <div id="purpose-list" class="accordion-body collapse">
+          <ol>
+            <li>从外面拖放文件</li>
+            <li>下载ZIP文件</li>
+            <li>列出文件列表</li>
+            <li>预览文件</li>
+            <li>上传文件</li>
+          </ol>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="span4">
       <div id="file-here">
-        请将图片拖放至此
+        拖放到这里的图片<br />会被复制进本地文件系统
       </div>
       <p>
         <button id="download-btn" type="button" class="btn btn-primary" disabled="true">下载zip文件</button>
-        <button id="list-btn" type="button" class="btn btn-info">列出本地文件</button>
+        <button id="list-btn" type="button" class="btn btn-info">刷新文件列表</button>
       </p>
-      <form class="form-horizontal">
-        <select id="file-list" multiple="multiple" class="span4" size="10">
-          
-        </select>
-      </form>
     </div>
     <div class="span8">
-      <div class="thumbnails" id="pic-container">
+      <ul class="thumbnails" id="file-list">
         
-      </div>
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="modals-cave">
+  <div class="modal fade hide" id="pic-popup">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>原图</h3>
+    </div>
+    <div class="modal-body">
+      
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary upload-button">上传</button>
+      <button type="button" class="btn btn-danger delete-button">删除</button>
+      <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
     </div>
   </div>
 </div>

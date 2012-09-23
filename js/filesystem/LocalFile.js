@@ -1,4 +1,43 @@
 (function (ns) {
+  /**
+   * 寻找指定目录
+   * @param {String} dir 目录结构
+   * @param {Function} callback 取得目标 DirectoryEntry 后，调用此函数
+   */
+  function getDirectory(dir, callback) {
+    var folders = _.reject(dir.split('/'), function (level) {
+      return level == '.' || level == '';
+    });
+    function checkDir(root, folders) {
+      root.getDirectory(folders.shift(), {create: true}, function (dirEntry) {
+        if (folders.length > 0) {
+          checkDir(dirEntry, folders);
+        } else {
+          callback(dirEntry);
+        }
+      }, errorHandler);
+    }
+    if (folders.length > 0) {
+      checkDir(fileSystem.root, folders);
+    } else {
+      callback(fileSystem.root);
+    }
+  }
+  /**
+   * 初始化文件系统成功回调
+   * @param {Object} fs
+   */
+  function fileSystemReadyHandler(fs) {
+    fileSystem = fs;
+  }
+  /**
+   * 初始化文件系统失败回调
+   * @param {Object} error
+   */
+  function errorHandler(error) {
+    console.log('Init Error: ' + error.code, error);
+  }
+  
   var fileSystem = null,
       init = {
         /**
@@ -25,7 +64,7 @@
         clone: function (fileData, options) {
           function clone(entry) {
             options.entry = entry;
-            entry.createWriter(clone, errorHandler);
+            entry.createWriter(success, errorHandler);
           }
           function success(fileWriter) {
             fileWriter.onwriteend = function(event) {
@@ -142,13 +181,19 @@
             fileEntry.file(success, errorHandler);
           }
           function success(file) {
-            if (options.type == 'blob') {
-              reader.readAsArrayBuffer(file);
-            } else if (options.type == 'base64') {
-              reader.readAsDataURL(file);
-            } else {
-              var encoding = options.encoding || 'UTF-8';
-              reader.readAsText(file, encoding);
+            switch (options.type) {
+              case type.blob: 
+                reader.readAsArrayBuffer(file);
+                break;
+                
+              case type.base64:
+                reader.readAsDataURL(file);
+                break;
+                
+              default:
+                var encoding = options.encoding || 'UTF-8';
+                reader.readAsText(file, encoding);
+                break;
             }
           }
           
@@ -304,47 +349,18 @@
             start(fileData.toDir);
           }
         }
+      },
+      type = {
+        blob : 1,
+        base64: 2,
+        text: 0,
       };
+  ns.LocalFile = function () {
+    
+  }
+  ns.LocalFile.prototype = _.extend(init, Backbone.Events);
+  ns.FileType = type;
   
-  
-  /**
-   * 寻找指定目录
-   * @param {String} dir 目录结构
-   * @param {Function} callback 取得目标 DirectoryEntry 后，调用此函数
-   */
-  function getDirectory(dir, callback) {
-    var folders = _.reject(dir.split('/'), function (level) {
-      return level == '.' || level == '';
-    });
-    function checkDir(root, folders) {
-      root.getDirectory(folders.shift(), {create: true}, function (dirEntry) {
-        if (folders.length > 0) {
-          checkDir(dirEntry, folders);
-        } else {
-          callback(dirEntry);
-        }
-      }, errorHandler);
-    }
-    if (folders.length > 0) {
-      checkDir(fileSystem.root, folders);
-    } else {
-      callback(fileSystem.root);
-    }
-  }
-  /**
-   * 初始化文件系统成功回调
-   * @param {Object} fs
-   */
-  function fileSystemReadyHandler(fs) {
-    fileSystem = fs;
-  }
-  /**
-   * 初始化文件系统失败回调
-   * @param {Object} error
-   */
-  function errorHandler(error) {
-    console.log('Init Error: ' + error.code, error);
-  }
   
   // 取FileSystem引用
   window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
