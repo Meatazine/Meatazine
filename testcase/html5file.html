@@ -36,9 +36,13 @@
     margin-top:20px;
   }
   #file-list {
-    box-shadow:0 1px 4px 1px rgba(0, 0, 0, 0.25);
     min-height:100px;
-    padding-top:30px;
+  }
+  #file-list img {
+    max-height:100px;
+  }
+  #file-list i.icon-folder-close {
+    margin:33px 33px;
   }
  </style>
 <div class="navbar navbar-static-top">
@@ -83,7 +87,7 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row-fluid">
     <div class="span4">
       <div id="file-here">
         拖放到这里的图片<br />会被复制进本地文件系统
@@ -94,6 +98,9 @@
       </p>
     </div>
     <div class="span8">
+      <ul class="breadcrumb">
+        <li class="active">根目录</li>
+      </ul>
       <ul class="thumbnails" id="file-list">
         
       </ul>

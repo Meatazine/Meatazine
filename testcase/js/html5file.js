@@ -9,20 +9,19 @@ $(function () {
     .on('drop', function (event) {
       var files = event.originalEvent.dataTransfer.files,
           usableFiles = [],
-          file;
+          file,
+          i = 0,
+          len = files.length;
       // 只认图片
-      for (var i = 0, len = files.length; i < len; i++) {
+      for (; i < len; i++) {
         if (files[i].type.substr(0, 5) == 'image') {
-          file = files[i];
+          localFile.clone({
+            file: file,
+            toDir: '',
+            name: file.name
+          });
           break;
         }
-      }
-      if (file != null) {
-        localFile.clone({
-          file: file,
-          toDir: '',
-          name: file.name
-        });
       }
       event.preventDefault();
     })
@@ -54,46 +53,17 @@ $(function () {
     refreshFileList();
   });
   $('#file-list').on('click', 'a', function (event) {
-    var img = $(event.currentTarget).find('img').clone();
-    showPicPopup(img);
+    if ($(this).hasClass('folder')) {
+      
+    } else {
+      var img = $(event.currentTarget).find('img').clone();
+      showPicPopup(img);
+    }
   });
   $('#pic-container').on('click', 'a', function (event) {
-    if (/#/.test(event.currentTarget.href)) {
-      var url = event.currentTarget.href,
-          index = Number(url.substr(url.indexOf('#') + 1)),
-          entry = $('#file-list').data('entries')[index];
-      entry.file(function (file) {
-        var formData = new FormData(),
-            xhr;
-        formData.append('id', 1);
-        formData.append('type', 'test');
-        formData.append('file', file);
-        $.ajax({
-          url: '../api/upload.php',
-          data: formData,
-          type: 'POST',
-          cache: false,
-          context: this,
-          contentType: false,
-          processData: false,
-          xhr: function () {
-            xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener('progress', function (event) {
-              console.log(event.loaded / event.total * 100 >> 1);
-            });
-            return xhr;
-          },
-          success: function (data) {
-            console.log(data);
-            alert(JSON.parse(data));
-            xhr.upload.removeEventListener('progres');
-            xhr = null;
-          },
-        });
-        console.log(file, formData);
-      }, null);
-      return false;
-    }
+    var index = Number(event.currentTarget.href.substr(1)),
+        entry = currentEntries[index];
+    upload(entry);
   });
   
   //refreshFileList();
@@ -105,20 +75,52 @@ function refreshFileList() {
   });
 };
 function showFilelist(entries) {
-  var options = '';
+  var items = '';
   _.each(entries, function (entry, i) {
-    if (entry.isFile) {
-      options += '<li class="span2"><a href="#' + i + '" class="thumbnail"><img src="' + entry.toURL() + '" /></a></li>';
-    }
+    var inner = entry.isFile ? '<img src="' + entry.toURL() + '" />' : '<i class="icon-folder-close"></i>',
+        className = entry.isFile ? 'file' : 'folder';
+    items += '<li class="span2"><a href="#' + i + '" class="thumbnail ' + className + '">' + inner + '</a></li>';
   });
-  $('#file-list')
-    .data('entries', entries)
-    .html(options);
+  $('#file-list').html(items);
+  currentEntries = entries;
 };
 function showPicPopup(dom) {
   $('#pic-popup')
     .find('.modal-body').html(dom)
     .end().modal('show');
 };
+function upload(entry) {
+  entry.file(function (file) {
+    var formData = new FormData(),
+        xhr;
+    formData.append('id', 1);
+    formData.append('type', 'test');
+    formData.append('file', file);
+    $.ajax({
+      url: '../api/upload.php',
+      data: formData,
+      type: 'POST',
+      cache: false,
+      context: this,
+      contentType: false,
+      processData: false,
+      xhr: function () {
+        xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function (event) {
+          console.log(event.loaded / event.total * 100 >> 1);
+        });
+        return xhr;
+      },
+      success: function (data) {
+        console.log(data);
+        alert(JSON.parse(data));
+        xhr.upload.removeEventListener('progres');
+        xhr = null;
+      },
+    });
+    console.log(file, formData);
+  }, null);
+}
 var fileURL,
-    localFile = new Meatazine.filesystem.LocalFile();
+    localFile = new Meatazine.filesystem.LocalFile(),
+    currentEntries;
