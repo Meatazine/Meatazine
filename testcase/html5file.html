@@ -19,30 +19,23 @@
   .hero-unit {
     margin-top:20px;
   }
-  #file-here {
-    width: 300px;
-    height: 200px;
-    border: 4px dashed #CCC;
-    border-radius:10px;
-    vertical-align: middle;
-    display:table-cell;
-    text-align:center;
-  }
-  #file-here.active {
-    border-color:#08C;
-    color:#08C;
-  }
-  #file-here + p {
-    margin-top:20px;
-  }
   #file-list {
     min-height:100px;
+  }
+  #file-list.active {
+    background-color:rgba(0, 136, 204, 0.2);
+  }
+  #file-list .thumbnail {
+    text-align:center;
+  }
+  #file-list > li:nth-child(6n + 1) {
+    margin-left:0;
   }
   #file-list img {
     max-height:100px;
   }
   #file-list i.icon-folder-close {
-    margin:33px 33px;
+    margin:33px 0;
   }
  </style>
 <div class="navbar navbar-static-top">
@@ -89,19 +82,24 @@
   </div>
   <div class="row-fluid">
     <div class="span4">
-      <div id="file-here">
-        拖放到这里的图片<br />会被复制进本地文件系统
-      </div>
+      <h3>您有三种方式添加图片</h3>
+      <ol>
+        <li>将图片拖拽到右侧文件列表区</li>
+        <li>点击上传按钮选择文件</li>
+        <li>复制文件，在此页面上粘贴</li>
+      </ol>
       <p>
-        <button id="download-btn" type="button" class="btn btn-primary" disabled="true">下载zip文件</button>
-        <button id="list-btn" type="button" class="btn btn-info">刷新文件列表</button>
+        <button id="upload-button" type="button" class="btn btn-primary"><i class="icon-upload icon-white"></i> 上传文件</button>
+        <button id="refresh-button" type="button" class="btn btn-info"><i class="icon-refresh icon-white"></i> 刷新列表</button>
+        <button id="delete" type="button" class="btn btn-danger"><i class="icon-remove icon-white"></i> 删除文件</button>
+        <button id="add-text" type="button" class="btn"><i class="icon-plus"></i> 添加文本文件</button>
       </p>
     </div>
     <div class="span8">
       <ul class="breadcrumb">
         <li class="active">根目录</li>
       </ul>
-      <ul class="thumbnails" id="file-list">
+      <ul class="thumbnails row" id="file-list">
         
       </ul>
     </div>

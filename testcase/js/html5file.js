@@ -5,40 +5,55 @@ $(function () {
     $('.btn').prop('disabled', false);
     refreshFileList();
   });
-  $('#file-here')
-    .on('drop', function (event) {
-      var files = event.originalEvent.dataTransfer.files,
-          usableFiles = [],
-          file,
-          i = 0,
-          len = files.length;
-      // 只认图片
-      for (; i < len; i++) {
-        if (files[i].type.substr(0, 5) == 'image') {
-          localFile.clone({
-            file: file,
-            toDir: '',
-            name: file.name
-          });
-          break;
+  $('#file-list')
+    .on({
+      drop: function (event) {
+        var files = event.originalEvent.dataTransfer.files,
+            usableFiles = [],
+            file,
+            i = 0,
+            len = files.length;
+        // 只认图片
+        for (; i < len; i++) {
+          if (files[i].type.substr(0, 5) == 'image') {
+            localFile.clone({
+              file: file,
+              toDir: '',
+              name: file.name
+            });
+            break;
+          }
+        }
+        event.preventDefault();
+      },
+      dragover: function (event) {
+        if (event.preventDefault) {
+          event.preventDefault();
+        }
+        event.originalEvent.dataTransfer.dropEffect = 'copy';
+        return false;
+      },
+      dragenter: function (event) {
+        $(this).addClass('active');
+      },
+      dragleave: function (event) {
+        $(this).removeClass('active');
+      }
+    })
+    .on({
+      click: function (event) {
+        
+      },
+      dblclick: function (event) {
+        if ($(this).hasClass('folder')) {
+          
+        } else {
+          var img = $(event.currentTarget).find('img').clone();
+          showPicPopup(img);
         }
       }
-      event.preventDefault();
-    })
-    .on('dragover', function (event) {
-      if (event.preventDefault) {
-        event.preventDefault();
-      }
-      event.originalEvent.dataTransfer.dropEffect = 'copy';
-      return false;
-    })
-    .on('dragenter', function (event) {
-      $(event.currentTarget).addClass('active');
-    })
-    .on('dragleave', function (event) {
-      $(event.currentTarget).removeClass('active');
-    });
-  $('#download-btn').click(function () {
+    }, 'a');
+  $('#upload-button').click(function () {
     var zip = new JSZip(),
         fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
     zip.file('file.txt', fileName);
@@ -49,21 +64,8 @@ $(function () {
     });
     localFile.read(fileURL, {type: Meatazine.fileSystem.FileType.blob});
   });
-  $('#list-btn').click(function (event) {
+  $('#refresh-button').click(function (event) {
     refreshFileList();
-  });
-  $('#file-list').on('click', 'a', function (event) {
-    if ($(this).hasClass('folder')) {
-      
-    } else {
-      var img = $(event.currentTarget).find('img').clone();
-      showPicPopup(img);
-    }
-  });
-  $('#pic-container').on('click', 'a', function (event) {
-    var index = Number(event.currentTarget.href.substr(1)),
-        entry = currentEntries[index];
-    upload(entry);
   });
   
   //refreshFileList();
