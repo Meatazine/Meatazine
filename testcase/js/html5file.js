@@ -42,14 +42,22 @@ $(function () {
     })
     .on({
       click: function (event) {
-        
+        $(this).addClass('active');
       },
       dblclick: function (event) {
-        if ($(this).hasClass('folder')) {
+        var index = Number(this.href.substr(1)),
+            entry = currentEntries[index];
+        if (entry.isDirectory) {
           
         } else {
-          var img = $(event.currentTarget).find('img').clone();
-          showPicPopup(img);
+          entry.file(function (file) {
+            if (/image/i.test(file.type)) {
+              var img = '<img src="' + entry.toURL + '" />';
+              showPicPopup(img);
+            } else if (/text/i.test(file.type)) {
+              
+            }
+          });
         }
       }
     }, 'a');
@@ -79,9 +87,8 @@ function refreshFileList() {
 function showFilelist(entries) {
   var items = '';
   _.each(entries, function (entry, i) {
-    var inner = entry.isFile ? '<img src="' + entry.toURL() + '" />' : '<i class="icon-folder-close"></i>',
-        className = entry.isFile ? 'file' : 'folder';
-    items += '<li class="span2"><a href="#' + i + '" class="thumbnail ' + className + '">' + inner + '</a></li>';
+    var inner = entry.isFile ? '<img src="' + entry.toURL() + '" />' : '<i class="icon-folder-close"></i>';
+    items += '<li class="span2"><a href="#' + i + '" class="thumbnail">' + inner + '</a></li>';
   });
   $('#file-list').html(items);
   currentEntries = entries;
