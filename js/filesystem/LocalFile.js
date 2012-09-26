@@ -37,6 +37,14 @@
   function errorHandler(error) {
     console.log('Init Error: ' + error.code, error);
   }
+  /**
+   * 检查对象是否是FileEntry
+   * @param {Mixed} value 待检查对象
+   * @return {Boolean} 是否是FileEntry
+   */
+  function isFileEntry(value) {
+    return value.toString() === '[object FileEntry]';
+  }
   
   var fileSystem = null,
       init = {
@@ -206,7 +214,7 @@
           }
           if (_.isString(file)) {
             window.resolveLocalFileSystemURL(url, read);
-          } else if (file.toString() == '[object FileEntry]') {
+          } else if (isFileEntry(file)) {
             file.file(success, errorHandler);
           } else {
             success(file);
@@ -252,8 +260,9 @@
          * 删除指定目录下的指定文件
          * 暂时一次只能删除一个
          * @param {Object} fileData
-         * @param {String|DirectoryEntry} fileData.toDir 目标目录
-         * @param {String} fileData.name 目标文件名
+         * @param {FileEntry} [fileData.file] 文件
+         * @param {String|DirectoryEntry} [fileData.toDir] 目标目录
+         * @param {String} [fileData.name] 目标文件名
          * @param {Object} [options] 附加参数
          * @param {Function} [options.callback] 完成操作后的回调函数，默认传入克隆后的文件地址和options
          * @param {Object} [options.context] 回调函数的执行环境
@@ -264,8 +273,8 @@
             entry.remove(success, errorHandler);
           }
           function success() {
-            console.log('Removed: ' + fileData.name);
-            self.trigger('complete:remove', fileData.name);
+            console.log('Removed: ' + fileName);
+            self.trigger('complete:remove', fileName, options);
             self.callback(null, options);
           }
           function start(dirEntry) {
@@ -273,9 +282,16 @@
             dirEntry.get(fileData.name, null, remove, errorHandler);
           }
           
-          var self = this;
+          var self = this,
+              fileName = fileData.name || fileData.file.name;
           fileData.toDir = fileData.toDir || '';
           options = options || {};
+          // 移除制定文件
+          if (isFileEntry(fileData.file)) {
+            remove(fileData.file);
+            return;
+          }
+          // 移除指定目录下指定文件名的文件
           if (_.isString(fileData.toDir)) {
             getDirectory(fileData.toDir, start);
           } else {

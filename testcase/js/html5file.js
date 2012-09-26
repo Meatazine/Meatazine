@@ -1,11 +1,13 @@
 $(function () {
   localFile.on('complete:clone', function (url) {
     fileURL = url;
-    $('#file-here').removeClass('active');
+    $('#file-list').removeClass('active');
     $('.btn').prop('disabled', false);
     refreshFileList();
   });
+  itemTemplate = $('#file-list').html();
   $('#file-list')
+    .empty()
     .on({
       drop: function (event) {
         var files = event.originalEvent.dataTransfer.files,
@@ -42,35 +44,37 @@ $(function () {
     })
     .on({
       click: function (event) {
-        $(this).addClass('active');
-      },
-      dblclick: function (event) {
-        var index = Number(this.href.substr(1)),
+        var img = $(this).find('img').clone(),
+            title = $(this).find('p').text(),
+            index = $(this).parent().index(),
             entry = currentEntries[index];
         if (entry.isDirectory) {
-          
+          refreshFileList(entry);
         } else {
           entry.file(function (file) {
             if (/image/i.test(file.type)) {
-              var img = '<img src="' + entry.toURL + '" />';
-              showPicPopup(img);
+              showPicPopup(title, img, entry);
             } else if (/text/i.test(file.type)) {
               
             }
           });
         }
-      }
+      },
     }, 'a');
-  $('#upload-button').click(function () {
-    var zip = new JSZip(),
-        fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-    zip.file('file.txt', fileName);
-    localFile.on('complete:read', function (file) {
-      zip.file(fileName, file, {binary: true});
-      var content = zip.generate();
-      location.href = "data:application/zip;base64," + content;
+  $('.modal').on('click', '.delete-button', function (event) {
+    var modal = $(this).closest('.modal'),
+        entry = modal.data('entry');
+    localFile.remove({
+      file: entry
     });
-    localFile.read(fileURL, {type: Meatazine.fileSystem.FileType.blob});
+    modal
+      .data('entry', null)
+      .modal('hide');
+    $('#file-list').children().eq(_.indexOf(currentEntries, entry)).remove();
+    currentEntries = _.without(currentEntries, entry);
+  });
+  $('#upload-button').click(function () {
+    
   });
   $('#refresh-button').click(function (event) {
     refreshFileList();
@@ -78,24 +82,28 @@ $(function () {
   
   //refreshFileList();
 });
-function refreshFileList() {
-  localFile.readEntries('', {
+function refreshFileList(dir) {
+  dir = dir || 'source';
+  localFile.readEntries(dir, {
     callback: showFilelist,
     context: this,
   });
 };
 function showFilelist(entries) {
-  var items = '';
-  _.each(entries, function (entry, i) {
-    var inner = entry.isFile ? '<img src="' + entry.toURL() + '" />' : '<i class="icon-folder-close"></i>';
-    items += '<li class="span2"><a href="#' + i + '" class="thumbnail">' + inner + '</a></li>';
+  var items = _.map(entries, function (entry, i) {
+    return {
+      name: entry.name,
+      img: entry.isFile && entry.toURL(), 
+    };
   });
-  $('#file-list').html(items);
+  $('#file-list').html(Mustache.render(itemTemplate, {section: items}));
   currentEntries = entries;
 };
-function showPicPopup(dom) {
+function showPicPopup(title, dom, entry) {
   $('#pic-popup')
-    .find('.modal-body').html(dom)
+    .data('entry', entry)
+    .find('h3').text(title)
+    .end().find('.modal-body').html(dom)
     .end().modal('show');
 };
 function upload(entry) {
@@ -132,4 +140,5 @@ function upload(entry) {
 }
 var fileURL,
     localFile = new Meatazine.filesystem.LocalFile(),
-    currentEntries;
+    currentEntries,
+    itemTemplate;
