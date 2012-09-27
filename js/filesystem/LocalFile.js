@@ -94,7 +94,7 @@
           }
           function start(dirEntry) {
             fileData.toDir = dirEntry;
-            dirEntry.getFile(fileData.name, {create:true, exclusive: true}, clone, errorHandler);
+            dirEntry.getFile(fileData.name, {create:true, exclusive: options.override}, clone, errorHandler);
           }
           
           var self = this;
@@ -108,6 +108,7 @@
             throw new Error('只能上传图片类素材');
           }
           fileData.toDir = fileData.toDir || '';
+          fileData.name = fileData.name || fileData.file.name;
           options = options || {};
           if ( _.isString(fileData.toDir)) {
             getDirectory(fileData.toDir, start);
@@ -185,8 +186,8 @@
          * @param {Object} [options.context] 回调函数的执行环境
          */
         read: function (file, options) {
-          function read(fileEntry) {
-            fileEntry.file(success, errorHandler);
+          function read(entry) {
+            entry.file(success, errorHandler);
           }
           function success(file) {
             switch (options.type) {
@@ -199,8 +200,7 @@
                 break;
                 
               default:
-                var encoding = options.encoding || 'UTF-8';
-                reader.readAsText(file, encoding);
+                reader.readAsText(file);
                 break;
             }
           }
@@ -243,6 +243,7 @@
             }
           }
           function start(dir) {
+            options.entry = dir;
             dirReader = dir.createReader();
             read();
           }
@@ -301,8 +302,9 @@
         /**
          * 保存内容到指定文件
          * @param {Object} fileData 文件相关数据
-         * @param {String|DirectoryEntry} fileData.toDir 目标目录
-         * @param {String} fileData.name 目标文件名
+         * @param {String|DirectoryEntry} [fileData.toDir] 目标目录
+         * @param {String} [fileData.name] 目标文件名
+         * @param {FileEntry} [fileData.file] 文件入口 
          * @param {String} [fileData.type] 文件类型
          * @param {Blob|String} fileData.content 文件内容
          * @param {Object} [options] 附加参数
@@ -312,7 +314,7 @@
         save: function (fileData, options) {
           function save(entry) {
             options.entry = entry;
-            fileEntry.createWriter(success, errorHandler);
+            entry.createWriter(success, errorHandler);
           }
           function success(fileWriter) {
             fileWriter.onwriteend = function (event) {
@@ -337,7 +339,7 @@
               }
               blob = new Blob([byteArray], {type: fileData.type});
             } else {
-              blob = new Blob(content);
+              blob = new Blob([content]);
             }
             fileWriter.write(blob);
           }
@@ -359,6 +361,10 @@
             toDir: '',
           }, fileData);
           options = options || {};
+          if (fileData.file && isFileEntry(fileData.file)) {
+            save(fileData.file);
+            return;
+          }
           if (_.isString(fileData.toDir)) {
             getDirectory(fileData.toDir, start);
           } else {

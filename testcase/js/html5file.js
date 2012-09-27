@@ -21,7 +21,6 @@ $(function () {
             localFile.clone({
               file: file,
               toDir: '',
-              name: file.name
             });
             break;
           }
@@ -44,37 +43,73 @@ $(function () {
     })
     .on({
       click: function (event) {
-        var img = $(this).find('img').clone(),
-            title = $(this).find('p').text(),
-            index = $(this).parent().index(),
+        var self = $(this),
+            title = self.find('p').text(),
+            index = self.parent().index(),
             entry = currentEntries[index];
         if (entry.isDirectory) {
           refreshFileList(entry);
         } else {
           entry.file(function (file) {
             if (/image/i.test(file.type)) {
+              var img = self.find('img').clone();
               showPicPopup(title, img, entry);
             } else if (/text/i.test(file.type)) {
-              
+              showTextPopup(title, file, entry);
             }
           });
         }
       },
     }, 'a');
-  $('.modal').on('click', '.delete-button', function (event) {
-    var modal = $(this).closest('.modal'),
-        entry = modal.data('entry');
-    localFile.remove({
-      file: entry
+  $('.modal')
+    .on('click', '.delete-button', function (event) {
+      var modal = $(this).closest('.modal'),
+          entry = modal.data('entry');
+      localFile.remove({
+        file: entry
+      });
+      modal
+        .data('entry', null)
+        .modal('hide');
+      $('#file-list').children().eq(_.indexOf(currentEntries, entry)).remove();
+      currentEntries = _.without(currentEntries, entry);
+    })
+    .on('click', '.save-button', function (event) {
+      var modal = $(this).closest('.modal'),
+          entry = modal.data('entry'),
+          content = modal.find('textarea').val();
+      if (entry == null) {
+        localFile.save({
+          toDir: currentDirectory,
+          name: content.substr(0, 8) + '.txt',
+          content: content,
+        }, {
+          callback: function (options) {
+            currentEntries.push(options.entry);
+            var item = {
+              name: entry.name,
+              url: entry.toURL(),
+            };
+            $('#file-list').append(Mustache.render(itemTemplate, {section: [entry]}));
+          },
+          context: this,
+        });
+      } else {
+        localFile.save({
+          file: entry,
+          content: content,
+        }, {
+          callback: function () {
+            modal.modal('hide');
+          },
+        });
+      }
     });
-    modal
-      .data('entry', null)
-      .modal('hide');
-    $('#file-list').children().eq(_.indexOf(currentEntries, entry)).remove();
-    currentEntries = _.without(currentEntries, entry);
-  });
   $('#upload-button').click(function () {
     
+  });
+  $('#add-text').click(function () {
+    $('#text-popup').modal('show');
   });
   $('#refresh-button').click(function (event) {
     refreshFileList();
@@ -83,21 +118,25 @@ $(function () {
   //refreshFileList();
 });
 function refreshFileList(dir) {
-  dir = dir || 'source';
+  dir = dir || '';
   localFile.readEntries(dir, {
     callback: showFilelist,
     context: this,
   });
 };
-function showFilelist(entries) {
+function showFilelist(entries, options) {
   var items = _.map(entries, function (entry, i) {
-    return {
+    var result = {
       name: entry.name,
-      img: entry.isFile && entry.toURL(), 
     };
+    if (entry.isFile) {
+      result[/txt/i.test(entry.name) ? 'url' : 'img'] = entry.toURL();
+    }
+    return result;
   });
   $('#file-list').html(Mustache.render(itemTemplate, {section: items}));
   currentEntries = entries;
+  currentDirectory = options.entry;
 };
 function showPicPopup(title, dom, entry) {
   $('#pic-popup')
@@ -106,6 +145,18 @@ function showPicPopup(title, dom, entry) {
     .end().find('.modal-body').html(dom)
     .end().modal('show');
 };
+function showTextPopup(title, file, entry) {
+  var textarea = $('#text-popup').find('textarea');
+  $('#text-popup')
+    .data('entry', entry)
+    .find('h3').text(title)
+    .end().modal('show');
+  localFile.read(file, {
+    callback: function (data) {
+      textarea.val(data);
+    }
+  })
+}
 function upload(entry) {
   entry.file(function (file) {
     var formData = new FormData(),
@@ -141,4 +192,5 @@ function upload(entry) {
 var fileURL,
     localFile = new Meatazine.filesystem.LocalFile(),
     currentEntries,
+    currentDirectory,
     itemTemplate;

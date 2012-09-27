@@ -69,7 +69,8 @@
             localFile.clone({
               file: this.fileQueue.shift(),
               toDir: 'source',
-              name: filename,
+            }, {
+              override: false,
             });
           } else {
             this.trigger('complete:all');
