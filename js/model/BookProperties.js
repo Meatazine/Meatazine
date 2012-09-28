@@ -17,6 +17,18 @@
         initialize: function () {
           this.get('pages').on('change', this.pages_changeHandler, this);
         },
+        set: function (key, value, options) {
+          if (_.isObject(key)) {
+            if (key.hasOwnProperty('pages') && !(key.pages instanceof Backbone.Collection)) {
+              this.get('pages').reset(key.pages);
+              delete key.pages;
+            }
+          } else if (key == 'pages'){
+            this.get('pages').reset(value);
+            return;
+          }
+          Backbone.Model.prototype.set.call(this, key, value, options);
+        },
         autosave: function () {
           if (!isModified || this.get('pages').length == 0) {
             return;
@@ -51,18 +63,6 @@
                 return attr + '="' + src + '"';
               });
             },
-            set: function (key, value, options) {
-              if (_.isObject(key)) {
-                if (key.hasOwnProperty('pages') && !(key.pages instanceof Backbone.Collection)) {
-                  this.get('pages').reset(key.pages);
-                  delete key.pages;
-                }
-              } else if (key == 'pages'){
-                this.get('pages').reset(value);
-                return;
-              }
-              Backbone.Model.prototype.set.call(this, key, value, options);
-            },
           })
         },
         isModified: function () {
@@ -80,7 +80,7 @@
           var store = localStorage.getItem(key),
               data = (store && JSON.parse(store)) || {};
           if (!_.isEmpty(data)) {
-            this.fill(data);
+            this.set(data);
             this.trigger('refresh');
           }
         },

@@ -22,7 +22,8 @@
          * @param {Object} url
          */
         handleImage: function (url) {
-          var image = new Image(),
+          var filename = this.makeFileName(),
+              image = new Image(),
               canvas = $('<canvas>')[0],
               context = canvas.getContext('2d'),
               size = this.size,
@@ -31,6 +32,7 @@
             if (image.width <= size.width && image.height <= size.height && image.width / image.height == size.width / size.height) {
               localFile.copy({
                 url: url,
+                name: filename,
               });
               return;
             }
@@ -49,7 +51,7 @@
             scale = size.width / sourceWidth;
             context.drawImage(image, image.width - sourceWidth >> 1, image.height - sourceHeight >> 1, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
             localFile.save({
-              name: url.substr(url.lastIndexOf('/') + 1),
+              name: filename,
               content: atob(canvas.toDataURL('image/jpeg').split(',')[1]),
               type: 'image/jpeg',
               options: {
@@ -59,13 +61,12 @@
           }
           image.src = url;
         },
-        getTimeString: function () {
+        makeFileName: function () {
           var now = new Date();
           return now.getTime().toString(36) + '.jpg';
         },
         next: function () {
           if (this.fileQueue.length > 0) {
-            var filename = this.getTimeString();
             localFile.clone({
               file: this.fileQueue.shift(),
               toDir: 'source',
