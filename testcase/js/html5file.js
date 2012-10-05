@@ -1,82 +1,164 @@
 $(function () {
-  localFile.on('complete:clone', function (url) {
-    fileURL = url;
-    $('#file-list').removeClass('active');
-    $('.btn').prop('disabled', false);
-    refreshFileList();
+  localFile.on('complete:clone', function (url, entry) {
+    fileSystem.create(entry);
   });
-  itemTemplate = $('#file-list').html();
-  $('#file-list')
-    .empty()
-    .on({
-      drop: function (event) {
-        var files = event.originalEvent.dataTransfer.files,
-            usableFiles = [],
-            file,
-            i = 0,
-            len = files.length;
-        // 只认图片
-        for (; i < len; i++) {
-          if (files[i].type.substr(0, 5) == 'image') {
-            localFile.clone({
-              file: file,
-              toDir: '',
-            });
-            break;
-          }
-        }
-        event.preventDefault();
-      },
-      dragover: function (event) {
-        if (event.preventDefault) {
-          event.preventDefault();
-        }
-        event.originalEvent.dataTransfer.dropEffect = 'copy';
-        return false;
-      },
-      dragenter: function (event) {
-        $(this).addClass('active');
-      },
-      dragleave: function (event) {
-        $(this).removeClass('active');
-      }
-    })
-    .on({
-      click: function (event) {
-        var self = $(this),
-            title = self.find('p').text(),
-            index = self.parent().index(),
-            entry = currentEntries[index];
-        if (entry.isDirectory) {
-          refreshFileList(entry);
-        } else {
-          entry.file(function (file) {
-            if (/image/i.test(file.type)) {
-              var img = self.find('img').clone();
-              showPicPopup(title, img, entry);
-            } else if (/text/i.test(file.type)) {
-              showTextPopup(title, file, entry);
-            }
-          });
-        }
-      },
-    }, 'a');
-  $('.modal')
-    .on('click', '.delete-button', function (event) {
-      var modal = $(this).closest('.modal'),
-          entry = modal.data('entry');
-      localFile.remove({
-        file: entry
+  $('#upload-button').click(function () {
+    
+  });
+  $('#add-text').click(function () {
+    modals.showTextPopup('创建纯文本文件');
+  });
+  $('#refresh-button').click(function (event) {
+    fileSystem.fetch();
+  });
+  
+  //refreshFileList();
+});
+var localFile = new Meatazine.filesystem.LocalFile(),
+fileSystem = (function () {
+  var FileModel = Backbone.Model.extend({
+    defaults: {
+      name: '',
+      url: '',
+      type: '',
+      file: null,
+      entry: null,
+    }
+  }),
+  FileSystem = Backbone.Collection.extend({
+    currentDirectory: '',
+    entries: [],
+    model: FileModel,
+    create: function (entry) {
+      var model = Backbone.Model({
+        
       });
-      modal
-        .data('entry', null)
-        .modal('hide');
-      $('#file-list').children().eq(_.indexOf(currentEntries, entry)).remove();
-      currentEntries = _.without(currentEntries, entry);
-    })
-    .on('click', '.save-button', function (event) {
-      var modal = $(this).closest('.modal'),
-          entry = modal.data('entry'),
+      this.add(model);
+    },
+    fetch: function (entry) {
+      localFile.readEntries(this.currentDirectory, {
+        callback: parse,
+        context: this,
+      });
+    },
+    parse: function (entries) {
+      
+    },
+    remove: function (model, options) {
+      localFile.remove({
+        toDir: this.currentDirectory,
+        file: model.entry,
+      });
+      Backbone.Collection.prototype.remove.call(this, model, options);
+    }
+  });
+  return new FileSystem();
+}());
+fileList = (function () {
+  var FileList = Backbone.View.extend({
+    template: '',
+    events: {
+      "drop": "dropHandler",
+      "dragover": "dragOverHandler",
+      "dragenter": "dragEnterHandler",
+      "dragleave": "dragLeaveHandler",
+      "click a": "a_clickHandler",
+    },
+    initialize: function () {
+      this.template = this.$('script').html();
+      this.$el.empty();
+      this.collection.on('change', this.collection_changeHandler, this);
+      this.collection.on('remove', this.collection_removeHandler, this);
+      this.collection.on('reset', this.collection_resetHandler, this);
+    },
+    dropHandler: function (event) {
+      var files = event.originalEvent.dataTransfer.files,
+          usableFiles = [],
+          file,
+          i = 0,
+          len = files.length;
+      // 只认图片
+      for (; i < len; i++) {
+        if (files[i].type.substr(0, 5) == 'image') {
+          localFile.clone({
+            file: file,
+            toDir: this.collection.currentDirectory,
+          });
+          break;
+        }
+      }
+      event.preventDefault();
+    },
+    dragOverHandler: function (event) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+      event.originalEvent.dataTransfer.dropEffect = 'copy';
+      return false;
+    },
+    dragEnterHandler: function (event) {
+      this.$el.addClass('active');
+    },
+    dragLeaveHandler: function (event) {
+      this.$el.removeClass('active');
+    },
+    a_clickHandler: function (event) {
+      var self = $(event.currentTarget),
+          title = self.find('p').text(),
+          index = self.parent().index(),
+          model = this.collection.at(index);
+      if (model.isDirectory) {
+        this.collection.fecth(entry);
+      } else {
+        modals.showTextPopup(title, model);
+      }
+    },
+    collection_changeHandler: function (model, changed) {
+      
+    },
+    collection_removeHandler: function (model, collection, options) {
+      this.$el.children().eq(options.index).remove();
+    },
+    collection_resetHandler: function (collection) {
+      this.$el.html(Mustache.render(itemTemplate, {section: collection.toJSON()}));
+    },
+  });
+  return new FileList({
+    el: '#file-list',
+    collection: fileSystem,
+  });
+}());
+modals = (function () {
+  var Modals = Backbone.View.extend({
+    events: {
+      'click .delete-button': "deleteButton_clickHandler",
+      'click .save-button': "saveButton_clickHandler",
+    },
+    popup: function (title, model) {
+      var type = /image/i.test(model.type) ? 'pic' : 'text',
+          popup = this.$('#' + type + '-popup'),
+          template = popup.find('script').html();
+      popup
+        .data('model', model)
+        .find('h3').text(title)
+        .end().find('.modal-body').html(Mustache.render(template, model.toJSON()))
+        .end().modal('show');
+      if (type === 'text') {
+        localFile.read(model.file, {
+          callback: function (data) {
+            popup.find('textarea').val(data);
+          }
+        });
+      }
+    },
+    deleteButton_clickHandler: function (event) {
+      var modal = $(event.currentTarget).closest('.modal'),
+          model = modal.data('model');
+      fileSystem.remove(model);
+    },
+    saveButton_clickHandler: function (event) {
+      var modal = $(event.currentTarget).closest('.modal'),
+          model = modal.data('model'),
           content = modal.find('textarea').val();
       if (entry == null) {
         localFile.save({
@@ -104,93 +186,9 @@ $(function () {
           },
         });
       }
-    });
-  $('#upload-button').click(function () {
-    
+    },
   });
-  $('#add-text').click(function () {
-    $('#text-popup').modal('show');
-  });
-  $('#refresh-button').click(function (event) {
-    refreshFileList();
-  });
-  
-  //refreshFileList();
-});
-function refreshFileList(dir) {
-  dir = dir || '';
-  localFile.readEntries(dir, {
-    callback: showFilelist,
-    context: this,
-  });
-};
-function showFilelist(entries, options) {
-  var items = _.map(entries, function (entry, i) {
-    var result = {
-      name: entry.name,
-    };
-    if (entry.isFile) {
-      result[/txt/i.test(entry.name) ? 'url' : 'img'] = entry.toURL();
-    }
-    return result;
-  });
-  $('#file-list').html(Mustache.render(itemTemplate, {section: items}));
-  currentEntries = entries;
-  currentDirectory = options.entry;
-};
-function showPicPopup(title, dom, entry) {
-  $('#pic-popup')
-    .data('entry', entry)
-    .find('h3').text(title)
-    .end().find('.modal-body').html(dom)
-    .end().modal('show');
-};
-function showTextPopup(title, file, entry) {
-  var textarea = $('#text-popup').find('textarea');
-  $('#text-popup')
-    .data('entry', entry)
-    .find('h3').text(title)
-    .end().modal('show');
-  localFile.read(file, {
-    callback: function (data) {
-      textarea.val(data);
-    }
+  return new Modals({
+    el: '#modals-cave',
   })
-}
-function upload(entry) {
-  entry.file(function (file) {
-    var formData = new FormData(),
-        xhr;
-    formData.append('id', 1);
-    formData.append('type', 'test');
-    formData.append('file', file);
-    $.ajax({
-      url: '../api/upload.php',
-      data: formData,
-      type: 'POST',
-      cache: false,
-      context: this,
-      contentType: false,
-      processData: false,
-      xhr: function () {
-        xhr = new window.XMLHttpRequest();
-        xhr.upload.addEventListener('progress', function (event) {
-          console.log(event.loaded / event.total * 100 >> 1);
-        });
-        return xhr;
-      },
-      success: function (data) {
-        console.log(data);
-        alert(JSON.parse(data));
-        xhr.upload.removeEventListener('progres');
-        xhr = null;
-      },
-    });
-    console.log(file, formData);
-  }, null);
-}
-var fileURL,
-    localFile = new Meatazine.filesystem.LocalFile(),
-    currentEntries,
-    currentDirectory,
-    itemTemplate;
+}());

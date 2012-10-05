@@ -67,7 +67,7 @@
 <div class="container">
   <div class="hero-unit">
     <h1>HTML5 文件API测试用例</h1>
-    <p>本测试部分代码来源于<a href="http://www.html5rocks.com/en/tutorials/file/filesystem/">html5rocks</a>，和<a href="http://www.w3.org/TR/file-system-api/">W3C</a>。</p>
+    <p>参考：<a href="http://www.html5rocks.com/en/tutorials/file/filesystem/">html5rocks</a>，<a href="http://www.w3.org/TR/file-system-api/">W3C</a>。</p>
     <div class="accordion" id="purpose">
       <div class="accordion-group">
         <div class="accordion-heading">
@@ -110,30 +110,35 @@
         <li class="active">根目录</li>
       </ul>
       <ul class="thumbnails row" id="file-list">
-        {{#section}}
-        <li class="span2">
-          <a class="thumbnail" href="#">
-            {{#img}}
-            <img src="{{img}}" />
-            {{/img}}
-            {{#url}}
-            <i class="icon-file"></i>
-            {{/url}}
-            {{^img}}
-              {{^url}}
-            <i class="icon-folder-close"></i>
+        <script type="text/html-template" >
+          {{#section}}
+          <li class="span2">
+            <a class="thumbnail" href="#">
+              {{#img}}
+              <img src="{{img}}" />
+              {{/img}}
+              {{#url}}
+              <i class="icon-file"></i>
               {{/url}}
-            {{/img}}
-            <p>{{name}}</p>
-          </a>
-        </li>
+              {{^img}}
+                {{^url}}
+              <i class="icon-folder-close"></i>
+                {{/url}}
+              {{/img}}
+              <p>{{name}}</p>
+            </a>
+          </li>
         {{/section}}
+        </script>
       </ul>
     </div>
   </div>
 </div>
 <div id="modals-cave">
   <div class="modal fade hide" id="pic-popup">
+    <script type="text/html-template">
+      <img src="{{img}}" />
+    </script>
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h3>原图</h3>
@@ -148,6 +153,9 @@
     </div>
   </div>
   <div class="modal fade hide" id="text-popup">
+    <script type="text/html-template">
+      <textarea></textarea>
+    </script>
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h3>文本</h3>
