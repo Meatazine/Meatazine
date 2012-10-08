@@ -12,16 +12,20 @@ $(function () {
     fileSystem.fetch();
   });
   
-  //refreshFileList();
+  fileList = new FileList({
+    el: '#file-list',
+    collection: fileSystem,
+  });
 });
-var localFile = new Meatazine.filesystem.LocalFile(),
+var fileList,
+    localFile = new Meatazine.filesystem.LocalFile(),
 fileSystem = (function () {
   var FileModel = Backbone.Model.extend({
     defaults: {
       name: '',
       url: '',
-      type: '',
-      file: null,
+      img: '',
+      isFile: true,
       entry: null,
     }
   }),
@@ -29,20 +33,24 @@ fileSystem = (function () {
     currentDirectory: '',
     entries: [],
     model: FileModel,
-    create: function (entry) {
-      var model = Backbone.Model({
-        
-      });
-      this.add(model);
+    create: function (attributes, options) {
+      if (/entry/i.test(attributes.toString())) {
+        attributes = this.convertEntry(attributes);
+      }
+      Backbone.Collection.prototype.create.call(this, attributes, options);
     },
     fetch: function (entry) {
       localFile.readEntries(this.currentDirectory, {
-        callback: parse,
+        callback: this.parse,
         context: this,
       });
     },
     parse: function (entries) {
-      
+      var contents = [];
+      _.each(entries, function (entry, i) {
+        contents.push(this.convertEntry(entry));
+      }, this);
+      this.reset(contents);
     },
     remove: function (model, options) {
       localFile.remove({
@@ -50,12 +58,22 @@ fileSystem = (function () {
         file: model.entry,
       });
       Backbone.Collection.prototype.remove.call(this, model, options);
+    },
+    convertEntry: function (entry) {
+      var url = entry.toURL(),
+          obj = {
+            name: entry.name,
+            entry: entry,
+            isFile: entry.isFile,
+          };
+      obj[/\.[jpg|gif|png]/i.test(url) ? 'img' : 'url'] = url;
+      return obj;
     }
   });
   return new FileSystem();
-}());
-fileList = (function () {
-  var FileList = Backbone.View.extend({
+}()),
+FileList = (function () {
+  return Backbone.View.extend({
     template: '',
     events: {
       "drop": "dropHandler",
@@ -70,6 +88,10 @@ fileList = (function () {
       this.collection.on('change', this.collection_changeHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
+    },
+    render: function () {
+      this.$el.html(Mustache.render(this.template, {section: this.collection.toJSON()}));
+      return this;
     },
     dropHandler: function (event) {
       var files = event.originalEvent.dataTransfer.files,
@@ -120,14 +142,10 @@ fileList = (function () {
       this.$el.children().eq(options.index).remove();
     },
     collection_resetHandler: function (collection) {
-      this.$el.html(Mustache.render(itemTemplate, {section: collection.toJSON()}));
+      this.render();
     },
   });
-  return new FileList({
-    el: '#file-list',
-    collection: fileSystem,
-  });
-}());
+}()),
 modals = (function () {
   var Modals = Backbone.View.extend({
     events: {
