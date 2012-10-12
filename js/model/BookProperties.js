@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.model');
 (function (ns) {
   var isModified = false,
       file = new Meatazine.filesystem.FileReferrence(),
@@ -179,4 +178,4 @@ jQuery.namespace('Meatazine.model');
         },
       };
   ns.BookProperties = Backbone.Model.extend(init);
-})(Meatazine.model);
+}(jQuery.namespace('Meatazine.model')));

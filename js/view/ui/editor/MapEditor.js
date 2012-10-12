@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
   var map = null,
       MARKER_WIDTH = 22,
@@ -232,4 +231,4 @@ jQuery.namespace('Meatazine.view.ui.editor');
       Meatazine.GUI.contextButtons.showButtons(this.buttons);
     },
   });
-})(Meatazine.view.ui.editor);
+}(jQuery.namespace('Meatazine.view.ui.editor')));

@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.ui.editor');
 (function (ns) {
   var localFile = new Meatazine.filesystem.FileReferrence(),
       args = null,
@@ -234,4 +233,4 @@ jQuery.namespace('Meatazine.view.ui.editor');
       self.trigger('select:image', uploader[0].files);
     },
   });
-})(Meatazine.view.ui.editor);
+}(jQuery.namespace('Meatazine.view.ui.editor')));

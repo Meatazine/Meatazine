@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.element');
 (function (ns) {
   function initButtons() {
     var buttons = $('.btn-group6');
@@ -97,4 +96,4 @@ jQuery.namespace('Meatazine.view.element');
       this.resetChildrenNumber();
     },
   });
-})(Meatazine.view.element);
+}(jQuery.namespace('Meatazine.view.element')));

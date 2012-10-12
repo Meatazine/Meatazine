@@ -1,4 +1,3 @@
-jQuery.namespace('Meatazine.view.ui');
 (function (ns) {
   var templateList = null,
       sourceList = null,
@@ -221,4 +220,4 @@ jQuery.namespace('Meatazine.view.ui');
         },
       };
   ns.SourcePanel = Backbone.View.extend(init);
-})(Meatazine.view.ui);
+}(jQuery.namespace('Meatazine.view.ui')));
