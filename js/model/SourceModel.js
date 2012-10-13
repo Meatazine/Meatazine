@@ -1,13 +1,17 @@
 jQuery.namespace('Meatazine.model');
 Meatazine.model.SourceModel = Backbone.Model.extend({
-  templates: {},
   isLoading: false,
   loadQueue: [],
   defaults: {
     type: '',
-    template: ''
+    sourceTemplate: '',
   },
   fetch: function (type) {
+    type = this.parseTemplateType(type);
+    if (this.has(type)) {
+      this.set('type', type);
+      return;
+    }
     if (type && _.indexOf(this.loadQueue, type) == -1) {
       this.loadQueue.push(type);
     }
@@ -27,30 +31,13 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     var type = this.loadQueue.shift();
     response = response.replace(/[\r\n]/gm, '').replace(/\s{2,}/gm, '');
     this.isLoading = false;
-    this.templates[type] = response;
+    this.set(type, response);
     this.set('type', type);
     if(this.loadQueue.length > 0) {
       this.fetch();
     }
   },
-  set: function (attributes, options) {
-    if (attributes == 'type' && !this.hasTemplate(options)) {
-      this.fetch(options);
-      return;
-    }
-    if (_.isObject(attributes)) {
-      if (attributes.hasOwnProperty('type') && attributes.type != '' && !this.hasTemplate(attributes.type)) {
-        this.fetch(attributes.type);
-        delete attributes.type;
-      }
-    } 
-    Backbone.Model.prototype.set.call(this, attributes, options);
-  },
-  // 页面模板
-  hasTemplate: function (type) {
-    return _.has(this.templates, type);
-  },
-  getSourceTemplate: function (model) {
+  createTemplate: function (model) {
     var obj = model.attributes,
         template = '';
     for (var prop in obj) {
@@ -65,12 +52,10 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
     }
     return '<li>' + template + '</li>';
   },
-  getTemplate: function (type) {
-    return this.templates[type];
-  },
-  // 元素列表模板
-  setSourceTemplate: function (str) {
-    str = str.replace(/[\r\n]/gm, '').replace(/\s{2,}/gm, '');
-    this.set('template', str);
+  parseTemplateType: function (value) {
+    if (value.indexOf('.') === -1) {
+      return value;
+    }
+    return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
   },
 });

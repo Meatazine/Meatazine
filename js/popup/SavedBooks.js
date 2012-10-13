@@ -10,7 +10,7 @@ jQuery.namespace('Meatazine.popup');
     },
     initialize: function () {
       this.setElement(this.el);
-      this.template = this.$('ul.well').html();
+      this.template = this.$('ul.well').find('script').html();
       this.registerModelListener();
       this.render();
     },

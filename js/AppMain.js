@@ -1,4 +1,4 @@
-$(function () {
+ï»¿$(function () {
   var config = new Meatazine.model.ConfigModel(),
       pages = new Meatazine.model.PageCollection(),
       user = new Meatazine.model.UserModel({
@@ -36,22 +36,22 @@ $(function () {
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
 
-  // ´¦ÀíModelÊÂ¼ş
+  // å¤„ç†Modeläº‹ä»¶
   book.on('saved', function () {
     user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
   });
   book.on('autosave', user.autosaveHandler, user);
   
-  // ·Åµ½ÃüÃû¿Õ¼äÀï
+  // æ”¾åˆ°å‘½åç©ºé—´é‡Œ
   Meatazine.config = config;
   Meatazine.user = user;
   Meatazine.book = book;
   
-  // ´¦Àí¸÷ÖÖManager
+  // å¤„ç†å„ç§Manager
   Meatazine.guide.GuideManager.init();
   Meatazine.popup.PopupManager.init('.modal');
   
-  // ¼ì²éµÇÂ¼×´Ì¬
+  // æ£€æŸ¥ç™»å½•çŠ¶æ€
   user.checkLoginStatus();
   user.on('change:isLogin', function () {
     user.get(user.get('isLogin') ? 'local' : 'remote').index = book.get('id');

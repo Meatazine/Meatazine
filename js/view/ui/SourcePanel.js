@@ -24,10 +24,12 @@
           this.collection.on('add', this.pages_addHandler, this);
           this.collection.on('remove', this.pages_removeHandler, this);
           this.collection.on('select', this.pages_selectHandler, this);
-          this.model.setSourceTemplate(this.$('#source-list').html());
+          
+          this.model.set('sourceTemplate', sourceList.find('script').html());
+          sourceList.empty();
         },
         createSourceItem: function (model) {
-          var template = this.model.getSourceTemplate(model),
+          var template = this.model.createTemplate(model),
               item = $(Meatazine.utils.render(template, model));
           model.on('change', function (model) {
             var changed = model.changedAttributes();
@@ -43,7 +45,7 @@
         },
         createSourceList: function (collection, ul) {
           if (ul.length == 0) {
-            var container = $(this.model.get('template'));
+            var container = $(this.model.get('sourceTemplate'));
             container.appendTo(this.$('#source-list'));
             ul = container.find('ul');
           }
@@ -67,9 +69,6 @@
               ul.append(this.createSourceItem(model));
             }, this);
           }
-        },
-        getTemplateType: function (value) {
-          return value.substring(value.lastIndexOf('/') + 1, value.lastIndexOf('.'));
         },
         highlightOn: function (item) {
           this.$('.btn').eq(1).click();
@@ -121,8 +120,8 @@
           silent = silent == null ? true : silent;
           this.model.set({type: type}, {silent: silent});
           var img = _.find(templateList.find('img'), function (element, i) {
-                return this.getTemplateType(element.src) == type;
-              }, this);
+            return this.model.parseTemplateType(element.src) === type;
+          }, this);
           if (img != null) {
             $(img).parent()
               .addClass('active')
@@ -205,7 +204,7 @@
           var currentTemplate = $(event.currentTarget);
           currentTemplate.addClass('active')
             .siblings('.active').removeClass('active');
-          this.model.set('type', this.getTemplateType(currentTemplate.find('img').attr('src')));
+          this.model.fetch(currentTemplate.find('img').attr('src'));
           _gaq.push(['_trackEvent', 'template', 'select', this.model.get('type')]);
         },
         textarea_clickHandler: function (event) {

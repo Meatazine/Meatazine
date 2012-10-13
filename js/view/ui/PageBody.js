@@ -8,7 +8,8 @@
       "dragstop .ui-draggable": "draggable_dragStopHandler",
     },
     initialize: function () {
-      this.options.book.on('change:width change:height', this.book_resizeHandler, this);      this.options.source.on('change:type', this.source_selectHandler, this);
+      this.options.book.on('change:width change:height', this.book_resizeHandler, this);
+      this.options.source.on('change:type', this.source_selectHandler, this);
       this.collection.on('select', this.collection_selectHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
@@ -108,8 +109,8 @@
     collection_selectHandler: function (model) {
       this.model = model;
       this.saveTemplate();
-      if (model.get('template') == '') {
-        model.set('template', this.options.source.getTemplate(model.get('templateType')));
+      if (model.get('template') === '') {
+        this.options.source.fetch(model.get('templateType'));
         return;
       }
       this.render();
@@ -128,14 +129,14 @@
       this.refreshThumbnail();
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
-    source_selectHandler: function () {
-      if (this.model.get('template') && this.model.get('templateType') == this.options.source.get('type')) {
+    source_selectHandler: function (model, changed) {
+      if (this.model.get('template') && this.model.get('templateType') == model.get('type')) {
         return;
       }
       this.model.reset();
       this.model.set({
         templateType: this.options.source.get('type'),
-        template: this.options.source.getTemplate(this.options.source.get('type')),
+        template: model.get(model.get('type')),
       }, {isModified: false});
       this.render();
     },
