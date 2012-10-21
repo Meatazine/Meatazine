@@ -1,4 +1,6 @@
+.idea/
 .settings/
+nbproject/
 api/assets/
 api/static/
 api/temp/

@@ -16,7 +16,11 @@ $assets = json_decode($assets);
 
 $pass = array();
 foreach ($assets as $key => $value) {
-	$url = 'static/' + $bookid + '/' + $value['name'];
+	$url = 'static/' + $bookid + '/' + $value->name;
+  if (!file_exists($url)) {
+    $pass[] = $key;
+    continue;
+  }
   if (strcmp(date('Y-m-d\TH:i:s.000\Z', filemtime($url)), $value['lastModifiedDate']) < 0) {
     $pass[] = $key;
   }

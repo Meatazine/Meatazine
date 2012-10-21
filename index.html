@@ -14,6 +14,7 @@
     border-radius: 8px;
   }
   #loading p {
+    text-align: center;
     font-size:14px;
   }
   .hidden, .hide {
@@ -45,10 +46,10 @@
   </style>
 </noscript>
 <div id="loading">
-  <p align="center">
+  <p>
     <img src="img/loading.gif" alt="Loading" />
   </p>
-  <p align="center">
+  <p>
     肉大师运功中，马上就来
   </p>
   <hr />
@@ -524,7 +525,7 @@
         <li><a href="//www.meathill.net/meatazine/meatazine-v0-2-changelog.html" target="_blank">肉大师（V0.2）开发中，去评论里留下您的希望吧</a></li>
       </ul>
       <p>
-        当前版本：<span id="version">0.1.5.@version@</span>
+        当前版本：<span id="version">0.1.6.@version@</span>
       </p>
     </div>
     <div class="modal-footer">
@@ -624,7 +625,6 @@
         <div class="tab-content">
           <ul class="well tab-pane active" id="books-local">
             <script type="text/html-template">
-            {{#section}}
             <li data-item="{{id}}">
               <figure>
                 <img src="{{icon}}" />
@@ -634,7 +634,6 @@
                 </figcaption>
               </figure>
             </li>
-            {{/section}}
             </script>
           </ul>
           <ul class="well tab-pane" id="books-cloud">
@@ -659,7 +658,7 @@
 <link rel="stylesheet" href="css/admin.css" />
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>
 <script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://meathill.pc/Meatazine/api/qqlogin.html" charset="UTF-8"></script>
-<script>
+<script id="ga-init">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-32752048-1']);
   _gaq.push(['_setDomainName', 'none']);
@@ -669,7 +668,7 @@
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    var s = document.getElementById('ga-init'); s.parentNode.insertBefore(ga, s);
   })();
 </script>
 <!-- replace start -->

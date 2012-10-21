@@ -25,7 +25,8 @@
           this.collection.on('remove', this.pages_removeHandler, this);
           this.collection.on('select', this.pages_selectHandler, this);
           
-          this.model.set('sourceTemplate', sourceList.find('script').html());
+          var template = Meatazine.utils.stripEmtpy(sourceList.find('script').html());
+          this.model.set('sourceTemplate', template);
           sourceList.empty();
         },
         createSourceItem: function (model) {
@@ -144,7 +145,7 @@
         },
         pages_selectHandler: function (model) {
           if (contents instanceof Meatazine.model.SinglePageModel) {
-            contents.off();
+            contents.off(null, null, this);
           }
           contents = model;
           contents.on('change:contents', this.refreshSourceList, this);

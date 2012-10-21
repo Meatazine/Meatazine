@@ -79,7 +79,7 @@
     collection_resetHandler: function (collection, options) {
       this.$('li.item').remove();
       this.collection.each(function (model, i) {
-        emptyItems.push(this.createItem());
+        emptyItems.push(this.createItem(model));
       }, this);
       list.sortable({
         items: 'li.item'
@@ -103,7 +103,7 @@
       if (target.hasClass('active')) {
         return;
       }
-      this.collection.tigger('select', target.data('model'), target);
+      this.collection.trigger('select', target.data('model'), target);
     },
     item_mouseOutHandler: function (event) {
       var pos = $(event.target).offset();

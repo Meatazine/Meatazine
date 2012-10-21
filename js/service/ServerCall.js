@@ -2,7 +2,6 @@ jQuery.namespace('Meatazine.service');
 Meatazine.service.ServerCall = _.extend({
   queue: [],
   proxyURL: 'api/api.php',
-  fileURL: 'api/upload.php',
   call: function (api, data, success, error, context) {
     var self = this,
         init = {
@@ -14,6 +13,7 @@ Meatazine.service.ServerCall = _.extend({
       context: context,
       data: _.extend(data, init),
       type: 'post',
+      dataType: 'json',
       url: this.proxyURL,
       xhr: function () {
         var xhr = new window.XMLHttpRequest();
@@ -23,13 +23,12 @@ Meatazine.service.ServerCall = _.extend({
         return xhr;
       },
       success: function (response) {
-        var data = JSON.parse(response);
-        if (data.hasOwnProperty('type')) {
+        if (response.hasOwnProperty('type')) {
           Meatazine.GUI.showError(data.msg);
           return;
         }
         if (success != null) {
-          success.call(context, data.data);
+          success.call(context, response.data);
           return;
         }
         self.successHandler();
@@ -42,18 +41,20 @@ Meatazine.service.ServerCall = _.extend({
   upload: function (file, name, success, error, context) {
     var self = this,
         data = new FormData();
+    data.append('api', 'upload');
     data.append('openid', Meatazine.user.get('openid'));
-    data.append('bookid', Meatazine.user.get('bookid'));
+    data.append('bookid', Meatazine.book.get('id'));
     data.append('filename', name);
     data.append('file', file);
     context = context || this;
     $.ajax({
-      url: this.fileURL,
+      url: this.proxyURL,
       data: data,
       type: 'POST',
       cache: false,
       context: context,
       contentType: false,
+      dataType: 'json',
       processData: false,
       xhr: function () {
         xhr = new window.XMLHttpRequest();
@@ -62,14 +63,13 @@ Meatazine.service.ServerCall = _.extend({
         });
         return xhr;
       },
-      success: function (data) {
-        var data = JSON.parse(data);
-        if (data.hasOwnProperty('code') && data.code != 0) {
-          Meatazine.GUI.showError(data.msg);
+      success: function (response) {
+        if (response.hasOwnProperty('code') && response.code != 0) {
+          Meatazine.GUI.showError(response.msg);
           return;
         }
         if (success != null) {
-          success.call(context, data.data);
+          success.call(context, response.data);
           return;
         }
         self.successHandler();

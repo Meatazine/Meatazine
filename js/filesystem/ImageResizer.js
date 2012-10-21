@@ -81,12 +81,12 @@
         file_clonedHandler: function (url) {
           this.handleImage(url);
         },
-        file_copyHandler: function (url) {
-          this.trigger('complete:one', url, 1);
+        file_copyHandler: function (url, options) {
+          this.trigger('complete:one', url, 1, options);
           this.next();
         },
-        file_savedHandler: function (url, scale) {
-          this.trigger('complete:one', url, scale);
+        file_savedHandler: function (url, options) {
+          this.trigger('complete:one', url, options.scale, options.entry);
           this.next();
         }
       };

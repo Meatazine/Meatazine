@@ -31,7 +31,7 @@ if ($bookid == 0) {
 }
 
 $sql = "UPDATE m_book
-        SET title='$name', content='$data', edit_date='$date'
+        SET title='$name', content='$data', edit_time='$date'
         WHERE id=$bookid";
 $check = $DB->query($sql);
 refreshBook($bookid, $data, $content);

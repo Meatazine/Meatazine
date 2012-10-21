@@ -3,7 +3,7 @@
    * 处理上传icon和cover
    */
   $file = $_FILES['file'];
-  $filename = isset($_REQUEST['filename']) ? $_REQUEST['filename'] : $file['name'];
+  $filename = $_REQUEST['filename'] ? $_REQUEST['filename'] : $file['name'];
   
   $dir = '../export/' . $bookid;
   $filename = $dir . '/' . $filename;

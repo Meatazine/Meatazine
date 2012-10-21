@@ -1,28 +1,11 @@
 jQuery.namespace('Meatazine');
 Meatazine.utils = {
-  render: function (template, data) {
-    data = data.toJSON != null ? data.toJSON() : data;
-    if (_.isArray(data)) {
-      template = '{{#section}}' + template + '{{/section}}';
-      data = {section: data};
-    }
-    return Mustache.render(template, data);
-  },
   clearSelection: function () {
     if (window.getSelection) {
       window.getSelection().removeAllRanges();
     } else if (document.getSelection) {
       document.getSelection().empty();
     }
-  },
-  getRenderedHTML: function (collection, isJSON) {
-    var htmls = [];
-    collection.each(function (model, i) {      
-      var html = model.get('renderedHTML');      
-      html = html.substr(0, 4) + ' id="' + i + '"' + html.substr(4);
-      htmls.push(html);
-    });
-    return isJSON ? JSON.stringify(htmls) : htmls;
   },
   filterHTML: function (string, folder) {
     folder = folder || '';
@@ -34,16 +17,36 @@ Meatazine.utils = {
     string = string.replace(/<assets[\S\s]*\/assets>/, '');
     return string;
   },
-  inheritPrototype: function (subType, superType) {
-    var prototype = this.object(superType.prototype);
-    prototype.constructor = subType;
-    subType.prototype = prototype;
-  },
   getDatetime: function () {
     var now = new Date(),
         date = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-'),
         time = [now.getHours(), now.getMinutes(), now.getSeconds()].join(':');
     return date + ' ' + time;
+  },
+  getRenderedHTML: function (collection, isJSON) {
+    var htmls = [];
+    collection.each(function (model, i) {      
+      var html = model.get('renderedHTML');      
+      html = html.substr(0, 4) + ' id="' + i + '"' + html.substr(4);
+      htmls.push(html);
+    });
+    return isJSON ? JSON.stringify(htmls) : htmls;
+  },
+  inheritPrototype: function (subType, superType) {
+    var prototype = this.object(superType.prototype);
+    prototype.constructor = subType;
+    subType.prototype = prototype;
+  },
+  render: function (template, data) {
+    data = data.toJSON != null ? data.toJSON() : data;
+    if (_.isArray(data)) {
+      template = '{{#section}}' + template + '{{/section}}';
+      data = {section: data};
+    }
+    return Mustache.render(template, data);
+  },
+  stripEmtpy: function (str) {
+    return str.replace(/[\r\n\s{2,}]/g, '');
   }
 }
 Meatazine.displayUtils = {

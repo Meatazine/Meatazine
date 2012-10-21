@@ -209,7 +209,7 @@
       $('body').off('mouseup', arguments.callee);
       canvas.off('mouseup', arguments.callee);
     },
-    canvas_savedHandler: function (url) {
+    canvas_savedHandler: function (url, options) {
       canvas.replaceWith(this.$el);
       canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
@@ -226,14 +226,18 @@
         callback = null;
         args = null;
       }
-      Meatazine.service.AssetsSyncService.add(url);
+      options.entry.file(function (file) {
+        Meatazine.service.AssetsSyncService.add(file);
+      });
     },
     resizer_completeHandler: function () {
       this.trigger('upload:all');
     },
-    resizer_readyHandler: function (url, scale) {
+    resizer_readyHandler: function (url, scale, entry) {
       this.trigger('upload:one', url, scale);
-      Meatazine.service.AssetsSyncService.add(url);
+      entry.file(function (file) {
+        Meatazine.service.AssetsSyncService.add(file);
+      });
     },
     scale_changeHandler: function (event) {
       var value = $(event.target).val();

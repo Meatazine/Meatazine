@@ -20,7 +20,8 @@ $uid = $DB->getVar($sql);
 if ($uid) {
   $sql = "SELECT id, title AS name, edit_time AS datetime
           FROM m_book
-          WHERE owner=$uid";
+          WHERE owner=$uid
+          ORDER BY edit_time DESC";
   $data = $DB->getResults($sql);
   die(json_encode($data));
 }

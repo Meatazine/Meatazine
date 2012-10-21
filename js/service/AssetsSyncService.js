@@ -26,7 +26,7 @@ jQuery.namespace('Meatazine.service');
       var data = {
         openid: Meatazine.user.get('openid'),
         bookid: Meatazine.book.get('id'),
-        files: JSON.stringify(news),
+        assets: JSON.stringify(news),
       };
       ns.ServerCall.call('assets_pre_check', data, this.checkSuccessHandler, null, this);
     },
@@ -38,7 +38,7 @@ jQuery.namespace('Meatazine.service');
     next: function () {
       // 如果queue里有未完成的则继续上传
       if (queue.length) {
-        ns.ServerCall.upload(queue.shift());
+        ns.ServerCall.upload(queue.shift(), '', this.uploadSuccessHandler, null, this);
         return;
       }
       // 如果queue完了就继续news
@@ -62,16 +62,20 @@ jQuery.namespace('Meatazine.service');
       }
     },
     checkSuccessHandler: function (response) {
-      var array = JSON.parse(response);
-      if (array.length) {
-        queue = array;
+      var i = 0,
+          len = response.length;
+      if (len) {
+        for (; i < len; i++) {
+          queue[i] = news[response[i]];
+        }
       }
       news = [];
       this.trigger('reset', queue.length, this);
+      this.next();
     },
     uploadSuccessHandler: function (data) {
       this.trigger('complete:one', this);
-      next();
+      this.next();
     },
   }, Backbone.Events);
 })(Meatazine.service);
