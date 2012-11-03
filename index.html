@@ -66,9 +66,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="#">
-        肉大师
-      </a>
+      <a class="brand" href="#">肉大师</a>
       <div class="nav-collapse">
         <ul class="nav">
           <li class="dropdown">
@@ -96,7 +94,20 @@
             </ul>
           </li>
           <li><a href="#user-config" data-toggle="modal">设置</a></li>
-          <li><a href="#help" data-toggle="modal">帮助</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">帮助 <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="//www.meathill.net/meatazine-tutorial" target="_blank">肉大师操作入门</a></li>
+              <li><a href="#help" data-toggle="modal">版本变化</a></li>
+              <li class="divider"></li>
+              <li><a href="https://github.com/Meatazine/Meatazine">帮助肉大师</a></li>
+              <li class="divider"></li>
+              <li><a href="#about" data-toggle="modal">关于</a></li>
+            </ul>
+          </li>
+          <li class="divider-vertical"></li>
+          <li>
+            <a href="http://book.evereditor.com/"><i class="icon-white icon-picture"></i> 肉大师作品精选</a></li>
         </ul>
         <ul class="nav pull-right">
           <li class="dropdown async">
@@ -520,7 +531,6 @@
     <div class="modal-body">
       <p>再次感谢您使用肉大师。</p>
       <ul>
-        <li><a href="//www.meathill.net/meatazine-tutorial" target="_blank">肉大师操作入门</a></li>
         <li><a href="//www.meathill.net/meatazine/meatazine-v0-1-test.html" target="_blank">肉大师（V0.1）测试开始</a></li>
         <li><a href="//www.meathill.net/meatazine/meatazine-v0-2-changelog.html" target="_blank">肉大师（V0.2）开发中，去评论里留下您的希望吧</a></li>
       </ul>
@@ -646,6 +656,22 @@
       <button class="btn btn-primary load" disabled="true">读取</button>
       <button class="btn btn-primary autosave" disabled="true">读取自动保存</button>
       <button class="btn" data-dismiss="modal">关闭</button>
+    </div>
+  </div>
+  <div class="modal fade hide" id="about">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h3>关于肉大师</h3>
+    </div>
+    <div class="modal-body">
+      <p>“肉大师”是一款基于浏览器的内容制作工具。我们利用HTML5技术，让内容生产者得以使用最常见的工具来制作能够在各类移动设备上观看的内容——初步以电子杂志为主。肉大师编辑器目前只支持Chrome浏览器，输出的杂志可以在iOS系统和Android系统上观看。</p>
+      <p>肉大师使用到很多HTML5的新特性，如FileSystem API。于是很不幸的，只能在Chrome上运行。</p>
+      <h3>开源</h3>
+      <p>肉大师的诞生离不开各种开源代码，包括：jQuery、backbone.js、underscore.js、html2canvas、iScroll、Zepto.js、jszip、Mustache、Bootstrap、Phonegap。所以我们也决定，永久性开放肉大师源代码，共建美好未来。</p>
+      <p>肉大师采用<a href="http://zh.wikipedia.org/wiki/MIT許可證" target="_blank">MIT协议</a>，授权使用者修改代码并用于闭源软件中。</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" data-dismiss="modal">关闭</button>
     </div>
   </div>
 </div>

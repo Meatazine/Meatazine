@@ -27,7 +27,7 @@
 
 肉大师的诞生离不开各种开源代码，包括：jQuery、backbone.js、underscore.js、html2canvas、iScroll、Zepto.js、jszip、Mustache、Bootstrap、Phonegap。所以我们也决定，永久性开放肉大师源代码，共建美好未来。
 
-肉大师遵守[MIT协议](http://zh.wikipedia.org/wiki/MIT%E8%A8%B1%E5%8F%AF%E8%AD%89 "MIT許可證")，允许修改代码并用于闭源软件中。
+肉大师采用并遵守[MIT协议](http://zh.wikipedia.org/wiki/MIT%E8%A8%B1%E5%8F%AF%E8%AD%89 "MIT許可證")，授权使用者修改代码并用于闭源软件中。
 
 ## 支持与捐赠
 
