@@ -158,6 +158,10 @@
       <format property="build.time" pattern="MMddHHmm" />
     </tstamp>
     <!-- 当前版本的一些新特色和修正的bug -->
+    <exec executable="native2ascii">
+      <arg value="${build}/release.properties" />
+      <arg value="${build}/temp.properties" />
+    </exec>
     <property file="${build}/temp.properties" />
     <replace file="${dist}/index.html" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
