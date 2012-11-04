@@ -67,4 +67,4 @@ Meatazine.guide.GuideManager = {
   guideTag_nextHandler: function() {
     this.showNextGuide();
   },
-}
+};

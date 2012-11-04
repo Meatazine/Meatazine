@@ -37,4 +37,4 @@ Meatazine.view.element.ElementFactory = {
     }
     return element;
   }
-}
+};
