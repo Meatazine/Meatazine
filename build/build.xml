@@ -34,8 +34,8 @@
       <filelist dir="js/">
         <file name="utils/Utils.js" />
         <file name="utils/Mouse.js" />
-        <file name="filesystem/FileReferrence.js" />
-        <file name="filesystem/FileZip.js" />
+        <file name="filesystem/LocalFile.js" />
+        <file name="filesystem/Zip.js" />
         <file name="filesystem/ImageResizer.js" />
         <file name="model/ConfigModel.js" />
         <file name="model/BookProperties.js" />
@@ -43,7 +43,7 @@
         <file name="model/SinglePageModel.js" />
         <file name="model/PageCollection.js" />
         <file name="model/SourceModel.js" />
-        <file name="model/SavedBookCollection.js" />
+        <file name="model/SavedBooksCollection.js" />
         <file name="service/ServerCall.js" />
         <file name="service/AssetsSyncService.js" />
         <file name="config/UserGuideConfig.js" />
