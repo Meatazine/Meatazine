@@ -69,6 +69,7 @@
         <file name="guide/GuideTag.js" />
         <file name="guide/GuideManager.js" />
         <file name="view/GUI.js" />
+        <file name="controller/Router.js" />
         <file name="AppMain.js" />
       </filelist>
     </concat>
@@ -166,6 +167,7 @@
     <replace file="${dist}/index.html" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
       <replacefilter token="@releasenote@" value="${releasenote}" />
+      <replacefilter token="meathill.pc" value="evereditor.com" />
     </replace>
     <replace file="${dist}/js/apps.js" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />

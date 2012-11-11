@@ -36,6 +36,15 @@
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
 
+  // 路径
+  Meatazine.router = new Meatazine.controller.Router({
+    book: book,
+  });
+  Backbone.history.start({
+    root: '/Meatazine/',
+    silent: true,
+  });
+
   // 处理Model事件
   book.on('saved', function () {
     user.save(_.pick(book.attributes, 'id', 'name', 'icon'));

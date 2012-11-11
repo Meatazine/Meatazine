@@ -233,9 +233,9 @@
     resizer_completeHandler: function () {
       this.trigger('upload:all');
     },
-    resizer_readyHandler: function (url, scale, entry) {
+    resizer_readyHandler: function (url, scale, option) {
       this.trigger('upload:one', url, scale);
-      entry.file(function (file) {
+      option.entry.file(function (file) {
         Meatazine.service.AssetsSyncService.add(file);
       });
     },

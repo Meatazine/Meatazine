@@ -89,10 +89,10 @@
               }
               break;
               
-            case 'books':
+            case 'load':
               if (load == null) {
                 load = new ns.SavedBooks({
-                  el: '#books',
+                  el: '#load',
                   model: Meatazine.user,
                   collection: Meatazine.user.get('local'),
                 })

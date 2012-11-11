@@ -74,15 +74,15 @@
               文件 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#new" class="system-button">新建</a></li>
-              <li class="disabled"><a href="#save" class="system-button">保存</a></li>
-              <li><a href="#load" class="system-button">读取</a></li>
+              <li><a href="#new">新建</a></li>
+              <li class="disabled"><a href="#/save" class="save-button">保存</a></li>
+              <li><a href="#load" data-toggle="modal">读取</a></li>
               <li class="divider"></li>
-              <li class="disabled"><a href="#book-config" data-toggle="modal">应用属性</a></li>
+              <li class="disabled"><a href="#book-config" data-toggle="modal" class="book-config-button">应用属性</a></li>
               <li class="divider"></li>
-              <li class="disabled"><a href="#preview" class="system-button" data-toggle="modal">预览</a></li>
-              <li class="disabled"><a href="#export-zip" class="system-button" data-toggle="modal">导出</a></li>
-              <li class="disabled"><a href="#publish" class="system-button" data-toggle="modal">发布</a></li>
+              <li class="disabled"><a href="#/preview" class="preview-button">预览</a></li>
+              <li class="disabled"><a href="#/export-zip" class="export-button">导出</a></li>
+              <li class="disabled"><a href="#/publish" class="publish-button">发布</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -538,6 +538,9 @@
       <p>
         当前版本：<span id="version">0.1.6.@version@</span>
       </p>
+      <p>
+        @releasenote@
+      </p>
     </div>
     <div class="modal-footer">
       <button class="btn btn-primary" data-dismiss="modal">关闭</button>
@@ -622,7 +625,7 @@
       <button class="btn" data-dismiss="modal">取消</button>
     </div>
   </div>
-  <div id="books" class="modal hide">
+  <div id="load" class="modal hide">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">&times;</a>
       <h3>请选择要读取的应用</h3>
@@ -695,7 +698,7 @@
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/admin.css" />
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>
-<script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://www.evereditor.com/api/qqlogin.html" charset="UTF-8"></script>
+<script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://meathill.pc/Meatazine/api/qqlogin.html" charset="UTF-8"></script>
 <script id="ga-init">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-36011684-1']);
@@ -762,5 +765,6 @@
 <script src="js/guide/GuideTag.js"></script>
 <script src="js/guide/GuideManager.js"></script>
 <script src="js/view/GUI.js"></script>
+<script src="js/controller/Router.js"></script>
 <script src="js/AppMain.js"></script>
 <!-- replace over -->
