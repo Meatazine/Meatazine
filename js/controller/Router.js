@@ -1,5 +1,5 @@
 (function (ns) {
-  var page,
+  var book,
       init = {
     routes: {
       'export-zip': 'exportZipHandler',
@@ -9,24 +9,24 @@
       'save': 'saveHandler'
     },
     initialize: function (options) {
-      page = options.page;
+      book = options.book;
     },
     exportZipHandler: function () {
       Meatazine.popup.PopupManager.popup('export-zip', 'static', false);
     },
     newHandler: function () {
-      page.reset();
+      book.reset();
       _gaq.push(['_trackEvent', 'book', 'create']);
     },
     previewHandler: function () {
-      page.preview();
+      book.preview();
       _gaq.push(['_trackEvent', 'book', 'preview']);
     },
     publishHandler: function () {
       Meatazine.popup.PopupManager.popup('publish', 'static', false);
     },
     saveHandler: function () {
-      page.save();
+      book.save();
       _gaq.push(['_trackEvent', 'book', 'save']);
     }
   };
