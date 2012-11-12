@@ -167,7 +167,7 @@
     <replace file="${dist}/index.html" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
       <replacefilter token="@releasenote@" value="${releasenote}" />
-      <replacefilter token="meathill.pc/Meatazine" value="evereditor.com" />
+      <replacefilter token="meathill.pc/Meatazine/" value="evereditor.com" />
     </replace>
     <replace file="${dist}/js/apps.js" encoding="UTF-8">
       <replacefilter token="@version@" value="${build.time}" />
