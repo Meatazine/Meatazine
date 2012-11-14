@@ -6,8 +6,6 @@
   <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="${build}/compiler.jar" />
   
   <target name="init">
-    <delete dir="${dist}" />
-    <mkdir dir="${dist}" />
     <mkdir dir="${temp}" />
   </target>
   

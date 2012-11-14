@@ -22,7 +22,7 @@
         var collection, element,
             config = JSON.parse($(elementDom).attr('data-config'));
         if (!config.noData) {
-          var keys = elementDom.outerHTML.match(/{{(\w+)}}/gim);
+          var keys = elementDom.innerHTML.match(/{{(\w+)}}/gim);
         	collection = this.model.getContentAt(count++, keys);
         }
         element = Meatazine.view.element.ElementFactory.getElement(config.type, {

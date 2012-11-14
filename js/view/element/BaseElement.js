@@ -20,9 +20,8 @@
       return obj;
     },
     initialize: function () {
-      this.$el = $(this.el);
-      this.template = this.el.innerHTML;
-      this.tagName = this.template != '' ? $(this.template)[0].tagName : '';
+      this.template = this.$('script').html();
+      this.tagName = this.template != '' ? this.template.match(/<(\w+)[>\s]/i)[1].toUpperCase() : '';
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
       this.render();
