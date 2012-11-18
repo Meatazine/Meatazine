@@ -132,6 +132,9 @@
         book_resizeHandler: function (model) {
           templateList.add(sourceList).height(model.get('height') - 112); // 空出按钮的位置
         },
+        contents_changeHandler: function (model) {
+          this.refreshSourceList();
+        },
         pages_addHandler: function (model) {
           templateList.removeClass('disabled');
           this.$('.btn').eq(0).click();
@@ -148,7 +151,7 @@
             contents.off(null, null, this);
           }
           contents = model;
-          contents.on('change:contents', this.refreshSourceList, this);
+          contents.on('change:contents', this.contents_changeHandler, this);
           this.refreshSourceList();
           this.setTemplateType(model.get('templateType'));
         },

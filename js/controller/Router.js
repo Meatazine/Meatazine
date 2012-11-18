@@ -11,22 +11,30 @@
     initialize: function (options) {
       book = options.book;
     },
+    clearRoutes: function () {
+      this.navigate('', {silent: true});
+    },
     exportZipHandler: function () {
       Meatazine.popup.PopupManager.popup('export-zip', 'static', false);
+      this.clearRoutes();
     },
     newHandler: function () {
       book.reset();
+      this.clearRoutes();
       _gaq.push(['_trackEvent', 'book', 'create']);
     },
     previewHandler: function () {
       book.preview();
+      this.clearRoutes();
       _gaq.push(['_trackEvent', 'book', 'preview']);
     },
     publishHandler: function () {
       Meatazine.popup.PopupManager.popup('publish', 'static', false);
+      this.clearRoutes();
     },
     saveHandler: function () {
       book.save();
+      this.clearRoutes();
       _gaq.push(['_trackEvent', 'book', 'save']);
     }
   };

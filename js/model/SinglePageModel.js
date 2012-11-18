@@ -14,11 +14,12 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
       }
     }
   },
-  reset: function () {
+  clear: function (options) {
     _.each(this.get('contents'), function (collection, i) {
       collection.offAll();
-    }, this);
-    this.set('contents', []);
+    });
+    options = _.extend({silent: true}, options);
+    Backbone.Model.prototype.clear.call(this, options);
   },
   set: function (attributes, options) {
     this.isModified = this.isModified || (options != null ? options.isModified : false);

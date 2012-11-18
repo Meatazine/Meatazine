@@ -9,7 +9,7 @@
     },
     initialize: function () {
       this.options.book.on('change:width change:height', this.book_resizeHandler, this);
-      this.options.source.on('change:type', this.source_selectHandler, this);
+      this.options.source.on('change:type', this.source_typeChangeHandler, this);
       this.collection.on('select', this.collection_selectHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
@@ -98,7 +98,7 @@
       template.find('.ui-resizable-handle').remove();
       template.find('.editable').removeClass('editing').removeAttr('contenteditable title');
       template.find('[data-config]').html(function (i, oldHtml) {
-        return self.items[i].template;
+        return '<script type="text/html-template">' + self.items[i].template + '</script>';
       });
       this.model.set({template: template.html()}, {isModified: !isReset});
     },
@@ -107,8 +107,8 @@
       this.$el.height(model.get('height'));
     },
     collection_selectHandler: function (model) {
-      this.model = model;
       this.saveTemplate();
+      this.model = model;
       if (model.get('template') === '') {
         this.options.source.fetch(model.get('templateType'));
         return;
@@ -129,13 +129,14 @@
       this.refreshThumbnail();
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
-    source_selectHandler: function (model, changed) {
+    source_typeChangeHandler: function (model, changed) {
       if (this.model.get('template') && this.model.get('templateType') == model.get('type')) {
         return;
       }
-      this.model.reset();
+      this.model.clear();
       this.model.set({
-        templateType: this.options.source.get('type'),
+        contents: [],
+        templateType: model.get('type'),
         template: model.get(model.get('type')),
       }, {isModified: false});
       this.render();

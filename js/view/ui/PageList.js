@@ -53,7 +53,6 @@
     collection_addHandler: function (model, collection, options) {
       this.createItem(model);
       collection.trigger('select', model);
-      this.refreshPageNumber();
     },
     collection_redrawHandler: function (model, thumb) {
       var index = this.collection.indexOf(model),

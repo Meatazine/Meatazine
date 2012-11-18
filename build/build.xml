@@ -108,6 +108,8 @@
     <copy todir="${dist}/js/libs/">
       <filelist dir="js/libs/">
         <file name="zepto.min.js" />
+        <file name="underscore-min.js" />
+        <file name="backbone-min.js" />
       </filelist>
     </copy>
     <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/libs/iscroll.js" encoding="UTF-8">

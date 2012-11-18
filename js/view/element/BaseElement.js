@@ -3,6 +3,7 @@
       imageEditor = new Meatazine.view.ui.editor.ImageEditor('.group2'),
       mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5'),
   init = {
+    tagName: '',
     token: null,
     events: function () {
       var obj = {
@@ -21,7 +22,12 @@
     },
     initialize: function () {
       this.template = this.$('script').html();
-      this.tagName = this.template != '' ? this.template.match(/<(\w+)[>\s]/i)[1].toUpperCase() : '';
+      if (this.template) {
+        var arr = this.template.match(/<(\w+)[>\s]/i);
+        if (arr.length > 1) {
+          this.tagName = arr[1].toUpperCase();
+        }
+      }
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
       this.render();
