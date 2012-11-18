@@ -56,6 +56,7 @@
               type: 'image/jpeg',
               options: {
                 scale: scale,
+                origin: this.src,
               },
             });
           }
@@ -86,7 +87,7 @@
           this.next();
         },
         file_savedHandler: function (url, options) {
-          this.trigger('complete:one', url, options.scale, options.entry);
+          this.trigger('complete:one', url, options.scale, options);
           this.next();
         }
       };

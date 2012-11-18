@@ -144,7 +144,6 @@
         return;
       }
       this.$el = $(value);
-      this.model = this.$el.data('model');
       this.buttons.find('[data-type="edit"]').prop('disabled', this.$el.hasClass('placeholder'));
       this.initScaleRange();
       this.initUploader();

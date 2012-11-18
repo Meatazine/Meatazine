@@ -1,4 +1,13 @@
 (function (ns) {
+  /**
+   * 服务器上存放的图片，换台电脑，用这种方法改变路径
+   * @param event
+   */
+  function img_loadErrorHandler(event) {
+    if (this.src.indexOf('filesystem') != -1) {
+      this.src = this.src.replace('filesystem:', '');
+    }
+  }
   var currentEditor = null,
       imageEditor = new Meatazine.view.ui.editor.ImageEditor('.group2'),
       mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5'),
@@ -11,10 +20,8 @@
         "dragover img": "img_dragOverHandler",
         "dragenter img": "img_dragEnterHandler",
         "dragleave img": "img_dragLeaveHandler",
-        "click img": "img_clickHandler",
         "mouseover img": "img_mouseoverHandler",
         "mouseout img": "img_mouseoutHandler",
-        "click .map-container": "map_clickHandler",
         "click [data-toggle]": "toggle_clickHandler",
       };
       obj['click ' + this.tagName] = "item_clickHandler";
@@ -28,6 +35,7 @@
           this.tagName = arr[1].toUpperCase();
         }
       }
+      this.collection.on('change', this.collection_changeHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
       this.render();
@@ -57,7 +65,8 @@
     },
     createItem: function (model, isToken) {
       var item = $(Meatazine.utils.render(this.template, model)),
-          isImage = /img|audio|video/i.test(this.tagName);
+          isImage = /img|audio|video/i.test(this.tagName),
+          image = item.filter('img').add('img', item);
       // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
         item.appendTo(this.$el);
@@ -68,11 +77,11 @@
       if (isToken) {
         this.token = this.token == null ? item : this.token.add(item);
       } else {
-        item.find('.placeholder').add(item.filter('.placeholder')).removeClass('placeholder');
+        item.filter('.placeholder').add('.placeholder', item).removeClass('placeholder');
       }
       if (model instanceof Backbone.Model && model.has('markers')) {
         _.each (model.get('markers'), function (val, key) {
-          var imgItem = item.filter('img').add(item.find('img')),
+          var imgItem = item.filter('img').add('img', item),
               container = isImage ? this.$el : imgItem.parent();
           imageEditor.createImgMarker(container, val, key);
         }, this);
@@ -82,15 +91,8 @@
       } else {
         item.appendTo(this.$el);
       }
-      item.filter('img').add('img', item).add(item).data('model', model);
-      model.on('change', function (model) {
-        var data = item.filter('img').add('img', item).add(item).data();
-            newItem = this.createItem(model);
-        item.replaceWith(newItem);
-        newItem.filter('img').add('img', newItem).add(newItem).data(data);
-        model.off('change', arguments.callee);
-        this.trigger('change');
-      }, this);
+      item.data('model', model);
+      image.one('error', img_loadErrorHandler);
       return item;
     },
     handleChildrenState: function () {
@@ -98,14 +100,16 @@
       children.slice(0, this.model.get('number')).removeClass('hide');
       children.slice(this.model.get('number')).addClass('hide');
     },
-    registerImageEditor: function (image) {
+    registerImageEditor: function (item) {
       if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor) {
         currentEditor.setElement(null);
       }
+      var image = item.filter('img').add('img', item);
       imageEditor.off();
       imageEditor.on('upload:one', this.editor_uploadImagesHandler, this);
       imageEditor.on('upload:all', this.editor_uploadCompleteHandler, this);
       imageEditor.on('convert:map', this.editor_convertMapHandler, this);
+      imageEditor.model = item.data('model');
       imageEditor.setTarget(image);
       currentEditor = imageEditor;
     },
@@ -139,6 +143,14 @@
       }
       item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).removeClass('placeholder');
     },
+    collection_changeHandler: function (model, changed) {
+      var index = this.collection.indexOf(model),
+          item = this.$el.children(this.tagName).eq(index);
+      newItem = this.createItem(model);
+      item.replaceWith(newItem);
+      newItem.data('model', model);
+      this.trigger('change');
+    },
     collection_removeHandler: function (model, collection, options) {
       this.$el.children(this.tagName).eq(options.index).remove();
       this.handleChildrenState();
@@ -158,8 +170,7 @@
           div = editor.$el,
           model = new this.collection.model(),
           item = this.createItem(model, true),
-          image = null,
-          index = div.index();
+          index = div.index(this.tagName);
       if (div.is(this.$el)) {
         this.$el
           .empty()
@@ -177,16 +188,15 @@
         this.token = this.token != null ? this.token.eq(index).prevAll().add(item).add(this.token.eq(index - 1).nextAll()) : item;
       }
       div.removeClass('map-container');
-      image = item.filter('.placeholder').add(item.find('.placeholder'));
-      image.data('model', model);
-      this.registerImageEditor(image);
-      _gaq.push(['_trackEvent', 'map', 'image']);
+      item.data('model', model);
+      this.registerImageEditor(item);
+      _gaq.push(['_trackEvent', 'convert', 'map-image']);
     },
     editor_convertMapHandler: function (editor) {
       // 改变类型的时候需要替换model
       var isImage = /img|video|audio/i.test(this.tagName),
           item = editor.isEditing ? editor.getTarget() : editor.$el,
-          index = isImage ? item.index() : item.closest(this.tagName).index(),
+          index = isImage ? item.index(this.tagName) : item.closest(this.tagName).index(),
           model = this.collection.createMapModel(),
           container = null,
           map = null;
@@ -197,7 +207,7 @@
       container = isImage ? this.$el : item.parent(); 
       map = mapEditor.createMap(container, model);
       this.registerMapEditor(map);
-      _gaq.push(['_trackEvent', 'image', 'map']);
+      _gaq.push(['_trackEvent', 'convert', 'image-map']);
     },
     editor_uploadCompleteHandler: function () {
       var firstImg = this.$el.children(this.tagName).eq(0);
@@ -210,12 +220,6 @@
     },
     editor_uploadImagesHandler: function (url, scale) {
       this.renderImageItem(url, scale);
-    },
-    img_clickHandler: function (event) {
-      if (!$.contains(this.$el[0], event.target) || $(event.target).closest('.map-container').length > 0) {
-        return;
-      }
-      this.registerImageEditor(event.target);
     },
     img_dropHandler: function (event) {
       this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
@@ -258,12 +262,19 @@
       img.data('size').remove();
     },
     item_clickHandler: function (event) {
+      var target = $(event.currentTarget),
+          model = target.data('model'),
+          image;
       if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
-        $(event.currentTarget).data('model').trigger('select');
+        model.trigger('select');
       }
-    },
-    map_clickHandler: function (event) {
-      this.registerMapEditor($(event.currentTarget).data('map'));
+      if (model.has('lat')) {
+        this.registerMapEditor(target.data('map'));
+        return;
+      }
+      if (model.has('img')) {
+        this.registerImageEditor(target);
+      }
     },
     toggle_clickHandler: function (event) {
       var handle = $(event.target),
