@@ -78,12 +78,6 @@
       context.clearRect(0, 0, canvas[0].width, canvas[0].height);
       context.drawImage(source, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     },
-    getSourceImageUrl: function (url) {
-      if ((/\/source\//i).test(url)) {
-        return url;
-      }
-      return url.substr(0, url.lastIndexOf('/')) + '/source' + url.substr(url.lastIndexOf('/'));
-    },
     getTarget: function () {
       return canvas;
     },
@@ -154,13 +148,16 @@
       this.$el.closest('.ui-resizable').resizable('disable');
       canvas = $('<canvas>');
       var self = this,
-          sourceUrl = this.getSourceImageUrl(this.$el.attr('src')),
+          sourceUrl = this.model.get('origin'),
           loader = new Image();
       canvas[0].width = this.$el.width();
       canvas[0].height = this.$el.height();
       loader.onload = function () {
         self.drawImage();
-      }
+      };
+      loader.onerror = function () {
+        alert("没有原始图片的话老衲也无计可施");
+      };
       canvas
         .addClass('active')
         .data('image', loader)
@@ -233,6 +230,7 @@
       this.trigger('upload:all');
     },
     resizer_readyHandler: function (url, scale, option) {
+      this.model.set('origin', option.origin);
       this.trigger('upload:one', url, scale);
       option.entry.file(function (file) {
         Meatazine.service.AssetsSyncService.add(file);

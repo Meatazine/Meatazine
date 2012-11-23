@@ -50,6 +50,11 @@
     user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
   });
   book.on('autosave', user.autosaveHandler, user);
+  user.on('change:openid', function (model, changed) {
+    if (model.get('openid')) {
+      Meatazine.service.AssetsSyncService.next();
+    }
+  });
   
   // 放到命名空间里
   Meatazine.config = config;
