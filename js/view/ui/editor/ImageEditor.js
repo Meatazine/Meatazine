@@ -237,7 +237,9 @@
       this.trigger('upload:all');
     },
     resizer_readyHandler: function (url, scale, option) {
-      this.model.set('origin', option.origin);
+      this.model.set({
+        origin: option.origin
+      }, {silent: true});
       this.trigger('upload:one', url, scale);
       option.entry.file(function (file) {
         Meatazine.service.AssetsSyncService.add(file);
