@@ -83,9 +83,10 @@
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('.scale input').on('change', _.bind(this.scale_changeHandler, this));
-      this.buttons.find("[data-type='upload']").on('click', this.uploadButton_clickHandker);
-      this.buttons.find("[data-type='add-marker']").on('click', _.bind(this.addImgMarkerButton_clickHandler, this));
+      this.buttons
+        .on('change', '.scale input', _.bind(this.scale_changeHandler, this))
+        .on('click', "[data-type='upload']", this.uploadButton_clickHandker)
+        .on('click', "[data-type='add-marker']", _.bind(this.addImgMarkerButton_clickHandler, this));
     },
     initScaleRange: function () {
       var scale = this.model.get('scale'),
@@ -192,6 +193,12 @@
       this.saveCanvas();
       Meatazine.GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
+    },
+    uploadFiles: function (files, target) {
+      imageResizer.addFiles(files, {
+        width: target.width,
+        height: target.height,
+      });
     },
     addImgMarkerButton_clickHandler: function (event) {
       this.addImgMarker(event.pageX, event.pageY);

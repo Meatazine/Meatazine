@@ -7,8 +7,9 @@ Meatazine.view.ui.editor.AbstractEditor = Backbone.View.extend({
     this.initButtons();
   },
   initButtons: function () {
-    this.buttons.find("[data-type='edit']").on('click', _.bind(this.editButton_clickHandler, this));
-    this.buttons.find("[data-type='convert']").on('click', _.bind(this.convertButton_clickHandler, this));
+    this.buttons
+      .on('click', "[data-type='edit']", _.bind(this.editButton_clickHandler, this))
+      .on('click', "[data-type='convert']", _.bind(this.convertButton_clickHandler, this));
   },
   setTarget: function (value) {
     

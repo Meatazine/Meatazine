@@ -33,6 +33,8 @@
               localFile.copy({
                 url: url,
                 name: filename,
+              }, {
+                origin: this.src,
               });
               return;
             }
@@ -54,10 +56,9 @@
               name: filename,
               content: atob(canvas.toDataURL('image/jpeg').split(',')[1]),
               type: 'image/jpeg',
-              options: {
-                scale: scale,
-                origin: this.src,
-              },
+            }, {
+              scale: scale,
+              origin: this.src,
             });
           }
           image.src = url;

@@ -223,7 +223,7 @@
       this.renderImageItem(url, scale);
     },
     img_dropHandler: function (event) {
-      this.handleFiles(event.originalEvent.dataTransfer.files, event.target);
+      imageEditor.uploadFiles(event.originalEvent.dataTransfer.files, event.target);
     },
     img_dragOverHandler: function (event) {
       if (event.preventDefault) {
