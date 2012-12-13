@@ -46,7 +46,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         openid: openid,
         token: token,
       });
-      self.remoteFetchData();
+      self.fetchRemoteData();
     });
   },
   getUserInfo: function () {
@@ -81,8 +81,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       self.attributes.remote.reset();
     });
   },
-  remoteFetchData: function () {
-    var self = this;
+  fetchRemoteData: function () {
     this.get('remote').fetch({
       data: {
         api: 'fetch',
@@ -90,20 +89,14 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       },
     });
   },
-  save: function (data) {
-    var collection = this.get('isLogin') ? this.get('remote') : this.get('local');
-    if (!collection.some(function (model, i) {
-      return model.get('id') == data.id;
-    })) {
-      collection.create({
-        id: data.id,
-        datetime: Meatazine.utils.getDatetime(),
-        name: data.name,
-        icon: data.icon,
-      });
+  book_savedHandler: function () {
+    if (this.get('isLogin')) {
+      this.fetchRemoteData();
+    } else {
+      this.get('local').reset();
     }
   },
-  autosaveHandler: function () {
+  book_autosaveHandler: function () {
     this.get('local').hasAutoSave = true;
   },
 });

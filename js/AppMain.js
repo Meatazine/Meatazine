@@ -46,13 +46,14 @@
   });
 
   // 处理Model事件
+  book.on('saved', user.book_savedHandler, user);
   book.on('saved', function () {
-    user.save(_.pick(book.attributes, 'id', 'name', 'icon'));
+    Meatazine.service.AssetsSyncService.start();
   });
-  book.on('autosave', user.autosaveHandler, user);
-  user.on('change:openid', function (model, changed) {
-    if (model.get('openid')) {
-      Meatazine.service.AssetsSyncService.next();
+  book.on('autosave', user.book_autosaveHandler, user);
+  user.on('change:openid', function (model, value, changed) {
+    if (value) {
+      Meatazine.service.AssetsSyncService.start();
     }
   });
   

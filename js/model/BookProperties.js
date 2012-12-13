@@ -126,7 +126,7 @@
           });
         },
         save: function (key) {
-          var data = _.clone(this.attributes),
+          var data = _.omit(this.attributes, 'id', 'pages'),
               content = '';
           data.pages = this.get('pages').toJSON();
           content = JSON.stringify(data);
@@ -137,6 +137,11 @@
           }
           // 同步或者不同步的保存
           if (Meatazine.user.get('isLogin')) {
+            // 如果id不为0，直接保存，这样即使网络有问题，也可以在本地完成保存
+            if (this.get('id') != 0) {
+              key = 'remote' + this.get('id');
+              localStorage.setItem(key, content);
+            }
             var param = {
               bookid: this.get('id'),
               name: this.get('name'),
@@ -150,11 +155,6 @@
                 localStorage.setItem(key, content);
               }
             }, null, this);
-            // 如果id不为0，直接保存，这样即使网络有问题，也可以在本地完成保存
-            if (this.get('id') != 0) {
-              key = 'remote' + this.get('id');
-              localStorage.setItem(key, content);
-            }
           } else {
             if (this.get('id') == 0) {
               this.set('id', Meatazine.user.getNextLocalIndex());

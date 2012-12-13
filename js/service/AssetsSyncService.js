@@ -37,6 +37,7 @@ jQuery.namespace('Meatazine.service');
     },
     next: function () {
       // 如果queue里有未完成的则继续上传
+      isUploading = true;
       if (queue.length) {
         ns.ServerCall.upload(queue.shift(), '', this.uploadSuccessHandler, null, this);
         return;
@@ -59,6 +60,11 @@ jQuery.namespace('Meatazine.service');
       if (index != -1) {
         news.splice(index, 1);
         this.trigger('remove', queue.length + news.length, asset, this);
+      }
+    },
+    start: function () {
+      if (!isUploading) {
+        this.next();
       }
     },
     checkSuccessHandler: function (response) {

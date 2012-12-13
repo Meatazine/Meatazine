@@ -63,6 +63,7 @@ jQuery.namespace('Meatazine.popup');
         Meatazine.service.ServerCall.call('load', data, function (content) {
           localStorage.setItem(key, content);
           Meatazine.book.load(key);
+          Meatazine.book.set('id', id);
           this.$el.modal('hide');
         }, null, this);
       }
