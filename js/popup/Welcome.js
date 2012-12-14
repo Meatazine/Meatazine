@@ -1,6 +1,6 @@
 jQuery.namespace('Meatazine.popup');
 Meatazine.popup.Welcome = Backbone.View.extend({
-  version: 0.1,
+  version: 0.2,
   events: {
     'shown': 'shownHandler',
     "click [data-toggle='button']": "useGuideButton_clickHandler",
@@ -17,8 +17,8 @@ Meatazine.popup.Welcome = Backbone.View.extend({
   	});
   },
   checkGuideConfig: function () {
-    var isUseGuide = this.model.get('isUseGuide');
-    if (isUseGuide || isUseGuide == undefined) {
+    var useGuide = this.model.get('useGuide');
+    if (useGuide || useGuide == undefined) {
       this.$('[data-toggle="button"]').addClass('active');
     } else {
       this.$('[data-toggle="button"]').removeClass('active');
@@ -37,7 +37,7 @@ Meatazine.popup.Welcome = Backbone.View.extend({
     this.$el.modal('show');
   },
   useGuideButton_clickHandler: function (event) {
-    this.model.set('isUseGuide', !$(event.target).hasClass('active'));
+    this.model.set('useGuide', !$(event.target).hasClass('active'));
   },
   shownHandler: function () {
     this.model.set('lastWelcomeVision', this.version);

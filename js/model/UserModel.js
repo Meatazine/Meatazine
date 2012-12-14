@@ -21,7 +21,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         isLogin: isQQLogin,
       });
       Meatazine.GUI.navbar.showQQLoginResult(this.get('info'));
-      this.remoteFetchData();
+      this.fetchRemoteData();
       this.set('isLogin', true);
       return;
     }

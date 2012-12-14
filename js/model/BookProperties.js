@@ -138,30 +138,39 @@
           }
         
           isModified = false;
-          // 保存到服务器端
-          if (M.user.get('isLogin')) {
-            // 如果id不为0，直接保存，这样即使网络有问题，也可以在本地完成保存
-            if (this.get('id') != 0) {
-              key = 'remote' + this.get('id');
-              localStorage.setItem(key, content);
+          // 保存到本地
+          if (!M.user.get('isLogin')) {
+            if (this.get('id') == 0) {
+              this.set('id', M.user.getNextLocalIndex());
+              M.user.createItem('local');
             }
-            var param = {
-              bookid: this.get('id'),
-              name: this.get('name'),
-              data: content,
-              content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true),
-            };
-            Meatazine.service.ServerCall.call('save', param, this.server_successHandler, null, this);
+            key = 'book' + this.get('id');
+            localStorage.setItem(key, content);
             return;
           }
           
-          // 保存到本地
-          if (this.get('id') == 0) {
-            this.set('id', M.user.getNextLocalIndex());
-            M.user.createItem('local');
+          // 保存到服务器端
+          // 如果id不为0，直接保存，这样即使网络有问题，也可以在本地完成保存
+          if (this.get('id') != 0) {
+            key = 'remote' + this.get('id');
+            localStorage.setItem(key, content);
           }
-          key = 'book' + this.get('id');
-          localStorage.setItem(key, content);
+          var param = {
+            bookid: this.get('id'),
+            name: this.get('name'),
+            data: content,
+            content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true),
+          };
+          Meatazine.service.ServerCall.call('save', param, function (data) {
+            if (this.get('id') == 0) {
+              this.set('id', data);
+              key = 'remote' + this.get('id');
+              localStorage.setItem(key, content);
+
+              M.user.createItem('remote');
+              Meatazine.service.AssetsSyncService.start();
+            }
+          }, null, this);
         },
         setSize: function (w, h) {
           this.set({
@@ -176,16 +185,6 @@
           localFile.off('complete:save', null, this);
           this.trigger('preview:ready');
         },
-        server_successHandler: function (data) {
-          if (this.get('id') == 0) {
-            this.set('id', data);
-            key = 'remote' + this.get('id');
-            localStorage.setItem(key, content);
-            
-            M.user.createItem('remote');
-            Meatazine.service.AssetsSyncService.start();
-          }
-        }
       };
   ns.BookProperties = Backbone.Model.extend(init);
 }(jQuery.namespace('Meatazine.model')));

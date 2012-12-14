@@ -239,12 +239,12 @@ body {
 .group1 + .group1,
 .group2 + .group2,
 .group5 + .group5 {
-  margin-left: -5px;
+  margin-left: 0;
 }
 .group1 + .group1 .btn,
 .group2 + .group2 .btn,
 .group5 + .group5 .btn {
-  border-radius:0;
+  border-radius:0 4px 4px 0;
 }
 .text-helper {
   border:1px solid #666;

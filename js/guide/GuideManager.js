@@ -13,7 +13,7 @@ Meatazine.guide.GuideManager = {
     _.each(branch, function(index) {
       this.branch.push(factory.createGuideTag(item));
     }, this);
-    M.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
+    M.config.on('change:useGuide', this.config_isUseGuideChagneHandler, this);
     this.checkGuideConfig();
     _gaq.push(['_trackEvent', 'guide', 'check', M.config.get('useGuide')]);
   },

@@ -30,12 +30,12 @@
           userSettings = new Meatazine.popup.userConfig({
             el: '#user-config',
             model: M.config,
-            book: book
+            book: M.book,
           }),
           screenSelector = new Meatazine.popup.ScreenSizeSelector({
             el: '#screen-size',
-            model: book,
-            infoText: '#screen-size-info'
+            model: M.book,
+            infoText: '#screen-size-info',
           });
         },
         popup: function (popupName, backdrop, keyboard) {
