@@ -4,14 +4,14 @@
       user = new Meatazine.model.UserModel({
         local: new Meatazine.model.LocalBookCollection(),
         remote: new Meatazine.model.RemoteBookCollection(),
-      });
+      }),
       book = new Meatazine.model.BookProperties({
         pages: pages,
       }),
       list = new Meatazine.view.ui.PageList({
         el: '#page-list',
         model: book,
-        collection: pages
+        collection: pages,
       }),
       source = new Meatazine.view.ui.SourcePanel({
         el: '#panel',
@@ -20,7 +20,7 @@
         collection: pages,
       }),
       contextButtons = new Meatazine.view.ui.ContextButtons({
-        el: '#context-menu'
+        el: '#context-menu',
       })
       page = new Meatazine.view.ui.PageBody({
         collection: pages,
@@ -37,30 +37,18 @@
   Meatazine.GUI.page = page;
 
   // 路径
-  Meatazine.router = new Meatazine.controller.Router({
+  M.router = new Meatazine.controller.Router({
     book: book,
   });
   Backbone.history.start({
     root: '/Meatazine/',
     silent: true,
   });
-
-  // 处理Model事件
-  book.on('saved', user.book_savedHandler, user);
-  book.on('saved', function () {
-    Meatazine.service.AssetsSyncService.start();
-  });
-  book.on('autosave', user.book_autosaveHandler, user);
-  user.on('change:openid', function (model, value, changed) {
-    if (value) {
-      Meatazine.service.AssetsSyncService.start();
-    }
-  });
   
   // 放到命名空间里
-  Meatazine.config = config;
-  Meatazine.user = user;
-  Meatazine.book = book;
+  M.config = config;
+  M.user = user;
+  M.book = book;
   
   // 处理各种Manager
   Meatazine.guide.GuideManager.init();
@@ -69,3 +57,6 @@
   // 检查登录状态
   user.checkLoginStatus();
 });
+
+// 全局变量，用来充当context
+var M = {};

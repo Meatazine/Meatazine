@@ -1,9 +1,14 @@
 jQuery.namespace('Meatazine.model');
 Meatazine.model.UserModel = Backbone.Model.extend({
+  local: null,
+  remote: null,
   defaults: {
-    local: null,
-    remote: null,
     isLogin: null,
+    hasAutosave: false,
+  },
+  initialize: function (options) {
+    this.local = options.local;
+    this.remote = options.remote;
   },
   checkLoginStatus: function () {
     var isQQLogin = this.checkQQLoginStatus(),
@@ -34,8 +39,21 @@ Meatazine.model.UserModel = Backbone.Model.extend({
   checkWeiboLoginStatus: function () {
     return false;
   },
+  createItem: function (type) {
+    var item = M.book.pick('id', 'title', 'icon');
+    item.datetime = Meatazine.utils.getDatetime();
+    this[type].create(item);
+  },
+  fetchRemoteData: function () {
+    this.remote.fetch({
+      data: {
+        api: 'fetch',
+        openid: this.get('openid'),
+      },
+    });
+  },
   getNextLocalIndex: function () {
-    return this.get('local').getNextIndex();
+    return this.local.getNextIndex();
   },
   getMe: function () {
     var self = this;
@@ -47,6 +65,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
         token: token,
       });
       self.fetchRemoteData();
+      Meatazine.service.AssetsSyncService.start();
     });
   },
   getUserInfo: function () {
@@ -80,23 +99,5 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       localStorage.removeItem('info');
       self.attributes.remote.reset();
     });
-  },
-  fetchRemoteData: function () {
-    this.get('remote').fetch({
-      data: {
-        api: 'fetch',
-        openid: this.get('openid'),
-      },
-    });
-  },
-  book_savedHandler: function () {
-    if (this.get('isLogin')) {
-      this.fetchRemoteData();
-    } else {
-      this.get('local').reset();
-    }
-  },
-  book_autosaveHandler: function () {
-    this.get('local').hasAutoSave = true;
   },
 });

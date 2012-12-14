@@ -13,7 +13,7 @@ jQuery.namespace('Meatazine.service');
         news.push(asset);
       }
       // 没登录的话中止上传
-      if (!Meatazine.user.get('isLogin') || Meatazine.book.get('id') == 0) {
+      if (!M.user.get('isLogin') || M.book.get('id') == 0) {
         return;
       }
       if (!isUploading) {
@@ -24,8 +24,8 @@ jQuery.namespace('Meatazine.service');
     },
     checkAssets: function () {
       var data = {
-        openid: Meatazine.user.get('openid'),
-        bookid: Meatazine.book.get('id'),
+        openid: M.user.get('openid'),
+        bookid: M.book.get('id'),
         assets: JSON.stringify(news),
       };
       ns.ServerCall.call('assets_pre_check', data, this.checkSuccessHandler, null, this);

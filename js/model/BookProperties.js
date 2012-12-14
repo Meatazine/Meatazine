@@ -34,7 +34,7 @@
             return;
           }
           this.save('bookauto');
-          this.trigger('autosave');
+          M.user.set('hasAutosave', true);
         },
         createZip: function () {
           var self = this,
@@ -76,17 +76,18 @@
               domain = location.hostname;
           return link == domain;
         },
-        load: function (key) {
+        load: function (key, id) {
           var store = localStorage.getItem(key),
               data = (store && JSON.parse(store)) || {};
           if (!_.isEmpty(data)) {
+            data.id = id;
             this.set(data);
             this.trigger('refresh');
           }
         },
         preview: function () {
           var pages = Meatazine.utils.getRenderedHTML(this.attributes.pages);
-          localFile.on('complete:save', this.saveCompleteHandler, this);
+          localFile.on('complete:save', this.preview_saveCompleteHandler, this);
           localFile.save({
             name: 'export.html',
             content: Meatazine.utils.filterHTML(pages.join('###'), 'img/')
@@ -135,8 +136,10 @@
             localStorage.setItem(key, content);
             return;
           }
-          // 同步或者不同步的保存
-          if (Meatazine.user.get('isLogin')) {
+        
+          isModified = false;
+          // 保存到服务器端
+          if (M.user.get('isLogin')) {
             // 如果id不为0，直接保存，这样即使网络有问题，也可以在本地完成保存
             if (this.get('id') != 0) {
               key = 'remote' + this.get('id');
@@ -148,22 +151,17 @@
               data: content,
               content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true),
             };
-            Meatazine.service.ServerCall.call('save', param, function (data) {
-              if (this.get('id') == 0) {
-                this.set('id', data);
-                key = 'remote' + this.get('id');
-                localStorage.setItem(key, content);
-              }
-            }, null, this);
-          } else {
-            if (this.get('id') == 0) {
-              this.set('id', Meatazine.user.getNextLocalIndex());
-            }
-            key = 'book' + this.get('id');
-            localStorage.setItem(key, content);
+            Meatazine.service.ServerCall.call('save', param, this.server_successHandler, null, this);
+            return;
           }
-          this.trigger('saved');
-          isModified = false;
+          
+          // 保存到本地
+          if (this.get('id') == 0) {
+            this.set('id', M.user.getNextLocalIndex());
+            M.user.createItem('local');
+          }
+          key = 'book' + this.get('id');
+          localStorage.setItem(key, content);
         },
         setSize: function (w, h) {
           this.set({
@@ -174,10 +172,20 @@
         pages_changeHandler: function () {
           isModified = true;
         },
-        saveCompleteHandler: function (url) {
+        preview_saveCompleteHandler: function (url) {
           localFile.off('complete:save', null, this);
           this.trigger('preview:ready');
         },
+        server_successHandler: function (data) {
+          if (this.get('id') == 0) {
+            this.set('id', data);
+            key = 'remote' + this.get('id');
+            localStorage.setItem(key, content);
+            
+            M.user.createItem('remote');
+            Meatazine.service.AssetsSyncService.start();
+          }
+        }
       };
   ns.BookProperties = Backbone.Model.extend(init);
 }(jQuery.namespace('Meatazine.model')));

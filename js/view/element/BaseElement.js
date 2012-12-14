@@ -6,7 +6,7 @@
   function img_loadErrorHandler(event) {
     if (this.src.indexOf('filesystem') != -1) {
       var fileName = this.src.substr(this.src.lastIndexOf('/') + 1);
-      this.src = '/export/' + Meatazine.book.get('id') + '/' + fileName;
+      this.src = '/export/' + M.book.get('id') + '/' + fileName;
     }
   }
   var currentEditor = null,

@@ -111,7 +111,7 @@
     pages_addHandler: function (model, collection, options) {
       this.contextButtons.enableButtons();
       this.navbar.setBookButtonsStatus(false);
-      if (Meatazine.user.get('isLogin')) {
+      if (M.user.get('isLogin')) {
         this.navbar.enablePublishButtons();
       }
     },
@@ -120,7 +120,7 @@
         this.page.empty();
         this.contextButtons.disableButtons();
         this.navbar.setBookButtonsStatus(true);
-        if (Meatazine.user.get('isLogin')) {
+        if (M.user.get('isLogin')) {
           this.navbar.disablePublishButtons();
         }
       }

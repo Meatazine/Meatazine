@@ -8,7 +8,6 @@ jQuery.namespace('Meatazine.model');(function (ns) {
     }
   });
   ns.LocalBookCollection = Backbone.Collection.extend({
-    hasAutoSave: false,
     model: model,
     url: 'api/api.php',
     initialize: function () {

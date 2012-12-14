@@ -13,19 +13,19 @@ Meatazine.guide.GuideManager = {
     _.each(branch, function(index) {
       this.branch.push(factory.createGuideTag(item));
     }, this);
-    Meatazine.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
+    M.config.on('change:isUseGuide', this.config_isUseGuideChagneHandler, this);
     this.checkGuideConfig();
-    _gaq.push(['_trackEvent', 'guide', 'check', Meatazine.config.get('isUseGuide')]);
+    _gaq.push(['_trackEvent', 'guide', 'check', M.config.get('useGuide')]);
   },
   
   checkGuideConfig: function () {
-    var isUseGuide = Meatazine.config.get('isUseGuide');
-    if (isUseGuide || isUseGuide == undefined) {
+    var useGuide = M.config.get('useGuide');
+    if (useGuide || useGuide == undefined) {
       this.showGuide(true);
-      Meatazine.book.on('change:size', this.book_sizeChangeHandler, this);
+      M.book.on('change:size', this.book_sizeChangeHandler, this);
     } else {
       this.hideGuide();
-      Meatazine.book.off('change:size', null, this);
+      M.book.off('change:size', null, this);
     }
   },
   

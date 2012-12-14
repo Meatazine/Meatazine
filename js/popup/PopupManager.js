@@ -25,11 +25,11 @@
           this.$el.on('hidden', this.modal_hiddenHandler);
           welcome = new Meatazine.popup.Welcome({
             el: '#welcome',
-            model: Meatazine.config,
+            model: M.config,
           });
           userSettings = new Meatazine.popup.userConfig({
             el: '#user-config',
-            model: Meatazine.config,
+            model: M.config,
             book: book
           }),
           screenSelector = new Meatazine.popup.ScreenSizeSelector({
@@ -57,7 +57,7 @@
               if (publish == null) {
                 publish = new Meatazine.popup.PublishStatus({
                   el: '#publish',
-                  model: Meatazine.book,
+                  model: M.book,
                 });
               }
               break;
@@ -66,7 +66,7 @@
               if (exportPopup == null) {
                 exportPopup = new Meatazine.popup.Export({
                   el: '#export-zip',
-                  model: Meatazine.book,
+                  model: M.book,
                 })
               }
               break;
@@ -75,7 +75,7 @@
               if (preview == null) {
                 preview = new Meatazine.popup.Preview({
                   el: '#preview',
-                  model: Meatazine.book,
+                  model: M.book,
                 });
               }
               break;
@@ -84,7 +84,7 @@
               if (config == null) {
                 config = new Meatazine.popup.BookConfig({
                   el: '#book-config',
-                  model: Meatazine.config,
+                  model: M.config,
                 })
               }
               break;
@@ -93,8 +93,8 @@
               if (load == null) {
                 load = new ns.SavedBooks({
                   el: '#load',
-                  model: Meatazine.user,
-                  collection: Meatazine.user.get('local'),
+                  model: M.user,
+                  collection: M.user.local,
                 })
               }
               break;

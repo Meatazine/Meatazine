@@ -16,16 +16,16 @@ jQuery.namespace('Meatazine.popup');
     },
     render: function () {
       this.$('ul.well').empty();
-      this.$('#books-local').html(Meatazine.utils.render(this.template, this.model.get('local').toJSON()));
-      this.$('#books-cloud').html(Meatazine.utils.render(this.template, this.model.get('remote').toJSON()));
+      this.$('#books-local').html(Meatazine.utils.render(this.template, this.model.local.toJSON()));
+      this.$('#books-cloud').html(Meatazine.utils.render(this.template, this.model.remote.toJSON()));
     },
     disabled_clickHandler: function (event) {
       event.stopPropagation();
       return false;
     },
     registerModelListener: function () {
-      var local = this.model.get('local'),
-          remote = this.model.get('remote');
+      var local = this.model.local,
+          remote = this.model.remote;
       local.on('add', this.local_addHandler, this);
       local.on('change', this.local_changeHandler, this);
       remote.on('add', this.remote_addHandler, this);
@@ -42,7 +42,7 @@ jQuery.namespace('Meatazine.popup');
       this.$('.load').prop('disabled', false);
     },
     loadAutosaveButton_clickHandler: function () {
-      Meatazine.book.load('bookauto');
+      M.book.load('bookauto');
       this.$el.modal('hide');
     },
     loadButton_clickHandler: function () {
@@ -53,7 +53,7 @@ jQuery.namespace('Meatazine.popup');
           key = prefix + id,
           data = null;
       if (localStorage.getItem(key)) {
-        Meatazine.book.load(key);
+        M.book.load(key, id);
         this.$el.modal('hide');
       } else {
         data = {
@@ -62,8 +62,7 @@ jQuery.namespace('Meatazine.popup');
         };
         Meatazine.service.ServerCall.call('load', data, function (content) {
           localStorage.setItem(key, content);
-          Meatazine.book.load(key);
-          Meatazine.book.set('id', id);
+          M.book.load(key, id);
           this.$el.modal('hide');
         }, null, this);
       }
@@ -73,7 +72,7 @@ jQuery.namespace('Meatazine.popup');
       this.$('#books-local').append(item);
     },
     local_changeHandler: function (model, options) {
-      var index = this.model.get('remote').models.indexOf(model),
+      var index = this.model.remote.indexOf(model),
           item = Meatazine.utils.render(this.template, model.toJSON());
       this.$('#books-local').children().eq(index).replaceWith(item);
     },
@@ -82,7 +81,7 @@ jQuery.namespace('Meatazine.popup');
       this.$('#books-cloud').append(item);
     },
     remote_changeHandler: function (model, options) {
-      var index = this.model.get('remote').models.indexOf(model),
+      var index = this.model.remote.indexOf(model),
           item = Meatazine.utils.render(this.template, model.toJSON());
       this.$('#books-cloud').children().eq(index).replaceWith(item);
     },
@@ -91,7 +90,7 @@ jQuery.namespace('Meatazine.popup');
     },
     shownHandler: function (event) {
       this.$('.load').prop('disabled', true);
-      this.$('.autosave').prop('disabled', !this.model.get('local').hasAutoSave);
+      this.$('.autosave').prop('disabled', !this.model.get('hasAutoSave'));
       this.$('.active').removeClass('active');
       
       var isLogin = this.model.get('isLogin');

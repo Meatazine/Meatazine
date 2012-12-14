@@ -48,7 +48,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   logout_clickHandler: function (event) {
     QC.Login.signOut();
     this.resetLogin();
-    Meatazine.user.initLogin();
+    M.user.initLogin();
   },
   service_changeHandler: function (number) {
     this.$('.async').find('i')
