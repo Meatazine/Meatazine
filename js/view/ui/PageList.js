@@ -51,8 +51,8 @@
       this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
     collection_addHandler: function (model, collection, options) {
-      this.createItem(model);
-      collection.trigger('select', model);
+      var item = this.createItem(model);
+      collection.trigger('select', model, item);
     },
     collection_redrawHandler: function (model, thumb) {
       var index = this.collection.indexOf(model),
@@ -65,9 +65,10 @@
       }
     },
     collection_removeHandler: function (model, collection, options) {
-      var target = list.children().eq(options.index);
+      var target = list.children().eq(options.index),
+          index = options.index > 0 ? options.index - 1 : 0;
       if (currentItem.is(target)) {
-        collection.trigger('select', collection.at(options.index > 0 ? options.index - 1 : 0));
+        collection.trigger('select', collection.at(index), list.children().eq(index));
       }
       target
         .off()
@@ -92,6 +93,7 @@
       if (currentItem != null) {
         currentItem.removeClass('active');
       }
+      target = target || list.children().eq(model.collection.indexOf(model));
       currentItem = $(target);
       currentItem.addClass('active');
       this.refreshPageNumber();

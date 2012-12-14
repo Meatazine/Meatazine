@@ -15,12 +15,6 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     Meatazine.service.AssetsSyncService.on('add reset remove', this.service_changeHandler, this);
     Meatazine.service.AssetsSyncService.on('complete', this.service_completeHandler, this);
   },
-  disablePublishButtons: function () {
-    this.setButtonsStatus(true, ['publish', 'book-config']);
-  },
-  enablePublishButtons: function () {
-    this.setButtonsStatus(false, ['publish', 'book-config']);
-  },
   resetLogin: function () {
     this.$('.login').text('请登录');
     this.$('.login-type').show();
@@ -35,6 +29,9 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
     _.each(buttons, function (target, i) {
       this.$('.' + target + '-button').parent().toggleClass('disabled', isDisabled);
     });
+  },
+  setPublishButtonsStatus: function (isDisabled) {
+    this.setButtonsStatus(isDisabled, ['publish', 'book-config']);
   },
   showQQLoginResult: function (data) {
     this.$('.login').text(data.nickname);

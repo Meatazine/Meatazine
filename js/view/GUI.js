@@ -11,6 +11,7 @@
       options.book.on('change:width change:height', this.book_sizeChangeHandler, this);
       options.pages.on('add', this.pages_addHandler, this);
       options.pages.on('remove', this.pages_removeHandler, this);
+      options.pages.on('reset', this.pages_resetHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
         el: '#navbar',
         model: options.book,
@@ -51,6 +52,15 @@
         return;
       }
       $('.hidden').removeClass('hidden');
+    },
+    checkPagesLength: function (collection) {
+      var noPage = collection.length == 0;
+      if (noPage) {
+        this.page.empty();
+      }
+      this.navbar.setPublishButtonsStatus(noPage || !M.user.get('isLogin'));
+      this.contextButtons.setButtonsStatus(noPage);
+      this.navbar.setBookButtonsStatus(noPage);
     },
     displayBrowerError: function (title, content) {
       $('<div class="alert alert-error noscript"><h4>' + title + '</h4>' + content + '</div>')
@@ -109,21 +119,13 @@
       $('#page-area').width(474 + model.get('width'));
     },
     pages_addHandler: function (model, collection, options) {
-      this.contextButtons.enableButtons();
-      this.navbar.setBookButtonsStatus(false);
-      if (M.user.get('isLogin')) {
-        this.navbar.enablePublishButtons();
-      }
+      this.checkPagesLength(collection);
     },
     pages_removeHandler: function (model, collection, options) {
-      if (collection.length == 0) {
-        this.page.empty();
-        this.contextButtons.disableButtons();
-        this.navbar.setBookButtonsStatus(true);
-        if (M.user.get('isLogin')) {
-          this.navbar.disablePublishButtons();
-        }
-      }
+      this.checkPagesLength(collection);
     },
+    pages_resetHandler: function (collection) {
+      this.checkPagesLength(collection);
+    }
   }
 }(jQuery.namespace('Meatazine'), jQuery));

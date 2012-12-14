@@ -8,14 +8,11 @@ Meatazine.view.ui.ContextButtons = Backbone.View.extend({
     this.setElement(this.el);
     this.hide();
   },
-  disableButtons: function () {
-    this.$('.always-show').find('.btn').prop('disabled', true);
-  },
-  enableButtons: function () {
-    this.$('.always-show').find('.btn').prop('disabled', false);
-  },
   hide: function () {
     this.$('.btn-group:not(.always-show)').hide();
+  },
+  setButtonsStatus: function (isDisabled) {
+    this.$('.always-show').find('.btn').prop('disabled', isDisabled);
   },
   showButtons: function (buttons, isShared) {
     // 是否可以和其它按钮共存
