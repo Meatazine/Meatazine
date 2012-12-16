@@ -88,7 +88,7 @@ Meatazine.model.UserModel = Backbone.Model.extend({
       size: "A_M",
     }, function (reqData, options) {
       self.set('isLogin', true);
-      Meatazine.GUI.navbar.enablePublishButtons();
+      Meatazine.GUI.navbar.setPublishButtonsStatus(false);
       Meatazine.GUI.navbar.showQQLoginResult(reqData, options);
       self.getMe();
       localStorage.setItem('info', JSON.stringify(reqData));
