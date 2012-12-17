@@ -2,9 +2,11 @@ jQuery.namespace('Meatazine.view.element');
 Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.extend({
   navi: null,
   initialize: function () {
-    this.$el = $(this.el);
-    this.template = this.el.innerHTML;
-    this.tagName = $(this.template)[0];
+    this.template = this.$('script').html();
+    var arr = this.template.match(/<(\w+)[>\s]/i);
+    if (arr.length > 1) {
+      this.tagName = arr[1].toUpperCase();
+    }
   },
   renderImageItem: function (url, scale) {
     this.navi.renderImageItem(url, scale);
