@@ -110,7 +110,7 @@ body {
 
 #map-info-editor {
   width:640px;
-  margin: -250px 0 0 -320px;
+  margin-left:-320px;
 }
 #map-info-editor .map-container {
   height: 300px;
@@ -127,7 +127,7 @@ body {
 
 #load {
   width:686px;
-  margin:-290px 0 0 -343px;
+  margin-left:-343px;
 }
 #load .modal-body {
   max-height:500px;
