@@ -144,7 +144,7 @@
       }
       item.filter('img[src="' + url + '"]').add(item.find('img[src="' + url + '"]')).removeClass('placeholder');
     },
-    collection_changeHandler: function (model, changed) {
+    collection_changeHandler: function (model) {
       var index = this.collection.indexOf(model),
           item = this.$el.children(this.tagName).eq(index);
       newItem = this.createItem(model);
@@ -267,7 +267,7 @@
           model = target.data('model'),
           image;
       if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
-        model.trigger('select');
+        model.trigger('select', model);
       }
       if (model.has('lat')) {
         this.registerMapEditor(target.data('map'));

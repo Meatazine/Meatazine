@@ -7,16 +7,16 @@ Meatazine.model.SinglePageModel = Backbone.Model.extend({
     renderedHTML: '',
     contents: [],
   },
-  initialize: function (initObj) {
-    if (initObj.contents.length > 0) {
+  initialize: function (options) {
+    if (options && options.contents.length > 0) {
       for (var i = 0, len = initObj.contents.length; i < len; i++) {
-        this.createElement(i, this.getModelDefaults(_.keys(initObj.contents[i][0])), initObj.contents[i]);
+        this.createElement(i, this.getModelDefaults(_.keys(options.contents[i][0])), options.contents[i]);
       }
     }
   },
   clear: function (options) {
     _.each(this.get('contents'), function (collection, i) {
-      collection.offAll();
+      collection.off();
     });
     options = _.extend({silent: true}, options);
     Backbone.Model.prototype.clear.call(this, options);

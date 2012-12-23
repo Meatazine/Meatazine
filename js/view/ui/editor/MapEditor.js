@@ -227,7 +227,7 @@
       map.fitBounds(geometry.viewport);
     },
     clickHandler: function (event) {
-      this.model.trigger('select');
+      this.model.trigger('select', this.model);
       Meatazine.GUI.contextButtons.showButtons(this.buttons);
     },
   });

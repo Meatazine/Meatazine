@@ -87,10 +87,10 @@
       });
     },
     model_changeHandler: function (model, options) {
-      if (options.changes.hasOwnProperty('col')) {
+      if (model.changed.hasOwnProperty('col')) {
         this.switchClass('col', model);
       }
-      if (options.changes.hasOwnProperty('row')) {
+      if (model.changed.hasOwnProperty('row')) {
         this.switchClass('row', model);
       }
       this.resetChildrenNumber();

@@ -109,9 +109,14 @@
     collection_selectHandler: function (model) {
       this.saveTemplate();
       this.model = model;
+      var type = model.get('templateType');
       if (model.get('template') === '') {
-        this.options.source.fetch(model.get('templateType'));
-        return;
+        if (!this.options.source.has(type)) {
+          this.options.source.fetch(model.get('templateType'));
+          return;
+        }
+        
+        this.model.set('template', this.options.source.get(type));
       }
       this.render();
     },
@@ -129,7 +134,7 @@
       this.refreshThumbnail();
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
-    source_typeChangeHandler: function (model, changed) {
+    source_typeChangeHandler: function (model) {
       if (this.model.get('template') && this.model.get('templateType') == model.get('type')) {
         return;
       }

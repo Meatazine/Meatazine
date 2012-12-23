@@ -41,12 +41,6 @@
       delete def.count;
       return !_.isEqual(obj, def);
     },
-    offAll: function () {
-      this.off();
-      this.each(function (model) {
-        model.off();
-      });
-    },
     removeAt: function (index, isSilent) {
       if (index == -1 || index > this.length - 1) {
         return;

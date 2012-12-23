@@ -8,7 +8,7 @@
     page: null,
     VERSION: '0.1.6.@version@',
     initialize: function (options) {
-      options.book.on('change:width change:height', this.book_sizeChangeHandler, this);
+      options.book.on('change:width', this.book_widthChangeHandler, this);
       options.pages.on('add', this.pages_addHandler, this);
       options.pages.on('remove', this.pages_removeHandler, this);
       options.pages.on('reset', this.pages_resetHandler, this);
@@ -115,8 +115,8 @@
         cancel.handler.call(cancel.context, cancel.argus || event);
       });
     },
-    book_sizeChangeHandler: function (model) {
-      $('#page-area').width(474 + model.get('width'));
+    book_widthChangeHandler: function (model, width) {
+      $('#page-area').width(474 + width);
     },
     pages_addHandler: function (model, collection, options) {
       this.checkPagesLength(collection);

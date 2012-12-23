@@ -20,7 +20,7 @@
           sourceList = this.$('#source-list');
           removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
           
-          this.options.book.on('change:width change:height', this.book_resizeHandler, this);
+          this.options.book.on('change:height', this.book_heightChangeHandler, this);
           this.collection.on('add', this.pages_addHandler, this);
           this.collection.on('remove', this.pages_removeHandler, this);
           this.collection.on('select', this.pages_selectHandler, this);
@@ -32,16 +32,6 @@
         createSourceItem: function (model) {
           var template = this.model.createTemplate(model),
               item = $(Meatazine.utils.render(template, model));
-          model.on('change', function (model) {
-            var changed = model.changedAttributes();
-            _.each(_.keys(changed), function (key) {
-              key == 'img' ? item.find('img').attr('src', changed[key]) : item.find(key).text(changed[key]);
-            });
-            item.replaceWith(this.createSourceItem(model));
-          }, this);
-          model.on('select', function () {
-            this.highlightOn(item);
-          }, this);
           return item;
         },
         createSourceList: function (collection, ul) {
@@ -52,19 +42,28 @@
           }
           if (ul.data('collection') != collection) {
             if (ul.data('collection') instanceof Meatazine.model.element.ElementCollection) {
-              ul.data('collection').offAll();
+              ul.data('collection').off();
             }
             ul.empty();
             ul.data('collection', collection);
             collection.on('add', function (model, collection, options) {
               ul.append(this.createSourceItem(model));
             }, this);
+            collection.on('change', function (model) {
+              var item = ul.children().eq(collection.indexOf(model));
+              for (var key in model.changed) {
+                key == 'img' ? item.find('img').attr('src', model.changed[key]) : item.find('.' + key).text(model.changed[key]);
+              };
+            });
             collection.on('remove', function (model, collection, options) {
               ul.children().eq(options.index).remove();
               model.off(null, null, this);
             }, this);
             collection.on('replace', function (model, collection, options) {
               ul.children().eq(options.index).replaceWith(this.createSourceItem(model));
+            }, this);
+            collection.on('select', function (model) {
+              this.highlightOn(ul.children().eq(collection.indexOf(model)));
             }, this);
             collection.each(function (model) {
               ul.append(this.createSourceItem(model));
@@ -129,8 +128,8 @@
                 .siblings('.active').removeClass('active');
           }
         },
-        book_resizeHandler: function (model) {
-          templateList.add(sourceList).height(model.get('height') - 112); // 空出按钮的位置
+        book_heightChangeHandler: function (model, height) {
+          templateList.add(sourceList).height(height - 112); // 空出按钮的位置
         },
         contents_changeHandler: function (model) {
           this.refreshSourceList();

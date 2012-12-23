@@ -12,8 +12,8 @@ Meatazine.model.ConfigModel = Backbone.Model.extend({
   save: function () {
     localStorage.setItem(this.KEY, JSON.stringify(this.toJSON()));
   },
-  changeHandler: function (model, changedAttributes) {
+  changeHandler: function (model) {
     this.save();
-    _gaq.push(['_trackEvent', 'config', 'change', _.keys(changedAttributes).join(',')]);
+    _gaq.push(['_trackEvent', 'config', 'change', JSON.stringify(model.changed)]);
   }
 });

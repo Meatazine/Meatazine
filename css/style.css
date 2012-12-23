@@ -26,6 +26,9 @@ body {
   color:#FFF;
   font:16px/150% Arial, Microsoft Yahei;
 }
+.page img {
+  height:100%;
+}
 article {
   overflow-y:scroll;
   -webkit-overflow-scrolling:touch;

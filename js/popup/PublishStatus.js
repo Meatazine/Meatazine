@@ -28,21 +28,12 @@ Meatazine.popup.PublishStatus = Backbone.View.extend({
   downloadHandler: function (event) {
     location.href = './api/static/' + this.model.get('id') + '.' + $(event.target).attr('data-target');
   },
-  initDownloadButtons: function () {
-    var platform = this.model.get('platform');
-    if (platform >> 1 & 0x1) {
-      this.$('[data-target=apk]').show();
-    } else {
-      this.$('[data-target=apk]').hide();
-    }
-    if (platform & 0x1) {
-      this.$('[data-target=ipa]').show();
-    } else {
-      this.$('[data-target=ipa]').hide();
-    }
+  initDownloadButtons: function (platform) {
+    this.$('[data-target=apk]').toggle(platform >> 1 & 1);
+    this.$('[data-target=ipa]').toggle(platform & 1);
   },
-  model_platformChangeHandler: function () {
-    this.initDownloadButtons();
+  model_platformChangeHandler: function (model, platform) {
+    this.initDownloadButtons(platform);
   },
   model_uploadProgressHandler: function (value) {
     this.$('.upload-progress').text('（' + value + '%）');
