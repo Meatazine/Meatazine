@@ -197,7 +197,7 @@
       // 改变类型的时候需要替换model
       var isImage = /img|video|audio/i.test(this.tagName),
           item = editor.isEditing ? editor.getTarget() : editor.$el,
-          index = isImage ? item.index(this.tagName) : item.closest(this.tagName).index(),
+          index = isImage ? item.index() : item.closest(this.tagName).index(),
           model = this.collection.createMapModel(),
           container = null,
           map = null;

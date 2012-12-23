@@ -5,21 +5,18 @@ jQuery.namespace('Meatazine.service');
       isUploading = false;
   ns.AssetsSyncService = _.extend({
     add: function (asset) {
-      if (_.include(queue, asset)){
+      if (_.contains(queue, asset)){
         return;
       }
       console.log('Async - Added : ', asset)
-      if (!_.include(news, asset)) {
+      if (!_.contains(news, asset)) {
         news.push(asset);
       }
       // 没登录的话中止上传
       if (!M.user.get('isLogin') || M.book.get('id') == 0) {
         return;
       }
-      if (!isUploading) {
-        isUploading = true;
-        this.next();
-      }
+      this.start();
       this.trigger('add', queue.length + news.length, asset, this);
     },
     checkAssets: function () {
@@ -47,6 +44,7 @@ jQuery.namespace('Meatazine.service');
         this.checkAssets();
       } else {
         this.trigger('complete', this);
+        this.empty();
       }
     },
     remove: function (asset) {
