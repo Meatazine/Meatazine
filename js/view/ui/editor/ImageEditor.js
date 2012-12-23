@@ -8,8 +8,8 @@
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
   init = {
-    initialize: function (buttons) {
-      ns.AbstractEditor.prototype.initialize.call(this, buttons);
+    initialize: function (options) {
+      ns.AbstractEditor.prototype.initialize.call(this, options.buttons);
       imageResizer.on('complete:one', this.resizer_readyHandler, this);
       imageResizer.on('complete:all', this.resizer_completeHandler, this);
     },

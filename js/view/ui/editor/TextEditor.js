@@ -6,8 +6,8 @@
       "paste": "pasteHandler",
       "keydown": "keydownHandler",
     },
-    initButtons: function () {
-      ns.AbstractEditor.prototype.initButtons.call(this);
+    initButtons: function (options) {
+      ns.AbstractEditor.prototype.initButtons.call(this, options);
       this.buttons.find('.dropdown-menu a').click(_.bind(this.menu_selectHandler, this));
       this.buttons.find('[data-type=delete]').click(_.bind(this.deleteButton_clickHandler, this));
     },

@@ -1,5 +1,5 @@
 (function (ns) {
-  var textEditor = new ns.editor.TextEditor('.group1');
+  var textEditor = new ns.editor.TextEditor({buttons: '.group1'});
   ns.PageBody = Backbone.View.extend({
     items: [],
     events: {

@@ -10,8 +10,8 @@
     }
   }
   var currentEditor = null,
-      imageEditor = new Meatazine.view.ui.editor.ImageEditor('.group2'),
-      mapEditor = new Meatazine.view.ui.editor.MapEditor('.group5'),
+      imageEditor = new Meatazine.view.ui.editor.ImageEditor({buttons: '.group2'}),
+      mapEditor = new Meatazine.view.ui.editor.MapEditor({buttons: '.group5'}),
   init = {
     tagName: '',
     token: null,
