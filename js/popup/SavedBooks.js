@@ -45,27 +45,28 @@ jQuery.namespace('Meatazine.popup');
       M.book.load('bookauto');
       this.$el.modal('hide');
     },
-    loadButton_clickHandler: function () {
-      var isLogin = this.model.get('isLogin'),
-          ul = isLogin ? '#books-cloud' : '#books-local',
-          prefix = isLogin ? 'remote' : 'book',
-          id = this.$(ul + ' .active').attr('data-item'),
-          key = prefix + id,
-          data = null;
-      if (localStorage.getItem(key)) {
-        M.book.load(key, id);
-        this.$el.modal('hide');
-      } else {
-        data = {
-          bookid: id, 
-          openid: this.model.get('openid')
-        };
+    loadButton_clickHandler: function (event) {
+      // 加载远程保存的杂志
+      if (this.model.get('isLogin')) {
+        var id = this.$('#books-cloud .active').attr('data-item'),
+            key = 'remote' + id,
+            data = {
+              bookid: id,
+              openid: this.model.get('openid')
+            };
         Meatazine.service.ServerCall.call('load', data, function (content) {
           localStorage.setItem(key, content);
           M.book.load(key, id);
           this.$el.modal('hide');
         }, null, this);
+        return;
       }
+      
+      // 加载本地保存的杂志
+      var id = this.$('#books-local .active').attr('data-item'),
+          key = 'book' + id;
+      M.book.load(key, id);
+      this.$el.modal('hide');
     },
     local_addHandler: function (model, collection) {
       var item = Meatazine.utils.render(this.template, model.toJSON());
