@@ -149,7 +149,6 @@
           item = this.$el.children(this.tagName).eq(index);
       newItem = this.createItem(model);
       item.replaceWith(newItem);
-      newItem.data('model', model);
       this.trigger('change');
     },
     collection_removeHandler: function (model, collection, options) {

@@ -8,8 +8,9 @@
     },
     initButtons: function (options) {
       ns.AbstractEditor.prototype.initButtons.call(this, options);
-      this.buttons.find('.dropdown-menu a').click(_.bind(this.menu_selectHandler, this));
-      this.buttons.find('[data-type=delete]').click(_.bind(this.deleteButton_clickHandler, this));
+      this.buttons
+        .on('click', '.dropdown-menu a', _.bind(this.menu_selectHandler, this))
+        .on('click', '[data-type=delete]', _.bind(this.deleteButton_clickHandler, this));
     },
     insertContentAtCaret: function (content, nodeType) {
       var selection = window.getSelection(),
@@ -95,7 +96,10 @@
           type = target.closest('[data-type]').attr('data-type');
       switch (type) {
         case 'font-size':
-          this.$el.css('font-size', target.text() + 'px');
+          this.$el.css({
+           'font-size': target.text() + 'px',
+           'line-height': Number(target.text()) * 1.5 + 'px', 
+          });
           _gaq.push(['_traceEvent', 'text', 'size', target.text()]);
           break;
           

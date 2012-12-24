@@ -16,6 +16,7 @@
 }
 body {
   background:#000;
+  font:16px/150% Arial, Microsoft Yahei;
 }
 .page {
   background: #F0F0F0;
@@ -24,7 +25,6 @@ body {
 .page,
 .page p {
   color:#FFF;
-  font:16px/150% Arial, Microsoft Yahei;
 }
 .page img {
   height:100%;
@@ -380,9 +380,7 @@ article p {
   max-width:30%;
 }
 .page .bighead:first-letter {
-  font-size:250%;
-  line-height:120%;
-  font-weight:bold;
+  font:bold 250%/110% Microsoft Yahei, Simhei;
   float:left;
   padding-right:4px;
 }

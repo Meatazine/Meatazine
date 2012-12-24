@@ -129,10 +129,11 @@
     },
     initButtons: function () {
       ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons.find('[data-type="add-marker"]').on('click', {self: this}, this.addMarkerButton_clickHandler);
-      this.buttons.find('[data-type=search]').on('click', 'li', {self: this}, this.searchResult_clickHandler);
-      this.buttons.find('.geo-search').on('keydown', 'input', {self: this}, this.geoSearchQuery_keydownHandler);
-      this.buttons.find('.geo-search').on('click', 'button', {self: this}, this.geoSearchButton_clickHandler);
+      this.buttons
+        .on('click', '[data-type="add-marker"]', _.bind(this.addMarkerButton_clickHandler, this))
+        .on('click', '[data-type=search] li', _.bind(this.searchResult_clickHandler, this))
+        .on('keydown', '.geo-search input', _.bind(this.geoSearchQuery_keydownHandler, this))
+        .on('click', '.geo-search button', _.bind(this.geoSearchButton_clickHandler, this));
     },
     search: function () {
       var coder = new google.maps.Geocoder(),
@@ -199,27 +200,27 @@
       _gaq.push(['_trackEvent', 'map', 'edit-stop']);
     },
     addMarkerButton_clickHandler: function (event) {
-      event.data.self.addMapMarker(event.pageX, event.pageY);
+      this.addMapMarker(event.pageX, event.pageY);
       event.stopPropagation();
     },
     convertButton_clickHandler: function (event) {
       google.maps.event.clearInstanceListeners(map);
-      ns.AbstractEditor.prototype.convertButton_clickHandler(event);
+      ns.AbstractEditor.prototype.convertButton_clickHandler.call(this, event);
     },
     geoSearchButton_clickHandler: function (event) {
-      event.data.self.search();
+      this.search();
       event.stopPropagation();
     },
     geoSearchQuery_keydownHandler: function (event) {
       if (event.keyCode == 13) {
-        event.data.self.search();
+        this.search();
       }
     },
     searchResult_clickHandler: function (event) {
-      if ($(this).is('.geo-search, .divider')) {
+      if ($(event.currentTarget).is('.geo-search, .divider')) {
         return;
       }
-      var geometry = $(this).data('geometry');
+      var geometry = $(event.currentTarget).data('geometry'),
           marker = new google.maps.Marker({
             position: geometry.location,
             map: map,

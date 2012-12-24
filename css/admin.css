@@ -5,6 +5,7 @@
 body {
   padding: 60px 0 40px;
   background:#FFF;
+  font:14px/20px simsun;
 }
 ::-webkit-scrollbar {
   width: 6px;
