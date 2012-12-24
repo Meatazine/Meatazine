@@ -1,14 +1,4 @@
 (function (ns) {
-  /**
-   * 服务器上存放的图片，换台电脑，用这种方法改变路径
-   * @param event
-   */
-  function img_loadErrorHandler(event) {
-    if (this.src.indexOf('filesystem') != -1) {
-      var fileName = this.src.substr(this.src.lastIndexOf('/') + 1);
-      this.src = '/export/' + M.book.get('id') + '/' + fileName;
-    }
-  }
   var currentEditor = null,
       imageEditor = new Meatazine.view.ui.editor.ImageEditor({buttons: '.group2'}),
       mapEditor = new Meatazine.view.ui.editor.MapEditor({buttons: '.group5'}),
@@ -93,7 +83,12 @@
         item.appendTo(this.$el);
       }
       item.data('model', model);
-      image.one('error', img_loadErrorHandler);
+      image.one('error', function (event) {
+        if (this.src.indexOf('filesystem') !== -1) {
+          var fileName = this.src.substr(this.src.lastIndexOf('/') + 1);
+          model.set('img', '/export/' + M.book.get('id') + '/' + fileName);
+        }
+      });
       return item;
     },
     handleChildrenState: function () {
