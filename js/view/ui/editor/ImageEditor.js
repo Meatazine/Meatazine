@@ -230,10 +230,11 @@
         args = null;
       }
       options.entry.file(function (file) {
-        Meatazine.service.AssetsSyncService.add(file);
+        Meatazine.service.AssetsSyncService.add(file, false);
       });
     },
     resizer_completeHandler: function () {
+      Meatazine.service.AssetsSyncService.start();
       this.trigger('upload:all');
     },
     resizer_readyHandler: function (url, scale, option) {

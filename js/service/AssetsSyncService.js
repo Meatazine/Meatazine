@@ -4,7 +4,7 @@ jQuery.namespace('Meatazine.service');
       news = [],
       isUploading = false;
   ns.AssetsSyncService = _.extend({
-    add: function (asset) {
+    add: function (asset, autoStart) {
       if (_.contains(queue, asset)){
         return;
       }
@@ -16,7 +16,10 @@ jQuery.namespace('Meatazine.service');
       if (!M.user.get('isLogin') || M.book.get('id') == 0) {
         return;
       }
-      this.start();
+      autoStart = autoStart === null ? true : autoStart;
+      if (autoStart) {
+        this.start();
+      }
       this.trigger('add', queue.length + news.length, asset, this);
     },
     checkAssets: function () {

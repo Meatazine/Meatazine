@@ -2,7 +2,7 @@
   var isModified = false,
       localFile = new Meatazine.filesystem.LocalFile(),
       init = {
-        url: './api/cloudbooks.php',
+        page: null,
         defaults: {
           width: 1024,
           height: 768,
@@ -12,25 +12,26 @@
           cover: '',
           name: 'My Book',
           gallery: -1,
-          pages: null,
         },
-        initialize: function () {
-          this.get('pages').on('change', this.pages_changeHandler, this);
+        initialize: function (options) {
+          this.pages = options.pages;
+          this.pages.on('change', this.pages_changeHandler, this);
         },
         set: function (key, value, options) {
-          if (_.isObject(key)) {
-            if (key.hasOwnProperty('pages') && !(key.pages instanceof Backbone.Collection)) {
-              this.get('pages').reset(key.pages);
-              delete key.pages;
-            }
-          } else if (key == 'pages'){
-            this.get('pages').reset(value);
+          if (key === 'pages'){
+            this.pages.reset(value);
             return;
+          }
+          if (_.isObject(key) && key.hasOwnProperty('pages')) {
+            if (this.pages instanceof Meatazine.model.PageCollection) {
+              this.pages.reset(key.pages);
+            }
+            key = _.omit(key, 'pages');
           }
           Backbone.Model.prototype.set.call(this, key, value, options);
         },
         autosave: function () {
-          if (!isModified || this.get('pages').length == 0) {
+          if (!isModified || this.pages.length == 0) {
             return;
           }
           this.save('bookauto');
@@ -127,9 +128,9 @@
           });
         },
         save: function (key) {
-          var data = _.omit(this.attributes, 'id', 'pages'),
+          var data = _.omit(this.attributes, 'id'),
               content = '';
-          data.pages = this.get('pages').toJSON();
+          data.pages = this.pages.toJSON();
           content = JSON.stringify(data);
           // 自动保存等特殊key
           if (key instanceof String) {

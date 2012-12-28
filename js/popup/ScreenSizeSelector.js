@@ -5,13 +5,11 @@ Meatazine.popup.ScreenSizeSelector = Backbone.View.extend({
     "click .device": "device_clickHandler",
     "click .btn-primary": "confirmHandler",
   },
-  initialize: function () {
-    this.setElement(this.el);
-    this.info = $(this.options.infoText);
+  initialize: function (options) {
+    this.info = $(options.infoText);
     this.model.on('change:width change:height', this.model_sizeChangeHandler, this);
     this.render();
     this.confirmHandler();
-    delete this.options;
   },
   render: function () {
     this.$('form').hide();

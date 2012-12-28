@@ -14,47 +14,42 @@
       options.pages.on('reset', this.pages_resetHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
         el: '#navbar',
-        model: options.book,
+        model: options.book
       });
       info = $('#system-info');
       this.removeLoading();
       this.checkBrowserVersion();
       $('body').on({
-        'keydown': function (event) {
-          if (event.keyCode == 8 && !(/input|textarea/i).test(event.target.tagName)) { // backspace
+        keydown: function (event) {
+          if (event.keyCode === 8 && !/input|textarea/i.test(event.target.tagName)) { // backspace
             event.preventDefault();
             return false;
           }
         },
-        'drop': function (event) {
+        drop: function (event) {
           event.preventDefault();
           return false;
         },
-        'click': _.bind(this.body_clickHandler),
+        click: this.body_clickHandler
       });
     },
     checkBrowserVersion: function () {
       var array = window.navigator.userAgent.match(/chrome\/(\d+(.\d+)?)/i),
-          isChrome = array != null,
-          title,
-          content;
+          isChrome = array !== null;
       // 不是Chrome浏览器，或者版本号低于12，这些浏览器都不支持File API操作本地文件
       if (!isChrome) {
-        title = '肉大师只支持Chrome浏览器';
-        content = '非Chrome环境下，肉大师无法发挥真正实力，请换用Chrome再试一次。<br />下载Chrome浏览器请至：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a>';
-        this.displayBrowerError(title, content);
+        this.displayBrowerError('no-chrome');
         return;
       }
       if (Number(array[1]) < 12) {
-        title = '肉大师需要Chrome 12+';
-        content = '只有Chrome 12+才能让肉大师发挥出真正实力，建议更新到最新版本再试一次。<br />下载最新版Chrome浏览器请至：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a>';
-        this.displayBrowerError(title, content);
+        this.displayBrowerError('low-version');
         return;
       }
+      $('.system-error').remove();
       $('.hidden').removeClass('hidden');
     },
     checkPagesLength: function (collection) {
-      var noPage = collection.length == 0;
+      var noPage = collection.length === 0;
       if (noPage) {
         this.page.empty();
       }
@@ -62,9 +57,8 @@
       this.contextButtons.setButtonsStatus(noPage);
       this.navbar.setBookButtonsStatus(noPage);
     },
-    displayBrowerError: function (title, content) {
-      $('<div class="alert alert-error noscript"><h4>' + title + '</h4>' + content + '</div>')
-        .prependTo('body');
+    displayBrowerError: function (id) {
+      $('#error-' + id).removeClass('hide');
     },
     displayMessage: function (msg, className) {
       clearTimeout(infoTimeout);
@@ -94,20 +88,20 @@
       this.displayMessage(msg);
     },
     registerCancelHandler: function (handler, context, argus) {
-      if (_.any(cancelQueue, function (cancel, i) { return cancel.handler == handler})) {
+      if (_.any(cancelQueue, function (cancel, i) { return cancel.handler === handler; })) {
         this.unregisterCancelHandler(handler);
       }
       setTimeout(function () {
         cancelQueue.push({
           handler: handler,
           context: context,
-          argus: argus,
+          argus: argus
         });
       }, 50);
     },
     unregisterCancelHandler: function (handler) {
       cancelQueue = _.reject(cancelQueue, function (cancel, i) {
-        return cancel.handler == handler;
+        return cancel.handler === handler;
       });
     },
     body_clickHandler: function (event) {
@@ -127,5 +121,5 @@
     pages_resetHandler: function (collection) {
       this.checkPagesLength(collection);
     }
-  }
+  };
 }(jQuery.namespace('Meatazine'), jQuery));

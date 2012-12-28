@@ -52,7 +52,7 @@
     },
     collection_addHandler: function (model, collection, options) {
       var item = this.createItem(model);
-      collection.trigger('select', model, item);
+      collection.trigger('select', model);
     },
     collection_redrawHandler: function (model, thumb) {
       var index = this.collection.indexOf(model),
@@ -61,14 +61,14 @@
       context.drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
       if (emptyItems.length > 0) {
         item = emptyItems.shift();
-        this.collection.trigger('select', item.data('model'), item);
+        this.collection.trigger('select', item.data('model'));
       }
     },
     collection_removeHandler: function (model, collection, options) {
       var target = list.children().eq(options.index),
           index = options.index > 0 ? options.index - 1 : 0;
       if (currentItem.is(target)) {
-        collection.trigger('select', collection.at(index), list.children().eq(index));
+        collection.trigger('select', collection.at(index));
       }
       target
         .off()
@@ -86,14 +86,15 @@
       });
       this.$('li').disableSelection();
       if (this.collection.length > 0) {
-        this.collection.trigger('select', this.collection.at(0), list.children().eq(0));
+        emptyItems.shift();
+        this.collection.trigger('select', this.collection.at(0));
       }
     },
-    collection_selectHandler: function (model, target) {
+    collection_selectHandler: function (model) {
       if (currentItem != null) {
         currentItem.removeClass('active');
       }
-      target = target || list.children().eq(model.collection.indexOf(model));
+      target = list.children().eq(model.collection.indexOf(model));
       currentItem = $(target);
       currentItem.addClass('active');
       this.refreshPageNumber();
@@ -104,7 +105,7 @@
       if (target.hasClass('active')) {
         return;
       }
-      this.collection.trigger('select', target.data('model'), target);
+      this.collection.trigger('select', target.data('model'));
     },
     item_mouseOutHandler: function (event) {
       var pos = $(event.target).offset();
