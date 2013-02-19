@@ -8,6 +8,7 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   events: {
     "click .disabled": "disabledButton_clickHandler",
     "click .logout": "logout_clickHandler",
+    'click #full-screen': 'fullScreen_clickHandler',
   },
   initialize: function () {
     this.setElement(this.el);
@@ -41,6 +42,13 @@ Meatazine.view.ui.NavBar = Backbone.View.extend({
   disabledButton_clickHandler: function (event) {
     event.stopPropagation();
     return false;
+  },
+  fullScreen_clickHandler: function (event) {
+    if (document.webkitIsFullScreen) {
+      $('body')[0].webkitRequestFullScreen();
+    } else {
+      document.webkitExitFullscreen();
+    }
   },
   logout_clickHandler: function (event) {
     QC.Login.signOut();

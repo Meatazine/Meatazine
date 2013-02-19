@@ -11,8 +11,8 @@
   
   <target name="-concat.js.libs.files">
     <mkdir dir="${dist}/js" />
-    <concat destfile="${dist}/js/libs.js" encoding="UTF-8" fixlastline="yes">
-      <filelist dir="js/libs/">
+    <concat destfile="${dist}/libs.js" encoding="UTF-8" fixlastline="yes">
+      <filelist dir="libs/">
         <file name="jquery.namespace.js" />
         <file name="html2canvas.js" />
         <file name="jszip.js" />
@@ -87,6 +87,12 @@
     </copy>
   </target>
   
+  <target name="-copy.font.files">
+    <copy todir="${dist}/font/">
+      <fileset dir="font/" />
+    </copy>
+  </target>
+  
   <target name="-compile.css.files">
     <copy todir="${dist}/css/">
       <filelist dir="css/">
@@ -105,8 +111,8 @@
         <file name="style.css" />
       </filelist>
     </copy>
-    <copy todir="${dist}/js/libs/">
-      <filelist dir="js/libs/">
+    <copy todir="${dist}/libs/">
+      <filelist dir="libs/">
         <file name="zepto.min.js" />
         <file name="underscore-min.js" />
         <file name="backbone-min.js" />
@@ -131,7 +137,7 @@
     </jscomp>
   </target>
   
-  <target name="maker" depends="init, -copy.html.files, -copy.image.files,
+  <target name="maker" depends="init, -copy.html.files, -copy.image.files, -copy.font.files,
     -compile.css.files, -concat.js.libs.files, -concat.js.apps.files">
     <echo message="Compile: apps.js" />
     <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/apps.js" encoding="UTF-8">

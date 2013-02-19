@@ -36,14 +36,6 @@ body {
   margin-top:10px;
 }
 
-.icon-b-plug-sign {
-  background:url(../img/glyphicons_190_circle_plus.png);
-  width:26px;
-  height:26px;
-  line-height:26px;
-  vertical-align: text-top;
-}
-
 .remove-button {
   position:absolute;
   top:3px;

@@ -5,7 +5,7 @@ Meatazine/
 bin/
 temp/
 jqueryui/
-js/libs/backbone.js
+libs/backbone.js
 export/
 img/source/
 build/*.jar

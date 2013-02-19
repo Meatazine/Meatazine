@@ -101,6 +101,8 @@
             </a>
             <ul class="dropdown-menu">
               <li><a href="#welcome" data-toggle="modal">欢迎窗体</a></li>
+              <li class="divider"></li>
+              <li><a href="#full-screen">全屏</a></li>
             </ul>
           </li>
           <li><a href="#user-config" data-toggle="modal"><i class="icon-cog icon-white"></i> 设置</a></li>
@@ -274,7 +276,7 @@
       <ul id="page-list-inner" class="well">
         <li>
           <button class="btn btn-large add-button" type="button">
-            <i class="icon-b-plug-sign"></i>
+            <i class="icon-plus icon-large"></i>
           </button>
         </li>
       </ul>
@@ -698,36 +700,23 @@
   </div>
 </div>
 <!-- 最后加载css和js -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" />
-<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" />
+<link rel="stylesheet" href="css/font-awesome.min.css" />
+<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.0/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="css/animate.css" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/admin.css" />
-<script src="//maps.google.com/maps/api/js?sensor=true"></script>
-<script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://meathill.pc/Meatazine/api/qqlogin.html" charset="UTF-8"></script>
-<script id="ga-init">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-36011684-1']);
-  _gaq.push(['_setDomainName', 'evereditor.com']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementById('ga-init'); s.parentNode.insertBefore(ga, s);
-  })();
-</script>
-<script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
-<script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-<script src="js/libs/underscore-min.js"></script>
-<script src="js/libs/backbone-min.js"></script>
+<script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+<script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.0/jquery-ui.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.0/mustache.min.js"></script>
 <!-- replace start -->
-<script src="js/libs/jquery.namespace.js"></script>
-<script src="js/libs/html2canvas.js"></script>
-<script src="js/libs/jszip.js"></script>
-<script src="js/libs/jszip-deflate.js"></script>
+<script src="libs/jquery.namespace.js"></script>
+<script src="libs/html2canvas.js"></script>
+<script src="libs/jszip.js"></script>
+<script src="libs/jszip-deflate.js"></script>
 <script src="js/utils/Utils.js"></script>
 <script src="js/utils/Mouse.js"></script>
 <script src="js/filesystem/LocalFile.js"></script>
@@ -774,3 +763,17 @@
 <script src="js/controller/Router.js"></script>
 <script src="js/AppMain.js"></script>
 <!-- replace over -->
+<script src="//maps.google.com/maps/api/js?sensor=true"></script>
+<script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://meathill.pc/Meatazine/api/qqlogin.html" charset="UTF-8"></script>
+<script id="ga-init">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36011684-1']);
+  _gaq.push(['_setDomainName', 'evereditor.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementById('ga-init'); s.parentNode.insertBefore(ga, s);
+  })();
+</script>
