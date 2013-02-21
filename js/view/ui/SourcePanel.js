@@ -20,7 +20,6 @@
           sourceList = this.$('#source-list');
           removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
           
-          this.options.book.on('change:height', this.book_heightChangeHandler, this);
           this.collection.on('add', this.pages_addHandler, this);
           this.collection.on('remove', this.pages_removeHandler, this);
           this.collection.on('select', this.pages_selectHandler, this);
@@ -127,9 +126,6 @@
               .addClass('active')
                 .siblings('.active').removeClass('active');
           }
-        },
-        book_heightChangeHandler: function (model, height) {
-          templateList.add(sourceList).height(height - 112); // 空出按钮的位置
         },
         contents_changeHandler: function (model) {
           this.refreshSourceList();

@@ -576,12 +576,10 @@ article p {
   visibility: visible;
 }
 .page {
-  float:left;
   position:relative;
   visibility: hidden;
 }
 #dummy {
-  float:left;
   width:0;
   height:0;
   visibility: hidden;

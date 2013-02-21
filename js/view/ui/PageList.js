@@ -16,8 +16,7 @@
       "sortdeactivate #page-list-inner": "sortdeactivateHandler",
     },
     initialize: function () {
-      list = this.$('#page-list-inner');      
-      this.model.on('change:width change:height', this.book_resizeHandler, this);
+      list = this.$('#page-list-inner');
       this.collection.on('add', this.collection_addHandler, this);
       this.collection.on('redraw', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
@@ -45,10 +44,6 @@
     addButton_clickHandler: function (event) {
       this.collection.create();
       _gaq.push(['_trackEvent', 'page', 'add']);
-    },
-    book_resizeHandler: function (model) {
-      list.height(model.get('height') - 57); // 把按钮和数字空出来
-      this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
     collection_addHandler: function (model, collection, options) {
       var item = this.createItem(model);
