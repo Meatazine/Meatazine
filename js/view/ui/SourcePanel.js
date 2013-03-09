@@ -117,7 +117,9 @@
         },
         setTemplateType: function (type, silent) {
           silent = silent == null ? true : silent;
-          this.model.set({type: type}, {silent: silent});
+          if (this.model.has(type)) {
+            this.model.set({type: type}, {silent: silent});
+          }
           var img = _.find(templateList.find('img'), function (element, i) {
             return this.model.parseTemplateType(element.src) === type;
           }, this);

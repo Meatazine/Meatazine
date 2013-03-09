@@ -30,10 +30,10 @@ Meatazine.model.SourceModel = Backbone.Model.extend({
   parse: function (response) {
     var type = this.loadQueue.shift();
     response = response.replace(/[\r\n]/gm, '').replace(/\s{2,}/gm, '');
-    this.isLoading = false;
     this.set(type, response);
     this.set('type', type);
-    if(this.loadQueue.length > 0) {
+    this.isLoading = this.loadQueue.length > 0;
+    if(this.isLoading) {
       this.fetch();
     }
   },

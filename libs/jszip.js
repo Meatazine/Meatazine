@@ -1,13 +1,947 @@
-var JSZip=function(f,e){this.files={};this.root="";f&&this.load(f,e)};JSZip.signature={LOCAL_FILE_HEADER:"PK\u0003\u0004",CENTRAL_FILE_HEADER:"PK\u0001\u0002",CENTRAL_DIRECTORY_END:"PK\u0005\u0006",ZIP64_CENTRAL_DIRECTORY_LOCATOR:"PK\u0006\u0007",ZIP64_CENTRAL_DIRECTORY_END:"PK\u0006\u0006",DATA_DESCRIPTOR:"PK\u0007\u0008"};JSZip.defaults={base64:!1,binary:!1,dir:!1,date:null};
-JSZip.prototype=function(){var f=function(b,a,c){this.name=b;this.data=a;this.options=c};f.prototype={asText:function(){return this.options.binary?JSZip.prototype.utf8decode(this.data):this.data},asBinary:function(){return this.options.binary?this.data:JSZip.prototype.utf8encode(this.data)}};var e=function(b,a){var c="",d;for(d=0;d<a;d++)c+=String.fromCharCode(b&255),b>>>=8;return c},k=function(){var b={},a,c;for(a=0;a<arguments.length;a++)for(c in arguments[a])"undefined"===typeof b[c]&&(b[c]=arguments[a][c]);
-return b},g=function(b,a,c){var d=l(b);d&&i.call(this,d);c=c||{};!0===c.base64&&null==c.binary&&(c.binary=!0);c=k(c,JSZip.defaults);c.date=c.date||new Date;return this.files[b]={name:b,data:a,options:c}},l=function(b){"/"==b.slice(-1)&&(b=b.substring(0,b.length-1));var a=b.lastIndexOf("/");return 0<a?b.substring(0,a):""},i=function(b){"/"!=b.slice(-1)&&(b+="/");if(!this.files[b]){var a=l(b);a&&i.call(this,a);g.call(this,b,"",{dir:!0})}return this.files[b]};return{load:function(){throw Error("Load method is not defined. Is the file jszip-load.js included ?");
-},filter:function(b){var a=[],c,d,e;for(c in this.files)d=this.files[c],e=new f(d.name,d.data,k(d.options)),d=c.slice(this.root.length,c.length),c.slice(0,this.root.length)===this.root&&b(d,e)&&a.push(e);return a},file:function(b,a,c){if(1===arguments.length){if(b instanceof RegExp){var d=b;return this.filter(function(a,b){return!b.options.dir&&d.test(a)})}return this.filter(function(a,c){return!c.options.dir&&a===b})[0]||null}b=this.root+b;g.call(this,b,a,c);return this},folder:function(b){if(!b)throw Error("folder : wrong argument");
-if(b instanceof RegExp)return this.filter(function(a,c){return c.options.dir&&b.test(a)});var a=i.call(this,this.root+b),c=this.clone();c.root=a.name;return c},remove:function(b){var b=this.root+b,a=this.files[b];a||("/"!=b.slice(-1)&&(b+="/"),a=this.files[b]);if(a)if(a.options.dir)for(var a=this.filter(function(a,c){return c.name.slice(0,b.length)===b}),c=0;c<a.length;c++)delete this.files[a[c].name];else delete this.files[b];return this},generate:function(b){var a,c,b=k(b||{},{base64:!0,compression:"STORE"}),
-d=b.compression.toUpperCase(),f=[],g=[],i=0;if(!JSZip.compressions[d])throw d+" is not a valid compression method !";for(var l in this.files)if(this.files.hasOwnProperty(l)){var j=this.files[l],q=this.utf8encode(j.name);a=c="";a=q;var p=d;c=a!==j.name;var o=j.data,m=j.options,n=j=void 0,j=m.date.getHours(),j=j<<6,j=j|m.date.getMinutes(),j=j<<5,j=j|m.date.getSeconds()/2,n=m.date.getFullYear()-1980,n=n<<4,n=n|m.date.getMonth()+1,n=n<<5,n=n|m.date.getDate();!0===m.base64&&(o=JSZipBase64.decode(o));!1===
-m.binary&&(o=this.utf8encode(o));var m=JSZip.compressions[p],p=m.compress(o),h="",h=h+"\n\x00",h=h+(c?"\x00\u0008":"\x00\x00"),h=h+m.magic,h=h+e(j,2),h=h+e(n,2),h=h+e(this.crc32(o),4),h=h+e(p.length,4),h=h+e(o.length,4),h=h+e(a.length,2);a=h+="\x00\x00";c=p;c=JSZip.signature.LOCAL_FILE_HEADER+a+q+c;a=JSZip.signature.CENTRAL_FILE_HEADER+"\u0014\x00"+a+"\x00\x00\x00\x00\x00\x00"+(!0===this.files[l].dir?"\u0010\x00\x00\x00":"\x00\x00\x00\x00")+e(i,4)+q;i+=c.length;g.push(c);f.push(a)}d=g.join("");f=
-f.join("");i="";i=JSZip.signature.CENTRAL_DIRECTORY_END+"\x00\x00\x00\x00"+e(g.length,2)+e(g.length,2)+e(f.length,4)+e(d.length,4)+"\x00\x00";g=d+f+i;return b.base64?JSZipBase64.encode(g):g},crc32:function(b,a){if(""===b||"undefined"===typeof b)return 0;"undefined"==typeof a&&(a=0);for(var c=0,c=0,a=a^-1,d=0,e=b.length;d<e;d++)c=(a^b.charCodeAt(d))&255,c="0x"+"00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 0EDB8832 79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 1DB71064 6AB020F2 F3B97148 84BE41DE 1ADAD47D 6DDDE4EB F4D4B551 83D385C7 136C9856 646BA8C0 FD62F97A 8A65C9EC 14015C4F 63066CD9 FA0F3D63 8D080DF5 3B6E20C8 4C69105E D56041E4 A2677172 3C03E4D1 4B04D447 D20D85FD A50AB56B 35B5A8FA 42B2986C DBBBC9D6 ACBCF940 32D86CE3 45DF5C75 DCD60DCF ABD13D59 26D930AC 51DE003A C8D75180 BFD06116 21B4F4B5 56B3C423 CFBA9599 B8BDA50F 2802B89E 5F058808 C60CD9B2 B10BE924 2F6F7C87 58684C11 C1611DAB B6662D3D 76DC4190 01DB7106 98D220BC EFD5102A 71B18589 06B6B51F 9FBFE4A5 E8B8D433 7807C9A2 0F00F934 9609A88E E10E9818 7F6A0DBB 086D3D2D 91646C97 E6635C01 6B6B51F4 1C6C6162 856530D8 F262004E 6C0695ED 1B01A57B 8208F4C1 F50FC457 65B0D9C6 12B7E950 8BBEB8EA FCB9887C 62DD1DDF 15DA2D49 8CD37CF3 FBD44C65 4DB26158 3AB551CE A3BC0074 D4BB30E2 4ADFA541 3DD895D7 A4D1C46D D3D6F4FB 4369E96A 346ED9FC AD678846 DA60B8D0 44042D73 33031DE5 AA0A4C5F DD0D7CC9 5005713C 270241AA BE0B1010 C90C2086 5768B525 206F85B3 B966D409 CE61E49F 5EDEF90E 29D9C998 B0D09822 C7D7A8B4 59B33D17 2EB40D81 B7BD5C3B C0BA6CAD EDB88320 9ABFB3B6 03B6E20C 74B1D29A EAD54739 9DD277AF 04DB2615 73DC1683 E3630B12 94643B84 0D6D6A3E 7A6A5AA8 E40ECF0B 9309FF9D 0A00AE27 7D079EB1 F00F9344 8708A3D2 1E01F268 6906C2FE F762575D 806567CB 196C3671 6E6B06E7 FED41B76 89D32BE0 10DA7A5A 67DD4ACC F9B9DF6F 8EBEEFF9 17B7BE43 60B08ED5 D6D6A3E8 A1D1937E 38D8C2C4 4FDFF252 D1BB67F1 A6BC5767 3FB506DD 48B2364B D80D2BDA AF0A1B4C 36034AF6 41047A60 DF60EFC3 A867DF55 316E8EEF 4669BE79 CB61B38C BC66831A 256FD2A0 5268E236 CC0C7795 BB0B4703 220216B9 5505262F C5BA3BBE B2BD0B28 2BB45A92 5CB36A04 C2D7FFA7 B5D0CF31 2CD99E8B 5BDEAE1D 9B64C2B0 EC63F226 756AA39C 026D930A 9C0906A9 EB0E363F 72076785 05005713 95BF4A82 E2B87A14 7BB12BAE 0CB61B38 92D28E9B E5D5BE0D 7CDCEFB7 0BDBDF21 86D3D2D4 F1D4E242 68DDB3F8 1FDA836E 81BE16CD F6B9265B 6FB077E1 18B74777 88085AE6 FF0F6A70 66063BCA 11010B5C 8F659EFF F862AE69 616BFFD3 166CCF45 A00AE278 D70DD2EE 4E048354 3903B3C2 A7672661 D06016F7 4969474D 3E6E77DB AED16A4A D9D65ADC 40DF0B66 37D83BF0 A9BCAE53 DEBB9EC5 47B2CF7F 30B5FFE9 BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF B3667A2E C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D".substr(9*
-c,8),a=a>>>8^c;return a^-1},clone:function(){var b=new JSZip,a;for(a in this)"function"!==typeof this[a]&&(b[a]=this[a]);return b},utf8encode:function(b){for(var b=b.replace(/\r\n/g,"\n"),a="",c=0;c<b.length;c++){var d=b.charCodeAt(c);128>d?a+=String.fromCharCode(d):(127<d&&2048>d?a+=String.fromCharCode(d>>6|192):(a+=String.fromCharCode(d>>12|224),a+=String.fromCharCode(d>>6&63|128)),a+=String.fromCharCode(d&63|128))}return a},utf8decode:function(b){for(var a="",c=0,d=0,e=0,f=0;c<b.length;)d=b.charCodeAt(c),
-128>d?(a+=String.fromCharCode(d),c++):191<d&&224>d?(e=b.charCodeAt(c+1),a+=String.fromCharCode((d&31)<<6|e&63),c+=2):(e=b.charCodeAt(c+1),f=b.charCodeAt(c+2),a+=String.fromCharCode((d&15)<<12|(e&63)<<6|f&63),c+=3);return a}}}();JSZip.compressions={STORE:{magic:"\x00\x00",compress:function(f){return f},uncompress:function(f){return f}}};
-var JSZipBase64=function(){return{encode:function(f){for(var e="",k,g,l,i,b,a,c=0;c<f.length;)k=f.charCodeAt(c++),g=f.charCodeAt(c++),l=f.charCodeAt(c++),i=k>>2,k=(k&3)<<4|g>>4,b=(g&15)<<2|l>>6,a=l&63,isNaN(g)?b=a=64:isNaN(l)&&(a=64),e=e+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(i)+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(k)+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(b)+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(a);
-return e},decode:function(f){for(var e="",k,g,l,i,b,a=0,f=f.replace(/[^A-Za-z0-9\+\/\=]/g,"");a<f.length;)k="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(f.charAt(a++)),g="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(f.charAt(a++)),i="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(f.charAt(a++)),b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(f.charAt(a++)),k=k<<2|g>>4,g=(g&15)<<4|
-i>>2,l=(i&3)<<6|b,e+=String.fromCharCode(k),64!=i&&(e+=String.fromCharCode(g)),64!=b&&(e+=String.fromCharCode(l));return e}}}();
+/**
+
+JSZip - A Javascript class for generating and reading zip files
+<http://stuartk.com/jszip>
+
+(c) 2009-2012 Stuart Knightley <stuart [at] stuartk.com>
+Dual licenced under the MIT license or GPLv3. See LICENSE.markdown.
+
+Usage:
+   zip = new JSZip();
+   zip.file("hello.txt", "Hello, World!").add("tempfile", "nothing");
+   zip.folder("images").file("smile.gif", base64Data, {base64: true});
+   zip.file("Xmas.txt", "Ho ho ho !", {date : new Date("December 25, 2007 00:00:01")});
+   zip.remove("tempfile");
+
+   base64zip = zip.generate();
+
+**/
+
+/**
+ * Representation a of zip file in js
+ * @constructor
+ * @param {String=|ArrayBuffer=|Uint8Array=} data the data to load, if any (optional).
+ * @param {Object=} options the options for creating this objects (optional).
+ */
+var JSZip = function(data, options) {
+   // object containing the files :
+   // {
+   //   "folder/" : {...},
+   //   "folder/data.txt" : {...}
+   // }
+   this.files = {};
+
+   // Where we are in the hierarchy
+   this.root = "";
+
+   if (data) {
+      this.load(data, options);
+   }
+};
+
+JSZip.signature = {
+   LOCAL_FILE_HEADER : "\x50\x4b\x03\x04",
+   CENTRAL_FILE_HEADER : "\x50\x4b\x01\x02",
+   CENTRAL_DIRECTORY_END : "\x50\x4b\x05\x06",
+   ZIP64_CENTRAL_DIRECTORY_LOCATOR : "\x50\x4b\x06\x07",
+   ZIP64_CENTRAL_DIRECTORY_END : "\x50\x4b\x06\x06",
+   DATA_DESCRIPTOR : "\x50\x4b\x07\x08"
+};
+
+// Default properties for a new file
+JSZip.defaults = {
+   base64: false,
+   binary: false,
+   dir: false,
+   date: null
+};
+
+
+JSZip.prototype = (function () {
+   /**
+    * A simple object representing a file in the zip file.
+    * @constructor
+    * @param {string} name the name of the file
+    * @param {string} data the data
+    * @param {Object} options the options of the file
+    */
+   var ZipObject = function (name, data, options) {
+      this.name = name;
+      this.data = data;
+      this.options = options;
+   };
+
+   ZipObject.prototype = {
+      /**
+       * Return the content as UTF8 string.
+       * @return {string} the UTF8 string.
+       */
+      asText : function () {
+         var result = this.data;
+         if (result === null || typeof result === "undefined") {
+            return "";
+         }
+         if (this.options.base64) {
+            result = JSZipBase64.decode(result);
+         }
+         if (this.options.binary) {
+            result = JSZip.prototype.utf8decode(result);
+         }
+         return result;
+      },
+      /**
+       * Returns the binary content.
+       * @return {string} the content as binary.
+       */
+      asBinary : function () {
+         var result = this.data;
+         if (result === null || typeof result === "undefined") {
+            return "";
+         }
+         if (this.options.base64) {
+            result = JSZipBase64.decode(result);
+         }
+         if (!this.options.binary) {
+            result = JSZip.prototype.utf8encode(result);
+         }
+         return result;
+      },
+      /**
+       * Returns the content as an Uint8Array.
+       * @return {Uint8Array} the content as an Uint8Array.
+       */
+      asUint8Array : function () {
+         return JSZip.utils.string2Uint8Array(this.asBinary());
+      },
+      /**
+       * Returns the content as an ArrayBuffer.
+       * @return {ArrayBuffer} the content as an ArrayBufer.
+       */
+      asArrayBuffer : function () {
+         return JSZip.utils.string2Uint8Array(this.asBinary()).buffer;
+      }
+   };
+
+   /**
+    * Transform an integer into a string in hexadecimal.
+    * @private
+    * @param {number} dec the number to convert.
+    * @param {number} bytes the number of bytes to generate.
+    * @returns {string} the result.
+    */
+   var decToHex = function(dec, bytes) {
+      var hex = "", i;
+      for(i = 0; i < bytes; i++) {
+         hex += String.fromCharCode(dec&0xff);
+         dec=dec>>>8;
+      }
+      return hex;
+   };
+
+   /**
+    * Merge the objects passed as parameters into a new one.
+    * @private
+    * @param {...Object} var_args All objects to merge.
+    * @return {Object} a new object with the data of the others.
+    */
+   var extend = function () {
+      var result = {}, i, attr;
+      for (i = 0; i < arguments.length; i++) { // arguments is not enumerable in some browsers
+         for (attr in arguments[i]) {
+            if (arguments[i].hasOwnProperty(attr) && typeof result[attr] === "undefined") {
+               result[attr] = arguments[i][attr];
+            }
+         }
+      }
+      return result;
+   };
+
+   /**
+    * Transforms the (incomplete) options from the user into the complete
+    * set of options to create a file.
+    * @private
+    * @param {Object} o the options from the user.
+    * @return {Object} the complete set of options.
+    */
+   var prepareFileAttrs = function (o) {
+      o = o || {};
+      if (o.base64 === true && o.binary == null) {
+         o.binary = true;
+      }
+      o = extend(o, JSZip.defaults);
+      o.date = o.date || new Date();
+
+      return o;
+   };
+
+  /**
+   * Add a file in the current folder.
+   * @private
+   * @param {string} name the name of the file
+   * @param {String|ArrayBuffer|Uint8Array} data the data of the file
+   * @param {Object} o the options of the file
+   * @return {Object} the new file.
+   */
+   var fileAdd = function (name, data, o) {
+      // be sure sub folders exist
+      var parent = parentFolder(name);
+      if (parent) {
+         folderAdd.call(this, parent);
+      }
+
+      o = prepareFileAttrs(o);
+
+      if (o.dir || data === null || typeof data === "undefined") {
+         o.base64 = false;
+         o.binary = false;
+         data = null;
+      } else if (JSZip.support.uint8array && data instanceof Uint8Array) {
+         o.base64 = false;
+         o.binary = true;
+         data = JSZip.utils.uint8Array2String(data);
+      } else if (JSZip.support.arraybuffer && data instanceof ArrayBuffer) {
+         o.base64 = false;
+         o.binary = true;
+         var bufferView = new Uint8Array(data);
+         data = JSZip.utils.uint8Array2String(bufferView);
+      } else if (o.binary && !o.base64) {
+         // optimizedBinaryString == true means that the file has already been filtered with a 0xFF mask
+         if (o.optimizedBinaryString !== true) {
+            // this is a string, not in a base64 format.
+            // Be sure that this is a correct "binary string"
+            data = JSZip.utils.string2binary(data);
+         }
+         // we remove this option since it's only relevant here
+         delete o.optimizedBinaryString;
+      }
+
+      return this.files[name] = new ZipObject(name, data, o);
+   };
+
+
+   /**
+    * Find the parent folder of the path.
+    * @private
+    * @param {string} path the path to use
+    * @return {string} the parent folder, or ""
+    */
+   var parentFolder = function (path) {
+      if (path.slice(-1) == '/') {
+         path = path.substring(0, path.length - 1);
+      }
+      var lastSlash = path.lastIndexOf('/');
+      return (lastSlash > 0) ? path.substring(0, lastSlash) : "";
+   };
+
+   /**
+    * Add a (sub) folder in the current folder.
+    * @private
+    * @param {string} name the folder's name
+    * @return {Object} the new folder.
+    */
+   var folderAdd = function (name) {
+      // Check the name ends with a /
+      if (name.slice(-1) != "/") {
+         name += "/"; // IE doesn't like substr(-1)
+      }
+
+      // Does this folder already exist?
+      if (!this.files[name]) {
+         // be sure sub folders exist
+         var parent = parentFolder(name);
+         if (parent) {
+            folderAdd.call(this, parent);
+         }
+
+         fileAdd.call(this, name, null, {dir:true});
+      }
+      return this.files[name];
+   };
+
+   /**
+    * Generate the data found in the local header of a zip file.
+    * Do not create it now, as some parts are re-used later.
+    * @private
+    * @param {Object} file the file to use.
+    * @param {string} utfEncodedFileName the file name, utf8 encoded.
+    * @param {string} compressionType the compression to use.
+    * @return {Object} an object containing header and compressedData.
+    */
+   var prepareLocalHeaderData = function(file, utfEncodedFileName, compressionType) {
+      var useUTF8 = utfEncodedFileName !== file.name,
+          data    = file.asBinary(),
+          o       = file.options,
+          dosTime,
+          dosDate;
+
+      // date
+      // @see http://www.delorie.com/djgpp/doc/rbinter/it/52/13.html
+      // @see http://www.delorie.com/djgpp/doc/rbinter/it/65/16.html
+      // @see http://www.delorie.com/djgpp/doc/rbinter/it/66/16.html
+
+      dosTime = o.date.getHours();
+      dosTime = dosTime << 6;
+      dosTime = dosTime | o.date.getMinutes();
+      dosTime = dosTime << 5;
+      dosTime = dosTime | o.date.getSeconds() / 2;
+
+      dosDate = o.date.getFullYear() - 1980;
+      dosDate = dosDate << 4;
+      dosDate = dosDate | (o.date.getMonth() + 1);
+      dosDate = dosDate << 5;
+      dosDate = dosDate | o.date.getDate();
+
+      var hasData = data !== null && data.length !== 0;
+
+      var compression    = JSZip.compressions[compressionType];
+      var compressedData = hasData ? compression.compress(data) : '';
+
+      var header = "";
+
+      // version needed to extract
+      header += "\x0A\x00";
+      // general purpose bit flag
+      // set bit 11 if utf8
+      header += useUTF8 ? "\x00\x08" : "\x00\x00";
+      // compression method
+      header += hasData ? compression.magic : JSZip.compressions['STORE'].magic;
+      // last mod file time
+      header += decToHex(dosTime, 2);
+      // last mod file date
+      header += decToHex(dosDate, 2);
+      // crc-32
+      header += hasData ? decToHex(this.crc32(data), 4) : '\x00\x00\x00\x00';
+      // compressed size
+      header += hasData ? decToHex(compressedData.length, 4) : '\x00\x00\x00\x00';
+      // uncompressed size
+      header += hasData ? decToHex(data.length, 4) : '\x00\x00\x00\x00';
+      // file name length
+      header += decToHex(utfEncodedFileName.length, 2);
+      // extra field length
+      header += "\x00\x00";
+
+      return {
+         header:header,
+         compressedData:compressedData
+      };
+   };
+
+
+   // return the actual prototype of JSZip
+   return {
+      /**
+       * Read an existing zip and merge the data in the current JSZip object.
+       * The implementation is in jszip-load.js, don't forget to include it.
+       * @param {String|ArrayBuffer|Uint8Array} stream  The stream to load
+       * @param {Object} options Options for loading the stream.
+       *  options.base64 : is the stream in base64 ? default : false
+       * @return {JSZip} the current JSZip object
+       */
+      load : function (stream, options) {
+         throw new Error("Load method is not defined. Is the file jszip-load.js included ?");
+      },
+
+      /**
+       * Filter nested files/folders with the specified function.
+       * @param {Function} search the predicate to use :
+       * function (relativePath, file) {...}
+       * It takes 2 arguments : the relative path and the file.
+       * @return {Array} An array of matching elements.
+       */
+      filter : function (search) {
+         var result = [], filename, relativePath, file, fileClone;
+         for (filename in this.files) {
+            if ( !this.files.hasOwnProperty(filename) ) { continue; }
+            file = this.files[filename];
+            // return a new object, don't let the user mess with our internal objects :)
+            fileClone = new ZipObject(file.name, file.data, extend(file.options));
+            relativePath = filename.slice(this.root.length, filename.length);
+            if (filename.slice(0, this.root.length) === this.root && // the file is in the current root
+                search(relativePath, fileClone)) { // and the file matches the function
+               result.push(fileClone);
+            }
+         }
+         return result;
+      },
+
+      /**
+       * Add a file to the zip file, or search a file.
+       * @param   {string|RegExp} name The name of the file to add (if data is defined),
+       * the name of the file to find (if no data) or a regex to match files.
+       * @param   {String|ArrayBuffer|Uint8Array} data  The file data, either raw or base64 encoded
+       * @param   {Object} o     File options
+       * @return  {JSZip|Object|Array} this JSZip object (when adding a file),
+       * a file (when searching by string) or an array of files (when searching by regex).
+       */
+      file : function(name, data, o) {
+         if (arguments.length === 1) {
+            if (name instanceof RegExp) {
+               var regexp = name;
+               return this.filter(function(relativePath, file) {
+                  return !file.options.dir && regexp.test(relativePath);
+               });
+            } else { // text
+               return this.filter(function (relativePath, file) {
+                  return !file.options.dir && relativePath === name;
+               })[0]||null;
+            }
+         } else { // more than one argument : we have data !
+            name = this.root+name;
+            fileAdd.call(this, name, data, o);
+         }
+         return this;
+      },
+
+      /**
+       * Add a directory to the zip file, or search.
+       * @param   {String|RegExp} arg The name of the directory to add, or a regex to search folders.
+       * @return  {JSZip} an object with the new directory as the root, or an array containing matching folders.
+       */
+      folder : function(arg) {
+         if (!arg) {
+            return this;
+         }
+
+         if (arg instanceof RegExp) {
+            return this.filter(function(relativePath, file) {
+               return file.options.dir && arg.test(relativePath);
+            });
+         }
+
+         // else, name is a new folder
+         var name = this.root + arg;
+         var newFolder = folderAdd.call(this, name);
+
+         // Allow chaining by returning a new object with this folder as the root
+         var ret = this.clone();
+         ret.root = newFolder.name;
+         return ret;
+      },
+
+      /**
+       * Delete a file, or a directory and all sub-files, from the zip
+       * @param {string} name the name of the file to delete
+       * @return {JSZip} this JSZip object
+       */
+      remove : function(name) {
+         name = this.root + name;
+         var file = this.files[name];
+         if (!file) {
+            // Look for any folders
+            if (name.slice(-1) != "/") {
+               name += "/";
+            }
+            file = this.files[name];
+         }
+
+         if (file) {
+            if (!file.options.dir) {
+               // file
+               delete this.files[name];
+            } else {
+               // folder
+               var kids = this.filter(function (relativePath, file) {
+                  return file.name.slice(0, name.length) === name;
+               });
+               for (var i = 0; i < kids.length; i++) {
+                  delete this.files[kids[i].name];
+               }
+            }
+         }
+
+         return this;
+      },
+
+      /**
+       * Generate the complete zip file
+       * @param {Object} options the options to generate the zip file :
+       * - base64, (deprecated, use type instead) true to generate base64.
+       * - compression, "STORE" by default.
+       * - type, "base64" by default. Values are : string, base64, uint8array, arraybuffer, blob.
+       * @return {String|Uint8Array|ArrayBuffer|Blob} the zip file
+       */
+      generate : function(options) {
+         options = extend(options || {}, {
+            base64 : true,
+            compression : "STORE",
+            type : "base64"
+         });
+         var compression = options.compression.toUpperCase();
+
+         // The central directory, and files data
+         var directory = [], files = [], fileOffset = 0;
+
+         if (!JSZip.compressions[compression]) {
+            throw compression + " is not a valid compression method !";
+         }
+
+         for (var name in this.files) {
+            if ( !this.files.hasOwnProperty(name) ) { continue; }
+
+            var file = this.files[name];
+
+            var utfEncodedFileName = this.utf8encode(file.name);
+
+            var fileRecord = "",
+            dirRecord = "",
+            data = prepareLocalHeaderData.call(this, file, utfEncodedFileName, compression);
+            fileRecord = JSZip.signature.LOCAL_FILE_HEADER + data.header + utfEncodedFileName + data.compressedData;
+
+            dirRecord = JSZip.signature.CENTRAL_FILE_HEADER +
+            // version made by (00: DOS)
+            "\x14\x00" +
+            // file header (common to file and central directory)
+            data.header +
+            // file comment length
+            "\x00\x00" +
+            // disk number start
+            "\x00\x00" +
+            // internal file attributes TODO
+            "\x00\x00" +
+            // external file attributes
+            (this.files[name].options.dir===true?"\x10\x00\x00\x00":"\x00\x00\x00\x00")+
+            // relative offset of local header
+            decToHex(fileOffset, 4) +
+            // file name
+            utfEncodedFileName;
+
+            fileOffset += fileRecord.length;
+
+            files.push(fileRecord);
+            directory.push(dirRecord);
+         }
+
+         var fileData = files.join("");
+         var dirData = directory.join("");
+
+         var dirEnd = "";
+
+         // end of central dir signature
+         dirEnd = JSZip.signature.CENTRAL_DIRECTORY_END +
+         // number of this disk
+         "\x00\x00" +
+         // number of the disk with the start of the central directory
+         "\x00\x00" +
+         // total number of entries in the central directory on this disk
+         decToHex(files.length, 2) +
+         // total number of entries in the central directory
+         decToHex(files.length, 2) +
+         // size of the central directory   4 bytes
+         decToHex(dirData.length, 4) +
+         // offset of start of central directory with respect to the starting disk number
+         decToHex(fileData.length, 4) +
+         // .ZIP file comment length
+         "\x00\x00";
+
+         var zip = fileData + dirData + dirEnd;
+
+
+         switch(options.type.toLowerCase()) {
+            case "uint8array" :
+               return JSZip.utils.string2Uint8Array(zip);
+            case "arraybuffer" :
+               return JSZip.utils.string2Uint8Array(zip).buffer;
+            case "blob" :
+               return JSZip.utils.string2Blob(zip);
+            case "base64" :
+               return (options.base64) ? JSZipBase64.encode(zip) : zip;
+            default : // case "string" :
+               return zip;
+         }
+      },
+
+      /**
+       *
+       *  Javascript crc32
+       *  http://www.webtoolkit.info/
+       *
+       */
+      crc32 : function(str, crc) {
+
+         if (str === "" || typeof str === "undefined") {
+            return 0;
+         }
+
+         var table = [
+            0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
+            0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
+            0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988,
+            0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91,
+            0x1DB71064, 0x6AB020F2, 0xF3B97148, 0x84BE41DE,
+            0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7,
+            0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC,
+            0x14015C4F, 0x63066CD9, 0xFA0F3D63, 0x8D080DF5,
+            0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172,
+            0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B,
+            0x35B5A8FA, 0x42B2986C, 0xDBBBC9D6, 0xACBCF940,
+            0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59,
+            0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116,
+            0x21B4F4B5, 0x56B3C423, 0xCFBA9599, 0xB8BDA50F,
+            0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924,
+            0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D,
+            0x76DC4190, 0x01DB7106, 0x98D220BC, 0xEFD5102A,
+            0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433,
+            0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818,
+            0x7F6A0DBB, 0x086D3D2D, 0x91646C97, 0xE6635C01,
+            0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E,
+            0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457,
+            0x65B0D9C6, 0x12B7E950, 0x8BBEB8EA, 0xFCB9887C,
+            0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65,
+            0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2,
+            0x4ADFA541, 0x3DD895D7, 0xA4D1C46D, 0xD3D6F4FB,
+            0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0,
+            0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9,
+            0x5005713C, 0x270241AA, 0xBE0B1010, 0xC90C2086,
+            0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F,
+            0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4,
+            0x59B33D17, 0x2EB40D81, 0xB7BD5C3B, 0xC0BA6CAD,
+            0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A,
+            0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683,
+            0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8,
+            0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1,
+            0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE,
+            0xF762575D, 0x806567CB, 0x196C3671, 0x6E6B06E7,
+            0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC,
+            0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5,
+            0xD6D6A3E8, 0xA1D1937E, 0x38D8C2C4, 0x4FDFF252,
+            0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B,
+            0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60,
+            0xDF60EFC3, 0xA867DF55, 0x316E8EEF, 0x4669BE79,
+            0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236,
+            0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F,
+            0xC5BA3BBE, 0xB2BD0B28, 0x2BB45A92, 0x5CB36A04,
+            0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D,
+            0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A,
+            0x9C0906A9, 0xEB0E363F, 0x72076785, 0x05005713,
+            0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38,
+            0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21,
+            0x86D3D2D4, 0xF1D4E242, 0x68DDB3F8, 0x1FDA836E,
+            0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777,
+            0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C,
+            0x8F659EFF, 0xF862AE69, 0x616BFFD3, 0x166CCF45,
+            0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2,
+            0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB,
+            0xAED16A4A, 0xD9D65ADC, 0x40DF0B66, 0x37D83BF0,
+            0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
+            0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6,
+            0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF,
+            0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
+            0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
+         ];
+
+         if (typeof(crc) == "undefined") { crc = 0; }
+         var x = 0;
+         var y = 0;
+
+         crc = crc ^ (-1);
+         for( var i = 0, iTop = str.length; i < iTop; i++ ) {
+            y = ( crc ^ str.charCodeAt( i ) ) & 0xFF;
+            x = table[y];
+            crc = ( crc >>> 8 ) ^ x;
+         }
+
+         return crc ^ (-1);
+      },
+
+      // Inspired by http://my.opera.com/GreyWyvern/blog/show.dml/1725165
+      clone : function() {
+         var newObj = new JSZip();
+         for (var i in this) {
+            if (typeof this[i] !== "function") {
+               newObj[i] = this[i];
+            }
+         }
+         return newObj;
+      },
+
+
+      /**
+       * http://www.webtoolkit.info/javascript-utf8.html
+       */
+      utf8encode : function (string) {
+         string = string.replace(/\r\n/g,"\n");
+         var utftext = "";
+
+         for (var n = 0; n < string.length; n++) {
+
+            var c = string.charCodeAt(n);
+
+            if (c < 128) {
+               utftext += String.fromCharCode(c);
+            } else if ((c > 127) && (c < 2048)) {
+               utftext += String.fromCharCode((c >> 6) | 192);
+               utftext += String.fromCharCode((c & 63) | 128);
+            } else {
+               utftext += String.fromCharCode((c >> 12) | 224);
+               utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+               utftext += String.fromCharCode((c & 63) | 128);
+            }
+
+         }
+
+         return utftext;
+      },
+
+      /**
+       * http://www.webtoolkit.info/javascript-utf8.html
+       */
+      utf8decode : function (utftext) {
+         var string = "";
+         var i = 0;
+         var c = 0, c1 = 0, c2 = 0, c3 = 0;
+
+         while ( i < utftext.length ) {
+
+            c = utftext.charCodeAt(i);
+
+            if (c < 128) {
+               string += String.fromCharCode(c);
+               i++;
+            } else if ((c > 191) && (c < 224)) {
+               c2 = utftext.charCodeAt(i+1);
+               string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+               i += 2;
+            } else {
+               c2 = utftext.charCodeAt(i+1);
+               c3 = utftext.charCodeAt(i+2);
+               string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+               i += 3;
+            }
+
+         }
+
+         return string;
+      }
+   };
+}());
+
+/*
+ * Compression methods
+ * This object is filled in as follow :
+ * name : {
+ *    magic // the 2 bytes indentifying the compression method
+ *    compress // function, take the uncompressed content and return it compressed.
+ *    uncompress // function, take the compressed content and return it uncompressed.
+ * }
+ *
+ * STORE is the default compression method, so it's included in this file.
+ * Other methods should go to separated files : the user wants modularity.
+ */
+JSZip.compressions = {
+   "STORE" : {
+      magic : "\x00\x00",
+      compress : function (content) {
+         return content; // no compression
+      },
+      uncompress : function (content) {
+         return content; // no compression
+      }
+   }
+};
+
+/*
+ * List features that require a modern browser, and if the current browser support them.
+ */
+JSZip.support = {
+   // contains true if JSZip can read/generate ArrayBuffer, false otherwise.
+   arraybuffer : (function(){
+      return typeof ArrayBuffer !== "undefined" && typeof Uint8Array !== "undefined";
+   })(),
+   // contains true if JSZip can read/generate Uint8Array, false otherwise.
+   uint8array : (function(){
+      return typeof Uint8Array !== "undefined";
+   })(),
+   // contains true if JSZip can read/generate Blob, false otherwise.
+   blob : (function(){
+      // the spec started with BlobBuilder then replaced it with a construtor for Blob.
+      // Result : we have browsers that :
+      // * know the BlobBuilder (but with prefix)
+      // * know the Blob constructor
+      // * know about Blob but not about how to build them
+      // About the "=== 0" test : if given the wrong type, it may be converted to a string.
+      // Instead of an empty content, we will get "[object Uint8Array]" for example.
+      if (typeof ArrayBuffer === "undefined") {
+         return false;
+      }
+      var buffer = new ArrayBuffer(0);
+      try {
+         return new Blob([buffer], { type: "application/zip" }).size === 0;
+      }
+      catch(e) {}
+
+      try {
+         var builder = new (window.BlobBuilder || window.WebKitBlobBuilder ||
+                            window.MozBlobBuilder || window.MSBlobBuilder)();
+         builder.append(buffer);
+         return builder.getBlob('application/zip').size === 0;
+      }
+      catch(e) {}
+
+      return false;
+   })()
+};
+
+JSZip.utils = {
+   /**
+    * Convert a string to a "binary string" : a string containing only char codes between 0 and 255.
+    * @param {string} str the string to transform.
+    * @return {String} the binary string.
+    */
+   string2binary : function (str) {
+      var result = "";
+      for (var i = 0; i < str.length; i++) {
+         result += String.fromCharCode(str.charCodeAt(i) & 0xff);
+      }
+      return result;
+   },
+   /**
+    * Create a Uint8Array from the string.
+    * @param {string} str the string to transform.
+    * @return {Uint8Array} the typed array.
+    * @throws {Error} an Error if the browser doesn't support the requested feature.
+    */
+   string2Uint8Array : function (str) {
+      if (!JSZip.support.uint8array) {
+         throw new Error("Uint8Array is not supported by this browser");
+      }
+      var buffer = new ArrayBuffer(str.length);
+      var bufferView = new Uint8Array(buffer);
+      for(var i = 0; i < str.length; i++) {
+         bufferView[i] = str.charCodeAt(i);
+      }
+
+      return bufferView;
+   },
+
+   /**
+    * Create a string from the Uint8Array.
+    * @param {Uint8Array} array the array to transform.
+    * @return {string} the string.
+    * @throws {Error} an Error if the browser doesn't support the requested feature.
+    */
+   uint8Array2String : function (array) {
+      if (!JSZip.support.uint8array) {
+         throw new Error("Uint8Array is not supported by this browser");
+      }
+      var result = "";
+      for(var i = 0; i < array.length; i++) {
+         result += String.fromCharCode(array[i]);
+      }
+
+      return result;
+   },
+   /**
+    * Create a blob from the given string.
+    * @param {string} str the string to transform.
+    * @return {Blob} the string.
+    * @throws {Error} an Error if the browser doesn't support the requested feature.
+    */
+   string2Blob : function (str) {
+      if (!JSZip.support.blob) {
+         throw new Error("Blob is not supported by this browser");
+      }
+
+      var buffer = JSZip.utils.string2Uint8Array(str).buffer;
+      try {
+         // Blob constructor
+         return new Blob([buffer], { type: "application/zip" });
+      }
+      catch(e) {}
+
+      try {
+         // deprecated, browser only, old way
+         var builder = new (window.BlobBuilder || window.WebKitBlobBuilder ||
+                            window.MozBlobBuilder || window.MSBlobBuilder)();
+         builder.append(buffer);
+         return builder.getBlob('application/zip');
+      }
+      catch(e) {}
+
+      // well, fuck ?!
+      throw new Error("Bug : can't construct the Blob.");
+   }
+};
+
+/**
+ *
+ *  Base64 encode / decode
+ *  http://www.webtoolkit.info/
+ *
+ *  Hacked so that it doesn't utf8 en/decode everything
+ **/
+var JSZipBase64 = (function() {
+   // private property
+   var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+   return {
+      // public method for encoding
+      encode : function(input, utf8) {
+         var output = "";
+         var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+         var i = 0;
+
+         while (i < input.length) {
+
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
+
+            if (isNaN(chr2)) {
+               enc3 = enc4 = 64;
+            } else if (isNaN(chr3)) {
+               enc4 = 64;
+            }
+
+            output = output +
+               _keyStr.charAt(enc1) + _keyStr.charAt(enc2) +
+               _keyStr.charAt(enc3) + _keyStr.charAt(enc4);
+
+         }
+
+         return output;
+      },
+
+      // public method for decoding
+      decode : function(input, utf8) {
+         var output = "";
+         var chr1, chr2, chr3;
+         var enc1, enc2, enc3, enc4;
+         var i = 0;
+
+         input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+         while (i < input.length) {
+
+            enc1 = _keyStr.indexOf(input.charAt(i++));
+            enc2 = _keyStr.indexOf(input.charAt(i++));
+            enc3 = _keyStr.indexOf(input.charAt(i++));
+            enc4 = _keyStr.indexOf(input.charAt(i++));
+
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+
+            output = output + String.fromCharCode(chr1);
+
+            if (enc3 != 64) {
+               output = output + String.fromCharCode(chr2);
+            }
+            if (enc4 != 64) {
+               output = output + String.fromCharCode(chr3);
+            }
+
+         }
+
+         return output;
+
+      }
+   };
+}());
+
+// enforcing Stuk's coding style
+// vim: set shiftwidth=3 softtabstop=3:

@@ -61,7 +61,7 @@
     refreshThumbnail: function (isReset) {
       isReset = isReset || false;
       var self = this;
-      html2canvas(this.$el, {onrendered: function (canvas) {
+      html2canvas(this.$el[0], {onrendered: function (canvas) {
         self.model.trigger('redraw', self.model, canvas);
       }});
       this.saveRenderedHTML();
