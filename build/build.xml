@@ -10,13 +10,16 @@
   </target>
   
   <target name="-concat.js.libs.files">
-    <mkdir dir="${dist}/js" />
-    <concat destfile="${dist}/libs.js" encoding="UTF-8" fixlastline="yes">
+    <mkdir dir="${dist}/libs" />
+    <concat destfile="${dist}/libs/libs.js" encoding="UTF-8" fixlastline="yes">
       <filelist dir="libs/">
+        <file name="underscore-min.js" />
+        <file name="backbone-min.js" />
         <file name="jquery.namespace.js" />
-        <file name="html2canvas.js" />
+        <file name="html2canvas.min.js" />
         <file name="jszip.js" />
         <file name="jszip-deflate.js" />
+        <file name="mustache.js" />
       </filelist>
     </concat>
   </target>
@@ -97,6 +100,7 @@
     <copy todir="${dist}/css/">
       <filelist dir="css/">
         <file name="animate.css" />
+        <file name="font-awesome.min.css" />
       </filelist>
     </copy>
     <java jar="${build}/closure-stylesheets.jar" fork="true">
@@ -114,14 +118,12 @@
     <copy todir="${dist}/libs/">
       <filelist dir="libs/">
         <file name="zepto.min.js" />
-        <file name="underscore-min.js" />
-        <file name="backbone-min.js" />
       </filelist>
     </copy>
-    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/js/libs/iscroll.js" encoding="UTF-8">
+    <jscomp compilationLevel="simple" warning="default" debug="false" output="${dist}/libs/iscroll.js" encoding="UTF-8">
       <warning group="internetExplorerChecks" level="OFF" />
       <warning group="globalThis" level="OFF" />
-      <sources dir="js/libs/">
+      <sources dir="libs/">
         <file name="iscroll.js" />
       </sources>
     </jscomp>
@@ -158,7 +160,7 @@
     <echo message="Replace tokens" />
     <replaceregexp flags="gs" encoding="UTF-8">
       <regexp pattern="\&lt;!-- replace start --\&gt;(.*?)\&lt;!-- replace over --\&gt;" />
-      <substitution expression="\&lt;script src='js/libs.js'\&gt;\&lt;/script\&gt;&#xD;&#xA;\&lt;script src='js/apps.js'\&gt;\&lt;/script\&gt;" />
+      <substitution expression="\&lt;script src='libs/libs.js'\&gt;\&lt;/script\&gt;&#xD;&#xA;\&lt;script src='js/apps.js'\&gt;\&lt;/script\&gt;" />
       <fileset dir="${dist}/" includes="index.html" />
     </replaceregexp>
     <tstamp>
