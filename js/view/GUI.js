@@ -1,4 +1,4 @@
-(function (ns, $) {
+;(function (ns) {
   var infoTimeout = 0,
       info = '';
       cancelQueue = [];
@@ -6,7 +6,7 @@
     contextButtons: null,
     navbar: null,
     page: null,
-    VERSION: '0.1.6.@version@',
+    VERSION: '0.1.7.@version@',
     initialize: function (options) {
       options.pages.on('add', this.pages_addHandler, this);
       options.pages.on('remove', this.pages_removeHandler, this);
@@ -17,8 +17,7 @@
       });
       info = $('#system-info');
       this.removeLoading();
-      this.checkBrowserVersion();
-      $('body').on({
+      $(document).on({
         keydown: function (event) {
           if (event.keyCode === 8 && !/input|textarea/i.test(event.target.tagName)) { // backspace
             event.preventDefault();
@@ -72,7 +71,7 @@
       }, 4000);
     },
     removeLoading: function () {
-      $('#loading').fadeOut();
+      $('#loading').fadeOut(_.bind(this.checkBrowserVersion, this));
     },
     showError: function (msg) {
       this.displayMessage(msg, 'alert-error');
@@ -118,4 +117,4 @@
       this.checkPagesLength(collection);
     }
   };
-}(jQuery.namespace('Meatazine'), jQuery));
+}(jQuery.namespace('Meatazine')));

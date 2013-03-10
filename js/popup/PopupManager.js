@@ -44,8 +44,8 @@
           $('#' + popupName).modal({
             backdrop: backdrop,
             keyboard: keyboard,
+            show: true
           });
-          $('#' + popupName).modal('show');
         },
         modal_hiddenHandler: function (event) {
           Meatazine.guide.GuideManager.checkGuideConfig();
@@ -103,5 +103,14 @@
           _gaq.push(['_trackEvent', 'popup', id]);
         }
       };
-   ns.PopupManager = manager;
+  ns.PopupManager = manager;
+  $(document).on('click', '.popup-button', function (event) {
+    var target = event.currentTarget,
+        confirm = target.dataset.confirm,
+        cancel = target.dataset.cancel;
+    $('#normal-popup')
+      .find('h3').html(target.innerText)
+      .end().find('.modal-footer [type=submit]').text(confirm).toggle(confirm)
+      .end().find('.modal-footer [type=button]').text(cancel).toggle(cancel);
+  });
 }(jQuery.namespace('Meatazine.popup')));
