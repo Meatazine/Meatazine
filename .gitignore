@@ -12,3 +12,4 @@ build/*.jar
 build/temp.*
 web.config
 ~
+*.db

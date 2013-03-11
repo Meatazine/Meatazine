@@ -8,7 +8,7 @@
     events: {
       "click .disabled": "disabledButton_clickHandler",
       "click .logout": "logout_clickHandler",
-      'click #full-screen': 'fullScreen_clickHandler',
+      'click #full-screen-button': 'fullScreenButton_clickHandler',
     },
     initialize: function () {
       this.setElement(this.el);
@@ -43,12 +43,13 @@
       event.stopPropagation();
       return false;
     },
-    fullScreen_clickHandler: function (event) {
-      if (document.webkitIsFullScreen) {
+    fullScreenButton_clickHandler: function (event) {
+      if (!document.webkitIsFullScreen) {
         document.body.webkitRequestFullScreen();
       } else {
-        document.body.webkitExitFullscreen();
+        document.webkitExitFullscreen();
       }
+      event.preventDefault();
     },
     logout_clickHandler: function (event) {
       QC.Login.signOut();

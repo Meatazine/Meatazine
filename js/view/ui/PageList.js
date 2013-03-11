@@ -17,6 +17,7 @@
     },
     initialize: function () {
       list = this.$('#page-list-inner');
+      this.model.on('change:width change:height', this.book_resizeHandler, this);
       this.collection.on('add', this.collection_addHandler, this);
       this.collection.on('redraw', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
@@ -34,6 +35,9 @@
         .disableSelection()
         .insertBefore(addButton.parent());
       list.scrollTop(list[0].scrollHeight - list.height());
+      list.sortable({
+        items: 'li.item'
+      });
       return li;
     },
     refreshPageNumber: function () {
@@ -44,6 +48,9 @@
     addButton_clickHandler: function (event) {
       this.collection.create();
       _gaq.push(['_trackEvent', 'page', 'add']);
+    },
+    book_resizeHandler: function (model) {
+      this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
     collection_addHandler: function (model, collection, options) {
       var item = this.createItem(model);
@@ -126,9 +133,10 @@
       ui.item.data('index', ui.item.index());
     },
     sortdeactivateHandler: function (event, ui) {
-      var model = this.collection.at(ui.item.data('index'));
-      this.collection.remove(model);
-      this.collection.add(model, {at: ui.item.index()});
+      var index = ui.item.data('index'),
+          model = this.collection.at(index);
+      this.collection.remove(model, {silent: true});
+      this.collection.add(model, {at: ui.item.index(), silent: true});
       this.refreshPageNumber();
       _gaq.push(['_trackEvent', 'page', 'sort']);
     },
