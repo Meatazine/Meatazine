@@ -82,6 +82,9 @@
     <copy todir="${dist}/template/">
       <fileset dir="template/" />
     </copy>
+    <copy todir="${dist}/popup/">
+      <fileset dir="popup" />
+    </copy>
   </target>
   
   <target name="-copy.image.files">

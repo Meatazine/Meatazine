@@ -7,6 +7,7 @@
       exportPopup,
       screenSize,
       mapInfoEditor,
+      normal,
       
       manager = {
         $el: null,
@@ -19,8 +20,17 @@
           mapInfoEditor.reset(init);
           return mapInfoEditor;
         },
-        init: function (className) {
-          this.$el = $(className);
+        init: function (className, popupButton) {
+          this.$el = $(className); 
+          $(document).on('click', popupButton, function (event) {
+            var target = event.currentTarget,
+                confirm = target.dataset.confirm,
+                cancel = target.dataset.cancel;
+            $('#normal-popup')
+              .find('h3').html(target.innerText)
+              .end().find('.modal-footer [type=submit]').text(confirm).toggle(confirm)
+              .end().find('.modal-footer [type=button]').text(cancel).toggle(cancel);
+          });
           this.$el.on('show', this.modal_showHandler);
           this.$el.on('hidden', this.modal_hiddenHandler);
           welcome = new Meatazine.popup.Welcome({
@@ -41,11 +51,16 @@
         popup: function (popupName, backdrop, keyboard) {
           backdrop = backdrop != null ? backdrop : true;
           keyboard = keyboard != null ? keyboard : true;
-          $('#' + popupName).modal({
-            backdrop: backdrop,
-            keyboard: keyboard,
-            show: true
-          });
+          var popup = $('#' + popupName);
+          if (popup.length) {
+            popup.modal({
+              backdrop: backdrop,
+              keyboard: keyboard,
+              show: true
+            });
+            return;
+          }
+          
         },
         modal_hiddenHandler: function (event) {
           Meatazine.guide.GuideManager.checkGuideConfig();
@@ -104,13 +119,4 @@
         }
       };
   ns.PopupManager = manager;
-  $(document).on('click', '.popup-button', function (event) {
-    var target = event.currentTarget,
-        confirm = target.dataset.confirm,
-        cancel = target.dataset.cancel;
-    $('#normal-popup')
-      .find('h3').html(target.innerText)
-      .end().find('.modal-footer [type=submit]').text(confirm).toggle(confirm)
-      .end().find('.modal-footer [type=button]').text(cancel).toggle(cancel);
-  });
 }(jQuery.namespace('Meatazine.popup')));

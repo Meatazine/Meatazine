@@ -52,7 +52,7 @@
   
   // 处理各种Manager
   Meatazine.guide.GuideManager.init();
-  Meatazine.popup.PopupManager.init('.modal');
+  Meatazine.popup.PopupManager.init('.modal', '.popup-button');
   
   // 检查登录状态
   user.checkLoginStatus();
