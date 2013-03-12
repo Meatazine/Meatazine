@@ -1,4 +1,5 @@
 (function (ns) {
+  'use strict';
   var publish,
       preview,
       welcome,
@@ -7,14 +8,31 @@
       exportPopup,
       screenSize,
       mapInfoEditor,
-      normal,
+
+      NormalPopup = Backbone.View.extend({
+        events: {
+          'hidden': 'hiddenHandler'
+        },
+        reset: function (title, confirmLabel, cancelLabel) {
+          this.$('h3').text(title);
+          this.$('.modal-footer')
+            .find('[type=submit]').text(confirmLabel).toggle(!!confirmLabel)
+            .end().find('[type=button]').text(cancelLabel).toggle(!!cancelLabel);
+        },
+        hiddenHandler: function () {
+          this.$('.modal-body').empty();
+        }
+      }),
+      normal = new NormalPopup({
+        el: '#normal-popup'
+      }),
       
       manager = {
         $el: null,
         createMapInfoEditorPopup: function (init) {
-          if (mapInfoEditor == null) {
+          if (mapInfoEditor === null) {
             mapInfoEditor = new ns.MapInfoEditor({
-              el: '#map-info-editor',
+              el: '#map-info-editor'
             });
           }
           mapInfoEditor.reset(init);
@@ -26,26 +44,23 @@
             var target = event.currentTarget,
                 confirm = target.dataset.confirm,
                 cancel = target.dataset.cancel;
-            $('#normal-popup')
-              .find('h3').html(target.innerText)
-              .end().find('.modal-footer [type=submit]').text(confirm).toggle(confirm)
-              .end().find('.modal-footer [type=button]').text(cancel).toggle(cancel);
+            normal.reset(target.innerText, confirm, cancel);
           });
           this.$el.on('show', this.modal_showHandler);
           this.$el.on('hidden', this.modal_hiddenHandler);
           welcome = new Meatazine.popup.Welcome({
             el: '#welcome',
-            model: M.config,
+            model: M.config
           });
-          userSettings = new Meatazine.popup.userConfig({
+          config = new Meatazine.popup.userConfig({
             el: '#user-config',
             model: M.config,
-            book: M.book,
-          }),
-          screenSelector = new Meatazine.popup.ScreenSizeSelector({
+            book: M.book
+          });
+          screenSize = new Meatazine.popup.ScreenSizeSelector({
             el: '#screen-size',
             model: M.book,
-            infoText: '#screen-size-info',
+            infoText: '#screen-size-info'
           });
         },
         popup: function (popupName, backdrop, keyboard) {
