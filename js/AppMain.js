@@ -21,7 +21,7 @@
       }),
       contextButtons = new Meatazine.view.ui.ContextButtons({
         el: '#context-menu',
-      })
+      }),
       page = new Meatazine.view.ui.PageBody({
         collection: pages,
         el: '#page-body',
@@ -37,12 +37,8 @@
   Meatazine.GUI.page = page;
 
   // 路径
-  M.router = new Meatazine.controller.Router({
+  var router = M.router = new Meatazine.controller.Router({
     book: book,
-  });
-  Backbone.history.start({
-    root: '/Meatazine/',
-    silent: true,
   });
   
   // 放到命名空间里
@@ -56,6 +52,14 @@
   
   // 检查登录状态
   user.checkLoginStatus();
+  
+  // 检查路径
+  var check = Backbone.history.start({
+    root: '/Meatazine/'
+  });
+  if (!check) {
+    router.navigate('#/popup/welcome');
+  }
 });
 
 // 全局变量，用来充当context

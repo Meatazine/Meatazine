@@ -6,7 +6,8 @@
       'new': 'newHandler',
       'preview': 'previewHandler',
       'publish': 'publishHandler',
-      'save': 'saveHandler'
+      'save': 'saveHandler',
+      'popup/:popup': 'showPopupHandler'
     },
     initialize: function (options) {
       book = options.book;
@@ -36,6 +37,9 @@
       book.save();
       this.clearRoutes();
       _gaq.push(['_trackEvent', 'book', 'save']);
+    },
+    showPopupHandler: function (popup) {
+      Meatazine.popup.PopupManager.popup(popup);
     }
   };
   ns.Router = Backbone.Router.extend(init);

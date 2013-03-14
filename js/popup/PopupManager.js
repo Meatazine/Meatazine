@@ -8,6 +8,10 @@
       exportPopup,
       screenSize,
       mapInfoEditor,
+      
+      map = {
+        'welcome': Meatazine.popup.Welcome
+      },
 
       NormalPopup = Backbone.View.extend({
         events: {
@@ -18,6 +22,9 @@
           this.$('.modal-footer')
             .find('[type=submit]').text(confirmLabel).toggle(!!confirmLabel)
             .end().find('[type=button]').text(cancelLabel).toggle(!!cancelLabel);
+        },
+        clone: function (domid) {
+          return this.$el.clone().attr('id', domid).appendTo('#windows');
         },
         hiddenHandler: function () {
           this.$('.modal-body').empty();
@@ -46,11 +53,9 @@
                 cancel = target.dataset.cancel;
             normal.reset(target.innerText, confirm, cancel);
           });
-          this.$el.on('show', this.modal_showHandler);
-          this.$el.on('hidden', this.modal_hiddenHandler);
-          welcome = new Meatazine.popup.Welcome({
-            el: '#welcome',
-            model: M.config
+          this.$el.on({
+            'show': this.modal_showHandler,
+            'hidden': this.modal_hiddenHandler
           });
           config = new Meatazine.popup.userConfig({
             el: '#user-config',
@@ -64,18 +69,21 @@
           });
         },
         popup: function (popupName, backdrop, keyboard) {
-          backdrop = backdrop != null ? backdrop : true;
-          keyboard = keyboard != null ? keyboard : true;
+          backdrop = backdrop !== null ? backdrop : true;
+          keyboard = keyboard !== null ? keyboard : true;
           var popup = $('#' + popupName);
-          if (popup.length) {
-            popup.modal({
-              backdrop: backdrop,
-              keyboard: keyboard,
-              show: true
+          if (popup.length === 0) {
+            popup = normal.clone(popupName);
+            new map[popupName]({
+              el: popup
             });
-            return;
           }
           
+          popup.modal({
+            backdrop: backdrop,
+            keyboard: keyboard,
+            show: true
+          });
         },
         modal_hiddenHandler: function (event) {
           Meatazine.guide.GuideManager.checkGuideConfig();
