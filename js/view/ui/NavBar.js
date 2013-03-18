@@ -9,6 +9,11 @@
       "click .disabled": "disabledButton_clickHandler",
       "click .logout": "logout_clickHandler",
       'click #full-screen-button': 'fullScreenButton_clickHandler',
+      'click #new-button': 'newButton_clickHandler',
+      'click #save-button': 'saveButton_clickHandler',
+      'click #preview-button': 'previewButton_clickHandler',
+      'click #export-button': 'exportButton_clickHandler',
+      'click #publish-button': 'publishButton_clickHandler'
     },
     initialize: function () {
       this.setElement(this.el);
@@ -51,10 +56,28 @@
       }
       event.preventDefault();
     },
+    exportButton_clickHandler: function () {
+      Meatazine.popup.PopupManager.popup('export-zip', 'static', false);
+    },
     logout_clickHandler: function (event) {
       QC.Login.signOut();
       this.resetLogin();
       M.user.initLogin();
+    },
+    newButton_clickHandler: function () {
+      book.reset();
+      _gaq.push(['_trackEvent', 'book', 'create']);
+    },
+    previewButton_clickHandler: function () {
+      book.preview();
+      _gaq.push(['_trackEvent', 'book', 'preview']);
+    },
+    publishButton_clickHandler: function () {
+      Meatazine.popup.PopupManager.popup('publish', 'static', false);
+    },
+    saveButton_clickHandler: function () {
+      book.save();
+      _gaq.push(['_trackEvent', 'book', 'save']);
     },
     service_changeHandler: function (number) {
       this.$('.async').find('i')

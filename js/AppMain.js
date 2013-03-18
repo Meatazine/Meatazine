@@ -57,9 +57,6 @@
   var check = Backbone.history.start({
     root: '/Meatazine/'
   });
-  if (!check) {
-    router.navigate('#/popup/welcome');
-  }
 });
 
 // 全局变量，用来充当context

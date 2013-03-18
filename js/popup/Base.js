@@ -1,5 +1,6 @@
 ;(function (ns) {
-  ns.BasePopup = Backbone.View.extend({
+  'use strict';
+  ns.Base = Backbone.View.extend({
     config: {
       title: 'Base Popup',
       hasConfirm: true,
@@ -11,6 +12,9 @@
       innerURL: ''
     },
     initialize: function (options) {
+      this.render();
+    },
+    render: function () {
       this.$('h3').text(this.config.title);
       this.$('.modal-body').load(this.config.innerURL, _.bind(this.innerLoadHandler, this));
       var confirm = this.$('.modal-footer [type=submit]');
@@ -26,11 +30,11 @@
         cancel.remove();
       }
       if (this.config.specButton) {
-        this.$().prepend('<button class="btn ' + specButton + '" data-toggle="button">' + specButtonLabel + '</button>');
+        this.$('.modal-footer').prepend('<button class="btn ' + this.config.specButton + '">' + this.config.specButtonLabel + '</button>');
       }
     },
     innerLoadHandler: function () {
     
     }
   });
-}(jQuery.namespace('Meatazine.popup'));
+}(jQuery.namespace('Meatazine.popup')));

@@ -47,12 +47,7 @@
         },
         init: function (className, popupButton) {
           this.$el = $(className); 
-          $(document).on('click', popupButton, function (event) {
-            var target = event.currentTarget,
-                confirm = target.dataset.confirm,
-                cancel = target.dataset.cancel;
-            normal.reset(target.innerText, confirm, cancel);
-          });
+          $(document).on('click', popupButton, _.bind(this.PopupButton_clickHandler, this));
           this.$el.on({
             'show': this.modal_showHandler,
             'hidden': this.modal_hiddenHandler
@@ -139,6 +134,17 @@
           }
           Meatazine.guide.GuideManager.hideGuide();
           _gaq.push(['_trackEvent', 'popup', id]);
+        },
+        PopupButton_clickHandler: function (event) {
+          event.preventDefault();
+          if (!event.currentTarget.dataset.hasOwnProperty('target')) {
+            this.popup(event.currentTarget.hash.substr(8));
+            return;
+          }
+          var target = event.currentTarget,
+              confirm = target.dataset.confirm,
+              cancel = target.dataset.cancel;
+          normal.reset(target.innerText, confirm, cancel);
         }
       };
   ns.PopupManager = manager;

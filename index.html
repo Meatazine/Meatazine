@@ -127,15 +127,15 @@
               文件 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#/new"><i class="icon-file"></i> 新建</a></li>
-              <li class="disabled"><a href="#/save" class="save-button"><i class="icon-download"></i> 保存</a></li>
+              <li><a href="#/new" id="new-button"><i class="icon-file"></i> 新建</a></li>
+              <li class="disabled"><a href="#/save" id="save-button"><i class="icon-download"></i> 保存</a></li>
               <li><a href="#load" data-toggle="modal"><i class="icon-upload"></i> 读取</a></li>
               <li class="divider"></li>
               <li class="disabled"><a href="#book-config" data-toggle="modal" class="book-config-button"><i class="icon-list-alt"></i> 应用属性</a></li>
               <li class="divider"></li>
-              <li class="disabled"><a href="#/preview" class="preview-button">预览</a></li>
-              <li class="disabled"><a href="#/export-zip" class="export-button">导出</a></li>
-              <li class="disabled"><a href="#/publish" class="publish-button">发布</a></li>
+              <li class="disabled"><a href="#/preview" id="preview-button"><i class="icon-eye-open"></i> 预览</a></li>
+              <li class="disabled"><a href="#/export-zip" id="export-button"><i class="icon-download-alt"></i> 导出</a></li>
+              <li class="disabled"><a href="#/publish" id="publish-button"><i class="icon-check"></i> 发布</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -143,14 +143,14 @@
               显示 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#/popup/welcome" data-toggle="modal">欢迎窗体</a></li>
+              <li><a href="#/popup/welcome" class="popup-button">欢迎窗体</a></li>
               <li class="divider"></li>
               <li><a href="#full-screen" id="full-screen-button">全屏</a></li>
             </ul>
           </li>
           <li><a href="#user-config" data-toggle="modal"><i class="icon-cog icon-white"></i> 设置</a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">帮助 <b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-question-sign"></i> 帮助 <b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href="//www.meathill.net/meatazine-tutorial" target="_blank">肉大师操作入门</a></li>
               <li><a href="popup/whatsnew.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">版本变化</a></li>
@@ -698,6 +698,7 @@
 <script src="js/service/ServerCall.js"></script>
 <script src="js/service/AssetsSyncService.js"></script>
 <script src="js/config/UserGuideConfig.js"></script>
+<script src="js/popup/Base.js"></script>
 <script src="js/popup/Welcome.js"></script>
 <script src="js/popup/ScreenSizeSelector.js"></script>
 <script src="js/popup/UserConfig.js"></script>
