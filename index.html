@@ -129,13 +129,13 @@
             <ul class="dropdown-menu">
               <li><a href="#/new" id="new-button"><i class="icon-file"></i> 新建</a></li>
               <li class="disabled"><a href="#/save" id="save-button"><i class="icon-download"></i> 保存</a></li>
-              <li><a href="#load" data-toggle="modal"><i class="icon-upload"></i> 读取</a></li>
+              <li><a href="#/popup/load" class="popup-button"><i class="icon-upload"></i> 读取</a></li>
               <li class="divider"></li>
               <li class="disabled"><a href="#book-config" data-toggle="modal" class="book-config-button"><i class="icon-list-alt"></i> 应用属性</a></li>
               <li class="divider"></li>
-              <li class="disabled"><a href="#/preview" id="preview-button"><i class="icon-eye-open"></i> 预览</a></li>
+              <li class="disabled"><a href="#/popup/preview" id="preview-button"><i class="icon-eye-open"></i> 预览</a></li>
               <li class="disabled"><a href="#/export-zip" id="export-button"><i class="icon-download-alt"></i> 导出</a></li>
-              <li class="disabled"><a href="#/publish" id="publish-button"><i class="icon-check"></i> 发布</a></li>
+              <li class="disabled"><a href="#/popup/publish" id="publish-button"><i class="icon-check"></i> 发布</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -194,7 +194,7 @@
 <div class="container-fluid hidden" id="page-area">
   <p>
     <span>目标分辨率：</span>
-    <a href="#screen-size" data-toggle="modal" id="screen-size-info" title="适用机型：iPad, iPad 2, The New iPad">1024 &times; 768</a>
+    <a href="#/popup/screen-size" id="screen-size-info" title="选择设备分辨率" class="popup-button">1024 &times; 768</a>
   </p>
   <div id="context-menu" class="btn-toolbar">
     <div class="btn-group group1">
@@ -403,253 +403,7 @@
     <a href="//blog.meathill.net/" target="_blank">Blog</a> &nbsp; <a href="mailto:meathill@foxmail.com">Email</a>
   </p>
 </footer>
-<div id="windows">
-  <div id="screen-size" class="modal hide">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">&times;</a>
-      <h3>选择设备分辨率</h3>
-    </div>
-    <div class="modal-body">
-      <div class="row-fluid">
-        <div class="span4">
-          <div class="device ipad" data-width="1024" data-height="768" data-device="iPad, iPad 2, The New iPad">
-            <p align="center"><img src="img/ipad.jpg" alt="iPad" /></p>
-            <p align="center">iPad<br /> 1024&times;768</p>
-          </div>
-        </div>
-        <div class="span4">
-          <div class="device kindle-fire" data-width="1024" data-height="600" data-device="Kindle Fire">
-            <p align="center"><img src="img/kindle.jpg" align="Kindle Fire" /></p>
-            <p align="center">Kindle Fire<br /> 1024&times;600</p>
-          </div>
-        </div>
-        <div class="span4">
-          <div class="device other" data-device="其它设备">
-            <p align="center"><img src="img/ipad.jpg" /></p>
-            <p align="center">其他设备<br /> 自定义分辨率</p>
-          </div>
-          <form class="form-inline mt10">
-            <input type="number" id="device-width" value="1024" />
-            &times;
-            <input type="number" id="device-height" value="768" />
-          </form>
-        </div>
-      </div>
-      <p class="mt10">
-        <small>理论上，设备间分辨率的些微差别会被肉大师用内功消弭于无形。不过，如果您有明确的目标平台，我建议您先设定好分辨率，这样对调试和最终效果都有很大帮助。</small>
-      </p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary">确定</button>
-      <button class="btn" data-dismiss="modal">取消</button>
-    </div>
-  </div>
-  <div id="book-config" class="modal hide">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">&times;</a>
-      <h3>应用属性</h3>
-    </div>
-    <div class="modal-body">
-      <form class="form-horizontal" onsubmit="return false;">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label" for="book-name">应用名称</label>
-            <div class="controls">
-              <input type="text" class="input-normal" id="book-name" />
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="book-icon">应用图标</label>
-            <div class="controls">
-              <img src="" class="icon" />
-              <input type="file" id="book-icon" />
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="book-cover">应用封面</label>
-            <div class="controls">
-              <img src="" class="cover" />
-              <input type="file" id="book-cover" />
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">目标平台</label>
-            <div class="controls btn-group" data-toggle="buttons-checkbox">
-              <button class="platform btn active">iOS</button>
-              <button class="platform btn active">Android</button>
-              <button class="platform btn" disabled="true">Windows Phone</button>
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="book-type">应用模板</label>
-            <div class="controls">
-              <select id="book-type">
-                <option value="megazine">杂志</option>
-                <option value="parallax" disabled="true">视差滚动</option>
-              </select>
-            </div>
-          </div>
-        </fieldset>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-info" disabled="true"></button>
-    </div>
-  </div>
-  <div id="publish" class="modal hide">
-    <div class="modal-header">
-      <h3>发布</h3>
-    </div>
-    <div class="modal-body">
-      <p>
-        受网速和服务器负载影响，发布需要几分钟到十几分钟时间，请耐心等待。<br />
-        期间请不要关闭浏览器或电脑。发布完成后，可以点击下方的按钮下载应用安装包。
-      </p>
-      <ol>
-        <li>生成压缩包 <span class="zip-progress"></span></li>
-        <li>上传压缩包 <span class="upload-progress"></span></li>
-        <li>服务器打包成应用</li>
-        <li>
-          完成！请下载<br />
-          <button class="btn btn-success download" data-target="apk" disabled="true"><i class="icon-download icon-white"></i> 下载Android安装包</button>
-          <button class="btn btn-success download" data-target="ipa" disabled="true"><i class="icon-download icon-white"></i> 下载iOS安装包</button>
-        </li>
-      </ol>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" data-dismiss="modal" disabled="true">关闭</button>
-    </div>
-  </div>
-  <div id="export-zip" class="modal hide">
-    <div class="modal-header">
-      <h3>导出Zip压缩包</h3>
-    </div>
-    <div class="modal-body">
-      <p>导出的zip暂时无法导入再次编辑。<br />
-        压缩时间和杂志大小有关，请不要关闭浏览器或电脑。
-      </p>
-      <p>
-        压缩文件中，请耐心等待。<br />
-        <span class="progress"></span>
-      </p>
-    </div>
-  </div>
-  <div id="user-config" class="modal fade hide">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">&times;</a>
-      <h3>设置</h3>
-    </div>
-    <div class="modal-body tabbable">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#">全局</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane active">
-          <form class="form-horizontal" onsubmit="return false;">
-            <fieldset>
-              <div class="control-group">
-                <label class="control-label" for="auto-save-button">自动保存</label>
-                <div class="controls">
-                  <input id="auto-save-button" type="button" class="btn switch-button" value="启用">
-                  <p class="help-block">启用后，每五分钟会自动保存一次</p>
-                </div>
-              </div>
-              <div class="control-group">
-                <label class="control-label" for="before-unload-button">退出前提醒</label>
-                <div class="controls">
-                  <input id="before-unload-button" type="button" class="btn switch-button" value="启用" />
-                  <p class="help-block">启用后，退出时如果没保存，会收到系统提示</p>
-                </div>
-              </div>
-            </fieldset>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" data-dismiss="modal">关闭</button>
-    </div>
-  </div>
-  <div id="preview" class="modal fade hide">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">&times;</a>
-      <h3>预览</h3>
-    </div>
-    <div class="modal-body">
-      
-    </div>
-  </div>
-  <div id="map-info-editor" class="modal hide">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">&times;</a>
-      <h3>编辑标记信息</h3>
-    </div>
-    <div class="modal-body row-fluid">
-      <div class="span6 map-container">
-        
-      </div>
-      <div class="span6">
-        <form class="form-horizontal" onsubmit="return false;">
-          <fieldset>
-            <div class="control-group">
-              <label for="info-title" class="control-label">标题</label>
-              <div class="controls">
-                <input type="text" class="input-large" id="info-title" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="info-text" class="control-label">内容</label>
-              <div class="controls">
-                <textarea class="input-large" rows="6" id="info-text"></textarea>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary">确定</button>
-      <button class="btn btn-danger">删除</button>
-      <button class="btn" data-dismiss="modal">取消</button>
-    </div>
-  </div>
-  <div id="load" class="modal hide">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">&times;</a>
-      <h3>请选择要读取的应用</h3>
-    </div>
-    <div class="modal-body">
-      <div class="tabbable tabs-left">
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#books-local" data-toggle="tab">本地</a></li>
-          <li><a href="#books-cloud" class="disabled" data-toggle="tab">云端</a></li>
-        </ul>
-        <div class="tab-content">
-          <ul class="well tab-pane active" id="books-local">
-            <script type="text/html-template">
-            <li data-item="{{id}}">
-              <figure>
-                <img src="{{icon}}" />
-                <figcaption>
-                  {{name}}<br />
-                  {{datetime}}
-                </figcaption>
-              </figure>
-            </li>
-            </script>
-          </ul>
-          <ul class="well tab-pane" id="books-cloud">
-            
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary load" disabled="true">读取</button>
-      <button class="btn btn-primary autosave" disabled="true">读取自动保存</button>
-      <button class="btn" data-dismiss="modal">关闭</button>
-    </div>
-  </div>
+<div id="modals">
   <div class="modal fade hide" id="normal-popup">
     <div class="modal-header">
       <button class="close" data-dismiss="modal" type="button">&times;</button>
@@ -707,7 +461,7 @@
 <script src="js/popup/Export.js"></script>
 <script src="js/popup/Preview.js"></script>
 <script src="js/popup/MapInfoEditor.js"></script>
-<script src="js/popup/SavedBooks.js"></script>
+<script src="js/popup/Load.js"></script>
 <script src="js/popup/PopupManager.js"></script>
 <script src="js/view/ui/editor/AbstractEditor.js"></script>
 <script src="js/view/ui/editor/ImageEditor.js"></script>

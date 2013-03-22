@@ -1,0 +1,41 @@
+<form class="form-horizontal" onsubmit="return false;">
+  <fieldset>
+    <div class="control-group">
+      <label class="control-label" for="book-name">应用名称</label>
+      <div class="controls">
+        <input type="text" class="input-normal" id="book-name" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="book-icon">应用图标</label>
+      <div class="controls">
+        <img src="" class="icon" />
+        <input type="file" id="book-icon" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="book-cover">应用封面</label>
+      <div class="controls">
+        <img src="" class="cover" />
+        <input type="file" id="book-cover" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label">目标平台</label>
+      <div class="controls btn-group" data-toggle="buttons-checkbox">
+        <button class="platform btn active">iOS</button>
+        <button class="platform btn active">Android</button>
+        <button class="platform btn" disabled="true">Windows Phone</button>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="book-type">应用模板</label>
+      <div class="controls">
+        <select id="book-type">
+          <option value="megazine">杂志</option>
+          <option value="parallax" disabled="true">视差滚动</option>
+        </select>
+      </div>
+    </div>
+  </fieldset>
+</form>

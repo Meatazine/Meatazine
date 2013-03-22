@@ -1,6 +1,16 @@
-jQuery.namespace('Meatazine.popup');
 (function (ns) {
-  ns.SavedBooks = Backbone.View.extend({
+  'use strict';
+  ns.Load = ns.Base.extend({
+    config: {
+      title: '读取保存的杂志',
+      hasConfirm: true,
+      confirmLabel: '读取',
+      hasCancel: true,
+      cancelLabel: '取消',
+      specButton: 'autosave btn-primary',
+      specButtonLabel: '读取自动保存',
+      innerURL: 'popup/load.html'
+    },
     events: {
       "shown": "shownHandler",
       "click .well li": "item_clickHandler",
@@ -9,15 +19,14 @@ jQuery.namespace('Meatazine.popup');
       "click .disabled": "disabled_clickHandler",
     },
     initialize: function () {
-      this.setElement(this.el);
-      this.template = this.$('ul.well').find('script').html();
+      ns.Base.prototype.initialize.call(this);
+      this.model = M.user;
+      this.collection = M.user.local;
       this.registerModelListener();
-      this.render();
     },
     render: function () {
-      this.$('ul.well').empty();
-      this.$('#books-local').html(Meatazine.utils.render(this.template, this.model.local.toJSON()));
-      this.$('#books-cloud').html(Meatazine.utils.render(this.template, this.model.remote.toJSON()));
+      ns.Base.prototype.render.call(this);
+      this.$('.btn-primary').prop('disabled', true);
     },
     disabled_clickHandler: function (event) {
       event.stopPropagation();
@@ -89,6 +98,12 @@ jQuery.namespace('Meatazine.popup');
     remote_resetHandler: function (collection) {
       this.$('#books-cloud').html(Meatazine.utils.render(this.template, collection.toJSON()));
     },
+    innerLoadHandler: function () {
+      this.template = this.$('ul.well').find('script').html();
+      this.$('ul.well').empty();
+      this.$('#books-local').html(Meatazine.utils.render(this.template, this.model.local.toJSON()));
+      this.$('#books-cloud').html(Meatazine.utils.render(this.template, this.model.remote.toJSON()));
+    },
     shownHandler: function (event) {
       this.$('.load').prop('disabled', true);
       this.$('.autosave').prop('disabled', !this.model.get('hasAutoSave'));
@@ -101,5 +116,5 @@ jQuery.namespace('Meatazine.popup');
       this.$('#books-cloud').toggleClass('active', isLogin);
     },
   });
-})(Meatazine.popup);
+}(jQuery.namespace('Meatazine.popup')));
 

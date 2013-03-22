@@ -16,7 +16,9 @@
     },
     render: function () {
       this.$('h3').text(this.config.title);
-      this.$('.modal-body').load(this.config.innerURL, _.bind(this.innerLoadHandler, this));
+      if (this.config.innerURL) {
+        this.$('.modal-body').load(this.config.innerURL, _.bind(this.innerLoadHandler, this));
+      }
       var confirm = this.$('.modal-footer [type=submit]');
       if (this.config.hasConfirm) {
         confirm.text(this.config.confirmLabel);

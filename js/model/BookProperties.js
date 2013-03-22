@@ -31,7 +31,7 @@
           Backbone.Model.prototype.set.call(this, key, value, options);
         },
         autosave: function () {
-          if (!isModified || this.pages.length == 0) {
+          if (!isModified || this.pages.length === 0) {
             return;
           }
           this.save('bookauto');

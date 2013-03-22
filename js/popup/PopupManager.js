@@ -1,16 +1,18 @@
 (function (ns) {
   'use strict';
   var publish,
-      preview,
-      welcome,
       config,
-      load,
       exportPopup,
-      screenSize,
       mapInfoEditor,
       
       map = {
-        'welcome': Meatazine.popup.Welcome
+        'book-config': Meatazine.popup.BookConfig,
+        'export': Meatazine.popup.Export,
+        'load': Meatazine.popup.Load,
+        'preview': Meatazine.popup.Preview,
+        'publish': Meatazine.popup.PublishStatus,
+        'welcome': Meatazine.popup.Welcome,
+        'screen-size': Meatazine.popup.ScreenSizeSelector
       },
 
       NormalPopup = Backbone.View.extend({
@@ -24,7 +26,7 @@
             .end().find('[type=button]').text(cancelLabel).toggle(!!cancelLabel);
         },
         clone: function (domid) {
-          return this.$el.clone().attr('id', domid).appendTo('#windows');
+          return this.$el.clone().attr('id', domid).appendTo('#modals');
         },
         hiddenHandler: function () {
           this.$('.modal-body').empty();
@@ -57,11 +59,6 @@
             model: M.config,
             book: M.book
           });
-          screenSize = new Meatazine.popup.ScreenSizeSelector({
-            el: '#screen-size',
-            model: M.book,
-            infoText: '#screen-size-info'
-          });
         },
         popup: function (popupName, backdrop, keyboard) {
           backdrop = backdrop !== null ? backdrop : true;
@@ -69,9 +66,11 @@
           var popup = $('#' + popupName);
           if (popup.length === 0) {
             popup = normal.clone(popupName);
-            new map[popupName]({
-              el: popup
-            });
+            if (map.hasOwnProperty(popupName)) {
+              new map[popupName]({
+                el: popup
+              });
+            }
           }
           
           popup.modal({
@@ -84,56 +83,8 @@
           Meatazine.guide.GuideManager.checkGuideConfig();
         },
         modal_showHandler: function (event) {
-          var id = $(event.target).attr('id');
-          switch (id) {
-            case 'publish':
-              if (publish == null) {
-                publish = new Meatazine.popup.PublishStatus({
-                  el: '#publish',
-                  model: M.book,
-                });
-              }
-              break;
-              
-            case 'export-zip':
-              if (exportPopup == null) {
-                exportPopup = new Meatazine.popup.Export({
-                  el: '#export-zip',
-                  model: M.book,
-                })
-              }
-              break;
-              
-            case 'preview':
-              if (preview == null) {
-                preview = new Meatazine.popup.Preview({
-                  el: '#preview',
-                  model: M.book,
-                });
-              }
-              break;
-              
-            case 'book-config':
-              if (config == null) {
-                config = new Meatazine.popup.BookConfig({
-                  el: '#book-config',
-                  model: M.config,
-                })
-              }
-              break;
-              
-            case 'load':
-              if (load == null) {
-                load = new ns.SavedBooks({
-                  el: '#load',
-                  model: M.user,
-                  collection: M.user.local,
-                })
-              }
-              break;
-          }
           Meatazine.guide.GuideManager.hideGuide();
-          _gaq.push(['_trackEvent', 'popup', id]);
+          _gaq.push(['_trackEvent', 'popup', $(event.target).attr('id')]);
         },
         PopupButton_clickHandler: function (event) {
           event.preventDefault();

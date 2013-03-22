@@ -1,0 +1,24 @@
+<div class="tabbable tabs-left">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#books-local" data-toggle="tab">本地</a></li>
+    <li><a href="#books-cloud" class="disabled" data-toggle="tab">云端</a></li>
+  </ul>
+  <div class="tab-content">
+    <ul class="well tab-pane active" id="books-local">
+      <script type="text/html-template">
+      <li data-item="{{id}}">
+        <figure>
+          <img src="{{icon}}" />
+          <figcaption>
+            {{name}}<br />
+            {{datetime}}
+          </figcaption>
+        </figure>
+      </li>
+      </script>
+    </ul>
+    <ul class="well tab-pane" id="books-cloud">
+
+    </ul>
+  </div>
+</div>

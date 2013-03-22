@@ -43,6 +43,7 @@
         <file name="service/ServerCall.js" />
         <file name="service/AssetsSyncService.js" />
         <file name="config/UserGuideConfig.js" />
+        <file name="popup/Base.js" />
         <file name="popup/Welcome.js" />
         <file name="popup/ScreenSizeSelector.js" />
         <file name="popup/PublishStatus.js" />
@@ -51,7 +52,7 @@
         <file name="popup/Export.js" />
         <file name="popup/Preview.js" />
         <file name="popup/MapInfoEditor.js" />
-        <file name="popup/SavedBooks.js" />
+        <file name="popup/Load.js" />
         <file name="popup/PopupManager.js" />
         <file name="view/ui/editor/AbstractEditor.js" />
         <file name="view/ui/editor/ImageEditor.js" />

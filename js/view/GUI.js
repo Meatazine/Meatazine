@@ -11,6 +11,7 @@
       options.pages.on('add', this.pages_addHandler, this);
       options.pages.on('remove', this.pages_removeHandler, this);
       options.pages.on('reset', this.pages_resetHandler, this);
+      options.book.on('change:width change:height', this.book_resizeHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
         el: '#navbar',
         model: options.book
@@ -106,6 +107,9 @@
       _.each(cancelQueue, function (cancel, i) {
         cancel.handler.call(cancel.context, cancel.argus || event);
       });
+    },
+    book_resizeHandler: function (model, value) {
+      $('#screen-size-info').html(model.get('width') + '&times;' + model.get('height'));
     },
     pages_addHandler: function (model, collection, options) {
       this.checkPagesLength(collection);
