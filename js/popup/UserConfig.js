@@ -1,7 +1,7 @@
 ;(function (ns) {
   'use strict';
   var timeout = 0;
-  ns.userConfig = ns.Base.extend({
+  ns.UserConfig = ns.Base.extend({
     config: {
       title: '设置',
       hasConfirm: true,
@@ -13,6 +13,11 @@
       "click #before-unload-button": "beforeUnloadButton_clickHandler",
       "mouseover .switch-button": "switchButton_mouseoverHandler",
       "mouseout .switch-button": "switchButton_mouseoutHandler"
+    },
+    initialize: function () {
+      ns.Base.prototype.initialize.call(this);
+      this.book = M.book;
+      this.model = M.config;
     },
     checkConfig: function () {
       this.checkAutoSave();

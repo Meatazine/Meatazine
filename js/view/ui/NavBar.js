@@ -27,7 +27,7 @@
       this.$('.logout').hide();
     },
     setBookButtonsStatus: function (isDisabled) {
-      var arr = ['save', 'preview', 'export', ];
+      var arr = ['save', 'preview', 'export'];
       this.setButtonsStatus(isDisabled, arr);
     },
     setButtonsStatus: function (isDisabled, buttons) {
@@ -56,8 +56,11 @@
       }
       event.preventDefault();
     },
-    exportButton_clickHandler: function () {
-      Meatazine.popup.PopupManager.popup('export-zip', 'static', false);
+    exportButton_clickHandler: function (event) {
+      if ($(event.currentTarget).parent().hasClass('disabled')) {
+        return;
+      }
+      Meatazine.popup.PopupManager.popup('export', 'static', false);
     },
     logout_clickHandler: function (event) {
       QC.Login.signOut();
@@ -65,18 +68,30 @@
       M.user.initLogin();
     },
     newButton_clickHandler: function () {
-      book.reset();
+      if ($(event.currentTarget).parent().hasClass('disabled')) {
+        return;
+      }
+      this.model.reset();
       _gaq.push(['_trackEvent', 'book', 'create']);
     },
     previewButton_clickHandler: function () {
-      book.preview();
+      if ($(event.currentTarget).parent().hasClass('disabled')) {
+        return;
+      }
+      this.model.preview();
       _gaq.push(['_trackEvent', 'book', 'preview']);
     },
     publishButton_clickHandler: function () {
+      if ($(event.currentTarget).parent().hasClass('disabled')) {
+        return;
+      }
       Meatazine.popup.PopupManager.popup('publish', 'static', false);
     },
     saveButton_clickHandler: function () {
-      book.save();
+      if ($(event.currentTarget).parent().hasClass('disabled')) {
+        return;
+      }
+      this.model.save();
       _gaq.push(['_trackEvent', 'book', 'save']);
     },
     service_changeHandler: function (number) {
@@ -92,6 +107,6 @@
         .addClass('icon-ok')
       .end().find('li a')
         .text('暂无同步内容'); 
-    },
+    }
   });
 }(jQuery.namespace('Meatazine.view.ui')));

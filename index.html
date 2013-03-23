@@ -131,11 +131,11 @@
               <li class="disabled"><a href="#/save" id="save-button"><i class="icon-download"></i> 保存</a></li>
               <li><a href="#/popup/load" class="popup-button"><i class="icon-upload"></i> 读取</a></li>
               <li class="divider"></li>
-              <li class="disabled"><a href="#book-config" data-toggle="modal" class="book-config-button"><i class="icon-list-alt"></i> 应用属性</a></li>
+              <li class="disabled"><a href="#/popup/book-config" class="popup-button"><i class="icon-list-alt"></i> 应用属性</a></li>
               <li class="divider"></li>
-              <li class="disabled"><a href="#/popup/preview" id="preview-button"><i class="icon-eye-open"></i> 预览</a></li>
-              <li class="disabled"><a href="#/export-zip" id="export-button"><i class="icon-download-alt"></i> 导出</a></li>
-              <li class="disabled"><a href="#/popup/publish" id="publish-button"><i class="icon-check"></i> 发布</a></li>
+              <li class="disabled"><a href="#/popup/preview" class="popup-button"><i class="icon-eye-open"></i> 预览</a></li>
+              <li class="disabled"><a href="#/popup/export" class="popup-button"><i class="icon-download-alt"></i> 导出</a></li>
+              <li class="disabled"><a href="#/popup/publish" class="popup-button"><i class="icon-check"></i> 发布</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -148,7 +148,7 @@
               <li><a href="#full-screen" id="full-screen-button">全屏</a></li>
             </ul>
           </li>
-          <li><a href="#user-config" data-toggle="modal"><i class="icon-cog icon-white"></i> 设置</a></li>
+          <li><a href="#/popup/user-config" class="popup-button"><i class="icon-cog icon-white"></i> 设置</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-question-sign"></i> 帮助 <b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -327,8 +327,8 @@
     <div id="page-body" class="page">
     </div>
   </div>
-  <div id="panel" class="tabbable">
-    <div class="btn-group nav-tabs" data-toggle="buttons-radio">
+  <div id="panel">
+    <div class="btn-group" data-toggle="buttons-radio">
       <a class="btn active" data-toggle="tab" href="#template-list">样式模板</a>
       <a class="btn" data-toggle="tab" href="#source-list">素材</a>
     </div>

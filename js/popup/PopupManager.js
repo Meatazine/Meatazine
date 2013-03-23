@@ -1,18 +1,15 @@
 (function (ns) {
   'use strict';
-  var publish,
-      config,
-      exportPopup,
-      mapInfoEditor,
-      
+  var mapInfoEditor,
       map = {
         'book-config': Meatazine.popup.BookConfig,
         'export': Meatazine.popup.Export,
         'load': Meatazine.popup.Load,
         'preview': Meatazine.popup.Preview,
         'publish': Meatazine.popup.PublishStatus,
+        'screen-size': Meatazine.popup.ScreenSizeSelector,
         'welcome': Meatazine.popup.Welcome,
-        'screen-size': Meatazine.popup.ScreenSizeSelector
+        'user-config': Meatazine.popup.UserConfig
       },
 
       NormalPopup = Backbone.View.extend({
@@ -53,11 +50,6 @@
           this.$el.on({
             'show': this.modal_showHandler,
             'hidden': this.modal_hiddenHandler
-          });
-          config = new Meatazine.popup.userConfig({
-            el: '#user-config',
-            model: M.config,
-            book: M.book
           });
         },
         popup: function (popupName, backdrop, keyboard) {
