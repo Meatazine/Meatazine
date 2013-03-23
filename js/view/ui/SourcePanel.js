@@ -22,7 +22,6 @@
           
           this.collection.on('add', this.pages_addHandler, this);
           this.collection.on('remove', this.pages_removeHandler, this);
-          this.collection.on('select', this.pages_selectHandler, this);
           
           var template = Meatazine.utils.stripEmtpy(sourceList.find('script').html());
           this.model.set('sourceTemplate', template);
@@ -143,14 +142,14 @@
             sourceList.empty();
           }
         },
-        pages_selectHandler: function (model) {
+        setContentTo: function (index) {
           if (contents instanceof Meatazine.model.SinglePageModel) {
             contents.off(null, null, this);
           }
-          contents = model;
+          contents = this.collection.at(index);
           contents.on('change:contents', this.contents_changeHandler, this);
           this.refreshSourceList();
-          this.setTemplateType(model.get('templateType'));
+          this.setTemplateType(contents.get('templateType'));
         },
         removeButton_clickHandler: function (event) {
           var target = removeButton.data('target'),

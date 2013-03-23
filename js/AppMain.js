@@ -3,45 +3,46 @@
       pages = new Meatazine.model.PageCollection(),
       user = new Meatazine.model.UserModel({
         local: new Meatazine.model.LocalBookCollection(),
-        remote: new Meatazine.model.RemoteBookCollection(),
+        remote: new Meatazine.model.RemoteBookCollection()
       }),
       book = new Meatazine.model.BookProperties({
-        pages: pages,
+        pages: pages
       }),
       list = new Meatazine.view.ui.PageList({
         el: '#page-list',
         model: book,
-        collection: pages,
+        collection: pages
       }),
       source = new Meatazine.view.ui.SourcePanel({
         el: '#panel',
         book: book,
         model: new Meatazine.model.SourceModel(),
-        collection: pages,
+        collection: pages
       }),
       contextButtons = new Meatazine.view.ui.ContextButtons({
-        el: '#context-menu',
+        el: '#context-menu'
       }),
       page = new Meatazine.view.ui.PageBody({
         collection: pages,
         el: '#page-body',
         book: book,
-        source: source.model,
+        source: source.model
       });
   Meatazine.GUI.initialize({
     config: config,
     book: book,
-    pages: pages,
+    pages: pages
   });
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
+  Meatazine.GUI.source = source;
 
   // 路径
-  var router = M.router = new Meatazine.controller.Router({
-    book: book,
+  M.router = new Meatazine.controller.Router({
+    book: book
   });
   
-  // 放到命名空间里
+  // 放到全局变量里
   M.config = config;
   M.user = user;
   M.book = book;
@@ -54,7 +55,7 @@
   user.checkLoginStatus();
   
   // 检查路径
-  var check = Backbone.history.start({
+  Backbone.history.start({
     root: '/Meatazine/'
   });
 });

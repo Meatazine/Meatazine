@@ -22,7 +22,6 @@
       this.collection.on('redraw', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
-      this.collection.on('select', this.collection_selectHandler, this);
       
       removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
       addButton = this.$('.add-button');
@@ -54,7 +53,7 @@
     },
     collection_addHandler: function (model, collection, options) {
       var item = this.createItem(model);
-      collection.trigger('select', model);
+      M.router.navigate('/#/book/' + this.model.id + '/page/' + (collection.length - 1));
     },
     collection_redrawHandler: function (model, thumb) {
       var index = this.collection.indexOf(model),
@@ -62,15 +61,15 @@
           context = canvas.getContext('2d');
       context.drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
       if (emptyItems.length > 0) {
-        item = emptyItems.shift();
-        this.collection.trigger('select', item.data('model'));
+        var item = emptyItems.shift();
+        M.router.navigate('/#/book/' + this.model.id + '/page/' + item.index());
       }
     },
     collection_removeHandler: function (model, collection, options) {
       var target = list.children().eq(options.index),
           index = options.index > 0 ? options.index - 1 : 0;
       if (currentItem.is(target)) {
-        collection.trigger('select', collection.at(index));
+        M.router.navigate('/#/book/' + this.model.id + '/page/' + index);
       }
       target
         .off()
@@ -89,25 +88,19 @@
       this.$('li').disableSelection();
       if (this.collection.length > 0) {
         emptyItems.shift();
-        this.collection.trigger('select', this.collection.at(0));
+        M.router.navigate('/#/book/' + this.model.id + '/page/0');
       }
-    },
-    collection_selectHandler: function (model) {
-      if (currentItem != null) {
-        currentItem.removeClass('active');
-      }
-      target = list.children().eq(model.collection.indexOf(model));
-      currentItem = $(target);
-      currentItem.addClass('active');
-      this.refreshPageNumber();
-      _gaq.push(['_trackEvent', 'page', 'select']);
     },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget);
       if (target.hasClass('active')) {
         return;
       }
-      this.collection.trigger('select', target.data('model'));
+      M.router.navigate('/#/book/' + this.model.id + '/page/' + target.index());
+      target.addClass('active')
+        .siblings('.active').removeClass('active');
+      this.refreshPageNumber();
+      _gaq.push(['_trackEvent', 'page', 'select']);
     },
     item_mouseOutHandler: function (event) {
       var pos = $(event.target).offset();

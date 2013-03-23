@@ -258,8 +258,7 @@
     },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget),
-          model = target.data('model'),
-          image;
+          model = target.data('model');
       if (Meatazine.utils.Mouse.status == Meatazine.utils.Mouse.NORMAL) {
         model.trigger('select', model);
       }
