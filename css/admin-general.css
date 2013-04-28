@@ -1,0 +1,68 @@
+/*========================
+ * body
+ * 空出导航条和脚部版权的位置
+ * =====================*/
+body {
+  background: #FFF;
+  font:14px/20px simsun;
+}
+.brand, h1, h2, h3 {
+  font-family: Microsoft Yahei;
+}
+
+#always-hidden {
+  display:none;
+}
+.mt10 {
+  margin-top:10px;
+}
+
+.remove-button {
+  position:absolute;
+  top:3px;
+  right:9px;
+  display: block;
+  cursor: pointer;
+  background-color:#EEE;
+  z-index:10;
+  opacity: 0.6;
+}
+.remove-button:hover {
+  opacity:1;
+}
+.resolution {
+  position: absolute;
+  top:5px;
+  left:8px;
+}
+
+/** ====================
+ *   覆盖类库的样式
+ *=====================*/
+.ui-resizable {
+  cursor: move;
+}
+.ui-state-disabled,
+.ui-widget-content .ui-state-disabled,
+.ui-widget-header .ui-state-disabled {
+  opacity: 1;
+}
+.carousel h4 {
+  padding-bottom:4px;
+}
+.carousel p {
+  line-height:20px;
+}
+.map-container img {
+  max-width:none;
+}
+#navbar .login{
+  color:#08c;
+  padding: 9px 10px 11px 4px;
+}
+#navbar .welcome {
+  padding:9px 0 11px 9px;
+  color:#999;
+  line-height:19px;
+  text-shadow:0 -1px 0 rgba(0, 0, 0, 0.2);
+}

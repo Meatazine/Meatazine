@@ -1,6 +1,7 @@
 .idea/
 .settings/
 nbproject/
+node_modules/
 Meatazine/
 bin/
 temp/

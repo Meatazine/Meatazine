@@ -1,0 +1,23 @@
+{
+  "name": "Meatazine",
+  "version": "0.1.7",
+  "description": "A great digi-magazine maker, maybe the best one",
+  "keywords": ["html5", "phonegap", "digi-magazine", "creative-tools"],
+  "homepage": "http://www.evereditor.com/",
+  "bugs": "https://github.com/Meatazine/Meatazine/issues",
+  "license": "MIT",
+  "author": "Meathill <meathill@gmail.com> (http://blog.meathill.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Meatazine/Meatazine"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.6.0",
+    "grunt-text-replace": "~0.3.1"
+  }
+}

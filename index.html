@@ -6,7 +6,7 @@
 <meta name="description" content="“肉大师”是一款基于浏览器的内容制作工具。我们利用HTML5技术，让内容生产者得以使用最常见的工具来制作能够在各类移动设备上观看的内容——初步以电子杂志为主。" />
 <style>
   body {
-    background:#F5F5F5;
+    background:#FFF;
   }
   #loading {
     width: 300px;
@@ -108,10 +108,10 @@
   <p>您使用的不是能为HTML5提供最强力支持的Chrome浏览器。非Chrome环境下，肉大师无法发挥真正实力，请换用Chrome再试一次。<br />下载Chrome浏览器请至：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a></p>
 </div>
 <div class="alert alert-error system-error hide" id="error-low-version">
-  <h4>肉大师需要Chrome 12+</h4>
-  <p>您的Chrome浏览器版本过低。只有Chrome 12+才能让肉大师发挥出真正实力，建议更新到最新版本再试一次。<br />也可以去这个地址下载安装最新版Chrome：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a></p>
+  <h4>肉大师需要Chrome 21+</h4>
+  <p>您的Chrome浏览器版本过低。只有Chrome 21+才能让肉大师发挥出真正实力，建议更新到最新版本再试一次。<br />也可以去这个地址下载安装最新版Chrome：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a></p>
 </div>
-<div class="navbar navbar-fixed-top hidden navbar-inverse" id="navbar">
+<div class="navbar navbar-fixed-top hidden navbar-inverse" id="topbar">
   <div class="navbar-inner">
     <div class="container-fluid">
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -180,7 +180,7 @@
             <a href="#" class="dropdown-toggle login" data-toggle="dropdown">请登录 <b class="caret"></b></a>
             <ul class="dropdown-menu login-menu">
               <li class="login-type"><span id="qqLoginBtn"></span></li>
-              <li class="logout"><a href="#">注销</a></li>
+              <li class="logout hide"><a href="#">注销</a></li>
             </ul>
           </li>
         </ul>
@@ -191,218 +191,192 @@
 <div class="alert hide" id="system-info">
   
 </div>
-<div class="container-fluid hidden" id="page-area">
-  <p>
-    <span>目标分辨率：</span>
-    <a href="#/popup/screen-size" id="screen-size-info" title="选择设备分辨率" class="popup-button">1024 &times; 768</a>
-  </p>
-  <div id="context-menu" class="btn-toolbar">
-    <div class="btn-group group1">
-      <button class="btn btn-mini" data-type="edit" ><i class="icon-edit"></i> 编辑文字</button>
-    </div>
-    <div class="btn-group group1">
-      <button class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
-        字号
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" data-type="font-size">
-        <li><a href="#">16</a></li>
-        <li><a href="#">20</a></li>
-        <li><a href="#">24</a></li>
-        <li><a href="#">30</a></li>
-        <li><a href="#">40</a></li>
-        <li><a href="#">60</a></li>
-        <li><a href="#">80</a></li>
+<div id="book-properties" class="container-fluid hidden">
+  <a href="#"><img src="img/icon.png" width="40" height="40" class="img-polaroid" /></a>
+  <a href="#" class="title" title="点击编辑">我的杂志</a>
+  <span>目标分辨率：</span>
+  <a href="#/popup/screen-size" id="screen-size-info" title="选择设备分辨率" class="popup-button">1024 &times; 768</a>
+</div>
+<div class="hidden" id="content">
+  <div id="sidebar">
+    <div id="panel">
+      <ul class="nav nav-pills">
+        <li class="active"><a data-toggle="tab" href="#template-list">样式模板</a></li>
+        <li><a data-toggle="tab" href="#source-list">素材</a></li>
       </ul>
-    </div>
-    <div class="btn-group group1">
-      <button class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
-        颜色
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" data-type="color">
-        <li><a href="#" class="black"><i class="swatch" style="background:#000"></i>黑色</a></li>
-        <li><a href="#" class="white"><i class="swatch" style="background:#FFF"></i>白色</a></li>
-        <li><a href="#" class="blue"><i class="swatch" style="background:#049cdb"></i>蓝色</a></li>
-        <li><a href="#" class="green"><i class="swatch" style="background:#46a546"></i>绿色</a></li>
-        <li><a href="#" class="red"><i class="swatch" style="background:#9d261d"></i>红色</a></li>
-        <li><a href="#" class="yellow"><i class="swatch" style="background:#ffc40d"></i>黄色</a></li>
-        <li><a href="#" class="orange"><i class="swatch" style="background:#f89406"></i>橙色</a></li>
-        <li><a href="#" class="pink"><i class="swatch" style="background:#c3325f"></i>粉色</a></li>
-        <li><a href="#" class="purple"><i class="swatch" style="background:#7a43b6"></i>紫色</a></li>
-      </ul>
-    </div>
-    <div class="btn-group group1">
-      <button class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
-        类型
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" data-type="class">
-        <li><a href="#" class="h1">大标题</a></li>
-        <li><a href="#" class="h2">二标题</a></li>
-        <li><a href="#" class="h3">三标题</a></li>
-        <li><a href="#" class="article">段落</a></li>
-        <li class="divider"></li>
-        <li><a href="#" class="blackcon">黑背景</a></li>
-        <li><a href="#" class="whitecon">白背景</a></li>
-        <li><a href="#" class="tag">标签</a></li>
-        <li><a href="#" class="">无背景</a></li>
-      </ul>
-    </div>
-    <div class="btn-group group1">
-      <button class="btn btn-mini" data-type="delete"><i class="icon-trash"></i> 删除</button>
-    </div>
-    <div class="btn-group group2">
-      <button class="btn btn-mini" data-type="upload"><i class="icon-upload"></i> 上传</button>
-      <button class="btn btn-mini" data-type="convert" data-class="map"><i class="icon-globe"></i> 转换为地图</button>
-      <button class="btn btn-mini" data-type="add-marker"><i class="icon-flag"></i> 添加标记</button>
-      <button class="btn btn-mini" data-type="edit" disabled="true"><i class="icon-edit"></i> 编辑图片</button>
-    </div>
-    <div class="btn-group group2">
-      <button class="btn btn-mini dropdown-toggle" data-group="edit" data-toggle="dropdown" disabled="true">
-        缩放
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" data-type="scale">
-        <li class="scale">
-          <span>100%</span>
-          <input type="range" max="1.5" min="0.5" step="0.01" />
-        </li>
-      </ul>
-    </div>
-    <div class="btn-group group2">
-      <button class="btn btn-mini dropdown-toggle" data-group="edit" data-toggle="dropdown" disabled="true">
-        <i class="icon-adjust"></i>
-        效果
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" data-type="filter">
-        <li><a href="#" title="没这个功能，等待填坑吧">黑白</a></li>
-        <li><a href="#" title="没这个功能，等待填坑吧">LOMO</a></li>
-      </ul>
-    </div>
-    <div class="btn-group group5">
-      <button class="btn btn-mini" data-type="convert" data-class="image"><i class="icon-picture"></i> 转换为图片</button>
-      <button class="btn btn-mini" data-type="add-marker"><i class="icon-flag"></i> 添加标记</button>
-      <button class="btn btn-mini" data-type="edit"><i class="icon-edit"></i> 编辑地图</button>
-      <button class="btn btn-mini" data-group="edit" data-toggle="dropdown" disabled="true">
-        <i class="icon-search"></i>
-        搜索地区
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu pull-right" data-type="search">
-        <li class="geo-search">
-          <input type="search" class="input-medium search-query" />
-          <button type="button" class="btn">搜索</button>
-        </li>
-      </ul>
-    </div>
-    <div class="btn-group btn-group6">
-      <button class="btn btn-mini" data-toggle="dropdown">
-        <i class="icon-th"></i>
-        调整行列
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li class="grid">
-          
-        </li>
-      </ul>
-    </div>
-    <div class="btn-group always-show">
-      <button class="btn btn-mini" data-type="add-text" disabled="true">添加文本框</button>
-    </div>
-  </div>
-  <div id="page-list">
-    <p align="center" id="page-number">0/0</p>
-    <ul id="page-list-inner" class="well">
-      <li>
-        <button class="btn btn-large add-button" type="button">
-          <i class="icon-plus icon-large"></i>
-        </button>
-      </li>
-    </ul>
-  </div>
-  <div id="page-editor">
-    <div id="page-body" class="page">
-    </div>
-  </div>
-  <div id="panel">
-    <div class="btn-group" data-toggle="buttons-radio">
-      <a class="btn active" data-toggle="tab" href="#template-list">样式模板</a>
-      <a class="btn" data-toggle="tab" href="#source-list">素材</a>
+      <div class="tab-content">
+        <ul id="template-list" class="well tab-pane active disabled">
+          <li>
+            <img src="img/elements/face.png" alt="封面" />
+          </li>
+          <li>
+            <img src="img/elements/face1.png" alt="文章封面1" />
+          </li>
+          <li>
+            <img src="img/elements/face2.png" alt="文章封面2" />
+          </li>
+          <li>
+            <img src="img/elements/face3.png" alt="文章封面3" />
+          </li>
+          <li>
+            <img src="img/elements/page5.png" alt="文章内页5" />
+          </li>
+          <li>
+            <img src="img/elements/page1.png" alt="文章内页1" />
+          </li>
+          <li>
+            <img src="img/elements/page2.png" alt="文章内页2" />
+          </li>
+          <li>
+            <img src="img/elements/page3.png" alt="文章内页3" />
+          </li>
+          <li>
+            <img src="img/elements/page4.png" alt="文章内页4" />
+          </li>
+          <li>
+            <img src="img/elements/grid1.png" alt="图片矩阵1" />
+          </li>
+          <li>
+            <img src="img/elements/grid2.png" alt="图片矩阵2" />
+          </li>
+          <li>
+            <img src="img/elements/slide.png" alt="Slide" />
+          </li>
+          <li>
+            <img src="img/elements/slide1.png" alt="Slide1" />
+          </li>
+          <li>
+            <img src="img/elements/slide2.png" alt="Slide2" />
+          </li>
+          <li>
+            <img src="img/elements/back.png" alt="封底" />
+          </li>
+          <li>
+            <img src="img/elements/back1.png" alt="封底1" />
+          </li>
+        </ul>
+        <dl id="source-list" class="well tab-pane">
+          <script type="text/html-template">
+            <dt>元素</dt>
+            <dd>
+              <ul>
+              </ul>
+            </dd>
+          </script>
+        </dl>
+      </div>
     </div>
     <hr />
-    <div class="tab-content">
-      <ul id="template-list" class="well tab-pane active disabled">
+    <div id="page-list">
+      <p align="center" id="page-number">0/0</p>
+      <ul id="page-list-inner" class="well">
         <li>
-          <img src="img/elements/face.png" alt="封面" />
-        </li>
-        <li>
-          <img src="img/elements/face1.png" alt="文章封面1" />
-        </li>
-        <li>
-          <img src="img/elements/face2.png" alt="文章封面2" />
-        </li>
-        <li>
-          <img src="img/elements/face3.png" alt="文章封面3" />
-        </li>
-        <li>
-          <img src="img/elements/page5.png" alt="文章内页5" />
-        </li>
-        <li>
-          <img src="img/elements/page1.png" alt="文章内页1" />
-        </li>
-        <li>
-          <img src="img/elements/page2.png" alt="文章内页2" />
-        </li>
-        <li>
-          <img src="img/elements/page3.png" alt="文章内页3" />
-        </li>
-        <li>
-          <img src="img/elements/page4.png" alt="文章内页4" />
-        </li>
-        <li>
-          <img src="img/elements/grid1.png" alt="图片矩阵1" />
-        </li>
-        <li>
-          <img src="img/elements/grid2.png" alt="图片矩阵2" />
-        </li>
-        <li>
-          <img src="img/elements/slide.png" alt="Slide" />
-        </li>
-        <li>
-          <img src="img/elements/slide1.png" alt="Slide1" />
-        </li>
-        <li>
-          <img src="img/elements/slide2.png" alt="Slide2" />
-        </li>
-        <li>
-          <img src="img/elements/back.png" alt="封底" />
-        </li>
-        <li>
-          <img src="img/elements/back1.png" alt="封底1" />
+          <button class="btn btn-large add-button btn-primary" type="button">
+            <i class="icon-plus icon-large"></i>
+          </button>
         </li>
       </ul>
-      <dl id="source-list" class="well tab-pane">
-        <script type="text/html-template">
-          <dt>元素</dt>
-          <dd>
-            <ul>
+    </div>
+  </div>
+  <div id="page-area">
+    <div class="navbar" id="toolbar">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li class="group1"><a href="#/edit/word"><i class="icon-edit"></i> 编辑文字</a></li>
+          <li class="group1">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">字号 <span class="caret"></span></a>
+            <ul class="dropdown-menu" data-type="font-size">
+              <li><a href="#">16</a></li>
+              <li><a href="#">20</a></li>
+              <li><a href="#">24</a></li>
+              <li><a href="#">30</a></li>
+              <li><a href="#">40</a></li>
+              <li><a href="#">60</a></li>
+              <li><a href="#">80</a></li>
             </ul>
-          </dd>
-        </script>
-      </dl>
+          </li>
+          <li class="group1">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">颜色 <span class="caret"></span></a>
+            <ul class="dropdown-menu" data-type="color">
+              <li><a href="#" class="black"><i class="swatch" style="background:#000"></i>黑色</a></li>
+              <li><a href="#" class="white"><i class="swatch" style="background:#FFF"></i>白色</a></li>
+              <li><a href="#" class="blue"><i class="swatch" style="background:#049cdb"></i>蓝色</a></li>
+              <li><a href="#" class="green"><i class="swatch" style="background:#46a546"></i>绿色</a></li>
+              <li><a href="#" class="red"><i class="swatch" style="background:#9d261d"></i>红色</a></li>
+              <li><a href="#" class="yellow"><i class="swatch" style="background:#ffc40d"></i>黄色</a></li>
+              <li><a href="#" class="orange"><i class="swatch" style="background:#f89406"></i>橙色</a></li>
+              <li><a href="#" class="pink"><i class="swatch" style="background:#c3325f"></i>粉色</a></li>
+              <li><a href="#" class="purple"><i class="swatch" style="background:#7a43b6"></i>紫色</a></li>
+            </ul>
+          </li>
+          <li class="group1">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">类型 <span class="caret"></span></a>
+            <ul class="dropdown-menu" data-type="class">
+              <li><a href="#" class="h1">大标题</a></li>
+              <li><a href="#" class="h2">二标题</a></li>
+              <li><a href="#" class="h3">三标题</a></li>
+              <li><a href="#" class="article">段落</a></li>
+              <li class="divider"></li>
+              <li><a href="#" class="blackcon">黑背景</a></li>
+              <li><a href="#" class="whitecon">白背景</a></li>
+              <li><a href="#" class="tag">标签</a></li>
+              <li><a href="#" class="">无背景</a></li>
+            </ul>
+          </li>
+          <li class="group1"><a href="#/edit/delete"><i class="icon-trash"></i> 删除</a></li>
+          <li class="group2"><a href="#/edit/upload"><i class="icon-upload"></i> 上传</a></li>
+          <li class="group2"><a href="#/edit/convert/map"><i class="icon-globe"></i> 转换为地图</a></li>
+          <li class="group2"><a href="#/edit/marker/add"><i class="icon-flag"></i> 添加标记</a></li>
+          <li class="group2 disabled"><a href="#/edit/edit"><i class="icon-edit"></i> 编辑图片</a></li>
+          <li class="group2 disabled">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">缩放 <span class="caret"></span></a>
+            <ul class="dropdown-menu" data-type="scale">
+              <li class="scale">
+                <span>100%</span>
+                <input type="range" max="1.5" min="0.5" step="0.01" />
+              </li>
+            </ul>
+          </li>
+          <li class="group2 disabled">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-adjust"></i> 效果 <span class="caret"></span></a>
+            <ul class="dropdown-menu" data-type="filter">
+              <li><a href="#" title="没这个功能，等待填坑吧">黑白</a></li>
+              <li><a href="#" title="没这个功能，等待填坑吧">LOMO</a></li>
+            </ul>
+          </li>
+          <li class="group5"><a href="#/edit/convert/image"><i class="icon-picture"></i> 转换为图片</a></li>
+          <li class="group5"><a href="#/edit/marker/add"><i class="icon-flag"></i> 添加标记</a></li>
+          <li class="group5"><a href="#/edit/edit"><i class="icon-edit"></i> 编辑地图</a></li>
+          <li class="group5">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-search"></i> 搜索地区 <span class="caret"></span></a>
+
+            <ul class="dropdown-menu pull-right" data-type="search">
+              <li class="geo-search">
+                <input type="search" class="input-medium search-query" />
+                <button type="button" class="btn">搜索</button>
+              </li>
+            </ul>
+          </li>
+          <li class="group6">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th"></i> 调整行列 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li class="grid">
+
+              </li>
+            </ul>
+          </li>
+          <li class="always-show disabled">
+            <a href="#/edit/text/add">添加文本框</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div id="page-editor">
+      <div id="page-body" class="page">
+      </div>
     </div>
   </div>
 </div>
-<footer class="container-fluid hidden">
-  <hr />
-  &copy; Meathill 2012 &nbsp;
-  <p class="pull-right">
-    <a href="//blog.meathill.net/" target="_blank">Blog</a> &nbsp; <a href="mailto:meathill@foxmail.com">Email</a>
-  </p>
-</footer>
 <div id="modals">
   <div class="modal fade hide" id="normal-popup">
     <div class="modal-header">
@@ -421,12 +395,15 @@
 <!-- 最后加载css和js -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
 <link rel="stylesheet" href="css/font-awesome.min.css" />
-<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.1/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="css/animate.css" />
 <link rel="stylesheet" href="css/style.css" />
-<link rel="stylesheet" href="css/admin.css" />
-<script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
-<script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="css/admin-general.css" />
+<link rel="stylesheet" href="css/admin-layout.css" />
+<link rel="stylesheet" href="css/admin-popup.css" />
+<link rel="stylesheet" href="css/admin-component.css" />
+<script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.0.min.js"></script>
+<script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/jquery-ui.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 <!-- replace start -->
 <script src="libs/underscore-min.js"></script>

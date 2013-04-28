@@ -14,7 +14,7 @@
     events: {
       "shown": "shownHandler",
       "click .well li": "item_clickHandler",
-      "click .load": "loadButton_clickHandler",
+      "click [type=submit]": "loadButton_clickHandler",
       "click .autosave": "loadAutosaveButton_clickHandler",
       "click .disabled": "disabled_clickHandler",
     },
@@ -26,7 +26,7 @@
     },
     render: function () {
       ns.Base.prototype.render.call(this);
-      this.$('.btn-primary').prop('disabled', true);
+      this.$('[type=submit]').prop('disabled', true);
     },
     disabled_clickHandler: function (event) {
       event.stopPropagation();
@@ -48,7 +48,7 @@
       }
       target.addClass('active')
         .siblings('.active').removeClass('active');
-      this.$('.load').prop('disabled', false);
+      this.$('[type=submit]').prop('disabled', false);
     },
     loadAutosaveButton_clickHandler: function () {
       M.book.load('bookauto');
@@ -105,7 +105,7 @@
       this.$('#books-cloud').html(Meatazine.utils.render(this.template, this.model.remote.toJSON()));
     },
     shownHandler: function (event) {
-      this.$('.load').prop('disabled', true);
+      this.$('[type=submit]').prop('disabled', true);
       this.$('.autosave').prop('disabled', !this.model.get('hasAutoSave'));
       this.$('.active').removeClass('active');
       

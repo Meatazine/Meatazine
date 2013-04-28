@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flex Box Test</title>
+  <style>
+    #flexbox {
+      display: -webkit-flex;
+      -webkit-flex-direction: row;
+      -webkit-flex-wrap: wrap;
+      width: 500px;
+      height: auto;
+      min-height: 200px;
+      background: #CCC;
+    }
+
+    #flexbox .box {
+
+      -webkit-flex: 130px 1;
+      background: #FF0;
+    }
+
+    #flexbox .box.bigger {
+
+      -webkit-flex: 330px 1;
+      background: #EEE;
+    }
+  </style>
+</head>
+<body>
+<div id="flexbox">
+  <div class="box">DIV 1</div>
+  <div class="box">DIV 2</div>
+  <div class="box">DIV 3</div>
+  <div class="box">DIV 4</div>
+  <div class="box bigger">DIV 5</div>
+  <div class="box">DIV 6</div>
+</div>
+</body>
+</html>

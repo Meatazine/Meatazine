@@ -1,0 +1,55 @@
+html,
+body {
+  height:100%;
+}
+
+.navbar-fixed-top {
+  position: static;
+}
+
+body,
+#content,
+#sidebar,
+#page-area,
+#page-editor,
+#page-list {
+  display:-webkit-box;
+  display:box;
+}
+#page-area,
+#content,
+#page-list,
+#page-editor,
+#page-list-inner {
+  -webkit-box-flex:1;
+  box-flex:1;
+}
+#content {
+  -webkit-box-orient:horizontal;
+  box-orient:horizontal;
+}
+body,
+#sidebar,
+#page-area,
+#page-list {
+  -webkit-box-orient:vertical;
+  box-orient:vertical;
+}
+#page-editor {
+  -webkit-box-align:center;
+  -webkit-box-pack:center;
+}
+
+/*========================
+ * main layout elements
+ * =====================*/
+#sidebar {
+  width: 300px;
+  background: #EEE;
+}
+#sidebar hr {
+  margin:10px;
+}
+#page-area {
+  background: #DDD;
+}

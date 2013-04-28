@@ -16,15 +16,13 @@
       'click #publish-button': 'publishButton_clickHandler'
     },
     initialize: function () {
-      this.setElement(this.el);
-      
       Meatazine.service.AssetsSyncService.on('add reset remove', this.service_changeHandler, this);
       Meatazine.service.AssetsSyncService.on('complete', this.service_completeHandler, this);
     },
     resetLogin: function () {
       this.$('.login').text('请登录');
       this.$('.login-type').show();
-      this.$('.logout').hide();
+      this.$('.logout').addClass('hide');
     },
     setBookButtonsStatus: function (isDisabled) {
       var arr = ['save', 'preview', 'export'];
@@ -42,7 +40,7 @@
     showQQLoginResult: function (data) {
       this.$('.login').text(data.nickname);
       this.$('.login-type').hide();
-      this.$('.logout').show();
+      this.$('.logout').removeClass('hide');
     },
     disabledButton_clickHandler: function (event) {
       event.stopPropagation();

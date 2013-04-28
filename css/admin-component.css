@@ -1,0 +1,289 @@
+/** ======================
+ * topbar
+ * 导航菜单项
+ *======================*/
+#system-info {
+  position: absolute;
+  top:36px;
+  left:50%;
+  margin:0;
+  z-index: 99999;
+}
+#navbar .async .progress {
+  margin:0 6px;
+}
+
+/*========================
+ * book properties
+ * =====================*/
+#book-properties {
+  padding: 10px;
+}
+#book-properties .title {
+  font: 20px/40px Microsoft Yahei, Simhei;
+  display: inline-block;
+  margin-right: 20px;
+  padding:0 5px;
+}
+#book-properties .title:hover {
+  background: #CCC;
+  text-decoration: none;
+}
+
+/*========================
+ * template/source list
+ * 页面功能部分
+ * =====================*/
+#panel {
+  padding: 10px;
+}
+#panel .well {
+  overflow-y:auto;
+  margin:0;
+  max-height: 200px;
+}
+#panel .nav {
+  margin-bottom: 10px;
+}
+#template-list li {
+  display:block;
+  padding:4px;
+  line-height:1;
+  border:1px solid #DDD;
+  border-radius:4px;
+  box-shadow:0 1px 1px rgba(0, 0, 0, 0.075);
+  list-style:none;
+  margin: 0 0 10px;
+  opacity: 0.8;
+  cursor:pointer;
+}
+#templae-list li img {
+  display:block;
+  max-width:100%;
+  margin: 0 auto;
+}
+#template-list li:hover {
+  opacity: 1;
+  border-color:#08C;
+  box-shadow:0 1px 4px rgba(0, 105, 214, 0.25);
+}
+#template-list.disabled li:hover {
+  opacity: 0.8;
+  border-color: #DDD;
+  box-shadow:0 1px 1px rgba(0, 0, 0, 0.075);
+  cursor: default;
+}
+#template-list li.active {
+  border-color: #08C;
+  box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+}
+#source-list {
+  position: relative;
+}
+#source-list dt {
+  background: #EEE;
+  /* @alternate */ background: -moz-linear-gradient(top, #FFF, #EEE);
+  /* @alternate */ background: -webkit-linear-gradient(top, #FFF, #EEE);
+  padding: 5px 8px 4px;
+  border: 1px solid #CCC;
+  border-radius: 4px 4px 0 0;
+}
+#source-list dd {
+  padding:5px;
+  border: 1px solid #CCC;
+  border-top: none;
+  margin: 0 0 10px;
+  border-radius: 0 0 4px 4px;
+  background: #FFF;
+}
+#source-list ul {
+  margin:0;
+}
+#source-list li {
+  padding:5px;
+  margin:0 0 10px;
+  list-style: none;
+  border-bottom: 1px dashed #EEE;
+  position:relative;
+}
+#source-list li:last-child {
+  border:none;
+  margin:0;
+}
+#source-list li img {
+  border:1px solid #CCC;
+  padding:1px;
+}
+#source-list li span:hover,
+#source-list li textarea {
+  border:1px solid #08C;
+  padding:2px;
+  border-radius:2px;
+  box-shadow:inset 0 0 2px #CCC;
+  background:#DEF;
+}
+#source-list li textarea {
+  background: #FFF;
+  width:100%;
+  margin:5px 0 0;
+}
+/*========================
+ * page list
+ * 页面功能部分
+ * =====================*/
+#page-list {
+  padding: 2px 10px 10px;
+  text-shadow:0 1px 0 #FFF;
+}
+#page-list-inner {
+  list-style:none;
+  overflow-y:auto;
+  padding:5px;
+  margin:0;
+}
+#page-list-inner li.item {
+  min-height: 60px;
+  list-style:none;
+  border:1px solid #CCC;
+  border-radius:2px;
+  background:#FFF;
+  margin: 0 0 5px;
+  cursor:pointer;
+  position:relative;
+}
+#page-list-inner li.item:hover {
+  border-color:#08C;
+  box-shadow:0 0 1px rgba(0, 105, 214, 0.25);
+}
+#page-list-inner li.active {
+  border:1px solid #08C;
+  box-shadow: 0 0 2px rgba(0, 105, 214, 0.25);
+}
+#page-list-inner .add-button {
+  width:100%;
+}
+#page-list-inner canvas {
+  width:100%;
+  display:block;
+}
+#sidebar hr {
+  border-top-color:#CCC;
+}
+
+/** ======================
+ * context menu
+ * 功能菜单项
+ *======================*/
+#toolbar .swatch {
+  width: 16px;
+  height: 10px;
+  display: inline-block;
+  margin-right: 4px;
+  border-radius: 2px;
+}
+.uploader {
+  visibility:hidden;
+  position: absolute;
+}
+#toolbar .scale {
+  padding: 0 10px;
+  text-align:center;
+}
+#toolbar .scale input {
+  margin:0;
+  padding:0;
+  width:150px;
+}
+#toolbar .geo-search {
+  padding:5px 10px;
+  width:232px;
+}
+#toolbar .geo-search input {
+  margin:0;
+}
+.uploader {
+  visibility:hidden;
+  position:absolute;
+  bottom: -50px;
+}
+.group1 + .group1,
+.group2 + .group2,
+.group5 + .group5 {
+  margin-left: 0;
+}
+.group1 + .group1 .btn,
+.group2 + .group2 .btn,
+.group5 + .group5 .btn {
+  border-radius:0 4px 4px 0;
+}
+.text-helper {
+  border:1px solid #666;
+  padding:10px 20px;
+  background:#FFF;
+  position:absolute;
+}
+#toolbar .grid {
+  overflow:hidden;
+  padding:5px 5px 0 10px;
+  width:175px;
+}
+#toolbar .grid div {
+  width:28px;
+  border:1px solid #CCC;
+  float:left;
+  font:12px/18px Arial;
+  text-align:center;
+  margin:0 5px 5px 0;
+  cursor:pointer;
+}
+#toolbar .grid div.active {
+  background:#3A87AD;
+  color:#FFF;
+  border:none;
+  width:30px;
+  line-height:20px;
+}
+/*========================
+ * page editor
+ * =====================*/
+#page-editor {
+  overflow:auto;
+}
+#page-body {
+  width: 1024px;
+  height:768px;
+  background:#FFF;
+  box-shadow:0px 1px 4px rgba(0, 0, 0, .2);
+  border-radius: 5px;
+}
+#page-body.editing * {
+  opacity: 0.4;
+}
+#page-body.editing img.active,
+#page-body.editing .editing,
+#page-body.editing .active img {
+  opacity: 1;
+}
+#page-body .placeholder {
+  background:url(../img/imageplaceholder.png) center center no-repeat #CCC;
+  box-shadow:inset 0 0 8px #08C;
+  cursor: pointer;
+  min-width:200px;
+  min-height: 80px;
+}
+#page-body .active-img {
+  box-shadow:inset 0 0 8px #F83;
+}
+#page-body .ui-resizable-handle {
+  display:none;
+}
+#page-body .editable:hover,
+#page-body .editing {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 2px #CCC, 0 0 2px 2px #08C;
+  border-radius:4px;
+}
+#page-body .editable:hover .ui-resizable-handle,
+#page-body .editing .ui-resizable-handle {
+  display:block;
+}

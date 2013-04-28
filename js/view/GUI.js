@@ -1,6 +1,7 @@
 ;(function (ns) {
+  'use strict';
   var infoTimeout = 0,
-      info = '';
+      info = '',
       cancelQueue = [];
   ns.GUI = {
     contextButtons: null,
@@ -13,7 +14,7 @@
       options.pages.on('reset', this.pages_resetHandler, this);
       options.book.on('change:width change:height', this.book_resizeHandler, this);
       this.navbar = new Meatazine.view.ui.NavBar({
-        el: '#navbar',
+        el: '#topbar',
         model: options.book
       });
       info = $('#system-info');
@@ -40,12 +41,14 @@
         this.displayBrowerError('no-chrome');
         return;
       }
-      if (Number(array[1]) < 12) {
+      if (Number(array[1]) < 21) {
         this.displayBrowerError('low-version');
         return;
       }
+      $('#loading').remove();
       $('.system-error').remove();
       $('.hidden').removeClass('hidden');
+      $('#page-body').css('visibility', 'visible');
     },
     checkPagesLength: function (collection) {
       var noPage = collection.length === 0;

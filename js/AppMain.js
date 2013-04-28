@@ -20,7 +20,7 @@
         collection: pages
       }),
       contextButtons = new Meatazine.view.ui.ContextButtons({
-        el: '#context-menu'
+        el: '#toolbar'
       }),
       page = new Meatazine.view.ui.PageBody({
         collection: pages,
