@@ -10,6 +10,7 @@
     initialize: function () {
       this.options.book.on('change:width change:height', this.book_resizeHandler, this);
       this.options.source.on('change:type', this.source_typeChangeHandler, this);
+      this.collection.on('select', this.collection_selectHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
@@ -118,6 +119,20 @@
     book_resizeHandler: function (model) {
       this.$el.width(model.get('width'));
       this.$el.height(model.get('height'));
+    },
+    collection_selectHandler: function (model) {
+      this.saveTemplate();
+      this.model = model;
+      var type = model.get('templateType');
+      if (model.get('template') === '') {
+        if (!this.options.source.has(type)) {
+          this.options.source.fetch(model.get('templateType'));
+          return;
+        }
+
+        this.model.set('template', this.options.source.get(type));
+      }
+      this.render();
     },
     draggable_dragStopHandler: function (event) {
       this.refreshThumbnail();

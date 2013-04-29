@@ -1,7 +1,8 @@
-(function (ns, $) {
+;(function (ns, $) {
+  'use strict';
   var addButton = null,
       removeButton = null,
-      itemWidth = 108,
+      itemWidth = 266,
       currentItem = null,
       list = null,
       emptyItems  = [];
@@ -13,7 +14,7 @@
       "mouseout li.item": "item_mouseOutHandler",
       "click .remove-button": "removeButton_clickHandler",
       "sortactivate #page-list-inner": "sortactivateHandler",
-      "sortdeactivate #page-list-inner": "sortdeactivateHandler",
+      "sortdeactivate #page-list-inner": "sortdeactivateHandler"
     },
     initialize: function () {
       list = this.$('#page-list-inner');
@@ -22,6 +23,7 @@
       this.collection.on('redraw', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
+      this.collection.on('select', this.collection_selectHandler, this);
       
       removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
       addButton = this.$('.add-button');
@@ -44,16 +46,16 @@
           total = this.collection.length;
       this.$('#page-number').text(index + '/' + total);
     },
-    addButton_clickHandler: function (event) {
+    addButton_clickHandler: function () {
       this.collection.create();
       _gaq.push(['_trackEvent', 'page', 'add']);
     },
     book_resizeHandler: function (model) {
       this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
-    collection_addHandler: function (model, collection, options) {
-      var item = this.createItem(model);
-      M.router.navigate('/#/book/' + this.model.id + '/page/' + (collection.length - 1));
+    collection_addHandler: function (model, collection) {
+      this.createItem(model);
+      collection.trigger('select', model);
     },
     collection_redrawHandler: function (model, thumb) {
       var index = this.collection.indexOf(model),
@@ -62,14 +64,14 @@
       context.drawImage(thumb, 0, 0, thumb.width, thumb.height, 0, 0, canvas.width, canvas.height);
       if (emptyItems.length > 0) {
         var item = emptyItems.shift();
-        M.router.navigate('/#/book/' + this.model.id + '/page/' + item.index());
+        this.collection.trigger('select', item.data('model'));
       }
     },
     collection_removeHandler: function (model, collection, options) {
       var target = list.children().eq(options.index),
           index = options.index > 0 ? options.index - 1 : 0;
       if (currentItem.is(target)) {
-        M.router.navigate('/#/book/' + this.model.id + '/page/' + index);
+        collection.trigger('select', collection.at(index));
       }
       target
         .off()
@@ -88,18 +90,25 @@
       this.$('li').disableSelection();
       if (this.collection.length > 0) {
         emptyItems.shift();
-        M.router.navigate('/#/book/' + this.model.id + '/page/0');
+        this.collection.trigger('select', this.collection.at(0));
       }
+    },
+    collection_selectHandler: function (model) {
+      if (currentItem !== null) {
+        currentItem.removeClass('active');
+      }
+      var target = list.children().eq(this.collection.indexOf(model));
+      currentItem = $(target);
+      currentItem.addClass('active');
+      this.refreshPageNumber();
+      _gaq.push(['_trackEvent', 'page', 'select']);
     },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget);
       if (target.hasClass('active')) {
         return;
       }
-      M.router.navigate('/#/book/' + this.model.id + '/page/' + target.index());
-      target.addClass('active')
-        .siblings('.active').removeClass('active');
-      this.refreshPageNumber();
+      this.collection.trigger('select', target.data('model'));
       _gaq.push(['_trackEvent', 'page', 'select']);
     },
     item_mouseOutHandler: function (event) {
@@ -132,6 +141,6 @@
       this.collection.add(model, {at: ui.item.index(), silent: true});
       this.refreshPageNumber();
       _gaq.push(['_trackEvent', 'page', 'sort']);
-    },
+    }
   });
 }(jQuery.namespace('Meatazine.view.ui'), jQuery));

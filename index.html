@@ -272,7 +272,7 @@
       <ul id="page-list-inner" class="well">
         <li>
           <button class="btn btn-large add-button btn-primary" type="button">
-            <i class="icon-plus icon-large"></i>
+            <i class="icon-plus icon-large icon-white"></i>
           </button>
         </li>
       </ul>
@@ -282,8 +282,12 @@
     <div class="navbar" id="toolbar">
       <div class="navbar-inner">
         <ul class="nav">
+          <li class="always-show disabled">
+            <a href="#/edit/text/add">添加文本框</a>
+          </li>
+          <li class="divider-vertical always-show"></li>
           <li class="group1"><a href="#/edit/word"><i class="icon-edit"></i> 编辑文字</a></li>
-          <li class="group1">
+          <li class="group1 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">字号 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="font-size">
               <li><a href="#">16</a></li>
@@ -295,7 +299,7 @@
               <li><a href="#">80</a></li>
             </ul>
           </li>
-          <li class="group1">
+          <li class="group1 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">颜色 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="color">
               <li><a href="#" class="black"><i class="swatch" style="background:#000"></i>黑色</a></li>
@@ -309,7 +313,7 @@
               <li><a href="#" class="purple"><i class="swatch" style="background:#7a43b6"></i>紫色</a></li>
             </ul>
           </li>
-          <li class="group1">
+          <li class="group1 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">类型 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="class">
               <li><a href="#" class="h1">大标题</a></li>
@@ -324,12 +328,12 @@
             </ul>
           </li>
           <li class="group1"><a href="#/edit/delete"><i class="icon-trash"></i> 删除</a></li>
-          <li class="group2"><a href="#/edit/upload"><i class="icon-upload"></i> 上传</a></li>
+          <li class="group2"><a href="#/edit/upload"><i class="icon-upload-alt"></i> 上传</a></li>
           <li class="group2"><a href="#/edit/convert/map"><i class="icon-globe"></i> 转换为地图</a></li>
           <li class="group2"><a href="#/edit/marker/add"><i class="icon-flag"></i> 添加标记</a></li>
           <li class="group2 disabled"><a href="#/edit/edit"><i class="icon-edit"></i> 编辑图片</a></li>
-          <li class="group2 disabled">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">缩放 <span class="caret"></span></a>
+          <li class="group2 disabled dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-resize-full"></i> 缩放 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="scale">
               <li class="scale">
                 <span>100%</span>
@@ -337,7 +341,7 @@
               </li>
             </ul>
           </li>
-          <li class="group2 disabled">
+          <li class="group2 disabled dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-adjust"></i> 效果 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="filter">
               <li><a href="#" title="没这个功能，等待填坑吧">黑白</a></li>
@@ -347,9 +351,8 @@
           <li class="group5"><a href="#/edit/convert/image"><i class="icon-picture"></i> 转换为图片</a></li>
           <li class="group5"><a href="#/edit/marker/add"><i class="icon-flag"></i> 添加标记</a></li>
           <li class="group5"><a href="#/edit/edit"><i class="icon-edit"></i> 编辑地图</a></li>
-          <li class="group5">
+          <li class="group5 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-search"></i> 搜索地区 <span class="caret"></span></a>
-
             <ul class="dropdown-menu pull-right" data-type="search">
               <li class="geo-search">
                 <input type="search" class="input-medium search-query" />
@@ -357,16 +360,13 @@
               </li>
             </ul>
           </li>
-          <li class="group6">
+          <li class="group6 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th"></i> 调整行列 <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li class="grid">
 
               </li>
             </ul>
-          </li>
-          <li class="always-show disabled">
-            <a href="#/edit/text/add">添加文本框</a>
           </li>
         </ul>
       </div>
@@ -457,7 +457,6 @@
 <script src="js/guide/GuideTag.js"></script>
 <script src="js/guide/GuideManager.js"></script>
 <script src="js/view/GUI.js"></script>
-<script src="js/controller/Router.js"></script>
 <script src="js/AppMain.js"></script>
 <!-- replace over -->
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>

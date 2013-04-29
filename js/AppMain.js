@@ -36,11 +36,6 @@
   Meatazine.GUI.contextButtons = contextButtons;
   Meatazine.GUI.page = page;
   Meatazine.GUI.source = source;
-
-  // 路径
-  M.router = new Meatazine.controller.Router({
-    book: book
-  });
   
   // 放到全局变量里
   M.config = config;
@@ -53,11 +48,6 @@
   
   // 检查登录状态
   user.checkLoginStatus();
-  
-  // 检查路径
-  Backbone.history.start({
-    root: '/Meatazine/'
-  });
 });
 
 // 全局变量，用来充当context
