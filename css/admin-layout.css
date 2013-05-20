@@ -45,11 +45,22 @@ body,
  * =====================*/
 #sidebar {
   width: 300px;
-  background: #EEE;
+  border-top:1px solid #D4D4D4;
 }
 #sidebar hr {
   margin:10px;
 }
 #page-area {
   background: #DDD;
+}
+
+/*========================
+ * sidebar layout
+ * =====================*/
+#template-list li {
+  padding:4px;
+  margin: 0 0 10px;
+  display: inline-block;
+  box-sizing: border-box;
+  width:76px;
 }

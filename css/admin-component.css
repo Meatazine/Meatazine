@@ -46,21 +46,12 @@
   margin-bottom: 10px;
 }
 #template-list li {
-  display:block;
-  padding:4px;
-  line-height:1;
   border:1px solid #DDD;
   border-radius:4px;
   box-shadow:0 1px 1px rgba(0, 0, 0, 0.075);
   list-style:none;
-  margin: 0 0 10px;
   opacity: 0.8;
   cursor:pointer;
-}
-#templae-list li img {
-  display:block;
-  max-width:100%;
-  margin: 0 auto;
 }
 #template-list li:hover {
   opacity: 1;
@@ -185,6 +176,9 @@
 .uploader {
   visibility:hidden;
   position: absolute;
+}
+#toolbar .navbar-inner {
+  border-radius: 0;
 }
 #toolbar .scale {
   padding: 0 10px;

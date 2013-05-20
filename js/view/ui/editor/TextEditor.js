@@ -4,7 +4,7 @@
     events: {
       "dblclick": "dblclickHandler",
       "paste": "pasteHandler",
-      "keydown": "keydownHandler",
+      "keydown": "keydownHandler"
     },
     initButtons: function (options) {
       ns.AbstractEditor.prototype.initButtons.call(this, options);
