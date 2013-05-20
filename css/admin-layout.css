@@ -12,7 +12,8 @@ body,
 #sidebar,
 #page-area,
 #page-editor,
-#page-list {
+#page-list,
+#page-list header {
   display:-webkit-box;
   display:box;
 }
@@ -20,11 +21,13 @@ body,
 #content,
 #page-list,
 #page-editor,
-#page-list-inner {
+#page-list-inner,
+#page-number {
   -webkit-box-flex:1;
   box-flex:1;
 }
-#content {
+#content,
+#page-list header {
   -webkit-box-orient:horizontal;
   box-orient:horizontal;
 }
@@ -57,10 +60,32 @@ body,
 /*========================
  * sidebar layout
  * =====================*/
+#panel {
+  padding: 10px;
+}
+#panel .well {
+  overflow-y:auto;
+  max-height: 200px;
+}
+#panel .nav {
+  margin-bottom: 10px;
+}
+#template-list {
+  margin:0;
+}
 #template-list li {
   padding:4px;
   margin: 0 0 10px;
   display: inline-block;
   box-sizing: border-box;
   width:76px;
+}
+#page-list {
+  padding: 0 10px 10px;
+}
+#page-list header {
+  margin-bottom: 10px;
+}
+#page-list .add-button {
+  width:150px;
 }

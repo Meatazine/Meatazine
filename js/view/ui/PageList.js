@@ -9,9 +9,9 @@
   ns.PageList = Backbone.View.extend({
     events: {
       "click .add-button": "addButton_clickHandler",
-      "click li.item": "item_clickHandler",
-      "mouseover li.item": "item_mouseOverHandler",
-      "mouseout li.item": "item_mouseOutHandler",
+      "click li": "item_clickHandler",
+      "mouseover li": "item_mouseOverHandler",
+      "mouseout li": "item_mouseOutHandler",
       "click .remove-button": "removeButton_clickHandler",
       "sortactivate #page-list-inner": "sortactivateHandler",
       "sortdeactivate #page-list-inner": "sortdeactivateHandler"
@@ -30,14 +30,14 @@
     },
     createItem: function (model) {
       var height = this.model.get('height') / this.model.get('width') * itemWidth,
-          li = $('<li class="item"><canvas width="' + itemWidth + '" height="' + height + '" /></li>');
+          li = $('<li><canvas width="' + itemWidth + '" height="' + height + '" /></li>');
       li
         .data('model', model)
         .disableSelection()
-        .insertBefore(addButton.parent());
+        .appendTo(list);
       list.scrollTop(list[0].scrollHeight - list.height());
       list.sortable({
-        items: 'li.item'
+        items: 'li'
       });
       return li;
     },
@@ -80,14 +80,10 @@
       _gaq.push(['_trackEvent', 'page', 'delete']);
     },
     collection_resetHandler: function (collection, options) {
-      this.$('li.item').remove();
+      this.$('li').remove();
       this.collection.each(function (model, i) {
         emptyItems.push(this.createItem(model));
       }, this);
-      list.sortable({
-        items: 'li.item'
-      });
-      this.$('li').disableSelection();
       if (this.collection.length > 0) {
         emptyItems.shift();
         this.collection.trigger('select', this.collection.at(0));

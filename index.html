@@ -206,7 +206,7 @@
       </ul>
       <div class="tab-content">
         <ul id="template-list" class="well well-small tab-pane active disabled">
-          <li>
+          <li title="封面" data-toggle="popover">
             <img src="img/elements/face.png" alt="封面" />
           </li>
           <li>
@@ -268,14 +268,13 @@
     </div>
     <hr />
     <div id="page-list">
-      <p align="center" id="page-number">0/0</p>
-      <ul id="page-list-inner" class="well">
-        <li>
-          <button class="btn btn-large add-button btn-primary" type="button">
-            <i class="icon-plus icon-large icon-white"></i>
-          </button>
-        </li>
-      </ul>
+      <header>
+        <div align="center" id="page-number">0/0</div>
+        <button class="btn add-button btn-primary" type="button" title="增加一页">
+          <i class="icon-plus icon-large icon-white"></i>
+        </button>
+      </header>
+      <ul id="page-list-inner" class="well"></ul>
     </div>
   </div>
   <div id="page-area">
@@ -283,10 +282,10 @@
       <div class="navbar-inner">
         <ul class="nav">
           <li class="always-show disabled">
-            <a href="#/edit/text/add">插入文本框</a>
+            <a href="#/add/text">插入文本框</a>
           </li>
           <li class="divider-vertical always-show"></li>
-          <li class="group1"><a href="#/edit/word"><i class="icon-edit"></i> 编辑文字</a></li>
+          <li class="group1"><a href="#/edit"><i class="icon-edit"></i> 编辑文字</a></li>
           <li class="group1 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">字号 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="font-size">
@@ -328,10 +327,10 @@
             </ul>
           </li>
           <li class="group1"><a href="#/edit/delete"><i class="icon-trash"></i> 删除</a></li>
-          <li class="group2"><a href="#/edit/upload"><i class="icon-upload-alt"></i> 上传</a></li>
+          <li class="group2"><a href="#/edit/upload"><i class="icon-upload-alt"></i> 上传图片</a></li>
           <li class="group2"><a href="#/edit/convert/map"><i class="icon-globe"></i> 转换为地图</a></li>
           <li class="group2"><a href="#/edit/marker/add"><i class="icon-flag"></i> 添加标记</a></li>
-          <li class="group2 disabled"><a href="#/edit/edit"><i class="icon-edit"></i> 编辑图片</a></li>
+          <li class="group2 disabled"><a href="#/edit"><i class="icon-edit"></i> 编辑图片</a></li>
           <li class="group2 disabled dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-resize-full"></i> 缩放 <span class="caret"></span></a>
             <ul class="dropdown-menu" data-type="scale">
@@ -350,7 +349,7 @@
           </li>
           <li class="group5"><a href="#/edit/convert/image"><i class="icon-picture"></i> 转换为图片</a></li>
           <li class="group5"><a href="#/edit/marker/add"><i class="icon-flag"></i> 添加标记</a></li>
-          <li class="group5"><a href="#/edit/edit"><i class="icon-edit"></i> 编辑地图</a></li>
+          <li class="group5"><a href="#/edit"><i class="icon-edit"></i> 编辑地图</a></li>
           <li class="group5 dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-search"></i> 搜索地区 <span class="caret"></span></a>
             <ul class="dropdown-menu pull-right" data-type="search">
@@ -393,7 +392,7 @@
   </div>
 </div>
 <!-- 最后加载css和js -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css">
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css">
 <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="css/animate.css" />

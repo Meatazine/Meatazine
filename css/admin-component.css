@@ -34,17 +34,6 @@
  * template/source list
  * 页面功能部分
  * =====================*/
-#panel {
-  padding: 10px;
-}
-#panel .well {
-  overflow-y:auto;
-  margin:0;
-  max-height: 200px;
-}
-#panel .nav {
-  margin-bottom: 10px;
-}
 #template-list li {
   border:1px solid #DDD;
   border-radius:4px;
@@ -122,9 +111,9 @@
  * page list
  * 页面功能部分
  * =====================*/
-#page-list {
-  padding: 2px 10px 10px;
-  text-shadow:0 1px 0 #FFF;
+#page-number {
+  font-family: Arial;
+  line-height: 30px;
 }
 #page-list-inner {
   list-style:none;
@@ -133,7 +122,7 @@
   margin:0;
   position: relative;
 }
-#page-list-inner li.item {
+#page-list-inner li {
   min-height: 60px;
   list-style:none;
   border:1px solid #CCC;
@@ -143,16 +132,13 @@
   cursor:pointer;
   position:relative;
 }
-#page-list-inner li.item:hover {
+#page-list-inner li:hover {
   border-color:#08C;
   box-shadow:0 0 1px rgba(0, 105, 214, 0.25);
 }
 #page-list-inner li.active {
   border:1px solid #08C;
   box-shadow: 0 0 2px rgba(0, 105, 214, 0.25);
-}
-#page-list-inner .add-button {
-  width:100%;
 }
 #page-list-inner canvas {
   width:100%;
