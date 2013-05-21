@@ -1,6 +1,7 @@
 (function (ns) {
   var localFile = new ns.LocalFile(),
       init = {
+        fileQueue: [],
         constructor: ns.ImageResizer,
         addFiles: function (files, imageSize) {
           this.size = imageSize;
@@ -19,22 +20,21 @@
          * 如果图片比当前图片大，则缩小
          * 如果宽更大或者高更大，则截取其中部分
          * 如果图片比当前图片小，因为操作jpg会有损失，所以复制图片，
-         * @param {Object} url
+         * @param {String} url
          */
         handleImage: function (url) {
           var filename = this.makeFileName(),
               image = new Image(),
               canvas = $('<canvas>')[0],
               context = canvas.getContext('2d'),
-              size = this.size,
-              scale = 1;
+              size = this.size;
           image.onload = function () {
             if (image.width <= size.width && image.height <= size.height && image.width / image.height == size.width / size.height) {
               localFile.copy({
                 url: url,
-                name: filename,
+                name: filename
               }, {
-                origin: this.src,
+                origin: this.src
               });
               return;
             }
@@ -55,10 +55,10 @@
             localFile.save({
               name: filename,
               content: atob(canvas.toDataURL('image/jpeg').split(',')[1]),
-              type: 'image/jpeg',
+              type: 'image/jpeg'
             }, {
               scale: scale,
-              origin: this.src,
+              origin: this.src
             });
           }
           image.src = url;
@@ -71,9 +71,9 @@
           if (this.fileQueue.length > 0) {
             localFile.clone({
               file: this.fileQueue.shift(),
-              toDir: 'source',
+              toDir: 'source'
             }, {
-              override: false,
+              override: false
             });
           } else {
             this.trigger('complete:all');
@@ -93,7 +93,6 @@
         }
       };
   ns.ImageResizer = function () {
-    this.fileQueue = [],
     this.size = {
       width: 300,
       height: 200

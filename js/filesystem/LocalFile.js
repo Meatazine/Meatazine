@@ -192,7 +192,7 @@
           function success(file) {
             switch (options.type) {
               case type.blob: 
-                reader.readAsArrayBuffer(file);
+                reader.readAsArrayBufferView(file);
                 break;
                 
               case type.base64:

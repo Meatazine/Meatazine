@@ -1,15 +1,23 @@
-(function (ns) {
+;(function (ns) {
   var localFile = new Meatazine.filesystem.LocalFile(),
       imageResizer = new Meatazine.filesystem.ImageResizer(),
       args = null,
       callback = null,
       canvas = null,
-      uploader = null;
+      uploader = null,
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
-  init = {
-    initialize: function (options) {
-      ns.AbstractEditor.prototype.initialize.call(this, options);
+  var ImageTarget = Backbone.View.extend({
+    canvas: null
+  });
+  ns.ImageEditor = ns.AbstractEditor.extend({
+    events: _.extend(ns.AbstractEditor.prototype.Events, {
+      'change .scale input': 'scale_changeHandler',
+      'change .uploader': 'uploader_selectHandler',
+      'click .upload-button': 'uploadButton_clickHandker',
+      'click .add-marker-button': 'addImgMarkerButton_clickHandler'
+    }),
+    initialize: function () {
       imageResizer.on('complete:one', this.resizer_readyHandler, this);
       imageResizer.on('complete:all', this.resizer_completeHandler, this);
     },
@@ -25,10 +33,10 @@
         .mousemove(function (event) {
           tmpImgMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
         })
-        .one('click', function (event) {
+        .one('click', function () {
           $(this).off('mousemove');
           tmpImgMarker.remove();
-          self.$el.off('click', imgClick_handler);
+          self.target.off('click', imgClick_handler);
         });
       function imgClick_handler(event) {
         var img = $(event.target),
@@ -55,8 +63,6 @@
           sourceHeight = canvas[0].height / scale,
           sourceX = (source.width - sourceWidth >> 1) - this.model.get('x') / scale,
           sourceY = (source.height - sourceHeight >> 1) - this.model.get('y') / scale,
-          destWidth = 0,
-          destHeight = 0,
           destX = sourceX < 0 ? Math.abs(sourceX) / sourceWidth * canvas[0].width : 0,
           destY = sourceY < 0 ? Math.abs(sourceY) / sourceHeight * canvas[0].height : 0;
       if (sourceX < 0) {
@@ -73,26 +79,19 @@
       if (sourceY + sourceHeight > source.height) {
         sourceHeight = source.height - sourceY;
       }
-      destWidth = sourceWidth * scale;
-      destHeight = sourceHeight * scale;
+      var destWidth = sourceWidth * scale,
+          destHeight = sourceHeight * scale;
       context.clearRect(0, 0, canvas[0].width, canvas[0].height);
       context.drawImage(source, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     },
     getTarget: function () {
       return canvas;
     },
-    initButtons: function () {
-      ns.AbstractEditor.prototype.initButtons.call(this);
-      this.buttons
-        .on('change', '.scale input', _.bind(this.scale_changeHandler, this))
-        .on('click', "[data-type='upload']", this.uploadButton_clickHandker)
-        .on('click', "[data-type='add-marker']", _.bind(this.addImgMarkerButton_clickHandler, this));
-    },
     initScaleRange: function () {
       var scale = this.model.get('scale'),
           scaleMin = scale < 0.5 ? scale : 0.5,
           scaleMax = scale > 1.5 ? scale : 1.5,
-          scaleRanger = this.buttons.find('[data-type="scale"]');
+          scaleRanger = this.$('.scale');
       scaleRanger
         .find('input').attr('max', scaleMax).attr('min', scaleMin).val(scale).end()
         .find('span').text(Math.round(scale * 10000) / 100 + '%');
@@ -100,14 +99,10 @@
     initUploader: function () {
       // 因为input必须change才能触发事件，所以有必要移除已经之前的标签
       if (uploader != null) {
-        uploader
-          .remove()
-          .off('change');
+        uploader.remove();
       }
       uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
-      uploader
-        .on("change", _.bind(this.uploader_selectHandler, this))
-        .appendTo(this.buttons.first());
+      uploader.appendTo(this.$el.first());
     },
     saveCanvas: function () {
       if (canvas == null) {
@@ -128,31 +123,31 @@
       this.drawImage();
     },
     setTarget: function (value) {
-      Meatazine.GUI.contextButtons.showButtons(this.buttons);
-      if (this.$el != null && this.$el.is(value)) {
+      Meatazine.GUI.contextButtons.showButtons(this.$el);
+      if (this.target != null && this.target.is(value)) {
         return;
       }
       if (this.isEditing) {
-        this.buttons.find('[data-type=edit]').click();
+        this.$('.edit-button').click();
         callback = arguments.callee;
         args = value;
         return;
       }
-      this.$el = $(value);
-      this.buttons.find('[data-type="edit"]').prop('disabled', this.$el.hasClass('placeholder'));
+      this.target = $(value);
+      this.$('.edit-button').prop('disabled', this.target.hasClass('placeholder'));
       this.initScaleRange();
       this.initUploader();
     },
     startEdit: function () {
       this.isEditing = true;
-      this.$el.closest('.ui-draggable').draggable('disable');
-      this.$el.closest('.ui-resizable').resizable('disable');
+      this.target.closest('.ui-draggable').draggable('disable');
+      this.target.closest('.ui-resizable').resizable('disable');
       canvas = $('<canvas>');
       var self = this,
           sourceUrl = this.model.get('origin'),
           loader = new Image();
-      canvas[0].width = this.$el.width();
-      canvas[0].height = this.$el.height();
+      canvas[0].width = this.target.width();
+      canvas[0].height = this.target.height();
       loader.onload = function () {
         self.drawImage();
       };
@@ -166,25 +161,27 @@
           var currentX = self.model.get('x'),
               currentY = self.model.get('y'),
               startX = event.pageX,
-              startY = event.pageY;
+              startY = event.pageY,
+              offsetX = 0,
+              offsetY = 0;
           $(this).on('mousemove', function (event) {
             offsetX = event.pageX - startX;
             offsetY = event.pageY - startY;
             self.model.set({
               x: currentX + offsetX,
-              y: currentY + offsetY,
+              y: currentY + offsetY
             }, {silent: true});
             self.drawImage();
             event.stopPropagation();
           });
           $('body').one('mouseup', self.canvas_mouseupHandler);
         })
-        .on('click', function (event) {
-          Meatazine.GUI.contextButtons.showButtons(self.buttons);
+        .on('click', function () {
+          Meatazine.GUI.contextButtons.showButtons(self.$el);
         })
         .on('mouseup', this.canvas_mouseupHandler);
       loader.src = sourceUrl;
-      this.$el.replaceWith(canvas);
+      this.target.replaceWith(canvas);
       Meatazine.GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
@@ -197,15 +194,12 @@
     uploadFiles: function (files, target) {
       imageResizer.addFiles(files, {
         width: target.width,
-        height: target.height,
+        height: target.height
       });
     },
     addImgMarkerButton_clickHandler: function (event) {
       this.addImgMarker(event.pageX, event.pageY);
       event.stopPropagation();
-    },
-    canvas_clickHandler: function (event) {
-      Meatazine.GUI.contextButtons.showButtons(this.buttons);
     },
     canvas_mouseupHandler: function () {
       canvas.off('mousemove');
@@ -213,12 +207,12 @@
       canvas.off('mouseup', arguments.callee);
     },
     canvas_savedHandler: function (url, options) {
-      canvas.replaceWith(this.$el);
+      canvas.replaceWith(this.target);
       canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
       canvas.off();
       canvas = null;
       localFile.off('complete:save', null, this);
-      this.$el
+      this.target
         .attr('src', url)
         .data('model', this.model)
         .closest('.ui-draggable').draggable('enable')
@@ -248,20 +242,19 @@
     },
     scale_changeHandler: function (event) {
       var value = $(event.target).val();
-      this.buttons.find('.scale span').text(Math.round(value * 10000) / 100 + '%');
+      this.$('.scale span').text(Math.round(value * 10000) / 100 + '%');
       this.setCanvasScale(value);
       _gaq.push(['_trackEvent', 'image', 'resize']);
     },
-    uploadButton_clickHandker: function (event) {
+    uploadButton_clickHandker: function () {
       uploader.click();
       _gaq.push(['_trackEvent', 'image', 'upload']);
     },
     uploader_selectHandler: function (event) {
       imageResizer.addFiles(event.target.files, {
-        width: this.$el.width(),
-        height: this.$el.height(),
+        width: this.target.width(),
+        height: this.target.height()
       });
-    },
-  };
-  ns.ImageEditor = ns.AbstractEditor.extend(init);
+    }
+  });
 }(jQuery.namespace('Meatazine.view.ui.editor')));

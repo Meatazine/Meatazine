@@ -1,4 +1,4 @@
-(function (ns) {
+;(function (ns) {
   var map = null,
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
@@ -19,7 +19,7 @@
         .mousemove(function (event) {
           tmpMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
         })
-        .one('click', function (event) {
+        .one('click', function () {
           tmpMarker.remove();
           $(this).off('mousemove');
           google.maps.event.clearListeners(map, 'click');
@@ -163,7 +163,7 @@
       _gaq.push(['_trackEvent', 'map', 'search', search.find('input').val(), search.siblings().length - 1]);
     },
     setTarget: function (value) {
-      map = value;
+      this.target = value;
       this.setElement(map.getDiv());
       this.model = this.$el.data('model');
       Meatazine.GUI.contextButtons.showButtons(this.buttons);
@@ -223,13 +223,13 @@
       var geometry = $(event.currentTarget).data('geometry'),
           marker = new google.maps.Marker({
             position: geometry.location,
-            map: map,
+            map: map
           })
       map.fitBounds(geometry.viewport);
     },
     clickHandler: function (event) {
       this.model.trigger('select', this.model);
       Meatazine.GUI.contextButtons.showButtons(this.buttons);
-    },
+    }
   });
 }(jQuery.namespace('Meatazine.view.ui.editor')));

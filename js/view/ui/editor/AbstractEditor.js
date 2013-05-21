@@ -4,10 +4,8 @@
     isEditing: false,
     target: null,
     events: {
-      'click a': 'editButton_clickHandler'
-    },
-    initialize: function (options) {
-      this.initButtons();
+      'click .convert-button': 'convertButton_clickHandler',
+      'click .edit-button': 'editButton_clickHandler'
     },
     setTarget: function (value) {
       this.target = value;
