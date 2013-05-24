@@ -1,7 +1,11 @@
 (function (ns) {
   var currentEditor = null,
-      imageEditor = new Meatazine.view.ui.editor.ImageEditor({buttons: '.group2'}),
-      mapEditor = new Meatazine.view.ui.editor.MapEditor({buttons: '.group5'}),
+      imageEditor = new Meatazine.view.ui.editor.ImageEditor({
+        el: '.group2'
+      }),
+      mapEditor = new Meatazine.view.ui.editor.MapEditor({
+        el: '.group5'
+      }),
   init = {
     tagName: '',
     token: null,

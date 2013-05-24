@@ -5,47 +5,45 @@
       callback = null,
       canvas = null,
       uploader = null,
+      tmpMarker = null,
       MARKER_WIDTH = 22,
       MARKER_HEIGHT = 32;
   var ImageTarget = Backbone.View.extend({
-    canvas: null
+    canvas: null,
+    events: {
+      'click': 'click_handler'
+    },
+    click_handler: function (event) {
+      this.trigger('click', event);
+    }
   });
   ns.ImageEditor = ns.AbstractEditor.extend({
-    events: _.extend(ns.AbstractEditor.prototype.Events, {
+    events: _.extend(ns.AbstractEditor.prototype.events, {
       'change .scale input': 'scale_changeHandler',
       'change .uploader': 'uploader_selectHandler',
       'click .upload-button': 'uploadButton_clickHandker',
-      'click .add-marker-button': 'addImgMarkerButton_clickHandler'
+      'click .add-marker-button': 'addMarkerButton_clickHandler'
     }),
     initialize: function () {
       imageResizer.on('complete:one', this.resizer_readyHandler, this);
       imageResizer.on('complete:all', this.resizer_completeHandler, this);
+
+      this.target = new ImageTarget();
+      this.target.on('click', this.target_clickHandler, this);
     },
-    addImgMarker: function (x, y) {
-      var self = this,
-          markers = this.model.get('markers') ? this.model.get('markers').concat() : [],
-          tmpImgMarker = $('<div class="tmp-img-marker"></div>');
-      tmpImgMarker
-        .css('left', x - MARKER_WIDTH / 2)
-        .css('top', y - MARKER_HEIGHT);
-      $('body')
-        .append(tmpImgMarker)
-        .mousemove(function (event) {
-          tmpImgMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
-        })
-        .one('click', function () {
-          $(this).off('mousemove');
-          tmpImgMarker.remove();
-          self.target.off('click', imgClick_handler);
-        });
-      function imgClick_handler(event) {
-        var img = $(event.target),
-            position = {x: event.offsetX, y: event.offsetY};
-        self.createImgMarker(img.parent(), position, markers.length);
-        markers.push(position);
-        self.model.set({markers: markers}, {silent: true});
-      };
-      this.$el.on('click', imgClick_handler);
+    addMarkerAt: function (x, y) {
+      if (!this.$el.hasClass('add-marker')) {
+        return;
+      }
+      var position = {x: x, y: y},
+          markers = this.model.get('markers') || [];
+      this.createImgMarker(this.target.parent(), position, markers.length);
+      markers.push(position);
+      this.model.set({markers: markers}, {silent: true});
+    },
+    clearTempMarker: function () {
+      $('body').off('mousemove');
+      tmpMarker.remove();
     },
     createImgMarker: function(container, position, index) {
       var imgMarker = $('<div class="img-marker"></div>');
@@ -104,6 +102,13 @@
       uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
       uploader.appendTo(this.$el.first());
     },
+    prepareImgMarker: function (x, y) {
+      tmpMarker = this.createImgMarker('body', {x: x, y: y}, 0);
+      $('body').mousemove(function (event) {
+        tmpMarker.css('left', event.pageX - MARKER_WIDTH / 2).css('top', event.pageY - MARKER_HEIGHT);
+      });
+      this.$el.addClass('add-marker');
+    },
     saveCanvas: function () {
       if (canvas == null) {
         return;
@@ -133,7 +138,7 @@
         args = value;
         return;
       }
-      this.target = $(value);
+      this.target.setElement(value);
       this.$('.edit-button').prop('disabled', this.target.hasClass('placeholder'));
       this.initScaleRange();
       this.initUploader();
@@ -197,8 +202,9 @@
         height: target.height
       });
     },
-    addImgMarkerButton_clickHandler: function (event) {
-      this.addImgMarker(event.pageX, event.pageY);
+    addMarkerButton_clickHandler: function (event) {
+      this.prepareImgMarker(event.pageX, event.pageY);
+      Meatazine.GUI.registerCancelHandler(this.clearTempMarker, this);
       event.stopPropagation();
     },
     canvas_mouseupHandler: function () {
@@ -245,6 +251,10 @@
       this.$('.scale span').text(Math.round(value * 10000) / 100 + '%');
       this.setCanvasScale(value);
       _gaq.push(['_trackEvent', 'image', 'resize']);
+    },
+    target_clickHandler: function (event) {
+      this.clearTempMarker();
+      this.addMarkerAt(event.offsetX, event.offsetY);
     },
     uploadButton_clickHandker: function () {
       uploader.click();
