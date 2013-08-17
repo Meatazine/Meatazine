@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.view.element');
+Nervenet.createNameSpace('Meatazine.view.element');
 Meatazine.view.element.SlideBodyElement = Meatazine.view.element.BaseElement.extend({
   navi: null,
   initialize: function () {

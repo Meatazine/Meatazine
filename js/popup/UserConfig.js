@@ -97,4 +97,4 @@
       this.checkConfig();
     }
   });
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));

@@ -20,4 +20,4 @@
       Meatazine.GUI.source.setContentTo(page);
     }
   });
-}(jQuery.namespace('Meatazine.controller')));
+}(Nervenet.createNameSpace('Meatazine.controller')));

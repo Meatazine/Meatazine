@@ -78,4 +78,4 @@
       this.$('.cover').attr('src', 'api/assets/' + this.model.get('id') + '/cover.png');
     }
   });
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));

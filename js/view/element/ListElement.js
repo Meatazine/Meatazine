@@ -96,4 +96,4 @@
       this.resetChildrenNumber();
     },
   });
-}(jQuery.namespace('Meatazine.view.element')));
+}(Nervenet.createNameSpace('Meatazine.view.element')));

@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.model');
+Nervenet.createNameSpace('Meatazine.model');
 Meatazine.model.UserModel = Backbone.Model.extend({
   local: null,
   remote: null,

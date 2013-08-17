@@ -103,4 +103,4 @@
     localFile.on('complete:save', this.file_savedHandler, this);
   }
   ns.ImageResizer.prototype = _.extend(init, Backbone.Events);
-}(jQuery.namespace('Meatazine.filesystem')));
+}(Nervenet.createNameSpace('Meatazine.filesystem')));

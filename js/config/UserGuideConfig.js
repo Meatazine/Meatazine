@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.guide');
+Nervenet.createNameSpace('Meatazine.guide');
 //title , content can be changed .The others are remained.
 Meatazine.guide.TrunkCollection = [
   {

@@ -388,4 +388,4 @@
   window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   window.requestFileSystem(TEMPORARY, 1024 * 1024 * 1024, fileSystemReadyHandler, errorHandler)
-}(jQuery.namespace('Meatazine.filesystem')));
+}(Nervenet.createNameSpace('Meatazine.filesystem')));

@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.model');(function (ns) {
+Nervenet.createNameSpace('Meatazine.model');(function (ns) {
   var model = Backbone.Model.extend({
     defaults: {
       id: 0,

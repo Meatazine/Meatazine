@@ -232,4 +232,4 @@
       Meatazine.GUI.contextButtons.showButtons(this.buttons);
     }
   });
-}(jQuery.namespace('Meatazine.view.ui.editor')));
+}(Nervenet.createNameSpace('Meatazine.view.ui.editor')));

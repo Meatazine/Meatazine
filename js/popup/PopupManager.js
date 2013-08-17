@@ -91,4 +91,4 @@
         }
       };
   ns.PopupManager = manager;
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));

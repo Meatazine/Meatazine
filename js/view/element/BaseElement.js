@@ -295,4 +295,4 @@
     },
   }
   ns.BaseElement = Backbone.View.extend(init);
-}(jQuery.namespace('Meatazine.view.element')));
+}(Nervenet.createNameSpace('Meatazine.view.element')));

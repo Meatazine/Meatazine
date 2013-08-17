@@ -166,4 +166,4 @@
       this.refreshThumbnail();
     },
   });
-})(jQuery.namespace('Meatazine.view.ui'));
+})(Nervenet.createNameSpace('Meatazine.view.ui'));

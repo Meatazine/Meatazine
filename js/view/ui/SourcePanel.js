@@ -218,4 +218,4 @@
         },
       };
   ns.SourcePanel = Backbone.View.extend(init);
-}(jQuery.namespace('Meatazine.view.ui')));
+}(Nervenet.createNameSpace('Meatazine.view.ui')));

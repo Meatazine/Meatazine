@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.service');
+Nervenet.createNameSpace('Meatazine.service');
 (function (ns) {
   var queue = [],
       news = [],

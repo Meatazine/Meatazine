@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.filesystem');
+Nervenet.createNameSpace('Meatazine.filesystem');
 Meatazine.filesystem.Zip = function () {
   var self = this,
       localFile = new Meatazine.filesystem.LocalFile(),

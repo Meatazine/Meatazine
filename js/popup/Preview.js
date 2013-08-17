@@ -36,4 +36,4 @@
       view.attr('src', 'about:blank');
     }
   });
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));

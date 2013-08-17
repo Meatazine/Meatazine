@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.service');
+Nervenet.createNameSpace('Meatazine.service');
 Meatazine.service.ServerCall = _.extend({
   queue: [],
   proxyURL: 'api/api.php',

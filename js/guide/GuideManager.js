@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.guide');
+Nervenet.createNameSpace('Meatazine.guide');
 Meatazine.guide.GuideManager = {
   trunk: [],
   branch: [],

@@ -160,4 +160,4 @@
       return guideTag;
     },
   }
-}(jQuery.namespace('Meatazine.guide')));
+}(Nervenet.createNameSpace('Meatazine.guide')));

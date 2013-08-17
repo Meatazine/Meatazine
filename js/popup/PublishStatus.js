@@ -74,5 +74,5 @@
       this.model.publish();
     }
   });
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));
 

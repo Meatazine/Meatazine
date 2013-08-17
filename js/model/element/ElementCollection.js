@@ -67,4 +67,4 @@
       });
     }
   });
-}(jQuery.namespace('Meatazine.model.element')));
+}(Nervenet.createNameSpace('Meatazine.model.element')));

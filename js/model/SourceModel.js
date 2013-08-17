@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.model');
+Nervenet.createNameSpace('Meatazine.model');
 Meatazine.model.SourceModel = Backbone.Model.extend({
   isLoading: false,
   loadQueue: [],

@@ -30,4 +30,4 @@
       _gaq.push(['_trackEvent', 'book', 'export', 'step', 1]);
     }
   })
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));

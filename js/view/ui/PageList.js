@@ -139,4 +139,4 @@
       _gaq.push(['_trackEvent', 'page', 'sort']);
     }
   });
-}(jQuery.namespace('Meatazine.view.ui'), jQuery));
+}(Nervenet.createNameSpace('Meatazine.view.ui'), jQuery));

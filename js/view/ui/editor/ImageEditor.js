@@ -10,11 +10,105 @@
       MARKER_HEIGHT = 32;
   var ImageTarget = Backbone.View.extend({
     canvas: null,
+    image: null,
+    filename: '',
+    isCanvas: false,
+    isPlaceholder: false,
     events: {
-      'click': 'click_handler'
+      'click': 'clickHandler',
+      'mousedown': 'mousedownHandler',
+      'mouseup': 'mouseUpHandler'
     },
-    click_handler: function (event) {
+    setElement: function (el) {
+      Backbone.View.prototype.setElement.call(this, el);
+
+      this.image = 'length' in el ? el[0] : el;
+      this.isPlaceholder = this.$el.hasClass('placeholder');
+      if (this.canvas) {
+        this.canvas[0].getContext('2d').clearRect(0, 0, this.canvas[0].width, this.canvas[0].height);
+      }
+    },
+    createCanvas: function () {
+      var canvas = document.createElement('canvas');
+      canvas.width = this.$el.width();
+      canvas.height = this.$el.height();
+      this.canvas = canvas;
+    },
+    is: function (value) {
+      return this.$el.is(value);
+    },
+    saveCanvas: function () {
+      if (!this.isCanvas) {
+        return;
+      }
+      var content = atob(this.canvas[0].toDataURL('image/jpeg').split(',')[1]);
+      localFile.on('complete:save', this.savedHandler, this);
+      localFile.save({
+        name: this.filename,
+        content: content,
+        type: 'image/jpeg'
+      });
+    },
+    switchToCanvas: function () {
+      if (!this.canvas) {
+        this.createCanvas();
+      }
+      var self = this,
+          loader = new Image(),
+          sourceUrl = this.model.get('origin');
+      loader.onload = function () {
+        self.drawImage();
+      };
+      loader.onerror = function () {
+        alert("没有原始图片的话老衲也无计可施");
+      };
+      loader.src = sourceUrl;
+      this.target.replaceWith(canvas);
+    },
+    savedHandler: function (url, options) {
+      this.canvas.replaceWith(this.image);
+
+      this.isCanvas = false;
+      localFile.off('complete:save', null, this);
+      this.$el
+        .attr('src', url)
+        .closest('.ui-draggable').draggable('enable')
+        .end()
+        .closest('.ui-resizable').resizable('enable');
+      if (callback !== null) {
+        callback.call(this, args);
+        callback = null;
+        args = null;
+      }
+      options.entry.file(function (file) {
+        Meatazine.service.AssetsSyncService.add(file, false);
+      });
+    },
+    clickHandler: function (event) {
       this.trigger('click', event);
+    },
+    mousedownHandler: function (event) {
+      var currentX = self.model.get('x'),
+        currentY = self.model.get('y'),
+        startX = event.pageX,
+        startY = event.pageY,
+        offsetX = 0,
+        offsetY = 0;
+      $(this).on('mousemove', function (event) {
+        offsetX = event.pageX - startX;
+        offsetY = event.pageY - startY;
+        self.model.set({
+          x: currentX + offsetX,
+          y: currentY + offsetY
+        }, {silent: true});
+        self.drawImage();
+        event.stopPropagation();
+      });
+      $('body').one('mouseup', self.canvas_mouseupHandler);
+    },
+    canvas_mouseupHandler: function () {
+      $('body').off('mouseup', arguments.callee);
+      canvas.off('mouseup', arguments.callee);
     }
   });
   ns.ImageEditor = ns.AbstractEditor.extend({
@@ -32,9 +126,6 @@
       this.target.on('click', this.target_clickHandler, this);
     },
     addMarkerAt: function (x, y) {
-      if (!this.$el.hasClass('add-marker')) {
-        return;
-      }
       var position = {x: x, y: y},
           markers = this.model.get('markers') || [];
       this.createImgMarker(this.target.parent(), position, markers.length);
@@ -42,6 +133,7 @@
       this.model.set({markers: markers}, {silent: true});
     },
     clearTempMarker: function () {
+      this.$el.removeClass('add-marker');
       $('body').off('mousemove');
       tmpMarker.remove();
     },
@@ -91,7 +183,10 @@
           scaleMax = scale > 1.5 ? scale : 1.5,
           scaleRanger = this.$('.scale');
       scaleRanger
-        .find('input').attr('max', scaleMax).attr('min', scaleMin).val(scale).end()
+        .find('input').attr({
+          'max': scaleMax,
+          'min': scaleMin
+        }).val(scale).end()
         .find('span').text(Math.round(scale * 10000) / 100 + '%');
     },
     initUploader: function () {
@@ -109,20 +204,6 @@
       });
       this.$el.addClass('add-marker');
     },
-    saveCanvas: function () {
-      if (canvas == null) {
-        return;
-      }
-      var url = this.model.get('img'),
-          name = url.substr(url.lastIndexOf('/') + 1),
-          content = atob(canvas[0].toDataURL('image/jpeg').split(',')[1]);
-      localFile.on('complete:save', this.canvas_savedHandler, this);
-      localFile.save({
-        name: name,
-        content: content,
-        type: 'image/jpeg'
-      });
-    },
     setCanvasScale: function (value) {
       this.model.set({scale: value}, {silent: true});
       this.drawImage();
@@ -139,60 +220,22 @@
         return;
       }
       this.target.setElement(value);
-      this.$('.edit-button').prop('disabled', this.target.hasClass('placeholder'));
+      this.$('.edit-button').prop('disabled', this.target.isPlaceholder);
       this.initScaleRange();
       this.initUploader();
     },
     startEdit: function () {
       this.isEditing = true;
-      this.target.closest('.ui-draggable').draggable('disable');
-      this.target.closest('.ui-resizable').resizable('disable');
-      canvas = $('<canvas>');
-      var self = this,
-          sourceUrl = this.model.get('origin'),
-          loader = new Image();
-      canvas[0].width = this.target.width();
-      canvas[0].height = this.target.height();
-      loader.onload = function () {
-        self.drawImage();
-      };
-      loader.onerror = function () {
-        alert("没有原始图片的话老衲也无计可施");
-      };
-      canvas
-        .addClass('active')
-        .data('image', loader)
-        .on('mousedown', function (event) {
-          var currentX = self.model.get('x'),
-              currentY = self.model.get('y'),
-              startX = event.pageX,
-              startY = event.pageY,
-              offsetX = 0,
-              offsetY = 0;
-          $(this).on('mousemove', function (event) {
-            offsetX = event.pageX - startX;
-            offsetY = event.pageY - startY;
-            self.model.set({
-              x: currentX + offsetX,
-              y: currentY + offsetY
-            }, {silent: true});
-            self.drawImage();
-            event.stopPropagation();
-          });
-          $('body').one('mouseup', self.canvas_mouseupHandler);
-        })
-        .on('click', function () {
-          Meatazine.GUI.contextButtons.showButtons(self.$el);
-        })
-        .on('mouseup', this.canvas_mouseupHandler);
-      loader.src = sourceUrl;
-      this.target.replaceWith(canvas);
+      this.target
+        .closest('.ui-draggable').draggable('disable').end()
+        .closest('.ui-resizable').resizable('disable');
+      this.switchToCanvas();
       Meatazine.GUI.page.$el.addClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-start']);
     },
     stopEdit: function () {
       this.isEditing = false;
-      this.saveCanvas();
+      this.target.saveCanvas();
       Meatazine.GUI.page.$el.removeClass('editing');
       _gaq.push(['_trackEvent', 'image', 'edit-stop']);
     },
@@ -206,32 +249,6 @@
       this.prepareImgMarker(event.pageX, event.pageY);
       Meatazine.GUI.registerCancelHandler(this.clearTempMarker, this);
       event.stopPropagation();
-    },
-    canvas_mouseupHandler: function () {
-      canvas.off('mousemove');
-      $('body').off('mouseup', arguments.callee);
-      canvas.off('mouseup', arguments.callee);
-    },
-    canvas_savedHandler: function (url, options) {
-      canvas.replaceWith(this.target);
-      canvas[0].getContext('2d').clearRect(0, 0, canvas[0].width, canvas[0].height);
-      canvas.off();
-      canvas = null;
-      localFile.off('complete:save', null, this);
-      this.target
-        .attr('src', url)
-        .data('model', this.model)
-        .closest('.ui-draggable').draggable('enable')
-        .end()
-        .closest('.ui-resizable').resizable('enable');
-      if (callback != null) {
-        callback.call(this, args);
-        callback = null;
-        args = null;
-      }
-      options.entry.file(function (file) {
-        Meatazine.service.AssetsSyncService.add(file, false);
-      });
     },
     resizer_completeHandler: function () {
       Meatazine.service.AssetsSyncService.start();
@@ -253,6 +270,9 @@
       _gaq.push(['_trackEvent', 'image', 'resize']);
     },
     target_clickHandler: function (event) {
+      if (!this.$el.hasClass('add-marker')) {
+        return;
+      }
       this.clearTempMarker();
       this.addMarkerAt(event.offsetX, event.offsetY);
     },
@@ -261,10 +281,7 @@
       _gaq.push(['_trackEvent', 'image', 'upload']);
     },
     uploader_selectHandler: function (event) {
-      imageResizer.addFiles(event.target.files, {
-        width: this.target.width(),
-        height: this.target.height()
-      });
+      this.uploadFiles(event.target.files, this.target);
     }
   });
-}(jQuery.namespace('Meatazine.view.ui.editor')));
+}(Nervenet.createNameSpace('Meatazine.view.ui.editor')));

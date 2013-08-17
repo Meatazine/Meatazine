@@ -107,4 +107,4 @@
         .text('暂无同步内容'); 
     }
   });
-}(jQuery.namespace('Meatazine.view.ui')));
+}(Nervenet.createNameSpace('Meatazine.view.ui')));

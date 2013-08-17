@@ -49,4 +49,4 @@
       this.model.set('lastWelcomeVision', this.version);
     },
   });
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));

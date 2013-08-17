@@ -116,5 +116,5 @@
       this.$('#books-cloud').toggleClass('active', isLogin);
     },
   });
-}(jQuery.namespace('Meatazine.popup')));
+}(Nervenet.createNameSpace('Meatazine.popup')));
 

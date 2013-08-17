@@ -124,4 +124,4 @@
       this.checkPagesLength(collection);
     }
   };
-}(jQuery.namespace('Meatazine')));
+}(Nervenet.createNameSpace('Meatazine')));

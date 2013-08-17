@@ -15,7 +15,7 @@
       <filelist dir="libs/">
         <file name="underscore-min.js" />
         <file name="backbone-min.js" />
-        <file name="jquery.namespace.js" />
+        <file name="Nervenet.min.js" />
         <file name="html2canvas.min.js" />
         <file name="jszip.js" />
         <file name="jszip-deflate.js" />

@@ -4,6 +4,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="keywords" content="肉大师,电子杂志,制作工具,html5,开源,移动平台,跨平台" />
 <meta name="description" content="“肉大师”是一款基于浏览器的内容制作工具。我们利用HTML5技术，让内容生产者得以使用最常见的工具来制作能够在各类移动设备上观看的内容——初步以电子杂志为主。" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="css/animate.css" />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/admin-general.css" />
+<link rel="stylesheet" href="css/admin-layout.css" />
+<link rel="stylesheet" href="css/admin-popup.css" />
+<link rel="stylesheet" href="css/admin-component.css" />
 <style>
   body {
     background:#FFF;
@@ -111,83 +120,83 @@
   <h4>肉大师需要Chrome 21+</h4>
   <p>您的Chrome浏览器版本过低。只有Chrome 21+才能让肉大师发挥出真正实力，建议更新到最新版本再试一次。<br />也可以去这个地址下载安装最新版Chrome：<br /><a href="https://www.google.com/chrome" target="_blank">https://www.google.com/chrome</a></p>
 </div>
-<div class="navbar navbar-fixed-top hidden navbar-inverse" id="topbar">
-  <div class="navbar-inner">
-    <div class="container-fluid">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand" href="#">肉大师</a>
-      <div class="nav-collapse">
-        <ul class="nav">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="icon-file-alt"></i> 文件 <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="#/new" id="new-button"><i class="icon-file"></i> 新建</a></li>
-              <li class="disabled"><a href="#/save" id="save-button"><i class="icon-download"></i> 保存</a></li>
-              <li><a href="#/popup/load" class="popup-button"><i class="icon-upload"></i> 读取</a></li>
-              <li class="divider"></li>
-              <li class="disabled"><a href="#/popup/book-config" class="popup-button"><i class="icon-list-alt"></i> 应用属性</a></li>
-              <li class="divider"></li>
-              <li class="disabled"><a href="#/popup/preview" class="popup-button"><i class="icon-eye-open"></i> 预览</a></li>
-              <li class="disabled"><a href="#/popup/export" class="popup-button"><i class="icon-download-alt"></i> 导出</a></li>
-              <li class="disabled"><a href="#/popup/publish" class="popup-button"><i class="icon-check"></i> 发布</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              显示 <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="#/popup/welcome" class="popup-button">欢迎窗体</a></li>
-              <li class="divider"></li>
-              <li><a href="#full-screen" id="full-screen-button">全屏</a></li>
-            </ul>
-          </li>
-          <li><a href="#/popup/user-config" class="popup-button"><i class="icon-cog icon-white"></i> 设置</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-question-sign"></i> 帮助 <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="//www.meathill.net/meatazine-tutorial" target="_blank">肉大师操作入门</a></li>
-              <li><a href="popup/whatsnew.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">版本变化</a></li>
-              <li class="divider"></li>
-              <li><a href="popup/donate.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">捐助肉大师</a></li>
-              <li><a href="https://github.com/Meatazine/Meatazine" target="_blank">获取源代码</a></li>
-              <li class="divider"></li>
-              <li><a href="popup/about.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">关于</a></li>
-            </ul>
-          </li>
-          <li class="divider-vertical"></li>
-          <li>
-            <a href="http://book.evereditor.com/" target="_blank"><i class="icon-white icon-picture"></i> 肉大师作品精选</a></li>
-        </ul>
-        <ul class="nav pull-right">
-          <li class="dropdown async">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源同步 <i class="icon-ok"></i></a>
-            <ul class="dropdown-menu">
-              <li class="disabled">
-                <a href="#">暂无同步内容</a>
-              </li>
-            </ul>
-          </li>
-          <li class="divider-vertical"></li>
-          <li class="welcome">欢迎您，</li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle login" data-toggle="dropdown">请登录 <b class="caret"></b></a>
-            <ul class="dropdown-menu login-menu">
-              <li class="login-type"><span id="qqLoginBtn"></span></li>
-              <li class="logout hide"><a href="#">注销</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
+<nav class="navbar navbar-fixed-top hidden navbar-inverse" role="navigation" id="topbar">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".topbar-navi">
+      <span class="sr-only">切换导航</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">肉大师</a>
   </div>
-</div>
+
+  <div class="collapse navbar-collapse topbar-navi" >
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <i class="icon-file-alt"></i> 文件 <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#/new" id="new-button"><i class="icon-file"></i> 新建</a></li>
+          <li class="disabled"><a href="#/save" id="save-button"><i class="icon-download"></i> 保存</a></li>
+          <li><a href="#/popup/load" class="popup-button"><i class="icon-upload"></i> 读取</a></li>
+          <li class="divider"></li>
+          <li class="disabled"><a href="#/popup/book-config" class="popup-button"><i class="icon-list-alt"></i> 应用属性</a></li>
+          <li class="divider"></li>
+          <li class="disabled"><a href="#/popup/preview" class="popup-button"><i class="icon-eye-open"></i> 预览</a></li>
+          <li class="disabled"><a href="#/popup/export" class="popup-button"><i class="icon-download-alt"></i> 导出</a></li>
+          <li class="disabled"><a href="#/popup/publish" class="popup-button"><i class="icon-check"></i> 发布</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          显示 <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#/popup/welcome" class="popup-button">欢迎窗体</a></li>
+          <li class="divider"></li>
+          <li><a href="#full-screen" id="full-screen-button">全屏</a></li>
+        </ul>
+      </li>
+      <li><a href="#/popup/user-config" class="popup-button"><i class="icon-cog icon-white"></i> 设置</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-question-sign"></i> 帮助 <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="//www.meathill.net/meatazine-tutorial" target="_blank">肉大师操作入门</a></li>
+          <li><a href="popup/whatsnew.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">版本变化</a></li>
+          <li class="divider"></li>
+          <li><a href="popup/donate.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">捐助肉大师</a></li>
+          <li><a href="https://github.com/Meatazine/Meatazine" target="_blank">获取源代码</a></li>
+          <li class="divider"></li>
+          <li><a href="popup/about.html" data-toggle="modal" data-target="#normal-popup" class="popup-button" data-confirm="关闭">关于</a></li>
+        </ul>
+      </li>
+      <li class="divider-vertical"></li>
+      <li>
+        <a href="http://book.evereditor.com/" target="_blank"><i class="icon-white icon-picture"></i> 肉大师作品精选</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown async">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源同步 <i class="icon-ok"></i></a>
+        <ul class="dropdown-menu">
+          <li class="disabled">
+            <a href="#">暂无同步内容</a>
+          </li>
+        </ul>
+      </li>
+      <li class="divider-vertical"></li>
+      <li class="welcome">欢迎您，</li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle login" data-toggle="dropdown">请登录 <b class="caret"></b></a>
+        <ul class="dropdown-menu login-menu">
+          <li class="login-type"><span id="qqLoginBtn"></span></li>
+          <li class="logout hide"><a href="#">注销</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
 <div class="alert hide" id="system-info">
   
 </div>
@@ -382,37 +391,32 @@
   </div>
 </div>
 <div id="modals">
-  <div class="modal fade hide" id="normal-popup">
-    <div class="modal-header">
-      <button class="close" data-dismiss="modal" type="button">&times;</button>
-      <h3>title</h3>
-    </div>
-    <div class="modal-body">
-    
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" type="submit" data-dismiss="modal">确定</button>
-      <button class="btn" type="button" data-dismiss="modal">取消</button>
+  <div class="modal fade" id="normal-popup" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">title</h4>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="submit" data-dismiss="modal">确定</button>
+          <button class="btn" type="button" data-dismiss="modal">取消</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 <!-- 最后加载css和js -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css">
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css">
-<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" href="css/animate.css" />
-<link rel="stylesheet" href="css/style.css" />
-<link rel="stylesheet" href="css/admin-general.css" />
-<link rel="stylesheet" href="css/admin-layout.css" />
-<link rel="stylesheet" href="css/admin-popup.css" />
-<link rel="stylesheet" href="css/admin-component.css" />
-<script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.0.min.js"></script>
-<script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.2/jquery-ui.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
 <!-- replace start -->
 <script src="libs/underscore-min.js"></script>
 <script src="libs/backbone-min.js"></script>
-<script src="libs/jquery.namespace.js"></script>
+<script src="libs/Nervenet.min.js"></script>
 <script src="libs/html2canvas.min.js"></script>
 <script src="libs/jszip.js"></script>
 <script src="libs/jszip-deflate.js"></script>

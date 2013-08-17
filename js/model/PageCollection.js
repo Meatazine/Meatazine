@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.model');
+Nervenet.createNameSpace('Meatazine.model');
 Meatazine.model.PageCollection = Backbone.Collection.extend({
   model: Meatazine.model.SinglePageModel,
   create: function (init) {

@@ -188,4 +188,4 @@
         },
       };
   ns.BookProperties = Backbone.Model.extend(init);
-}(jQuery.namespace('Meatazine.model')));
+}(Nervenet.createNameSpace('Meatazine.model')));

@@ -1,4 +1,4 @@
-jQuery.namespace('Meatazine.model');
+Nervenet.createNameSpace('Meatazine.model');
 Meatazine.model.SinglePageModel = Backbone.Model.extend({
   isModified: false,
   defaults: {
