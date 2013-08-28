@@ -1,22 +1,29 @@
 ;(function (ns) {
   'use strict';
+
   var infoTimeout = 0,
       info = '',
       cancelQueue = [];
+
   ns.GUI = {
+    $book: null,
+    $pages: null,
+    $config: null,
+    $user: null,
+    $context: null,
     contextButtons: null,
     navbar: null,
     page: null,
     VERSION: '0.1.7.@version@',
-    initialize: function (options) {
-      options.pages.on('add', this.pages_addHandler, this);
-      options.pages.on('remove', this.pages_removeHandler, this);
-      options.pages.on('reset', this.pages_resetHandler, this);
-      options.book.on('change:width change:height', this.book_resizeHandler, this);
-      this.navbar = new Meatazine.view.ui.NavBar({
+    postConstruct: function () {
+      this.$pages.on('add remove reset', this.pages_changeHandler, this);
+      this.$book.on('change:width change:height', this.book_resizeHandler, this);
+
+      this.navbar = this.$context.createInstance(Meatazine.view.ui.NavBar, {
         el: '#topbar',
-        model: options.book
+        model: this.$book
       });
+
       info = $('#system-info');
       this.removeLoading();
       $(document).on({
@@ -48,14 +55,13 @@
       $('#loading').remove();
       $('.system-error').remove();
       $('.hidden').removeClass('hidden');
-      $('#page-body').css('visibility', 'visible');
     },
     checkPagesLength: function (collection) {
       var noPage = collection.length === 0;
       if (noPage) {
         this.page.empty();
       }
-      this.navbar.setPublishButtonsStatus(noPage || !M.user.get('isLogin'));
+      this.navbar.setPublishButtonsStatus(noPage || !this.$user.get('isLogin'));
       this.contextButtons.setButtonsStatus(noPage);
       this.navbar.setBookButtonsStatus(noPage);
     },
@@ -107,20 +113,14 @@
       });
     },
     body_clickHandler: function (event) {
-      _.each(cancelQueue, function (cancel, i) {
+      _.each(cancelQueue, function (cancel) {
         cancel.handler.call(cancel.context, cancel.argus || event);
       });
     },
-    book_resizeHandler: function (model, value) {
+    book_resizeHandler: function (model) {
       $('#screen-size-info').html(model.get('width') + '&times;' + model.get('height'));
     },
-    pages_addHandler: function (model, collection, options) {
-      this.checkPagesLength(collection);
-    },
-    pages_removeHandler: function (model, collection, options) {
-      this.checkPagesLength(collection);
-    },
-    pages_resetHandler: function (collection) {
+    pages_changeHandler: function (model, collection) {
       this.checkPagesLength(collection);
     }
   };
