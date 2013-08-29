@@ -34,6 +34,7 @@
       }),
       
       manager = {
+        $context: null,
         $el: null,
         createMapInfoEditorPopup: function (init) {
           if (mapInfoEditor === null) {
@@ -44,7 +45,7 @@
           mapInfoEditor.reset(init);
           return mapInfoEditor;
         },
-        init: function (className, popupButton) {
+        postConstruct: function (className, popupButton) {
           this.$el = $(className); 
           $(document).on('click', popupButton, _.bind(this.PopupButton_clickHandler, this));
           this.$el.on({
@@ -59,17 +60,14 @@
           if (popup.length === 0) {
             popup = normal.clone(popupName);
             if (map.hasOwnProperty(popupName)) {
-              new map[popupName]({
-                el: popup
+              this.$context.createInstance(map[popupName], {
+                el: popup,
+                backdrop: backdrop,
+                keyboard: keyboard,
+                show: true
               });
             }
           }
-          
-          popup.modal({
-            backdrop: backdrop,
-            keyboard: keyboard,
-            show: true
-          });
         },
         modal_hiddenHandler: function (event) {
           Meatazine.guide.GuideManager.checkGuideConfig();

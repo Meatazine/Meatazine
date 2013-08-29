@@ -1,6 +1,7 @@
 ;(function (ns) {
   'use strict';
   ns.ScreenSizeSelector = ns.Base.extend({
+    $context: null,
     config: {
       title: '选择设备分辨率',
       hasConfirm: true,
@@ -13,8 +14,8 @@
       "click .device": "device_clickHandler",
       "click .btn-primary": "confirmHandler",
     },
-    initialize: function (options) {
-      this.model = M.book;
+    initialize: function () {
+      this.model = this.$context.getValue('book');
       this.model.on('change:width change:height', this.model_sizeChangeHandler, this);
       ns.Base.prototype.initialize.call(this);
     },

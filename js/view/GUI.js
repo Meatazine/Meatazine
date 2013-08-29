@@ -11,7 +11,7 @@
     $config: null,
     $user: null,
     $context: null,
-    contextButtons: null,
+    $toolbar: null,
     navbar: null,
     page: null,
     VERSION: '0.1.7.@version@',
@@ -62,8 +62,7 @@
         this.page.empty();
       }
       this.navbar.setPublishButtonsStatus(noPage || !this.$user.get('isLogin'));
-      this.contextButtons.setButtonsStatus(noPage);
-      this.navbar.setBookButtonsStatus(noPage);
+      this.$toolbar.setButtonsStatus(noPage);
     },
     displayBrowerError: function (id) {
       $('#error-' + id).removeClass('hide');

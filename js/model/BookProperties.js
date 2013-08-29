@@ -2,6 +2,7 @@
   var isModified = false,
       localFile = new Meatazine.filesystem.LocalFile(),
       init = {
+        $context: null,
         page: null,
         defaults: {
           width: 1024,
@@ -11,7 +12,7 @@
           icon: 'img/icon.png',
           cover: '',
           name: 'My Book',
-          gallery: -1,
+          gallery: -1
         },
         initialize: function (options) {
           this.pages = options.pages;
@@ -63,7 +64,7 @@
                 zip.addFile(src, null, url);
                 return attr + '="' + src + '"';
               });
-            },
+            }
           })
         },
         isModified: function () {
@@ -122,7 +123,7 @@
               success: function (data) {
                 self.trigger('publish:uploaded');
                 self.getAppPack();
-              },
+              }
             });
             self.trigger('publish:start')
           });
@@ -160,7 +161,7 @@
             bookid: this.get('id'),
             name: this.get('name'),
             data: content,
-            content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true),
+            content: Meatazine.utils.getRenderedHTML(this.attributes.pages, true)
           };
           Meatazine.service.ServerCall.call('save', param, function (data) {
             if (this.get('id') == 0) {
@@ -176,8 +177,9 @@
         setSize: function (w, h) {
           this.set({
             width: parseInt(w),
-            height: parseInt(h),
+            height: parseInt(h)
           });
+          this.$context.trigger('resize', w, h);
         },
         pages_changeHandler: function () {
           isModified = true;
@@ -185,7 +187,7 @@
         preview_saveCompleteHandler: function (url) {
           localFile.off('complete:save', null, this);
           this.trigger('preview:ready');
-        },
+        }
       };
   ns.BookProperties = Backbone.Model.extend(init);
 }(Nervenet.createNameSpace('Meatazine.model')));

@@ -3,6 +3,7 @@
     el: '.group1'
   });
   ns.PageBody = Backbone.View.extend({
+    $toolbar: null,
     items: [],
     events: {
       "click .editable": "editable_clickHandler",
@@ -10,9 +11,7 @@
       "dragstop .ui-draggable": "draggable_dragStopHandler"
     },
     initialize: function () {
-      this.options.book.on('change:width change:height', this.book_resizeHandler, this);
-      this.options.source.on('change:type', this.source_typeChangeHandler, this);
-      this.collection.on('select', this.collection_selectHandler, this);
+      this.collection.on('change:type', this.source_typeChangeHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
@@ -72,7 +71,7 @@
       this.$('.ui-draggable').draggable('destroy');
       this.$('.ui-resizable').resizable('destroy');
       this.$el.empty();
-      Meatazine.GUI.contextButtons.hide();
+      this.$toolbar.hide();
     },
     refreshThumbnail: function (isReset) {
       isReset = isReset || false;
@@ -118,11 +117,7 @@
       });
       this.model.set({template: template.html()}, {isModified: !isReset});
     },
-    book_resizeHandler: function (model) {
-      this.$el.width(model.get('width'));
-      this.$el.height(model.get('height'));
-    },
-    collection_selectHandler: function (model) {
+    setModel: function (model) {
       this.saveTemplate();
       this.model = model;
       var type = model.get('templateType');
@@ -135,6 +130,10 @@
         this.model.set('template', this.options.source.get(type));
       }
       this.render();
+    },
+    setSize: function (width, height) {
+      this.$el.width(model.get('width'));
+      this.$el.height(model.get('height'));
     },
     draggable_dragStopHandler: function (event) {
       this.refreshThumbnail();

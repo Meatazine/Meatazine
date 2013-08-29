@@ -27,20 +27,25 @@
     model: sources,
     collection: pages
   }));
-  context.mapValue('buttons', context.createInstance(Meatazine.view.ui.ContextButtons, {
+  context.mapValue('toolbar', context.createInstance(Meatazine.view.ui.ContextButtons, {
     el: '#toolbar'
   }));
   context.mapValue('editor', context.createInstance(Meatazine.view.ui.PageBody, {
-    collection: pages,
     el: '#page-body',
-    book: book,
-    source: sources
+    collection: sources
   }));
 
-  context.inject(Meatazine.GUI);
-  
-  // 处理各种Manager
-  Meatazine.popup.PopupManager.init('.modal', '.popup-button');
+  context
+    .inject(Meatazine.GUI)
+    .inject(Meatazine.popup.PopupManager, '.modal', '.popup-button');
+
+  // events
+  context.mapEvent('resize', function (width, height) {
+    page.setSize(width, height);
+  });
+  context.mapEvent('select', function (model) {
+    page.setModel(model);
+  });
   
   // 检查登录状态
   user.checkLoginStatus();

@@ -23,14 +23,18 @@
       this.collection.on('redraw', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
-      this.collection.on('select', this.collection_selectHandler, this);
-      
+
+      this.template = this.$('script').html();
+      this.$('script').remove();
       removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
       addButton = this.$('.add-button');
     },
     createItem: function (model) {
       var height = this.model.get('height') / this.model.get('width') * itemWidth,
-          li = $('<li><canvas width="' + itemWidth + '" height="' + height + '" /></li>');
+          li = $(Mustache.render(this.template, {
+            width: itemWidth,
+            height: height
+          }));
       li
         .data('model', model)
         .disableSelection()
@@ -55,7 +59,7 @@
     },
     collection_addHandler: function (model, collection) {
       this.createItem(model);
-      collection.trigger('select', model);
+      this.$context.trigger('select', model);
     },
     collection_redrawHandler: function (model, thumb) {
       var index = this.collection.indexOf(model),
