@@ -37,7 +37,7 @@
         <file name="model/element/ElementCollection.js" />
         <file name="model/SinglePageModel.js" />
         <file name="model/PageCollection.js" />
-        <file name="model/SourceModel.js" />
+        <file name="model/TemplateModel.js" />
         <file name="model/SavedBooksCollection.js" />
         <file name="model/UserModel.js" />
         <file name="service/ServerCall.js" />

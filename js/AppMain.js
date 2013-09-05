@@ -8,12 +8,13 @@
       book = context.createInstance(Meatazine.model.BookProperties, {
         pages: pages
       }),
-      sources = context.createInstance(Meatazine.model.SourceModel);
-  context.mapValue('config', config);
-  context.mapValue('pages', pages);
-  context.mapValue('user', user);
-  context.mapValue('book', book);
-  context.mapValue('sources', sources);
+      templates = context.createInstance(Meatazine.model.TemplateModel);
+  context
+    .mapValue('config', config)
+    .mapValue('pages', pages)
+    .mapValue('user', user)
+    .mapValue('book', book)
+    .mapValue('templates', templates);
 
   // views
   context.mapValue('list', context.createInstance(Meatazine.view.ui.PageList, {
@@ -24,16 +25,16 @@
   context.mapValue('source', context.createInstance(Meatazine.view.ui.SourcePanel, {
     el: '#panel',
     book: book,
-    model: sources,
+    model: templates,
     collection: pages
   }));
   context.mapValue('toolbar', context.createInstance(Meatazine.view.ui.ContextButtons, {
     el: '#toolbar'
   }));
-  context.mapValue('editor', context.createInstance(Meatazine.view.ui.PageBody, {
-    el: '#page-body',
-    collection: sources
-  }));
+  var editor = context.createInstance(Meatazine.view.ui.PageBody, {
+    el: '#page-body'
+  });
+  context.mapValue('editor', editor);
 
   context
     .inject(Meatazine.GUI)
@@ -41,10 +42,10 @@
 
   // events
   context.mapEvent('resize', function (width, height) {
-    page.setSize(width, height);
+    editor.setSize(width, height);
   });
   context.mapEvent('select', function (model) {
-    page.setModel(model);
+    editor.setModel(model);
   });
   
   // 检查登录状态

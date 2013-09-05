@@ -4,6 +4,7 @@
   });
   ns.PageBody = Backbone.View.extend({
     $toolbar: null,
+    $templates: null,
     items: [],
     events: {
       "click .editable": "editable_clickHandler",
@@ -11,8 +12,10 @@
       "dragstop .ui-draggable": "draggable_dragStopHandler"
     },
     initialize: function () {
-      this.collection.on('change:type', this.source_typeChangeHandler, this);
       textEditor.on('change', this.textEditor_changeHandler, this);
+    },
+    postConstruct: function () {
+      this.$templates.on('complete', this.template_loadCompleteHandler, this);
     },
     render: function () {
       this.trigger('render:start');
@@ -119,21 +122,25 @@
     },
     setModel: function (model) {
       this.saveTemplate();
+      if (this.model) {
+        this.model.off(null, null, this);
+      }
       this.model = model;
-      var type = model.get('templateType');
+      model.on('change:templateType', this.model_templateChangeHandler, this);
       if (model.get('template') === '') {
-        if (!this.options.source.has(type)) {
-          this.options.source.fetch(model.get('templateType'));
+        var type = model.get('templateType');
+        if (!this.$templates.has(type)) {
+          this.$templates.fetch(model.get('templateType'));
           return;
         }
 
-        this.model.set('template', this.options.source.get(type));
+        this.model.set('template', this.$templates.get(type));
       }
       this.render();
     },
     setSize: function (width, height) {
-      this.$el.width(model.get('width'));
-      this.$el.height(model.get('height'));
+      this.$el.width(width);
+      this.$el.height(height);
     },
     draggable_dragStopHandler: function (event) {
       this.refreshThumbnail();
@@ -149,20 +156,22 @@
       this.refreshThumbnail();
       _gaq.push(['_trackEvent', 'text', 'resize']);
     },
-    source_typeChangeHandler: function (model) {
-      if (this.model.get('template') && this.model.get('templateType') == model.get('type')) {
-        return;
+    model_templateChangeHandler: function (model, value) {
+      if (this.$templates.has(value)) {
+        this.model.set('template', this.$templates.get(value));
+        this.render();
+      } else {
+        this.$templates.fetch(value);
       }
-      this.model.clear();
-      this.model.set({
-        contents: [],
-        templateType: model.get('type'),
-        template: model.get(model.get('type')),
-      }, {isModified: false});
-      this.render();
+    },
+    template_loadCompleteHandler: function (type, template) {
+      if (this.model.get('templateType') === type && this.model.get('template') === '') {
+        this.model.set('template', template);
+        this.render();
+      }
     },
     textEditor_changeHandler: function () {
       this.refreshThumbnail();
-    },
+    }
   });
 })(Nervenet.createNameSpace('Meatazine.view.ui'));

@@ -7,6 +7,7 @@
       list = null,
       emptyItems  = [];
   ns.PageList = Backbone.View.extend({
+    $context: null,
     events: {
       "click .add-button": "addButton_clickHandler",
       "click li": "item_clickHandler",
@@ -57,7 +58,7 @@
     book_resizeHandler: function (model) {
       this.$('canvas').height(itemWidth * model.get('height') / model.get('width'));
     },
-    collection_addHandler: function (model, collection) {
+    collection_addHandler: function (model) {
       this.createItem(model);
       this.$context.trigger('select', model);
     },
