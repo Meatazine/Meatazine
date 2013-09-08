@@ -5,6 +5,7 @@
    * 设计系统的操作广播事件给GUI处理
    */
   ns.NavBar = Backbone.View.extend({
+    $user: null,
     events: {
       "click .disabled": "disabledButton_clickHandler",
       "click .logout": "logout_clickHandler",
@@ -63,7 +64,7 @@
     logout_clickHandler: function (event) {
       QC.Login.signOut();
       this.resetLogin();
-      M.user.initLogin();
+      this.$user.initLogin();
     },
     newButton_clickHandler: function () {
       if ($(event.currentTarget).parent().hasClass('disabled')) {

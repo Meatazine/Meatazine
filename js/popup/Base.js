@@ -9,16 +9,15 @@
       cancelLabel: '',
       specButton: '',
       specButtonLabel: '',
-      innerURL: ''
+      remote: ''
     },
     initialize: function (options) {
-      this.render();
+      this.render(options);
+      this.$el.modal(options);
     },
-    render: function () {
-      this.$('h3').text(this.config.title);
-      if (this.config.innerURL) {
-        this.$('.modal-body').load(this.config.innerURL, _.bind(this.innerLoadHandler, this));
-      }
+    render: function (options) {
+      this.$('h4').text(this.config.title);
+      _.extend(options, this.config);
       var confirm = this.$('.modal-footer [type=submit]');
       if (this.config.hasConfirm) {
         confirm.text(this.config.confirmLabel);
@@ -34,9 +33,6 @@
       if (this.config.specButton) {
         this.$('.modal-footer').prepend('<button class="btn ' + this.config.specButton + '">' + this.config.specButtonLabel + '</button>');
       }
-    },
-    innerLoadHandler: function () {
-    
     }
   });
 }(Nervenet.createNameSpace('Meatazine.popup')));

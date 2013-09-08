@@ -1,12 +1,9 @@
 (function (ns) {
   var currentEditor = null,
-      imageEditor = new Meatazine.view.ui.editor.ImageEditor({
-        el: '.group2'
-      }),
-      mapEditor = new Meatazine.view.ui.editor.MapEditor({
-        el: '.group5'
-      }),
   init = {
+    $book: null,
+    $imageEditor: null,
+    $mapEditor: null,
     tagName: '',
     token: null,
     events: function () {
@@ -17,7 +14,7 @@
         "dragleave img": "img_dragLeaveHandler",
         "mouseover img": "img_mouseoverHandler",
         "mouseout img": "img_mouseoutHandler",
-        "click [data-toggle]": "toggle_clickHandler",
+        "click [data-toggle]": "toggle_clickHandler"
       };
       obj['click ' + this.tagName] = "item_clickHandler";
       return obj;
@@ -33,16 +30,16 @@
       this.collection.on('change', this.collection_changeHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
+    },
+    postConstruct: function () {
       this.render();
     },
     render: function () {
-      var self = this,
-          i = 0;
       this.$el.empty();
       _.each(this.collection.models, function (model, i) {
         this.createItem(model, !this.collection.isModelChanged(model));
       }, this);
-      for (i = this.model.get('number') - this.collection.length; i > 0; i--) {
+      for (var i = this.model.get('number') - this.collection.length; i > 0; i--) {
         this.createItem(this.collection.create(), true);
       }
       this.handleChildrenState();
@@ -51,8 +48,8 @@
       if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor && currentEditor.isEditing) {
         currentEditor.buttons.find('[data-type=edit]').click();
       }
-      imageEditor.off(null, null, this);
-      mapEditor.off(null, null, this);
+      this.$imageEditor.off(null, null, this);
+      this.$mapEditor.off(null, null, this);
       this.collection.off(null, null, this);
       this.off();
       this.undelegateEvents();
@@ -61,12 +58,13 @@
     createItem: function (model, isToken) {
       var item = $(Meatazine.utils.render(this.template, model)),
           isImage = /img|audio|video/i.test(this.tagName),
-          image = item.filter('img').add('img', item);
+          image = item.filter('img').add('img', item),
+          bookid = this.$book.get('id');
       // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
         item.appendTo(this.$el);
         item = isImage ? this.$el : item;
-        mapEditor.createMap(item, model);
+        this.$mapEditor.createMap(item, model);
         return;
       }
       if (isToken) {
@@ -78,7 +76,7 @@
         _.each (model.get('markers'), function (val, key) {
           var imgItem = item.filter('img').add('img', item),
               container = isImage ? this.$el : imgItem.parent();
-          imageEditor.createImgMarker(container, val, key);
+          this.$imageEditor.createImgMarker(container, val, key);
         }, this);
       }
       if (this.$('.ui-resizable-handle').length) {
@@ -90,7 +88,7 @@
       image.one('error', function (event) {
         if (this.src.indexOf('filesystem') !== -1) {
           var fileName = this.src.substr(this.src.lastIndexOf('/') + 1);
-          model.set('img', '/export/' + M.book.get('id') + '/' + fileName);
+          model.set('img', '/export/' + bookid + '/' + fileName);
         }
       });
       return item;
@@ -105,22 +103,22 @@
         currentEditor.setElement(null);
       }
       var image = item.filter('img').add('img', item);
-      imageEditor.off();
-      imageEditor.on('upload:one', this.editor_uploadImagesHandler, this);
-      imageEditor.on('upload:all', this.editor_uploadCompleteHandler, this);
-      imageEditor.on('convert:map', this.editor_convertMapHandler, this);
-      imageEditor.model = item.data('model');
-      imageEditor.setTarget(image);
-      currentEditor = imageEditor;
+      this.$imageEditor.off();
+      this.$imageEditor.on('upload:one', this.editor_uploadImagesHandler, this);
+      this.$imageEditor.on('upload:all', this.editor_uploadCompleteHandler, this);
+      this.$imageEditor.on('convert:map', this.editor_convertMapHandler, this);
+      this.$imageEditor.model = item.data('model');
+      this.$imageEditor.setTarget(image);
+      currentEditor = this.$imageEditor;
     },
     registerMapEditor: function (map) {
       if (currentEditor instanceof Meatazine.view.ui.editor.AbstractEditor) {
         currentEditor.setElement(null);
       }
-      mapEditor.off();
-      mapEditor.on('convert:image', this.editor_convertImageHandler, this);
-      mapEditor.setTarget(map);
-      currentEditor = mapEditor;
+      this.$mapEditor.off();
+      this.$mapEditor.on('convert:image', this.editor_convertImageHandler, this);
+      this.$mapEditor.setTarget(map);
+      currentEditor = this.$mapEditor;
     },
     renderImageItem: function (url, scale) {
       var item,
@@ -130,14 +128,14 @@
         index = this.token.eq(0).index();
         this.collection.at(index).set({
           img: url,
-          scale: scale,
+          scale: scale
         });
         this.token = this.token.slice(1);
         item = this.$el.children(this.tagName).eq(index);
       } else {
         model = this.collection.create({
           img: url,
-          scale: scale,
+          scale: scale
         });
         item = $(this.createItem(model));
       }
@@ -145,8 +143,8 @@
     },
     collection_changeHandler: function (model) {
       var index = this.collection.indexOf(model),
-          item = this.$el.children(this.tagName).eq(index);
-      newItem = this.createItem(model);
+          item = this.$el.children(this.tagName).eq(index),
+          newItem = this.createItem(model);
       item.replaceWith(newItem);
       this.trigger('change');
     },
@@ -204,7 +202,7 @@
       }
       this.collection.replaceAt(model, index);
       container = isImage ? this.$el : item.parent(); 
-      map = mapEditor.createMap(container, model);
+      map = this.$mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'convert', 'image-map']);
     },
@@ -221,7 +219,7 @@
       this.renderImageItem(url, scale);
     },
     img_dropHandler: function (event) {
-      imageEditor.uploadFiles(event.originalEvent.dataTransfer.files, event.target);
+      this.$imageEditor.uploadFiles(event.originalEvent.dataTransfer.files, event.target);
     },
     img_dragOverHandler: function (event) {
       if (event.preventDefault) {
@@ -292,7 +290,7 @@
             .animate(origin)
             .off('click', arguments.callee);
         });
-    },
+    }
   }
   ns.BaseElement = Backbone.View.extend(init);
 }(Nervenet.createNameSpace('Meatazine.view.element')));

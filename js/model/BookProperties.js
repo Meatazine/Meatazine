@@ -3,6 +3,8 @@
       localFile = new Meatazine.filesystem.LocalFile(),
       init = {
         $context: null,
+        $user: null,
+
         page: null,
         defaults: {
           width: 1024,
@@ -36,12 +38,12 @@
             return;
           }
           this.save('bookauto');
-          M.user.set('hasAutosave', true);
+          this.$user.set('hasAutosave', true);
         },
         createZip: function () {
           var self = this,
               data = _.pick(this.attributes, 'width', 'height'),
-              zip = new Meatazine.filesystem.Zip();
+              zip = new Meatazine.filesystem.Zip(),
               htmls = Meatazine.utils.getRenderedHTML(this.attributes.pages);
           data.content = htmls.join('###');
           data.pages = htmls.slice(0, 5).join('\n');
@@ -141,10 +143,10 @@
         
           isModified = false;
           // 保存到本地
-          if (!M.user.get('isLogin')) {
+          if (!this.$user.get('isLogin')) {
             if (this.get('id') == 0) {
-              this.set('id', M.user.getNextLocalIndex());
-              M.user.createItem('local');
+              this.set('id', this.$user.getNextLocalIndex());
+              this.$user.createItem('local');
             }
             key = 'book' + this.get('id');
             localStorage.setItem(key, content);
@@ -169,7 +171,7 @@
               key = 'remote' + this.get('id');
               localStorage.setItem(key, content);
 
-              M.user.createItem('remote');
+              this.$user.createItem('remote');
               Meatazine.service.AssetsSyncService.start();
             }
           }, null, this);

@@ -46,6 +46,15 @@
       });
       return li;
     },
+    markCurrentPage: function (page) {
+      if (currentItem !== null && currentItem.index() !== page) {
+        currentItem.removeClass('active');
+      }
+      currentItem = list.children().eq(page);
+      currentItem.addClass('active');
+      this.refreshPageNumber();
+      _gaq.push(['_trackEvent', 'page', 'select']);
+    },
     refreshPageNumber: function () {
       var index = currentItem.index() + 1,
           total = this.collection.length;
@@ -60,6 +69,7 @@
     },
     collection_addHandler: function (model) {
       this.createItem(model);
+      this.markCurrentPage(this.collection.length - 1);
       this.$context.trigger('select', model);
     },
     collection_redrawHandler: function (model, thumb) {
@@ -84,7 +94,7 @@
       this.refreshPageNumber();
       _gaq.push(['_trackEvent', 'page', 'delete']);
     },
-    collection_resetHandler: function (collection, options) {
+    collection_resetHandler: function () {
       this.$('li').remove();
       this.collection.each(function (model, i) {
         emptyItems.push(this.createItem(model));
@@ -94,22 +104,12 @@
         this.collection.trigger('select', this.collection.at(0));
       }
     },
-    collection_selectHandler: function (model) {
-      if (currentItem !== null) {
-        currentItem.removeClass('active');
-      }
-      var target = list.children().eq(this.collection.indexOf(model));
-      currentItem = $(target);
-      currentItem.addClass('active');
-      this.refreshPageNumber();
-      _gaq.push(['_trackEvent', 'page', 'select']);
-    },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget);
       if (target.hasClass('active')) {
         return;
       }
-      this.collection.trigger('select', target.data('model'));
+      this.$context.trigger('select', target.data('model'));
       _gaq.push(['_trackEvent', 'page', 'select']);
     },
     item_mouseOutHandler: function (event) {

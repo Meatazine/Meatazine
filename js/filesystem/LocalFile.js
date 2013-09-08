@@ -375,7 +375,7 @@
       type = {
         blob : 1,
         base64: 2,
-        text: 0,
+        text: 0
       };
   ns.LocalFile = function () {
     
@@ -385,6 +385,7 @@
   
   
   // 取FileSystem引用
+  window.TEMPORARY = window.TEMPORARY || 0;
   window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
   window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
   window.requestFileSystem(TEMPORARY, 1024 * 1024 * 1024, fileSystemReadyHandler, errorHandler)

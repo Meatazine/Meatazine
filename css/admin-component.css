@@ -238,7 +238,7 @@
   height:768px;
   background:#FFF;
   box-shadow:0px 1px 4px rgba(0, 0, 0, .2);
-  border-radius: 5px;
+  visibility: visible;
 }
 #page-body.editing * {
   opacity: 0.4;

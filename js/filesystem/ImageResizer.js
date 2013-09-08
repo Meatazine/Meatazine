@@ -25,7 +25,7 @@
         handleImage: function (url) {
           var filename = this.makeFileName(),
               image = new Image(),
-              canvas = $('<canvas>')[0],
+              canvas = document.createElement('canvas'),
               context = canvas.getContext('2d'),
               size = this.size;
           image.onload = function () {

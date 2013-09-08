@@ -1,9 +1,11 @@
-Nervenet.createNameSpace('Meatazine.service');
-(function (ns) {
+;(function (ns) {
   var queue = [],
       news = [],
       isUploading = false;
   ns.AssetsSyncService = _.extend({
+    $user: null,
+    $book: null,
+
     add: function (asset, autoStart) {
       if (_.contains(queue, asset)){
         return;
@@ -13,7 +15,7 @@ Nervenet.createNameSpace('Meatazine.service');
         news.push(asset);
       }
       // 没登录的话中止上传
-      if (!M.user.get('isLogin') || M.book.get('id') == 0) {
+      if (!this.$user.get('isLogin') || this.$book.get('id') == 0) {
         return;
       }
       autoStart = autoStart === null ? true : autoStart;
@@ -24,9 +26,9 @@ Nervenet.createNameSpace('Meatazine.service');
     },
     checkAssets: function () {
       var data = {
-        openid: M.user.get('openid'),
-        bookid: M.book.get('id'),
-        assets: JSON.stringify(news),
+        openid: this.$user.get('openid'),
+        bookid: this.$book.get('id'),
+        assets: JSON.stringify(news)
       };
       ns.ServerCall.call('assets_pre_check', data, this.checkSuccessHandler, null, this);
     },
@@ -83,6 +85,6 @@ Nervenet.createNameSpace('Meatazine.service');
     uploadSuccessHandler: function (data) {
       this.trigger('complete:one', this);
       this.next();
-    },
+    }
   }, Backbone.Events);
-})(Meatazine.service);
+}(Nervenet.createNameSpace('Meatazine.service')));

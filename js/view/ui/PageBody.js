@@ -1,10 +1,8 @@
 (function (ns) {
-  var textEditor = new ns.editor.TextEditor({
-    el: '.group1'
-  });
   ns.PageBody = Backbone.View.extend({
     $toolbar: null,
     $templates: null,
+    $textEditor: null,
     items: [],
     events: {
       "click .editable": "editable_clickHandler",
@@ -12,10 +10,10 @@
       "dragstop .ui-draggable": "draggable_dragStopHandler"
     },
     initialize: function () {
-      textEditor.on('change', this.textEditor_changeHandler, this);
     },
     postConstruct: function () {
       this.$templates.on('complete', this.template_loadCompleteHandler, this);
+      this.$textEditor.on('change', this.textEditor_changeHandler, this);
     },
     render: function () {
       this.trigger('render:start');
@@ -147,7 +145,7 @@
       _gaq.push(['_trackEvent', 'text', 'drag']);
     },
     editable_clickHandler: function (event) {
-      textEditor.setTarget(event.currentTarget);
+      this.$textEditor.setTarget(event.currentTarget);
     },
     element_changeHandler: function () {
       this.refreshThumbnail();

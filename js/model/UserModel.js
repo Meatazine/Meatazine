@@ -1,5 +1,6 @@
 ;(function (ns) {
   ns.UserModel = Backbone.Model.extend({
+    $book: null,
     local: null,
     remote: null,
     defaults: {
@@ -29,8 +30,7 @@
       this.set('isLogin', isWeiboLogin);
     },
     checkQQLoginStatus: function () {
-      var self = this,
-        isQQLogin = QC.Login.check();
+      var isQQLogin = QC.Login.check();
       if (!isQQLogin) {
         this.initQQLogin();
       }
@@ -40,7 +40,7 @@
       return false;
     },
     createItem: function (type) {
-      var item = M.book.pick('id', 'title', 'icon');
+      var item = this.$book.pick('id', 'title', 'icon');
       item.datetime = Meatazine.utils.getDatetime();
       this[type].create(item);
     },

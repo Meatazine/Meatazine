@@ -1,26 +1,22 @@
 ;(function (ns) {
   'use strict';
   ns.ScreenSizeSelector = ns.Base.extend({
-    $context: null,
+    $book: null,
     config: {
       title: '选择设备分辨率',
       hasConfirm: true,
       confirmLabel: '确定',
       hasCancel: true,
       cancelLabel: '取消',
-      innerURL: 'popup/screenSize.html'
+      remote: 'popup/screenSize.html'
     },
     events: {
       "click .device": "device_clickHandler",
-      "click .btn-primary": "confirmHandler",
+      "click .btn-primary": "confirmHandler"
     },
-    initialize: function () {
-      this.model = this.$context.getValue('book');
+    postConstruct: function  () {
+      this.model = this.$book;
       this.model.on('change:width change:height', this.model_sizeChangeHandler, this);
-      ns.Base.prototype.initialize.call(this);
-    },
-    render: function () {
-      ns.Base.prototype.render.call(this);
     },
     confirmHandler: function (event) {
       this.model.setSize($('#device-width').val(), $('#device-height').val());

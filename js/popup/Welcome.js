@@ -1,6 +1,6 @@
 ;(function (ns) {
   ns.Welcome = ns.Base.extend({
-    version: 0.2,
+    $config: null,
     config: {
       title: '肉大师这厢有礼了',
       hasConfirm: true,
@@ -13,9 +13,8 @@
       'shown': 'shownHandler',
       "click .guide-button": "useGuideButton_clickHandler"
     },
-    initialize: function () {
-      ns.Base.prototype.initialize.call(this);
-      this.model = M.config;
+    postConstruct: function () {
+      this.model = this.$config;
       this.checkModified();
       this.checkGuideConfig();
     },
@@ -47,6 +46,6 @@
     },
     shownHandler: function () {
       this.model.set('lastWelcomeVision', this.version);
-    },
+    }
   });
 }(Nervenet.createNameSpace('Meatazine.popup')));

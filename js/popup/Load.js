@@ -1,6 +1,8 @@
 (function (ns) {
   'use strict';
   ns.Load = ns.Base.extend({
+    $book: null,
+    $user: null,
     config: {
       title: '读取保存的杂志',
       hasConfirm: true,
@@ -18,11 +20,14 @@
       "click .autosave": "loadAutosaveButton_clickHandler",
       "click .disabled": "disabled_clickHandler",
     },
-    initialize: function () {
-      ns.Base.prototype.initialize.call(this);
-      this.model = M.user;
-      this.collection = M.user.local;
-      this.registerModelListener();
+    postConstruct: function () {
+      var local = this.$user.local,
+          remote = this.$user.remote;
+      local.on('add', this.local_addHandler, this);
+      local.on('change', this.local_changeHandler, this);
+      remote.on('add', this.remote_addHandler, this);
+      remote.on('change', this.remote_changeHandler, this);
+      remote.on('reset', this.remote_resetHandler, this);
     },
     render: function () {
       ns.Base.prototype.render.call(this);
@@ -31,15 +36,6 @@
     disabled_clickHandler: function (event) {
       event.stopPropagation();
       return false;
-    },
-    registerModelListener: function () {
-      var local = this.model.local,
-          remote = this.model.remote;
-      local.on('add', this.local_addHandler, this);
-      local.on('change', this.local_changeHandler, this);
-      remote.on('add', this.remote_addHandler, this);
-      remote.on('change', this.remote_changeHandler, this);
-      remote.on('reset', this.remote_resetHandler, this);
     },
     item_clickHandler: function (event) {
       var target = $(event.currentTarget);
@@ -51,7 +47,7 @@
       this.$('[type=submit]').prop('disabled', false);
     },
     loadAutosaveButton_clickHandler: function () {
-      M.book.load('bookauto');
+      this.$book.load('bookauto');
       this.$el.modal('hide');
     },
     loadButton_clickHandler: function (event) {
@@ -65,7 +61,7 @@
             };
         Meatazine.service.ServerCall.call('load', data, function (content) {
           localStorage.setItem(key, content);
-          M.book.load(key, id);
+          this.$book.load(key, id);
           this.$el.modal('hide');
         }, null, this);
         return;
@@ -74,7 +70,7 @@
       // 加载本地保存的杂志
       var id = this.$('#books-local .active').attr('data-item'),
           key = 'book' + id;
-      M.book.load(key, id);
+      this.$book.load(key, id);
       this.$el.modal('hide');
     },
     local_addHandler: function (model, collection) {

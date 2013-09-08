@@ -1,6 +1,7 @@
 (function (ns) {
   'use strict';
   ns.Router = Backbone.Router.extend({
+    $book: null,
     routes: {
       'book/:book': 'loadBook',
       'book/:book/page/:page': 'showPage'
@@ -13,7 +14,7 @@
     },
     showPage: function (book, page) {
       page = Number(page);
-      if (page + 1 > M.book.pages.length) {
+      if (page + 1 > this.$book.pages.length) {
         return;
       }
       Meatazine.GUI.page.displayPage(page);

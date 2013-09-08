@@ -2,6 +2,8 @@
   'use strict';
   var timeout = 0;
   ns.UserConfig = ns.Base.extend({
+    $book: null,
+    $config: null,
     config: {
       title: '设置',
       hasConfirm: true,
@@ -14,10 +16,8 @@
       "mouseover .switch-button": "switchButton_mouseoverHandler",
       "mouseout .switch-button": "switchButton_mouseoutHandler"
     },
-    initialize: function () {
-      ns.Base.prototype.initialize.call(this);
-      this.book = M.book;
-      this.model = M.config;
+    postConstruct: function () {
+      this.model = this.$config;
     },
     checkConfig: function () {
       this.checkAutoSave();
@@ -44,7 +44,7 @@
       this.initBeforeUnload(isAlert);
     },
     saveOnTime: function () {
-      var bookModel = this.options.book;
+      var bookModel = this.$book;
       this.$('#auto-save-button')
         .addClass('active')
         .val("已启用");

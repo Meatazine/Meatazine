@@ -88,12 +88,13 @@
       this.trigger('click', event);
     },
     mousedownHandler: function (event) {
-      var currentX = self.model.get('x'),
-        currentY = self.model.get('y'),
-        startX = event.pageX,
-        startY = event.pageY,
-        offsetX = 0,
-        offsetY = 0;
+      var currentX = this.model.get('x'),
+          currentY = this.model.get('y'),
+          startX = event.pageX,
+          startY = event.pageY,
+          offsetX = 0,
+          offsetY = 0,
+          self = this;
       $(this).on('mousemove', function (event) {
         offsetX = event.pageX - startX;
         offsetY = event.pageY - startY;
@@ -112,6 +113,7 @@
     }
   });
   ns.ImageEditor = ns.AbstractEditor.extend({
+    $toolbar: null,
     events: _.extend(ns.AbstractEditor.prototype.events, {
       'change .scale input': 'scale_changeHandler',
       'change .uploader': 'uploader_selectHandler',
@@ -209,7 +211,7 @@
       this.drawImage();
     },
     setTarget: function (value) {
-      Meatazine.GUI.contextButtons.showButtons(this.$el);
+      this.$toolbar.showButtons(this.$el);
       if (this.target != null && this.target.is(value)) {
         return;
       }
@@ -241,8 +243,8 @@
     },
     uploadFiles: function (files, target) {
       imageResizer.addFiles(files, {
-        width: target.width,
-        height: target.height
+        width: target.$el.width(),
+        height: target.$el.height()
       });
     },
     addMarkerButton_clickHandler: function (event) {
