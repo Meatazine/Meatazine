@@ -23,10 +23,10 @@
             <p align="center"><img src="img/ipad.jpg" /></p>
             <p align="center">其他设备<br /> 自定义分辨率</p>
           </div>
-          <form class="form-inline mt10 hide">
-            <input type="number" id="device-width" value="1024" />
+          <form class="form-inline mt10" id="screen-size-form">
+            <input type="number" name="width" value="1024" />
             &times;
-            <input type="number" id="device-height" value="768" />
+            <input type="number" name="height" value="768" />
           </form>
         </div>
       </div>
@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" type="submit" data-dismiss="modal">确定</button>
+      <button class="btn btn-primary" type="submit" form="screen-size-form">确定</button>
       <button class="btn" type="button" data-dismiss="modal">取消</button>
     </div>
   </div>

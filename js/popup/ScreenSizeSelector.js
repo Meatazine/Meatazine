@@ -5,18 +5,11 @@
     inner: 'popup/screenSize.html',
     events: {
       "click .device": "device_clickHandler",
-      "click .btn-primary": "confirmHandler"
+      "submit form": "form_submitHandler"
     },
     postConstruct: function  () {
       this.model = this.$book;
       this.model.on('change:width change:height', this.model_sizeChangeHandler, this);
-    },
-    confirmHandler: function (event) {
-      this.model.setSize($('#device-width').val(), $('#device-height').val());
-      this.$el.modal('hide');
-      if (event !== null) {
-        _gaq.push(['_trackEvent', 'popup', 'screen-size', this.model.get('width') + '-' + this.model.get('height')]);
-      }
     },
     device_clickHandler: function (event) {
       var target = this.$(event.currentTarget);
@@ -28,6 +21,14 @@
         this.$('#device-width').val(target.attr('data-width'));
         this.$('#device-height').val(target.attr('data-height'));
         this.$('form').slideUp();
+      }
+    },
+    form_submitHandler: function (event) {
+      var form = event.currentTarget;
+      this.model.setSize(form.elements.width.value, form.elements.height.value);
+      this.hide();
+      if (event !== null) {
+        _gaq.push(['_trackEvent', 'popup', 'screen-size', this.model.get('width') + '-' + this.model.get('height')]);
       }
     },
     model_sizeChangeHandler: function (model) {
