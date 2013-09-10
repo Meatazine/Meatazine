@@ -1,28 +1,42 @@
-<div class="row-fluid">
-  <div class="span4">
-    <div class="device ipad" data-width="1024" data-height="768" data-device="iPad, iPad 2, The New iPad">
-      <p align="center"><img src="img/ipad.jpg" alt="iPad" /></p>
-      <p align="center">iPad<br /> 1024&times;768</p>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">分辨率设置</h4>
     </div>
-  </div>
-  <div class="span4">
-    <div class="device kindle-fire" data-width="1024" data-height="600" data-device="Kindle Fire">
-      <p align="center"><img src="img/kindle.jpg" align="Kindle Fire" /></p>
-      <p align="center">Kindle Fire<br /> 1024&times;600</p>
+    <div class="modal-body">
+      <div class="row-fluid">
+        <div class="span4">
+          <div class="device ipad" data-width="1024" data-height="768" data-device="iPad, iPad 2, The New iPad">
+            <p align="center"><img src="img/ipad.jpg" alt="iPad" /></p>
+            <p align="center">iPad<br /> 1024&times;768</p>
+          </div>
+        </div>
+        <div class="span4">
+          <div class="device kindle-fire" data-width="1024" data-height="600" data-device="Kindle Fire">
+            <p align="center"><img src="img/kindle.jpg" align="Kindle Fire" /></p>
+            <p align="center">Kindle Fire<br /> 1024&times;600</p>
+          </div>
+        </div>
+        <div class="span4">
+          <div class="device other" data-device="其它设备">
+            <p align="center"><img src="img/ipad.jpg" /></p>
+            <p align="center">其他设备<br /> 自定义分辨率</p>
+          </div>
+          <form class="form-inline mt10 hide">
+            <input type="number" id="device-width" value="1024" />
+            &times;
+            <input type="number" id="device-height" value="768" />
+          </form>
+        </div>
+      </div>
+      <div class="alert alert-info mt20">
+        设置分辨率请以宽高比为主，不同解析度，比如普通iPad和Retina iPad，显示效果会自动缩放。
+      </div>
     </div>
-  </div>
-  <div class="span4">
-    <div class="device other" data-device="其它设备">
-      <p align="center"><img src="img/ipad.jpg" /></p>
-      <p align="center">其他设备<br /> 自定义分辨率</p>
+    <div class="modal-footer">
+      <button class="btn btn-primary" type="submit" data-dismiss="modal">确定</button>
+      <button class="btn" type="button" data-dismiss="modal">取消</button>
     </div>
-    <form class="form-inline mt10">
-      <input type="number" id="device-width" value="1024" />
-      &times;
-      <input type="number" id="device-height" value="768" />
-    </form>
   </div>
 </div>
-<p class="mt10">
-  <small>理论上，设备间分辨率的些微差别会被肉大师用内功消弭于无形。不过，如果您有明确的目标平台，我建议您先设定好分辨率，这样对调试和最终效果都有很大帮助。</small>
-</p>

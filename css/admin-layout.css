@@ -3,6 +3,16 @@ body {
   height:100%;
 }
 
+#always-hidden {
+  display:none;
+}
+.mt10 {
+  margin-top:10px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+
 .navbar-fixed-top {
   position: static;
   margin-bottom: 0;
@@ -91,4 +101,11 @@ body,
 }
 #page-list .add-button {
   width:150px;
+}
+
+/*========================
+ * popup layout
+ * =====================*/
+.modal-body > *:last-child {
+  margin-bottom: 0;
 }

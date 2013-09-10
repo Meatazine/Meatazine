@@ -1,6 +1,7 @@
 (function (ns) {
   'use strict';
   var mapInfoEditor,
+      PREFIX = 'popup-',
       map = {
         'book-config': Meatazine.popup.BookConfig,
         'export': Meatazine.popup.Export,
@@ -48,19 +49,22 @@
         $(document).on('click', popupButton, _.bind(this.PopupButton_clickHandler, this));
       },
       popup: function (popupName, backdrop, keyboard) {
-        backdrop = backdrop !== null ? backdrop : true;
-        keyboard = keyboard !== null ? keyboard : true;
-        var popup = $('#' + popupName);
-        if (popup.length === 0) {
+        var popup = this.$context.getValue(PREFIX + popupName);
+        if (popup) {
+          popup.show();
+          return;
+        }
+
+        if (popupName in map) {
+          backdrop = backdrop !== null ? backdrop : true;
+          keyboard = keyboard !== null ? keyboard : true;
           popup = normal.clone(popupName);
-          if (map.hasOwnProperty(popupName)) {
-            this.$context.createInstance(map[popupName], {
-              el: popup,
-              backdrop: backdrop,
-              keyboard: keyboard,
-              show: true
-            });
-          }
+          this.$context.mapValue(PREFIX + popupName, this.$context.createInstance(map[popupName], {
+            el: popup,
+            backdrop: backdrop,
+            keyboard: keyboard,
+            show: true
+          }));
         }
       },
       PopupButton_clickHandler: function (event) {

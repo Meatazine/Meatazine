@@ -10,13 +10,6 @@ body {
   font-family: Microsoft Yahei;
 }
 
-#always-hidden {
-  display:none;
-}
-.mt10 {
-  margin-top:10px;
-}
-
 .remove-button {
   position:absolute;
   top:3px;

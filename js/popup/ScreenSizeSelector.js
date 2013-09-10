@@ -2,14 +2,7 @@
   'use strict';
   ns.ScreenSizeSelector = ns.Base.extend({
     $book: null,
-    config: {
-      title: '选择设备分辨率',
-      hasConfirm: true,
-      confirmLabel: '确定',
-      hasCancel: true,
-      cancelLabel: '取消',
-      remote: 'popup/screenSize.html'
-    },
+    inner: 'popup/screenSize.html',
     events: {
       "click .device": "device_clickHandler",
       "click .btn-primary": "confirmHandler"
