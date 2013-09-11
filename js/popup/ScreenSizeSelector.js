@@ -18,8 +18,8 @@
       if (target.hasClass('other')) {
         this.$('form').slideDown();
       } else {
-        this.$('#device-width').val(target.attr('data-width'));
-        this.$('#device-height').val(target.attr('data-height'));
+        this.$('[name=width]').val(target.data('width'));
+        this.$('[name=height]').val(target.data('height'));
         this.$('form').slideUp();
       }
     },
@@ -31,12 +31,11 @@
         _gaq.push(['_trackEvent', 'popup', 'screen-size', this.model.get('width') + '-' + this.model.get('height')]);
       }
     },
-    model_sizeChangeHandler: function (model) {
-      var w = model.get('width'),
-          h = model.get('height');
+    model_sizeChangeHandler: function (model, value) {
+      var changed = model.changed;
+      this.$('[name=' + ('width' in changed ? 'width]' : 'height]')).value(value);
+
       this.$('.active').removeClass('active');
-      this.$('#device-width').val(w);
-      this.$('#device-height').val(h);
       if (w === 1024 && h === 768) {
         this.$('.ipad').addClass('active');
         return;
@@ -46,10 +45,6 @@
         return;
       }
       this.$('.other').addClass('active');
-    },
-    innerLoadHandler: function () {
-      this.$('form').hide();
-      this.$('.ipad').addClass('active');
     }
   });
 }(Nervenet.createNameSpace('Meatazine.popup')));
