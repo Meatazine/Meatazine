@@ -2,6 +2,7 @@
   'use strict';
   ns.ScreenSizeSelector = ns.Base.extend({
     $book: null,
+    $context: null,
     inner: 'popup/screenSize.html',
     events: {
       "click .device": "device_clickHandler",
@@ -25,15 +26,18 @@
     },
     form_submitHandler: function (event) {
       var form = event.currentTarget;
-      this.model.setSize(form.elements.width.value, form.elements.height.value);
+      this.model.set({
+        width: form.elements.width.value,
+        height: form.elements.height.value
+      }, {silent: true});
       this.hide();
-      if (event !== null) {
-        _gaq.push(['_trackEvent', 'popup', 'screen-size', this.model.get('width') + '-' + this.model.get('height')]);
-      }
+      this.$context.trigger('resize', form.elements.width.value, form.elements.height.value);
+      _gaq.push(['_trackEvent', 'popup', 'screen-size', this.model.get('width') + '-' + this.model.get('height')]);
+      return false;
     },
     model_sizeChangeHandler: function (model, value) {
       var changed = model.changed;
-      this.$('[name=' + ('width' in changed ? 'width]' : 'height]')).value(value);
+      this.$('[name=' + ('width' in changed ? 'width]' : 'height]')).val(value);
 
       this.$('.active').removeClass('active');
       if (w === 1024 && h === 768) {

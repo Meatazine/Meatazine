@@ -1,4 +1,11 @@
 (function (ns) {
+  function img_errorHandler() {
+    if (this.src.indexOf('filesystem') !== -1) {
+      var fileName = this.src.substr(this.src.lastIndexOf('/') + 1);
+      this.src = '/export/' + bookid + '/' + fileName;
+    }
+  }
+
   var currentEditor = null,
   init = {
     $book: null,
@@ -58,8 +65,7 @@
     createItem: function (model, isToken) {
       var item = $(Meatazine.utils.render(this.template, model)),
           isImage = /img|audio|video/i.test(this.tagName),
-          image = item.filter('img').add('img', item),
-          bookid = this.$book.get('id');
+          image = item.filter('img').add('img', item);
       // 判断是否是地图
       if (model instanceof Backbone.Model && model.has('lat')) {
         item.appendTo(this.$el);
@@ -85,12 +91,8 @@
         item.appendTo(this.$el);
       }
       item.data('model', model);
-      image.one('error', function (event) {
-        if (this.src.indexOf('filesystem') !== -1) {
-          var fileName = this.src.substr(this.src.lastIndexOf('/') + 1);
-          model.set('img', '/export/' + bookid + '/' + fileName);
-        }
-      });
+      image.one('error', img_errorHandler);
+      image.one('load', _.bind(this.img_loadHandler, this));
       return item;
     },
     handleChildrenState: function () {
@@ -146,7 +148,6 @@
           item = this.$el.children(this.tagName).eq(index),
           newItem = this.createItem(model);
       item.replaceWith(newItem);
-      this.trigger('change');
     },
     collection_removeHandler: function (model, collection, options) {
       this.$el.children(this.tagName).eq(options.index).remove();
@@ -194,15 +195,13 @@
       var isImage = /img|video|audio/i.test(this.tagName),
           item = editor.isEditing ? editor.getTarget() : editor.$el,
           index = isImage ? item.index() : item.closest(this.tagName).index(),
-          model = this.collection.createMapModel(),
-          container = null,
-          map = null;
+          model = this.collection.createMapModel();
       if (this.token != null) {
         this.token = this.token.not(this.$el.children(this.tagName).eq(index));
       }
       this.collection.replaceAt(model, index);
-      container = isImage ? this.$el : item.parent(); 
-      map = this.$mapEditor.createMap(container, model);
+      var container = isImage ? this.$el : item.parent();
+      var map = this.$mapEditor.createMap(container, model);
       this.registerMapEditor(map);
       _gaq.push(['_trackEvent', 'convert', 'image-map']);
     },
@@ -212,7 +211,6 @@
       firstImg.click();
 
       this.handleChildrenState();
-      this.trigger('change', this.collection);
       this.trigger('ready');
     },
     editor_uploadImagesHandler: function (url, scale) {
@@ -233,6 +231,9 @@
     },
     img_dragLeaveHandler: function (event) {
       $(event.currentTarget).removeClass('active-img');
+    },
+    img_loadHandler: function (event) {
+      this.trigger('change');
     },
     img_mouseoverHandler: function (event) {
       var img = $(event.target),

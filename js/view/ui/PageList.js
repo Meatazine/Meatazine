@@ -21,7 +21,7 @@
       list = this.$('#page-list-inner');
       this.model.on('change:width change:height', this.book_resizeHandler, this);
       this.collection.on('add', this.collection_addHandler, this);
-      this.collection.on('redraw', this.collection_redrawHandler, this);
+      this.collection.on('change:thumbnail', this.collection_redrawHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
 

@@ -32,11 +32,6 @@
       });
       return isJSON ? JSON.stringify(htmls) : htmls;
     },
-    inheritPrototype: function (subType, superType) {
-      var prototype = this.object(superType.prototype);
-      prototype.constructor = subType;
-      subType.prototype = prototype;
-    },
     render: function (template, data) {
       data = data.toJSON != null ? data.toJSON() : data;
       if (_.isArray(data)) {

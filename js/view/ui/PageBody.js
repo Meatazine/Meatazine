@@ -9,8 +9,6 @@
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
       "dragstop .ui-draggable": "draggable_dragStopHandler"
     },
-    initialize: function () {
-    },
     postConstruct: function () {
       this.$templates.on('complete', this.template_loadCompleteHandler, this);
       this.$textEditor.on('change', this.textEditor_changeHandler, this);
@@ -76,9 +74,9 @@
     },
     refreshThumbnail: function (isReset) {
       isReset = isReset || false;
-      var self = this;
+      var model = this.model;
       html2canvas(this.$el[0], {onrendered: function (canvas) {
-        self.model.trigger('redraw', self.model, canvas);
+        model.set('thumbnail', canvas);
       }});
       this.saveRenderedHTML();
       this.saveTemplate(isReset);

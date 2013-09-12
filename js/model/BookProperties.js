@@ -176,13 +176,6 @@
             }
           }, null, this);
         },
-        setSize: function (w, h) {
-          this.set({
-            width: parseInt(w),
-            height: parseInt(h)
-          });
-          this.$context.trigger('resize', w, h);
-        },
         pages_changeHandler: function () {
           isModified = true;
         },

@@ -1,4 +1,3 @@
-
 ;(function (ns) {
   ns.SinglePageModel = Backbone.Model.extend({
     isModified: false,
@@ -33,7 +32,7 @@
     },
     createElement: function (index, initObj, array) {
       var contents = this.get('contents').concat(),
-        element = new Meatazine.model.element.ElementCollection();
+          element = new Meatazine.model.element.ElementCollection();
       element.initModel(initObj);
       if (array instanceof Array) {
         element.add(array);
