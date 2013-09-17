@@ -14,18 +14,15 @@
     filename: '',
     isCanvas: false,
     isPlaceholder: false,
-    events: {
-      'click': 'clickHandler',
-      'mousedown': 'mousedownHandler',
-      'mouseup': 'mouseUpHandler'
-    },
     setElement: function (el) {
       Backbone.View.prototype.setElement.call(this, el);
 
-      this.image = 'length' in el ? el[0] : el;
-      this.isPlaceholder = this.$el.hasClass('placeholder');
+      this.image = el.is('img') ? el[0] : el.find('img')[0];
+      if (this.image) {
+        this.isPlaceholder = /placeholder/i.test(this.image.className);
+      }
       if (this.canvas) {
-        this.canvas[0].getContext('2d').clearRect(0, 0, this.canvas[0].width, this.canvas[0].height);
+        this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
       }
     },
     createCanvas: function () {
@@ -84,9 +81,6 @@
         Meatazine.service.AssetsSyncService.add(file, false);
       });
     },
-    clickHandler: function (event) {
-      this.trigger('click', event);
-    },
     mousedownHandler: function (event) {
       var currentX = this.model.get('x'),
           currentY = this.model.get('y'),
@@ -125,7 +119,6 @@
       imageResizer.on('complete:all', this.resizer_completeHandler, this);
 
       this.target = new ImageTarget();
-      this.target.on('click', this.target_clickHandler, this);
     },
     addMarkerAt: function (x, y) {
       var position = {x: x, y: y},
@@ -177,7 +170,7 @@
       context.drawImage(source, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
     },
     getTarget: function () {
-      return canvas;
+      return this.target.$el;
     },
     initScaleRange: function () {
       var scale = this.model.get('scale'),
@@ -188,8 +181,7 @@
         .find('input').attr({
           'max': scaleMax,
           'min': scaleMin
-        }).val(scale).end()
-        .find('span').text(Math.round(scale * 10000) / 100 + '%');
+        }).val(scale);
     },
     initUploader: function () {
       // 因为input必须change才能触发事件，所以有必要移除已经之前的标签
@@ -197,7 +189,7 @@
         uploader.remove();
       }
       uploader = $('<input type="file" multiple="multiple" accept="image/*" class="uploader" />');
-      uploader.appendTo(this.$el.first());
+      uploader.appendTo(this.$el.last());
     },
     prepareImgMarker: function (x, y) {
       tmpMarker = this.createImgMarker('body', {x: x, y: y}, 0);
@@ -210,18 +202,14 @@
       this.model.set({scale: value}, {silent: true});
       this.drawImage();
     },
-    setTarget: function (value) {
+    setTarget: function (target, model) {
       this.$toolbar.showButtons(this.$el);
-      if (this.target != null && this.target.is(value)) {
-        return;
-      }
       if (this.isEditing) {
-        this.$('.edit-button').click();
-        callback = arguments.callee;
-        args = value;
-        return;
+        this.$('.edit-button').removeClass('active');
+        this.stopEdit();
       }
-      this.target.setElement(value);
+      this.model = model;
+      this.target.setElement(target);
       this.$('.edit-button').prop('disabled', this.target.isPlaceholder);
       this.initScaleRange();
       this.initUploader();

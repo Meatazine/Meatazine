@@ -4,10 +4,11 @@
     isEditing: false,
     target: null,
     events: {
-      'click .convert-button': 'convertButton_clickHandler',
       'click .edit-button': 'editButton_clickHandler'
     },
-    setTarget: function (value) {
+    setTarget: function (value, model) {
+      this.off();
+      this.model = model;
       this.target = value;
     },
     getTarget: function () {
@@ -37,10 +38,6 @@
         .toggleClass('active')
         .closest('.btn-group').siblings('.btn-group').andSelf().find('[data-group=edit]').prop('disabled', !target.hasClass('active'));
       event.stopPropagation();
-    },
-    convertButton_clickHandler: function (event) {
-      var type = $(event.target).attr('data-class');
-      this.trigger('convert:' + type, this);
     }
   });
 }(Nervenet.createNameSpace('Meatazine.view.ui.editor')));
