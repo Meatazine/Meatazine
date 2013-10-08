@@ -1,6 +1,6 @@
 ;(function (ns) {
   ns.Welcome = ns.Base.extend({
-    $config: null,
+    model: '{{$config}}',
     config: {
       title: '肉大师这厢有礼了',
       hasConfirm: true,
@@ -13,8 +13,7 @@
       'shown': 'shownHandler',
       "click .guide-button": "useGuideButton_clickHandler"
     },
-    postConstruct: function () {
-      this.model = this.$config;
+    initialize: function () {
       this.checkModified();
       this.checkGuideConfig();
     },

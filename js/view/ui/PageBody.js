@@ -1,4 +1,5 @@
 (function (ns) {
+  var cover;
   ns.PageBody = Backbone.View.extend({
     $toolbar: null,
     $templates: null,
@@ -8,6 +9,9 @@
       "click .editable": "editable_clickHandler",
       "resizestop .ui-resizable": "resizable_resizeStopHandler",
       "dragstop .ui-draggable": "draggable_dragStopHandler"
+    },
+    initialize: function () {
+      cover = this.$('.cover').remove();
     },
     postConstruct: function () {
       this.$templates.on('complete', this.template_loadCompleteHandler, this);

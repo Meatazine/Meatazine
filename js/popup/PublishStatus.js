@@ -1,7 +1,7 @@
 ;(function (ns) {
   'use strict';
   ns.PublishStatus = ns.Base.extend({
-    $book: null,
+    model: '{{$book}}',
     config: {
       title: '发布杂志',
       innerURL: 'popup/publish.html'
@@ -11,8 +11,8 @@
       "hidden": "hiddenHandler",
       "click .download": "downloadHandler"
     },
-    postConstruct: function () {
-      this.$book.on('change:platform', this.model_platformChangeHandler, this);
+    initialize: function () {
+      this.model.on('change:platform', this.model_platformChangeHandler, this);
     },
     showStep: function (index) {
       this.$('li').eq(index - 1).toggleClass('active');

@@ -1,7 +1,7 @@
 ;(function (ns) {
   'use strict';
   ns.BookConfig = ns.Base.extend({
-    $book: null,
+    model: '{{$book}}',
     config: {
       title: '杂志属性',
       hasConfirm: true,
@@ -16,8 +16,8 @@
       "click .platform": "platform_clickHandler",
       "change #book-type": "bookType_changeHandler"
     },
-    postConstruct: function () {
-      this.$book.on('change:name', this.model_nameChangeHandler, this);
+    initialize: function () {
+      this.model.on('change:name', this.model_nameChangeHandler, this);
     },
     uploadImage: function (file, type) {
       if (file == null) {

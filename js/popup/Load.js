@@ -2,7 +2,7 @@
   'use strict';
   ns.Load = ns.Base.extend({
     $book: null,
-    $user: null,
+    model: '{{$user}}',
     config: {
       title: '读取保存的杂志',
       hasConfirm: true,
@@ -20,9 +20,9 @@
       "click .autosave": "loadAutosaveButton_clickHandler",
       "click .disabled": "disabled_clickHandler",
     },
-    postConstruct: function () {
-      var local = this.$user.local,
-          remote = this.$user.remote;
+    initialize: function () {
+      var local = this.model.local,
+          remote = this.model.remote;
       local.on('add', this.local_addHandler, this);
       local.on('change', this.local_changeHandler, this);
       remote.on('add', this.remote_addHandler, this);

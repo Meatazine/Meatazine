@@ -3,7 +3,7 @@
   var timeout = 0;
   ns.UserConfig = ns.Base.extend({
     $book: null,
-    $config: null,
+    model: '{{$config}}',
     config: {
       title: '设置',
       hasConfirm: true,
@@ -15,9 +15,6 @@
       "click #before-unload-button": "beforeUnloadButton_clickHandler",
       "mouseover .switch-button": "switchButton_mouseoverHandler",
       "mouseout .switch-button": "switchButton_mouseoutHandler"
-    },
-    postConstruct: function () {
-      this.model = this.$config;
     },
     checkConfig: function () {
       this.checkAutoSave();

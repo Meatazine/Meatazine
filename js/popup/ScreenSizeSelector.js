@@ -1,15 +1,14 @@
 ;(function (ns) {
   'use strict';
   ns.ScreenSizeSelector = ns.Base.extend({
-    $book: null,
+    model: '{{$book}}',
     $context: null,
     inner: 'popup/screenSize.html',
     events: {
       "click .device": "device_clickHandler",
       "submit form": "form_submitHandler"
     },
-    postConstruct: function  () {
-      this.model = this.$book;
+    initialize: function  () {
       this.model.on('change:width change:height', this.model_sizeChangeHandler, this);
     },
     device_clickHandler: function (event) {
