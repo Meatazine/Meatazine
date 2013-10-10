@@ -4,10 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="keywords" content="肉大师,电子杂志,制作工具,html5,开源,移动平台,跨平台" />
 <meta name="description" content="“肉大师”是一款基于浏览器的内容制作工具。我们利用HTML5技术，让内容生产者得以使用最常见的工具来制作能够在各类移动设备上观看的内容——初步以电子杂志为主。" />
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css">
-<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" href="css/animate.css" />
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="bower_components/jquery.ui/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="bower_components/animate.css/animate.min.css" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/admin-general.css" />
 <link rel="stylesheet" href="css/admin-layout.css" />
@@ -408,17 +408,17 @@
   </div>
 </div>
 <!-- 最后加载css和js -->
-<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-<script src="//code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<!-- replace start -->
-<script src="libs/underscore-min.js"></script>
-<script src="libs/backbone-min.js"></script>
+<script src="bower_components/jquery/jquery.min.js"></script>
+<script src="bower_components/jquery.ui//jquery-ui.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="bower_components/backbone/backbone.js"></script>
+<script src="bower_components/html2canvas/build/html2canvas.js"></script>
+<script src="bower_components/jszip/jszip.js"></script>
+<script src="bower_components/jszip/jszip-deflate.js"></script>
+<script src="bower_components/handlebars/handlebars.js"></script>
 <script src="libs/Nervenet.js"></script>
-<script src="libs/html2canvas.min.js"></script>
-<script src="libs/jszip.js"></script>
-<script src="libs/jszip-deflate.js"></script>
-<script src="libs/mustache.js"></script>
+<!-- replace start -->
 <script src="js/utils/Utils.js"></script>
 <script src="js/utils/Mouse.js"></script>
 <script src="js/filesystem/LocalFile.js"></script>
@@ -467,15 +467,3 @@
 <!-- replace over -->
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>
 <script src="//qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="100289540" data-redirecturi="http://meathill.pc/Meatazine/api/qqlogin.html" charset="UTF-8"></script>
-<script id="ga-init">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-36011684-1']);
-  _gaq.push(['_setDomainName', 'evereditor.com']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementById('ga-init'); s.parentNode.insertBefore(ga, s);
-  })();
-</script>

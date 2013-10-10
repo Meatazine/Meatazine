@@ -1,0 +1,46 @@
+{
+  "name": "Meatazine",
+  "version": "0.1.7",
+  "description": "A great digi-magazine maker, maybe the best one",
+  "keywords": [
+    "html5",
+    "phonegap",
+    "digi-magazine",
+    "creative-tools"
+  ],
+  "homepage": "http://www.evereditor.com/",
+  "bugs": "https://github.com/Meatazine/Meatazine/issues",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Meatazine/Meatazine"
+  },
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "jquery.ui": "~1.10.3",
+    "bootstrap": "~3.0.0",
+    "font-awesome": "~3.2.1",
+    "underscore": "~1.5.2",
+    "backbone": "~1.0.0",
+    "html2canvas": "~0.4.1",
+    "jszip": "~1.0.0",
+    "handlebars": "~1.0.0",
+    "iscroll": "~5.0.5",
+    "animate.css": "~2.1.0"
+  },
+  "devDependencies": {
+
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "main": "index.html",
+  "authors": [
+    "Meathill <meathill@gmail.com> (http://www.meathill.com/)"
+  ],
+  "private": true
+}
