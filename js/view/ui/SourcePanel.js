@@ -30,7 +30,7 @@
         },
         createSourceItem: function (model) {
           var template = this.model.createTemplate(model),
-              item = $(Meatazine.utils.render(template, model));
+              item = $(template(model));
           return item;
         },
         createSourceList: function (collection, ul) {

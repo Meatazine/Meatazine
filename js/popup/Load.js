@@ -73,32 +73,32 @@
       this.$book.load(key, id);
       this.$el.modal('hide');
     },
-    local_addHandler: function (model, collection) {
-      var item = Meatazine.utils.render(this.template, model.toJSON());
+    local_addHandler: function (model) {
+      var item = this.template(model.toJSON());
       this.$('#books-local').append(item);
     },
-    local_changeHandler: function (model, options) {
+    local_changeHandler: function (model) {
       var index = this.model.remote.indexOf(model),
-          item = Meatazine.utils.render(this.template, model.toJSON());
+          item = this.template(model.toJSON());
       this.$('#books-local').children().eq(index).replaceWith(item);
     },
-    remote_addHandler: function (model, collection) {
-      var item = Meatazine.utils.render(this.template, model.toJSON());
+    remote_addHandler: function (model) {
+      var item = this.template(model.toJSON());
       this.$('#books-cloud').append(item);
     },
-    remote_changeHandler: function (model, options) {
+    remote_changeHandler: function (model) {
       var index = this.model.remote.indexOf(model),
-          item = Meatazine.utils.render(this.template, model.toJSON());
+          item = this.template(model.toJSON());
       this.$('#books-cloud').children().eq(index).replaceWith(item);
     },
     remote_resetHandler: function (collection) {
-      this.$('#books-cloud').html(Meatazine.utils.render(this.template, collection.toJSON()));
+      this.$('#books-cloud').html(this.template(collection));
     },
     innerLoadHandler: function () {
-      this.template = this.$('ul.well').find('script').html();
+      this.template = Handlebars.compile(this.$('ul.well').find('script').html());
       this.$('ul.well').empty();
-      this.$('#books-local').html(Meatazine.utils.render(this.template, this.model.local.toJSON()));
-      this.$('#books-cloud').html(Meatazine.utils.render(this.template, this.model.remote.toJSON()));
+      this.$('#books-local').html(this.template(this.model.local.toJSON()));
+      this.$('#books-cloud').html(this.template(this.model.remote.toJSON()));
     },
     shownHandler: function (event) {
       this.$('[type=submit]').prop('disabled', true);

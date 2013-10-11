@@ -42,7 +42,7 @@
         }
         template += '<span class="' + prop + '">{{{' + prop + '}}}</span><br />';
       }
-      return '<li>' + template + '</li>';
+      return Handlebars.compile('<li>' + template + '</li>');
     },
     load: function (name) {
       $.ajax({

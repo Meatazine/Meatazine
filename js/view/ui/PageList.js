@@ -25,14 +25,14 @@
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('reset', this.collection_resetHandler, this);
 
-      this.template = this.$('script').html();
+      this.template = Handlebars.compile(this.$('script').html());
       this.$('script').remove();
       removeButton = $('<i class="icon-trash remove-button" title="删除"></i>');
       addButton = this.$('.add-button');
     },
     createItem: function (model) {
       var height = this.model.get('height') / this.model.get('width') * itemWidth,
-          li = $(Mustache.render(this.template, {
+          li = $(this.template({
             width: itemWidth,
             height: height
           }));

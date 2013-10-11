@@ -34,6 +34,7 @@
           this.tagName = arr[1].toUpperCase();
         }
       }
+      this.template = Handlebars.compile(this.template);
       this.collection.on('change', this.collection_changeHandler, this);
       this.collection.on('remove', this.collection_removeHandler, this);
       this.collection.on('sort', this.collection_sortHandler, this);
@@ -63,7 +64,7 @@
       this.$el.remove();
     },
     createItem: function (model, isToken) {
-      var item = $(Meatazine.utils.render(this.template, model)),
+      var item = $(this.template(model)),
           isImage = /img|audio|video/i.test(this.tagName),
           image = item.filter('img').add('img', item);
       // 判断是否是地图
