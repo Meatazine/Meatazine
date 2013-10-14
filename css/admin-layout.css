@@ -3,9 +3,6 @@ body {
   height:100%;
 }
 
-#always-hidden {
-  display:none;
-}
 .mt10 {
   margin-top:10px;
 }
@@ -25,8 +22,7 @@ body,
 #page-editor,
 #page-list,
 #page-list header {
-  display:-webkit-box;
-  display:box;
+  display:flex;
 }
 #page-area,
 #content,
@@ -34,24 +30,17 @@ body,
 #page-editor,
 #page-list-inner,
 #page-number {
-  -webkit-box-flex:1;
-  box-flex:1;
+  flex:1;
 }
 #content,
 #page-list header {
-  -webkit-box-orient:horizontal;
-  box-orient:horizontal;
+  flex-direction:row;
 }
 body,
 #sidebar,
 #page-area,
 #page-list {
-  -webkit-box-orient:vertical;
-  box-orient:vertical;
-}
-#page-editor {
-  -webkit-box-align:center;
-  -webkit-box-pack:center;
+  flex-direction:column;
 }
 
 /*========================
@@ -63,9 +52,6 @@ body,
 }
 #sidebar hr {
   margin:10px;
-}
-#page-area {
-  background: #DDD;
 }
 
 /*========================
@@ -101,6 +87,17 @@ body,
 }
 #page-list .add-button {
   width:150px;
+}
+
+/*========================
+ * page layout
+ * =====================*/
+#toolbar {
+  margin-bottom: 0;
+}
+#page-body {
+  align-self:center;
+  margin:0 auto;
 }
 
 /*========================

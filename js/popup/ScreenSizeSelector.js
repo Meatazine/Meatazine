@@ -8,7 +8,7 @@
       "click .device": "device_clickHandler",
       "submit form": "form_submitHandler"
     },
-    initialize: function  () {
+    postConstruct: function  () {
       this.model.on('change:width change:height', this.model_sizeChangeHandler, this);
     },
     device_clickHandler: function (event) {

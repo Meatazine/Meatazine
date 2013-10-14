@@ -13,77 +13,7 @@
 <link rel="stylesheet" href="css/admin-layout.css" />
 <link rel="stylesheet" href="css/admin-popup.css" />
 <link rel="stylesheet" href="css/admin-component.css" />
-<style>
-  body {
-    background:#FFF;
-  }
-  #loading {
-    width: 300px;
-    position:absolute;
-    left:50%;
-    top:100px;
-    margin-left:-160px;
-    border:1px solid #DDD;
-    border-radius: 6px;
-    background:#FFF;
-    box-shadow:0 4px 10px rgba(200, 200, 200, 0.7);
-  }
-  #loading .top {
-    padding: 30px 10px 25px;
-    background:#2185C5;
-    border-radius:6px 6px 0 0;
-  }
-  #loading h2 {
-    color:#FFF;
-    text-align:center;
-    font:bold 24px/30px Microsoft Yahei, Simhei;
-    margin:10px 0 15px;
-  }
-  #loading .top p {
-    margin:10px 0 0;
-    -webkit-animation-name: appLoadingIndicator;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-direction: linear;
-  }
-  @-webkit-keyframes appLoadingIndicator{
-    0% { opacity: 0.8 }
-    50% { opacity: 0 }
-    100% { opacity: 0.8 }
-  }
-  #loading .dot {
-    width: 16px;
-    height:16px;
-    display:inline-block;
-    border-radius:8px;
-    margin:0 5px;
-    background:#FFF;
-    opacity: 0.8;
-  }
-  #loading h4 {
-    font-size:16px;
-    padding: 0 10px;
-  }
-  #loading p {
-    font-size:14px;
-    padding:0 10px;
-  }
-  .hidden, .hide {
-    display:none;
-  }
-  .noscript {
-    width: 350px;
-    position: absolute;
-    left:50%;
-    top:100px;
-    margin-left:-200px;
-    font:16px/24px Microsoft Yahei;
-  }
-  .noscript h4 {
-    font:bold 20px/30px Microsoft Yahei;
-    padding: 0 0 10px;
-  }
-</style>
+
 <noscript>
   <div class="alert alert-error noscript">
     <h4>您的浏览器不支持JavaScript!</h4>
@@ -407,7 +337,7 @@
     </div>
   </div>
 </div>
-<!-- 最后加载css和js -->
+<!-- 最后加载js -->
 <script src="bower_components/jquery/jquery.js"></script>
 <script src="bower_components/jquery.ui/dist/jquery-ui.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -417,7 +347,7 @@
 <script src="bower_components/jszip/jszip.js"></script>
 <script src="bower_components/jszip/jszip-deflate.js"></script>
 <script src="bower_components/handlebars/handlebars.js"></script>
-<script src="libs/Nervenet.js"></script>
+<script src="bower_components/nervenet/Nervenet.js"></script>
 <!-- replace start -->
 <script src="js/utils/Utils.js"></script>
 <script src="js/utils/Mouse.js"></script>

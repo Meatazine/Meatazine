@@ -230,6 +230,9 @@
 /*========================
  * page editor
  * =====================*/
+#page-area {
+  background: #DDD;
+}
 #page-editor {
   overflow:auto;
 }
